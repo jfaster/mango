@@ -68,9 +68,6 @@
                         <goals>
                             <goal>jjtree-javacc</goal>
                         </goals>
-                        <configuration>
-                            <nodePrefix>"ASH"</nodePrefix>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

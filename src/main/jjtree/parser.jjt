@@ -1,103 +1,57 @@
 options
 {
-	 JDK_VERSION = "1.5";
- 	static = false;
- 	MULTI=true;
- 	VISITOR=true;
+    /** 使用jdk1.6 */
+    JDK_VERSION = "1.6";
+
+    /** 生成非静态方法 */
+    static = false;
+
+    /** 让jjtree给每个非终结符生成一个对象 */
+    MULTI = true;
+
+    /** 开启访问者模式 */
+    VISITOR = true;
 }
 
-PARSER_BEGIN(WhereParser)
-package com.monql.grammar;
+PARSER_BEGIN(Parser)
+package cc.concurrent.mango.parser;
 
 import java.io.StringReader;
 import java.io.Reader;
 
-public class WhereParser {
-
-	public WhereParser(String s)
-    {
+public class Parser {
+    public Parser(String s) {
         this((Reader)(new StringReader(s)));
-
     }
 }
+PARSER_END(Parser)
 
-PARSER_END(WhereParser)
-
-SKIP :
-{
-	 " "
-	| "\t"
-	| "\r"
-	| "\n"
-}
 
 TOKEN:
 {
-		<AND: "and">
-	|  <OR:  "or">
-	|  <LPAREN: "(">
-	|  <RPAREN: ")">
-	|  <EQUALS: "=">
-	|  <NE: "!=">
-	|  <LT: "<" >
-	|  <LTE: "<=" >
-	|  <GT: ">" >
-	|	<GTE: ">=" >
-	|  <IN: "in" >
-	|  <ALL: "all" >
-	|  <EXISTS: "exists" >
+        <LPAREN: "(" >
+    |   <RPAREN: ")" >
+    |   <EQUALS: "=" >
+    |   <NE: "!=" >
+    |   <LT: "<" >
+    |   <LTE: "<=" >
+    |   <GT: ">" >
+    |	<GTE: ">=" >
+    |   <TEXT: (~[":", "#", "("])+ >
 }
 
 TOKEN :
 {
-  		  <KEYWORD: (~[" ","\t","\r","\n",":","(",")"]) ( ~[" ","\t","\r","\n"] )* >
-	| 	 < PARAM_NUM: ":"["1"-"9"] >
+    <PARAM: ":"["1"-"9"] >
 }
 
 SimpleNode parse()  #RootNode :
 {
+    Token t;
 }
 {
-    expression()   <EOF>
+    (t=<TEXT> {jjtThis.add(t);} | t=<PARAM> {jjtThis.add(t);}) + <EOF>
     {
-		return(SimpleNode) jjtThis.children[0];
+        return jjtThis;
     }
-}
-
-void expression() #OrNode(>1) :
-{}
-{
- 	andExpression()  ( <OR> andExpression() )*
-}
-
-void andExpression() #AndNode(>1) :
-{}
-{
-	termOrExpression() ( <AND> termOrExpression() )*
-}
-
-void termOrExpression()  #void :
-{
-}
-{
-    	term()
-        |
-        <LPAREN> expression() <RPAREN>
-}
-
-void term()  #TermNode :
-{
-	Token key = null;
-	Token op = null;
-	Token paramNum = null;
-}
-{
-    	key=<KEYWORD>
-        ( op=<EQUALS> | op=<NE> | op=<LT> | op=<LTE> | op=<GT> | op=<GTE> | op=<IN> | op=<ALL> | op=<EXISTS> )
-        ( paramNum=<PARAM_NUM>)
-        {
-         	jjtThis.setKey(key.image);
-			jjtThis.setOperatorFromOp(op.image);
-			jjtThis.setParamNum(paramNum.image);
-        }
 }
