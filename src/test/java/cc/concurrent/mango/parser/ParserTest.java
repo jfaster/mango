@@ -10,7 +10,7 @@ public class ParserTest {
     @Test
     public void test() throws ParseException {
         Parser p = new Parser("sdfs df :1 s df");
-        System.out.println(p.parse());
+        p.parse().dump("--");
     }
 
 }

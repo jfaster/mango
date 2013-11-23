@@ -31,27 +31,42 @@ TOKEN:
 {
         <LPAREN: "(" >
     |   <RPAREN: ")" >
-    |   <EQUALS: "=" >
-    |   <NE: "!=" >
-    |   <LT: "<" >
-    |   <LTE: "<=" >
-    |   <GT: ">" >
-    |	<GTE: ">=" >
+    |   <COLON: ":" >
     |   <TEXT: (~[":", "#", "("])+ >
+    |   <DOT: "." >
 }
 
 TOKEN :
 {
-    <PARAM: ":"["1"-"9"] >
+        <NUMBER: ["1"-"9"] (["0"-"9"])* >
+    |   <FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
 }
 
 SimpleNode parse()  #RootNode :
 {
-    Token t;
 }
 {
-    (t=<TEXT> {jjtThis.add(t);} | t=<PARAM> {jjtThis.add(t);}) + <EOF>
+    (Parameter() | Text())+ <EOF>
     {
         return jjtThis;
+    }
+}
+
+void Parameter() #ParameterNode :
+{
+    Token;
+}
+{
+    <COLON> t=<NUMBER> {jjtThis.setNum(t.image);} (<DOT> <FIELD> {jjtThis.addFieldName(t.image);})*
+}
+
+void Text() #TextNode :
+{
+    Token;
+}
+{
+    t=<TEXT>
+    {
+        jjtThis.setText(t.image);
     }
 }
