@@ -9,8 +9,8 @@ public class ParserTest {
 
     @Test
     public void test() throws ParseException {
-        Parser p = new Parser("sdfs df :1 s df");
-        p.parse().dump("--");
+        Parser p = new Parser("a=:1.abc.ed  SDF");
+        p.parse().dump("");
     }
 
 }

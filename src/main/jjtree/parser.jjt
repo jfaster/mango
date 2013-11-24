@@ -26,27 +26,28 @@ public class Parser {
 }
 PARSER_END(Parser)
 
-
-TOKEN:
-{
-        <LPAREN: "(" >
-    |   <RPAREN: ")" >
-    |   <COLON: ":" >
-    |   <TEXT: (~[":", "#", "("])+ >
-    |   <DOT: "." >
-}
-
+<G>
 TOKEN :
 {
         <NUMBER: ["1"-"9"] (["0"-"9"])* >
+    |   <DOT: "." >
     |   <FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
+    |   <BLANK: " " > {SwitchTo(DEFAULT);}
 }
+
+<DEFAULT>
+TOKEN:
+{
+        <COLON: ":" > {SwitchTo(G);}
+    |   <TEXT: (~[":", "#", "(", "."])+ >
+}
+
 
 SimpleNode parse()  #RootNode :
 {
 }
 {
-    (Parameter() | Text())+ <EOF>
+    (Text() | Parameter())+ <EOF>
     {
         return jjtThis;
     }
@@ -54,15 +55,15 @@ SimpleNode parse()  #RootNode :
 
 void Parameter() #ParameterNode :
 {
-    Token;
+    Token t;
 }
 {
-    <COLON> t=<NUMBER> {jjtThis.setNum(t.image);} (<DOT> <FIELD> {jjtThis.addFieldName(t.image);})*
+    <COLON> t=<NUMBER> {jjtThis.setNum(t.image);} (<DOT> <FIELD> {jjtThis.addFieldName(t.image);})* [<BLANK>]
 }
 
 void Text() #TextNode :
 {
-    Token;
+    Token t;
 }
 {
     t=<TEXT>
