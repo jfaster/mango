@@ -28,4 +28,13 @@ public class ASTParameterNode extends SimpleNode {
         fieldNames.add(fieldName);
     }
 
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(num);
+        for (String fieldName : fieldNames) {
+            sb.append(".").append(fieldName);
+        }
+        return sb.toString();
+    }
 }

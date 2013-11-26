@@ -22,4 +22,9 @@ public class ASTTextNode extends SimpleNode {
     public void setText(String text) {
         this.text = text;
     }
+
+    @Override
+    public String toString() {
+        return text;
+    }
 }

@@ -26,19 +26,31 @@ public class Parser {
 }
 PARSER_END(Parser)
 
+<O>
+TOKEN :
+{
+        <O_NUMBER: ["1"-"9"] (["0"-"9"])* >
+    |   <O_DOT: "." >
+    |   <O_FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
+}
+
+<O>
+MORE :
+{
+        <O_BLANK: "" > {SwitchTo(DEFAULT);}
+}
+
 <G>
 TOKEN :
 {
-        <NUMBER: ["1"-"9"] (["0"-"9"])* >
-    |   <DOT: "." >
-    |   <FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
-    |   <BLANK: " " > {SwitchTo(DEFAULT);}
+        <G_NUMBER: ["1"-"9"] (["0"-"9"])* >
 }
+
 
 <DEFAULT>
 TOKEN:
 {
-        <COLON: ":" > {SwitchTo(G);}
+        <COLON: ":" > {SwitchTo(O);}
     |   <TEXT: (~[":", "#", "(", "."])+ >
 }
 
@@ -58,7 +70,7 @@ void Parameter() #ParameterNode :
     Token t;
 }
 {
-    <COLON> t=<NUMBER> {jjtThis.setNum(t.image);} (<DOT> <FIELD> {jjtThis.addFieldName(t.image);})* [<BLANK>]
+    <COLON> t=<O_NUMBER> {jjtThis.setNum(t.image);} (<O_DOT> t=<O_FIELD> {jjtThis.addFieldName(t.image);})*
 }
 
 void Text() #TextNode :
