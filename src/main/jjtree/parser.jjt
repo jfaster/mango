@@ -26,32 +26,19 @@ public class Parser {
 }
 PARSER_END(Parser)
 
-<O>
 TOKEN :
 {
-        <O_NUMBER: ["1"-"9"] (["0"-"9"])* >
-    |   <O_DOT: "." >
-    |   <O_FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
+        <#COLON: ":" >
+    |   <#NUMBER: ["1"-"9"] (["0"-"9"])* >
+    |   <#DOT: "." >
+    |   <#FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
+    |   <IN_PARAM: "(" (" ")* <COLON> <NUMBER> (<DOT> <FIELD>)* (" ")* ")" >
+    |   <OUT_PARAM: <COLON> <NUMBER> (<DOT> <FIELD>)* >
 }
 
-<O>
-MORE :
-{
-        <O_BLANK: "" > {SwitchTo(DEFAULT);}
-}
-
-<G>
-TOKEN :
-{
-        <G_NUMBER: ["1"-"9"] (["0"-"9"])* >
-}
-
-
-<DEFAULT>
 TOKEN:
 {
-        <COLON: ":" > {SwitchTo(O);}
-    |   <TEXT: (~[":", "#", "(", "."])+ >
+        <TEXT: (~[":", "#", "(", "."])+ >
 }
 
 
@@ -59,18 +46,32 @@ SimpleNode parse()  #RootNode :
 {
 }
 {
-    (Text() | Parameter())+ <EOF>
+    (Text() | OutParam() | InParam())+ <EOF>
     {
         return jjtThis;
     }
 }
 
-void Parameter() #ParameterNode :
+void OutParam() #OutParamNode :
 {
     Token t;
 }
 {
-    <COLON> t=<O_NUMBER> {jjtThis.setNum(t.image);} (<O_DOT> t=<O_FIELD> {jjtThis.addFieldName(t.image);})*
+    t=<OUT_PARAM>
+    {
+        jjtThis.setParam(t.image);
+    }
+}
+
+void InParam() #InParamNode :
+{
+    Token t;
+}
+{
+    t=<IN_PARAM>
+    {
+        jjtThis.setParam(t.image);
+    }
 }
 
 void Text() #TextNode :

@@ -9,7 +9,7 @@ public class ParserTest {
 
     @Test
     public void test() throws ParseException {
-        Parser p = new Parser("a=:1.abc.ed  sdf");
+        Parser p = new Parser("a=:1.abc.ed :2  sdf in ( :3.x.y.x  )");
         p.parse().dump("");
     }
 
