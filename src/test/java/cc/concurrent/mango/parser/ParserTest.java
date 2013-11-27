@@ -9,7 +9,7 @@ public class ParserTest {
 
     @Test
     public void test() throws ParseException {
-        Parser p = new Parser("a=:1.abc.ed :2 ab${:1}cd sdf in ( :3.x.y.x  )");
+        Parser p = new Parser("select * from table_${:1 % 100 + 1} where a = :1 and b in (:2)");
         p.parse().dump("");
     }
 

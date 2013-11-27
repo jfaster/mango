@@ -46,7 +46,21 @@ TOKEN:
 TOKEN:
 {
         <PARAM: <COLON> <NUMBER> (<DOT> <FIELD>)* >
+    |   <MINUS: "-">
+    |   <PLUS: "+">
+    |   <MULTIPLY: "*">
+    |   <DIVIDE: "/">
+    |   <MODULUS: "%">
     |   <EXPR_END: "}" > {SwitchTo(DEFAULT);}
+    |   <INTEGER_LITERAL: ["1"-"9"] (["0"-"9"])* >
+    |   <LPAREN: "(" >
+    |   <RPAREN: ")" >
+}
+
+<G>
+SKIP :
+{
+        " "
 }
 
 
@@ -60,7 +74,7 @@ SimpleNode parse()  #RootNode :
     }
 }
 
-void OutParam() #OutParamNode :
+void OutParam() :
 {
     Token t;
 }
@@ -71,7 +85,7 @@ void OutParam() #OutParamNode :
     }
 }
 
-void InParam() #InParamNode :
+void InParam() :
 {
     Token t;
 }
@@ -82,7 +96,7 @@ void InParam() #InParamNode :
     }
 }
 
-void Text() #TextNode :
+void Text() :
 {
     Token t;
 }
@@ -98,23 +112,46 @@ void Expr() #void : // 标记为void不生成节点
 
 }
 {
-    <EXPR_START> Add() <EXPR_END>
+    <EXPR_START> AdditiveExpression() <EXPR_END>
 }
 
-void Add() #AddNode :
+void AdditiveExpression() #void : // 标记为void不生成节点
 {}
 {
-    Mul() ( ( "+" | "-" ) Mul() )*
+    MultiplicativeExpression()
+    (
+            <PLUS>  MultiplicativeExpression() #AddNode(2)
+        |   <MINUS> MultiplicativeExpression() #SubtractNode(2)
+    )*
 }
 
-void Mul() #MulNode :
+void MultiplicativeExpression() #void : // 标记为void不生成节点
 {}
 {
-    Param() ( ( "*" | "/" | "%" ) Param() )*
+    PrimaryExpression()
+    (
+            <MULTIPLY>  PrimaryExpression() #MulNode(2)
+        |   <DIVIDE>  PrimaryExpression() #DivNode(2)
+        |   <MODULUS>  PrimaryExpression() #ModNode(2)
+    )*
 }
 
-void Param() #ParamNode :
+void PrimaryExpression() #void :
+{}
+{
+        Param()
+    |   IntegerLiteral()
+    |   <LPAREN> AdditiveExpression() <RPAREN>
+}
+
+void Param() :
 {}
 {
     <PARAM>
+}
+
+void IntegerLiteral() :
+{}
+{
+    <INTEGER_LITERAL>
 }

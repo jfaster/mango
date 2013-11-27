@@ -12,16 +12,16 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * @author ash
  */
-public class ASTOutParamNode extends SimpleNode {
+public class ASTOutParam extends SimpleNode {
 
     private int num ;
     private List<String> fieldNames;
 
-    public ASTOutParamNode(int i) {
+    public ASTOutParam(int i) {
         super(i);
     }
 
-    public ASTOutParamNode(Parser p, int i) {
+    public ASTOutParam(Parser p, int i) {
         super(p, i);
     }
 

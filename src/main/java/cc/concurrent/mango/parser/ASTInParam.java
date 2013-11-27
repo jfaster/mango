@@ -13,16 +13,16 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * @author ash
  */
-public class ASTInParamNode extends SimpleNode {
+public class ASTInParam extends SimpleNode {
 
     private int num ;
     private List<String> fieldNames;
 
-    public ASTInParamNode(int i) {
+    public ASTInParam(int i) {
         super(i);
     }
 
-    public ASTInParamNode(Parser p, int i) {
+    public ASTInParam(Parser p, int i) {
         super(p, i);
     }
 
@@ -32,7 +32,6 @@ public class ASTInParamNode extends SimpleNode {
         checkState(m.matches());
         num = Integer.parseInt(m.group(1));
         String strFieldNames = param.substring(m.end(1));
-        System.out.println(strFieldNames);
         fieldNames = Splitter.on(".").trimResults(CharMatcher.is(')').or(CharMatcher.is(' ')))
                 .omitEmptyStrings().splitToList(strFieldNames);
     }
