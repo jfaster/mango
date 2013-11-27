@@ -34,11 +34,19 @@ TOKEN :
     |   <#FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
     |   <IN_PARAM: "(" (" ")* <COLON> <NUMBER> (<DOT> <FIELD>)* (" ")* ")" >
     |   <OUT_PARAM: <COLON> <NUMBER> (<DOT> <FIELD>)* >
+    |   <EXPR_START: "${" > {SwitchTo(G);}
 }
 
 TOKEN:
 {
-        <TEXT: (~[":", "#", "(", "."])+ >
+        <TEXT: (~[":", "$", "(", "."])+ >
+}
+
+<G>
+TOKEN:
+{
+        <PARAM: <COLON> <NUMBER> (<DOT> <FIELD>)* >
+    |   <EXPR_END: "}" > {SwitchTo(DEFAULT);}
 }
 
 
@@ -46,7 +54,7 @@ SimpleNode parse()  #RootNode :
 {
 }
 {
-    (Text() | OutParam() | InParam())+ <EOF>
+    (Text() | OutParam() | InParam() | Expr())+ <EOF>
     {
         return jjtThis;
     }
@@ -83,4 +91,30 @@ void Text() #TextNode :
     {
         jjtThis.setText(t.image);
     }
+}
+
+void Expr() #void : // 标记为void不生成节点
+{
+
+}
+{
+    <EXPR_START> Add() <EXPR_END>
+}
+
+void Add() #AddNode :
+{}
+{
+    Mul() ( ( "+" | "-" ) Mul() )*
+}
+
+void Mul() #MulNode :
+{}
+{
+    Param() ( ( "*" | "/" | "%" ) Param() )*
+}
+
+void Param() #ParamNode :
+{}
+{
+    <PARAM>
 }
