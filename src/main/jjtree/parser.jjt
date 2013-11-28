@@ -145,13 +145,23 @@ void PrimaryExpression() #void :
 }
 
 void Param() :
-{}
 {
-    <PARAM>
+    Token t;
+}
+{
+    t=<PARAM>
+    {
+        jjtThis.setParam(t.image);
+    }
 }
 
 void IntegerLiteral() :
-{}
 {
-    <INTEGER_LITERAL>
+    Token t;
+}
+{
+    t=<INTEGER_LITERAL>
+    {
+        jjtThis.setValue(Integer.valueOf(t.image));
+    }
 }

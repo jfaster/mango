@@ -9,7 +9,7 @@ public class ParserTest {
 
     @Test
     public void test() throws ParseException {
-        Parser p = new Parser("select * from table_${:1 % 100 + 1} where a = :1 and b in (:2)");
+        Parser p = new Parser("select * from table_${:1 % 100 + 1 + :3.uid} where a = :1 and b in (:2)");
         p.parse().dump("");
     }
 
