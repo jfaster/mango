@@ -1,5 +1,6 @@
 package cc.concurrent.mango.runtime.parser;
 
+import cc.concurrent.mango.runtime.RuntimeContext;
 import com.google.common.base.Objects;
 
 import java.util.regex.Matcher;
@@ -12,8 +13,8 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class ASTParam extends SimpleNode {
 
-    private int num;
-    private String propertyName;
+    private String beanName;
+    private String propertyName; // 为""的时候表示没有属性
 
     public ASTParam(int i) {
         super(i);
@@ -24,10 +25,10 @@ public class ASTParam extends SimpleNode {
     }
 
     public void setParam(String param) {
-        Pattern p = Pattern.compile(":(\\d+)(\\.\\w+)*");
+        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
         Matcher m = p.matcher(param);
         checkState(m.matches());
-        num = Integer.parseInt(m.group(1));
+        beanName = m.group(1);
         propertyName = param.substring(m.end(1));
         if (!propertyName.isEmpty()) {
             propertyName = propertyName.substring(1);  // .a.b.c变为a.b.c
@@ -35,7 +36,12 @@ public class ASTParam extends SimpleNode {
     }
 
     @Override
+    public Object value(RuntimeContext context) {
+        return context.getPropertyValue(beanName, propertyName);
+    }
+
+    @Override
     public String toString() {
-        return Objects.toStringHelper(this).addValue(num + "." + propertyName).toString();
+        return Objects.toStringHelper(this).addValue(beanName + "." + propertyName).toString();
     }
 }

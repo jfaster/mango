@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 /**
  * @author ash
  */
-public class ASTAddNode extends SimpleNode {
+public class ASTAddNode extends ASTMathNode {
 
     public ASTAddNode(int i) {
         super(i);
@@ -13,6 +13,24 @@ public class ASTAddNode extends SimpleNode {
 
     public ASTAddNode(Parser p, int i) {
         super(p, i);
+    }
+
+    @Override
+    protected Object handleSpecial(Object left, Object right) {
+        if (left instanceof String || right instanceof String) {
+            if (left == null) {
+                left = "null";
+            } else if (right == null) {
+                right = "null";
+            }
+            return left.toString().concat(right.toString());
+        }
+        return null;
+    }
+
+    @Override
+    public Integer perform(Integer left, Integer right) {
+        return left + right;
     }
 
     @Override

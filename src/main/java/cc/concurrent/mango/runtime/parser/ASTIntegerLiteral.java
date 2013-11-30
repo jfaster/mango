@@ -1,5 +1,6 @@
 package cc.concurrent.mango.runtime.parser;
 
+import cc.concurrent.mango.runtime.RuntimeContext;
 import com.google.common.base.Objects;
 
 /**
@@ -19,6 +20,11 @@ public class ASTIntegerLiteral extends SimpleNode {
 
     public void setValue(Integer value) {
         this.value = value;
+    }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        return value;
     }
 
     @Override

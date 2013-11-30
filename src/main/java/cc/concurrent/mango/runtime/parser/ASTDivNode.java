@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 /**
  * @author ash
  */
-public class ASTDivNode extends SimpleNode {
+public class ASTDivNode extends ASTMathNode {
 
     public ASTDivNode(int i) {
         super(i);
@@ -13,6 +13,11 @@ public class ASTDivNode extends SimpleNode {
 
     public ASTDivNode(Parser p, int i) {
         super(p, i);
+    }
+
+    @Override
+    public Integer perform(Integer left, Integer right) {
+        return left / right;
     }
 
     @Override
