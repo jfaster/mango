@@ -13,4 +13,10 @@ public class ParserTest {
         p.parse().dump("");
     }
 
+    @Test
+    public void test2() {
+        System.out.println(this.getClass().isArray());
+    }
+
+
 }

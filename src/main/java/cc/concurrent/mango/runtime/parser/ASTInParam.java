@@ -3,10 +3,14 @@ package cc.concurrent.mango.runtime.parser;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -37,15 +41,32 @@ public class ASTInParam extends SimpleNode {
         }
     }
 
-    @Override
-    public Object value(RuntimeContext context) {
-        return context.getPropertyValue(beanName, propertyName);
+    public List<Object> values(RuntimeContext context) {
+        Object v = context.getPropertyValue(beanName, propertyName);
+        checkNotNull(v);
+        List<Object> values = Lists.newArrayList();
+        if (v.getClass().isArray()) {
+            Object[] objs = (Object[]) v;
+            for (Object obj : objs) {
+                values.add(obj);
+            }
+            return values;
+        } else if (v instanceof Collection) {
+            for (Object o : (Collection) v) {
+                values.add(o);
+            }
+            return values;
+        }
+        throw new IllegalArgumentException("parameter " + getParamName() + " must be a array or instance of Collection");
     }
 
     @Override
     public String toString() {
-        String str = propertyName.isEmpty() ? "" : "." + propertyName;
-        return Objects.toStringHelper(this).addValue(beanName + str).toString();
+        return Objects.toStringHelper(this).addValue(getParamName()).toString();
+    }
+
+    private String getParamName() {
+        return ":" + beanName + (propertyName.isEmpty() ? "" : "." + propertyName);
     }
 
 }
