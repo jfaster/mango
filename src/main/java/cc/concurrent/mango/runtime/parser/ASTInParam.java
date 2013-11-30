@@ -43,7 +43,7 @@ public class ASTInParam extends SimpleNode {
 
     public List<Object> values(RuntimeContext context) {
         Object v = context.getPropertyValue(beanName, propertyName);
-        checkNotNull(v);
+        checkNotNull(v, "parameter " + getParamName() + " can't be null");
         List<Object> values = Lists.newArrayList();
         if (v.getClass().isArray()) {
             Object[] objs = (Object[]) v;

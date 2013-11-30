@@ -39,4 +39,14 @@ public class ASTInParamTest {
         System.out.println(((ASTInParam) root.jjtGetChild(0)).values(context));
     }
 
+    @Test
+    public void test3() throws ParseException {
+        Parser p = new Parser("(:1)");
+        SimpleNode root = p.parse();
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("1", null);
+        RuntimeContext context = new RuntimeContextImpl(map);
+        System.out.println(((ASTInParam) root.jjtGetChild(0)).values(context));
+    }
+
 }
