@@ -17,12 +17,12 @@ public class ASTAddNode extends ASTMathNode {
 
     @Override
     protected Object handleSpecial(Object left, Object right) {
+        if (left == null) {
+            left = "null";
+        } else if (right == null) {
+            right = "null";
+        }
         if (left instanceof String || right instanceof String) {
-            if (left == null) {
-                left = "null";
-            } else if (right == null) {
-                right = "null";
-            }
             return left.toString().concat(right.toString());
         }
         return null;

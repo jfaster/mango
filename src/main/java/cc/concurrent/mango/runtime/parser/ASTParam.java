@@ -42,6 +42,7 @@ public class ASTParam extends SimpleNode {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).addValue(beanName + "." + propertyName).toString();
+        String str = propertyName.isEmpty() ? "" : "." + propertyName;
+        return Objects.toStringHelper(this).addValue(beanName + str).toString();
     }
 }

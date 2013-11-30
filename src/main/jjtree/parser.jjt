@@ -32,8 +32,8 @@ TOKEN :
     |   <#NUMBER: ["1"-"9"] (["0"-"9"])* >
     |   <#DOT: "." >
     |   <#FIELD: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_", "0"-"9"])* >
-    |   <IN_PARAM: "(" (" ")* <COLON> <NUMBER> (<DOT> <FIELD>)* (" ")* ")" >
-    |   <OUT_PARAM: <COLON> <NUMBER> (<DOT> <FIELD>)* >
+    |   <IN_PARAM: "(" (" ")* <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* (" ")* ")" >
+    |   <OUT_PARAM: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
     |   <EXPR_START: "${" > {SwitchTo(G);}
 }
 
@@ -45,7 +45,7 @@ TOKEN:
 <G>
 TOKEN:
 {
-        <PARAM: <COLON> <NUMBER> (<DOT> <FIELD>)* >
+        <PARAM: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
     |   <MINUS: "-">
     |   <PLUS: "+">
     |   <MULTIPLY: "*">

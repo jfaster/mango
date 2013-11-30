@@ -1,5 +1,6 @@
 package cc.concurrent.mango.runtime.parser;
 
+import cc.concurrent.mango.runtime.RuntimeContext;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 
@@ -14,8 +15,8 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class ASTOutParam extends SimpleNode {
 
-    private int num ;
-    private List<String> fieldNames;
+    private String beanName;
+    private String propertyName; // 为""的时候表示没有属性
 
     public ASTOutParam(int i) {
         super(i);
@@ -26,21 +27,24 @@ public class ASTOutParam extends SimpleNode {
     }
 
     public void setParam(String param) {
-        Pattern p = Pattern.compile(":(\\d+)(\\.\\w+)*");
+        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
         Matcher m = p.matcher(param);
         checkState(m.matches());
-        num = Integer.parseInt(m.group(1));
-        String strFieldNames = param.substring(m.end(1));
-        fieldNames = Splitter.on(".").omitEmptyStrings().splitToList(strFieldNames);
+        beanName = m.group(1);
+        propertyName = param.substring(m.end(1));
+        if (!propertyName.isEmpty()) {
+            propertyName = propertyName.substring(1);  // .a.b.c变为a.b.c
+        }
+    }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        return context.getPropertyValue(beanName, propertyName);
     }
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(num);
-        for (String fieldName : fieldNames) {
-            sb.append(".").append(fieldName);
-        }
-        return Objects.toStringHelper(this).addValue(sb).toString();
+        String str = propertyName.isEmpty() ? "" : "." + propertyName;
+        return Objects.toStringHelper(this).addValue(beanName + str).toString();
     }
 }
