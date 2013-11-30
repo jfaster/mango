@@ -1,6 +1,5 @@
-package cc.concurrent.mango.parser;
+package cc.concurrent.mango.runtime.parser;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 
@@ -13,27 +12,26 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * @author ash
  */
-public class ASTInParam extends SimpleNode {
+public class ASTOutParam extends SimpleNode {
 
     private int num ;
     private List<String> fieldNames;
 
-    public ASTInParam(int i) {
+    public ASTOutParam(int i) {
         super(i);
     }
 
-    public ASTInParam(Parser p, int i) {
+    public ASTOutParam(Parser p, int i) {
         super(p, i);
     }
 
     public void setParam(String param) {
-        Pattern p = Pattern.compile("\\(\\s*:(\\d+)(\\.\\w+)*\\s*\\)");
+        Pattern p = Pattern.compile(":(\\d+)(\\.\\w+)*");
         Matcher m = p.matcher(param);
         checkState(m.matches());
         num = Integer.parseInt(m.group(1));
         String strFieldNames = param.substring(m.end(1));
-        fieldNames = Splitter.on(".").trimResults(CharMatcher.is(')').or(CharMatcher.is(' ')))
-                .omitEmptyStrings().splitToList(strFieldNames);
+        fieldNames = Splitter.on(".").omitEmptyStrings().splitToList(strFieldNames);
     }
 
     @Override

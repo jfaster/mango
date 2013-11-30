@@ -1,7 +1,6 @@
-package cc.concurrent.mango.parser;
+package cc.concurrent.mango.runtime.parser;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

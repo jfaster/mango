@@ -1,5 +1,7 @@
 package cc.concurrent.mango.parser;
 
+import cc.concurrent.mango.runtime.parser.ParseException;
+import cc.concurrent.mango.runtime.parser.Parser;
 import org.junit.Test;
 
 /**

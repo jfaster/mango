@@ -1,4 +1,4 @@
-package cc.concurrent.mango.parser;
+package cc.concurrent.mango.runtime.parser;
 
 import java.util.ArrayList;
 import java.util.List;
