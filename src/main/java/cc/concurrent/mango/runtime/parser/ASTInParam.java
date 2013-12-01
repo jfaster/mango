@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -50,14 +51,15 @@ public class ASTInParam extends SimpleNode {
             for (Object obj : objs) {
                 values.add(obj);
             }
-            return values;
         } else if (v instanceof Collection) {
             for (Object o : (Collection) v) {
                 values.add(o);
             }
-            return values;
+        } else {
+            throw new IllegalArgumentException("parameter " + getParamName() + " must a array or instance of Collection");
         }
-        throw new IllegalArgumentException("parameter " + getParamName() + " must be a array or instance of Collection");
+        checkArgument(!values.isEmpty(), "value of parameter " + getParamName() + " can't be empty");
+        return values;
     }
 
     @Override

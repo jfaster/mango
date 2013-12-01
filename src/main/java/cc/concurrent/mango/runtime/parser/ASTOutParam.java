@@ -44,7 +44,11 @@ public class ASTOutParam extends SimpleNode {
 
     @Override
     public String toString() {
-        String str = propertyName.isEmpty() ? "" : "." + propertyName;
-        return Objects.toStringHelper(this).addValue(beanName + str).toString();
+        return Objects.toStringHelper(this).addValue(getParamName()).toString();
     }
+
+    private String getParamName() {
+        return ":" + beanName + (propertyName.isEmpty() ? "" : "." + propertyName);
+    }
+
 }
