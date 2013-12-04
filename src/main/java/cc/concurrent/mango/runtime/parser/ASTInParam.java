@@ -56,7 +56,7 @@ public class ASTInParam extends SimpleNode {
                 values.add(o);
             }
         } else {
-            throw new IllegalArgumentException("parameter " + getParamName() + " must a array or instance of Collection");
+            throw new IllegalArgumentException("parameter " + getParamName() + " must be array or instance of Collection");
         }
         checkArgument(!values.isEmpty(), "value of parameter " + getParamName() + " can't be empty");
         return values;
