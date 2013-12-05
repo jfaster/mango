@@ -3,7 +3,6 @@ package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.Tuple;
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -30,6 +29,9 @@ public class ASTRootNode extends SimpleNode {
             if (node instanceof ASTText) {
                 ASTText text = (ASTText) node;
                 sql.append(text.getText());
+            } else if (node instanceof ASTBlank) {
+                ASTBlank text = (ASTBlank) node;
+                sql.append(text.getBlank());
             } else if (node instanceof ASTOutParam) {
                 ASTOutParam outParam = (ASTOutParam) node;
                 args.add(outParam.value(context));
@@ -51,9 +53,4 @@ public class ASTRootNode extends SimpleNode {
         return new Tuple(sql.toString(), args.toArray());
     }
 
-
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).toString();
-    }
 }

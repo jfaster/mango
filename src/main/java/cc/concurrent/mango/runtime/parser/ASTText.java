@@ -1,7 +1,5 @@
 package cc.concurrent.mango.runtime.parser;
 
-import com.google.common.base.Objects;
-
 /**
  * @author ash
  */
@@ -25,8 +23,4 @@ public class ASTText extends SimpleNode {
         this.text = text;
     }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).addValue(text).toString();
-    }
 }

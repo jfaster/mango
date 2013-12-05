@@ -2,7 +2,6 @@ package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.runtime.RuntimeContext;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
@@ -10,9 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * @author ash
@@ -31,7 +28,7 @@ public class ASTInParam extends SimpleNode {
     }
 
     public void setParam(String param) {
-        Pattern p = Pattern.compile("\\(\\s*:(\\w+)(\\.\\w+)*\\s*\\)");
+        Pattern p = Pattern.compile("in\\s*\\(\\s*:(\\w+)(\\.\\w+)*\\s*\\)");
         Matcher m = p.matcher(param);
         checkState(m.matches());
         beanName = m.group(1);
@@ -60,11 +57,6 @@ public class ASTInParam extends SimpleNode {
         }
         checkArgument(!values.isEmpty(), "value of parameter " + getParamName() + " can't be empty");
         return values;
-    }
-
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).addValue(getParamName()).toString();
     }
 
     private String getParamName() {

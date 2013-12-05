@@ -1,7 +1,5 @@
 package cc.concurrent.mango.runtime.parser;
 
-import com.google.common.base.Objects;
-
 /**
  * @author ash
  */
@@ -33,8 +31,4 @@ public class ASTAddNode extends ASTMathNode {
         return left + right;
     }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).addValue("+").toString();
-    }
 }

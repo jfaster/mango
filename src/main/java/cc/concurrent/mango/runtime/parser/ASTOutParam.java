@@ -1,10 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.runtime.RuntimeContext;
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,15 +37,6 @@ public class ASTOutParam extends SimpleNode {
     @Override
     public Object value(RuntimeContext context) {
         return context.getPropertyValue(beanName, propertyName);
-    }
-
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).addValue(getParamName()).toString();
-    }
-
-    private String getParamName() {
-        return ":" + beanName + (propertyName.isEmpty() ? "" : "." + propertyName);
     }
 
 }

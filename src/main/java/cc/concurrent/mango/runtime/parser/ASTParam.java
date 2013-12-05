@@ -1,7 +1,6 @@
 package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.runtime.RuntimeContext;
-import com.google.common.base.Objects;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,9 +39,4 @@ public class ASTParam extends SimpleNode {
         return context.getPropertyValue(beanName, propertyName);
     }
 
-    @Override
-    public String toString() {
-        String str = propertyName.isEmpty() ? "" : "." + propertyName;
-        return Objects.toStringHelper(this).addValue(beanName + str).toString();
-    }
 }
