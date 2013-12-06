@@ -39,10 +39,6 @@ TOKEN :
     |   <IN_PARAM: "in" <BLANK> "(" <BLANK> <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* <BLANK> ")" >
     |   <OUT_PARAM: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
     |   <BLANK_MORE: (" ")+ >
-    |   <SELECT: <BLANK> "select" <BLANK> >
-    |   <INSERT: <BLANK> "insert" <BLANK> >
-    |   <DELETE: <BLANK> "delete" <BLANK> >
-    |   <UPDATE: <BLANK> "update" <BLANK> >
     |   <EXPR_START: "${" > {SwitchTo(G);}
 }
 
@@ -77,7 +73,7 @@ ASTRootNode parse()  #RootNode :
 {
 }
 {
-    (<SELECT> | <INSERT> | <DELETE> | <UPDATE>) (Text() | Blank() | OutParam() | InParam() | Expr())+ <EOF>
+    (Text() | Blank() | OutParam() | InParam() | Expr())+ <EOF>
     {
         return jjtThis;
     }
