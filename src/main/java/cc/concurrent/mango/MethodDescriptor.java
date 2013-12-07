@@ -8,21 +8,20 @@ import cc.concurrent.mango.runtime.parser.ASTRootNode;
  */
 public class MethodDescriptor {
 
+    private final ASTRootNode node;
+
     private final Operator operator;
 
-    private final ASTRootNode rootNode;
-
-    public MethodDescriptor(Operator operator, ASTRootNode rootNode) {
+    public MethodDescriptor(ASTRootNode node, Operator operator) {
+        this.node = node;
         this.operator = operator;
-        this.rootNode = rootNode;
+    }
+
+    public ASTRootNode getNode() {
+        return node;
     }
 
     public Operator getOperator() {
         return operator;
     }
-
-    public ASTRootNode getRootNode() {
-        return rootNode;
-    }
-
 }
