@@ -1,12 +1,13 @@
 package cc.concurrent.mango.operator;
 
-import java.util.List;
+
+import cc.concurrent.mango.runtime.ParsedSql;
 
 /**
  * @author ash
  */
 public interface Operator {
 
-    public Object execute(String sql, List<Object[]> batchArgs);
+    public Object execute(ParsedSql... parsedSqls);
 
 }

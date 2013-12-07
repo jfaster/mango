@@ -1,8 +1,8 @@
 package cc.concurrent.mango.runtime.parser;
 
 
+import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.Tuple;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class ASTRootNode extends SimpleNode {
         super(p, i);
     }
 
-    public Tuple getSqlAndArgs(RuntimeContext context) {
+    public ParsedSql getSqlAndArgs(RuntimeContext context) {
         StringBuffer sql = new StringBuffer();
         List<Object> args = Lists.newArrayList();
 
@@ -50,7 +50,7 @@ public class ASTRootNode extends SimpleNode {
             }
         }
 
-        return new Tuple(sql.toString(), args.toArray());
+        return new ParsedSql(sql.toString(), args.toArray());
     }
 
 }

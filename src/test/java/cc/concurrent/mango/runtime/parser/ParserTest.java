@@ -1,8 +1,8 @@
 package cc.concurrent.mango.runtime.parser;
 
+import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.RuntimeContextImpl;
-import cc.concurrent.mango.runtime.Tuple;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class ParserTest {
         map.put("1", 105);
         map.put("2", Lists.newArrayList());
         RuntimeContext context = new RuntimeContextImpl(map);
-        Tuple tuple = root.getSqlAndArgs(context);
+        ParsedSql tuple = root.getSqlAndArgs(context);
         System.out.println(tuple.getSql());
         System.out.println(Arrays.toString(tuple.getArgs()));
     }

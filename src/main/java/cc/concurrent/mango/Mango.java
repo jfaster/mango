@@ -4,9 +4,9 @@ import cc.concurrent.mango.annotation.SQL;
 import cc.concurrent.mango.operator.BatchUpdateOperator;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
+import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.RuntimeContextImpl;
-import cc.concurrent.mango.runtime.Tuple;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.runtime.parser.ParseException;
 import cc.concurrent.mango.runtime.parser.Parser;
@@ -53,19 +53,16 @@ public class Mango {
         checkArgument(arg0 instanceof Collection, "first parameter must be instanceof Collection");
         Collection collection = (Collection) arg0;
         checkArgument(collection.size() > 0, "first parameter can't be empty");
-        String sql = null;
-        List<Object[]> batchArgs = Lists.newArrayList();
+        ParsedSql[] parsedSqls = new ParsedSql[collection.size()];
+        int index = 0;
         for (Object obj : collection) {
             Map<String, Object> parameters = Maps.newHashMap();
             parameters.put("1", obj);
             RuntimeContext context = new RuntimeContextImpl(parameters);
-            Tuple tuple = node.getSqlAndArgs(context);
-            if (sql == null) {
-                sql = tuple.getSql();
-            }
-            batchArgs.add(tuple.getArgs());
+            ParsedSql parsedSql = node.getSqlAndArgs(context);
+            parsedSqls[index++] = parsedSql;
         }
-        return operator.execute(sql, batchArgs);
+        return operator.execute(parsedSqls);
     }
 
     private Object handleQueryOrUpdate(ASTRootNode node, Object[] args, Operator operator) {
@@ -74,10 +71,8 @@ public class Mango {
             parameters.put(String.valueOf(i + 1), args[i]);
         }
         RuntimeContext context = new RuntimeContextImpl(parameters);
-        Tuple tuple = node.getSqlAndArgs(context);
-        List<Object[]> batchArgs = new ArrayList<Object[]>(1);
-        batchArgs.add(tuple.getArgs());
-        return operator.execute(tuple.getSql(), batchArgs);
+        ParsedSql parsedSql = node.getSqlAndArgs(context);
+        return operator.execute(parsedSql);
     }
 
     LoadingCache<Method, MethodDescriptor> cache = CacheBuilder.newBuilder()
