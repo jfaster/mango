@@ -4,12 +4,10 @@ import cc.concurrent.mango.dao.UserDao;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.logging.Slf4JLoggerFactory;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 import org.junit.Test;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
+import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,7 +19,8 @@ public class MangoTest {
     @Test
     public void testCreate() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-        UserDao userDao = new Mango().create(UserDao.class);
+        DataSource ds = new DriverManagerDataSource();
+        UserDao userDao = new Mango(ds).create(UserDao.class);
         userDao.batchInsert(Lists.newArrayList(2, 3));
         userDao.insert(1, "abc");
     }

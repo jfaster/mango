@@ -6,6 +6,7 @@ import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,9 +16,13 @@ import static com.google.common.base.Preconditions.*;
 /**
  * @author ash
  */
-public class BatchUpdateOperator implements Operator {
+public class BatchUpdateOperator extends AbstractOperator {
 
     private final InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
+
+    protected BatchUpdateOperator(TypeToken returnType) {
+        super(returnType);
+    }
 
     @Override
     public Object execute(ParsedSql... parsedSqls) {

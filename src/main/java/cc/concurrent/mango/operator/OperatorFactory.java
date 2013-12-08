@@ -2,6 +2,8 @@ package cc.concurrent.mango.operator;
 
 import cc.concurrent.mango.annotation.SQL;
 import com.google.common.base.Strings;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -23,8 +25,9 @@ public class OperatorFactory {
         String sql = anno.value();
         checkArgument(!Strings.isNullOrEmpty(sql));
 
+        TypeToken returnType = Invokable.from(method).getReturnType();
         if (QUERY_PATTERN.matcher(sql).find()) {
-            return new QueryOperator();
+            return new QueryOperator(returnType);
         } else {
             Class<?>[] arameterTypes = method.getParameterTypes();
             boolean isBatchUpdate = false;
@@ -34,7 +37,7 @@ public class OperatorFactory {
                     isBatchUpdate = true;
                 }
             }
-            return isBatchUpdate ? new BatchUpdateOperator() : new UpdateOperator();
+            return isBatchUpdate ? new BatchUpdateOperator(returnType) : new UpdateOperator(returnType);
         }
     }
 

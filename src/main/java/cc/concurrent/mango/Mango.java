@@ -14,14 +14,12 @@ import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.Reflection;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -30,6 +28,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author ash
  */
 public class Mango {
+
+    private final DataSource dataSource;
+
+    public Mango(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public <T> T create(Class<T> daoClass) {
         return Reflection.newProxy(daoClass, new MangoInvocationHandler(this));
@@ -91,6 +95,7 @@ public class Mango {
 
         ASTRootNode node = new Parser(sql).parse();
         Operator operator = OperatorFactory.getOperator(method);
+        operator.setDataSource(dataSource);
 
         return new MethodDescriptor(node, operator);
     }

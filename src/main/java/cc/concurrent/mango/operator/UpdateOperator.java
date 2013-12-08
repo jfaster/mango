@@ -4,6 +4,7 @@ import cc.concurrent.mango.logging.InternalLogger;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Objects;
+import com.google.common.reflect.TypeToken;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,9 +12,13 @@ import java.util.List;
 /**
  * @author ash
  */
-public class UpdateOperator implements Operator {
+public class UpdateOperator extends AbstractOperator {
 
     private final InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
+
+    protected UpdateOperator(TypeToken returnType) {
+        super(returnType);
+    }
 
     @Override
     public Object execute(ParsedSql... parsedSqls) {

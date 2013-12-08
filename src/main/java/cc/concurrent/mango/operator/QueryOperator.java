@@ -4,16 +4,38 @@ import cc.concurrent.mango.logging.InternalLogger;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Objects;
+import com.google.common.reflect.TypeToken;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author ash
  */
-public class QueryOperator implements Operator {
+public class QueryOperator extends AbstractOperator {
 
     private final InternalLogger logger = InternalLoggerFactory.getInstance(QueryOperator.class);
+
+    private final boolean isForList;
+    private final Class<?> requiredType;
+    private final Class<?> elementType;
+
+    protected QueryOperator(TypeToken returnType) {
+        super(returnType);
+        if (returnType.isArray()) {
+            isForList = true;
+            requiredType = null;
+            elementType = returnType.getComponentType().getRawType();
+        } else if (Collection.class.isAssignableFrom(returnType.getRawType())) {
+            isForList = true;
+            requiredType = null;
+            elementType = returnType.resolveType(Collection.class.getTypeParameters()[0]).getRawType();
+        } else {
+            isForList = false;
+            requiredType = returnType.getRawType();
+            elementType = null;
+        }
+    }
 
     @Override
     public Object execute(ParsedSql... parsedSqls) {
@@ -23,7 +45,9 @@ public class QueryOperator implements Operator {
         if (logger.isDebugEnabled()) {
             logger.debug(Objects.toStringHelper("QueryOperator").add("sql", sql).add("args", Arrays.toString(args)).toString());
         }
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return isForList ?
+                jdbcTemplate.queryForList(sql, args, elementType) :
+                jdbcTemplate.queryForObject(sql, args, requiredType);
     }
 
 }
