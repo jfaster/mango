@@ -1,4 +1,0 @@
-CREATE TABLE student (
-   id INTEGER NOT NULL PRIMARY KEY,
-   name VARCHAR(100)
-);
