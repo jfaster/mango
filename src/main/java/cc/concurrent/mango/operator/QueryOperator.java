@@ -4,6 +4,7 @@ import cc.concurrent.mango.logging.InternalLogger;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Objects;
+import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
 
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class QueryOperator extends AbstractOperator {
             elementType = returnType.resolveType(Collection.class.getTypeParameters()[0]).getRawType();
         } else {
             isForList = false;
-            requiredType = returnType.getRawType();
+            requiredType = returnType.wrap().getRawType();
             elementType = null;
         }
     }
