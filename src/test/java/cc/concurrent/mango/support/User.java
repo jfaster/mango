@@ -16,6 +16,9 @@ public class User {
     private long money;
     private Date updateTime;
 
+    public User() {
+    }
+
     public User(String name, int age, boolean gender, long money, Date updateTime) {
         this.name = name;
         this.age = age;
@@ -36,7 +39,13 @@ public class User {
                 && Objects.equal(this.age, other.age)
                 && Objects.equal(this.gender, other.gender)
                 && Objects.equal(this.money, other.money)
-                && Objects.equal(this.updateTime, other.updateTime);
+                && Objects.equal(this.updateTime.getTime(), other.updateTime.getTime());
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
+                add("gender", gender).add("money", money).add("updateTime", updateTime).toString();
     }
 
     public int getId() {

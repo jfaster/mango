@@ -91,6 +91,13 @@ public class QueryTest {
         assertThat(dao.selectUser(id), equalTo(users[id]));
     }
 
+    @Test
+    public void testQueryIntegerNull() throws Exception {
+        int id = Integer.MAX_VALUE;
+        Integer r = dao.selectInt(id);
+        System.out.println(r);
+    }
+
     /**
      * 从文本文件中获得建表语句
      * @param name

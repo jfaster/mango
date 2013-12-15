@@ -1,25 +1,21 @@
 package cc.concurrent.mango.operator;
 
-import com.google.common.reflect.TypeToken;
-import org.springframework.jdbc.core.JdbcTemplate;
+import cc.concurrent.mango.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
 public abstract class AbstractOperator implements Operator {
 
-    protected final TypeToken returnType;
+    protected final Type returnType;
 
     protected JdbcTemplate jdbcTemplate;
 
-    protected AbstractOperator(TypeToken returnType) {
+    protected AbstractOperator(Type returnType) {
         this.returnType = returnType;
+        this.jdbcTemplate = new JdbcTemplate();
     }
 
-    @Override
-    public void setDataSource(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
 }

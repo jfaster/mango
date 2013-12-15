@@ -66,7 +66,7 @@ public class Mango {
             ParsedSql parsedSql = node.getSqlAndArgs(context);
             parsedSqls[index++] = parsedSql;
         }
-        return operator.execute(parsedSqls);
+        return operator.execute(this.dataSource, parsedSqls);
     }
 
     private Object handleQueryOrUpdate(ASTRootNode node, Object[] args, Operator operator) {
@@ -76,7 +76,7 @@ public class Mango {
         }
         RuntimeContext context = new RuntimeContextImpl(parameters);
         ParsedSql parsedSql = node.getSqlAndArgs(context);
-        return operator.execute(parsedSql);
+        return operator.execute(this.dataSource, parsedSql);
     }
 
     LoadingCache<Method, MethodDescriptor> cache = CacheBuilder.newBuilder()
@@ -95,7 +95,6 @@ public class Mango {
 
         ASTRootNode node = new Parser(sql).parse();
         Operator operator = OperatorFactory.getOperator(method);
-        operator.setDataSource(dataSource);
 
         return new MethodDescriptor(node, operator);
     }

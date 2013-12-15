@@ -3,29 +3,29 @@ package cc.concurrent.mango.operator;
 import cc.concurrent.mango.logging.InternalLogger;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
 
+import javax.sql.DataSource;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * @author ash
  */
 public class BatchUpdateOperator extends AbstractOperator {
 
-    private final InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
 
-    protected BatchUpdateOperator(TypeToken returnType) {
+    protected BatchUpdateOperator(Type returnType) {
         super(returnType);
     }
 
     @Override
-    public Object execute(ParsedSql... parsedSqls) {
+    public Object execute(DataSource ds, ParsedSql... parsedSqls) {
         checkArgument(parsedSqls.length > 0);
         String sql = null;
         List<Object[]> batchArgs = Lists.newArrayList();

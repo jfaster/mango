@@ -10,8 +10,6 @@ import javax.sql.DataSource;
  */
 public interface Operator {
 
-    public void setDataSource(DataSource dataSource);
-
-    public Object execute(ParsedSql... parsedSqls);
+    public Object execute(DataSource ds, ParsedSql... parsedSqls);
 
 }

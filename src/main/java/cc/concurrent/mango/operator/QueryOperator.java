@@ -1,54 +1,90 @@
 package cc.concurrent.mango.operator;
 
+import cc.concurrent.mango.jdbc.core.BeanPropertyRowMapper;
+import cc.concurrent.mango.jdbc.core.RowMapper;
+import cc.concurrent.mango.jdbc.core.SingleColumnRowMapper;
+import cc.concurrent.mango.jdbc.support.JdbcUtils;
 import cc.concurrent.mango.logging.InternalLogger;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Objects;
-import com.google.common.primitives.Primitives;
-import com.google.common.reflect.TypeToken;
 
+import javax.sql.DataSource;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * 处理所有的查询操作
+ *
  * @author ash
  */
 public class QueryOperator extends AbstractOperator {
 
-    private final InternalLogger logger = InternalLoggerFactory.getInstance(QueryOperator.class);
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(QueryOperator.class);
 
-    private final boolean isForList;
-    private final Class<?> requiredType;
-    private final Class<?> elementType;
+    private boolean isForList = false;
+    private boolean isForSet = false;
+    private boolean isForArray = false;
+    private RowMapper<?> rowMapper;
 
-    protected QueryOperator(TypeToken returnType) {
-        super(returnType);
-        if (returnType.isArray()) {
-            isForList = true;
-            requiredType = null;
-            elementType = returnType.getComponentType().getRawType();
-        } else if (Collection.class.isAssignableFrom(returnType.getRawType())) {
-            isForList = true;
-            requiredType = null;
-            elementType = returnType.resolveType(Collection.class.getTypeParameters()[0]).getRawType();
-        } else {
-            isForList = false;
-            requiredType = returnType.wrap().getRawType();
-            elementType = null;
+    protected QueryOperator(Type type) {
+        super(type);
+
+        Class<?> mappedClass = null;
+        if (type instanceof ParameterizedType) { // 参数化类型
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type rawType = parameterizedType.getRawType();
+            if (rawType instanceof Class) {
+                Class<?> rawClass = (Class<?>) rawType;
+                if (List.class.equals(rawClass)) {
+                    isForList = true;
+                } else if (Set.class.equals(rawClass)) {
+                    isForSet = true;
+                }
+            }
+        } else if (type instanceof Class) { // 没有参数化
+            Class<?> clazz = (Class<?>) type;
+            if (clazz.isArray()) { // 数组
+                isForArray = true;
+                mappedClass = clazz.getComponentType();
+            } else { // 普通类
+                mappedClass = clazz;
+            }
         }
+        checkNotNull(mappedClass);
+        rowMapper = getRowMapper(mappedClass);
+    }
+
+    private <T> RowMapper<T> getRowMapper(Class<T> clazz) {
+        return JdbcUtils.isSingleColumnClass(clazz) ?
+                new SingleColumnRowMapper<T>(clazz) :
+                new BeanPropertyRowMapper<T>(clazz);
     }
 
     @Override
-    public Object execute(ParsedSql... parsedSqls) {
+    public Object execute(DataSource ds, ParsedSql... parsedSqls) {
         ParsedSql parsedSql = parsedSqls[0];
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
         if (logger.isDebugEnabled()) {
             logger.debug(Objects.toStringHelper("QueryOperator").add("sql", sql).add("args", Arrays.toString(args)).toString());
         }
-        return isForList ?
-                jdbcTemplate.queryForList(sql, args, elementType) :
-                jdbcTemplate.queryForObject(sql, args, requiredType);
+        Object r;
+        if (isForList) {
+            r = jdbcTemplate.queryForList(ds, sql, args, rowMapper);
+        } else if (isForSet) {
+            r = jdbcTemplate.queryForSet(ds, sql, args, rowMapper);
+        } else if (isForArray) {
+            r = jdbcTemplate.queryForArray(ds, sql, args, rowMapper);
+        } else {
+            r = jdbcTemplate.queryForObject(ds, sql, args, rowMapper);
+        }
+        return r;
     }
 
 }

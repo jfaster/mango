@@ -6,6 +6,7 @@ import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -25,7 +26,7 @@ public class OperatorFactory {
         String sql = anno.value();
         checkArgument(!Strings.isNullOrEmpty(sql));
 
-        TypeToken returnType = Invokable.from(method).getReturnType();
+        Type returnType = method.getGenericReturnType();
         if (QUERY_PATTERN.matcher(sql).find()) {
             return new QueryOperator(returnType);
         } else {

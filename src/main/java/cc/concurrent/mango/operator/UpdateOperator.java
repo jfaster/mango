@@ -6,22 +6,23 @@ import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Objects;
 import com.google.common.reflect.TypeToken;
 
+import javax.sql.DataSource;
+import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author ash
  */
 public class UpdateOperator extends AbstractOperator {
 
-    private final InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
 
-    protected UpdateOperator(TypeToken returnType) {
+    protected UpdateOperator(Type returnType) {
         super(returnType);
     }
 
     @Override
-    public Object execute(ParsedSql... parsedSqls) {
+    public Object execute(DataSource ds, ParsedSql... parsedSqls) {
         ParsedSql parsedSql = parsedSqls[0];
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
