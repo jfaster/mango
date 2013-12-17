@@ -10,4 +10,6 @@ public interface RowMapper<T> {
 
     T mapRow(ResultSet rs, int rowNum) throws SQLException;
 
+    Class<T> getMappedClass();
+
 }

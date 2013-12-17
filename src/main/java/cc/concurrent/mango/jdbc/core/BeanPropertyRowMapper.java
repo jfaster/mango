@@ -87,6 +87,11 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
         return mappedObject;
     }
 
+    @Override
+    public Class<T> getMappedClass() {
+        return mappedClass;
+    }
+
 
     protected Object getColumnValue(ResultSet rs, int index, PropertyDescriptor pd) throws SQLException {
         return JdbcUtils.getResultSetValue(rs, index, pd.getPropertyType());

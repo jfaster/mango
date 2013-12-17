@@ -3,6 +3,8 @@ package cc.concurrent.mango.support;
 import cc.concurrent.mango.annotation.SQL;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author ash
@@ -36,5 +38,19 @@ public interface UserDao {
     @SQL("select id, name, age, gender, money, update_time from user where id = :1")
     public User selectUser(int id);
 
+    @SQL("select id, name, age, gender, money, update_time from user order by id")
+    public List<User> selectUserList();
+
+    @SQL("select id, name, age, gender, money, update_time from user order by id")
+    public Set<User> selectUserSet();
+
+    @SQL("select id, name, age, gender, money, update_time from user order by id")
+    public User[] selectUserArray();
+
+    @SQL("select id from user order by id")
+    public Integer[] selectIntegerArray();
+
+    @SQL("select id from user order by id")
+    public int[] selectIntArray();
 
 }

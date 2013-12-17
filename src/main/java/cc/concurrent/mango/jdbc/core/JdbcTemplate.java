@@ -22,15 +22,15 @@ public class JdbcTemplate {
     }
 
     public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return null;
+        return execute(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
     public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return null;
+        return execute(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> T[] queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return null;
+    public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return execute(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 
 

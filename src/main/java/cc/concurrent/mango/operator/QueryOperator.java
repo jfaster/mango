@@ -43,8 +43,16 @@ public class QueryOperator extends AbstractOperator {
                 Class<?> rawClass = (Class<?>) rawType;
                 if (List.class.equals(rawClass)) {
                     isForList = true;
+                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
+                    if (typeArgument instanceof Class) {
+                        mappedClass = (Class<?>) typeArgument;
+                    }
                 } else if (Set.class.equals(rawClass)) {
                     isForSet = true;
+                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
+                    if (typeArgument instanceof Class) {
+                        mappedClass = (Class<?>) typeArgument;
+                    }
                 }
             }
         } else if (type instanceof Class) { // 没有参数化

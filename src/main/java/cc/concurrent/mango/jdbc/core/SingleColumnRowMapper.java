@@ -14,10 +14,10 @@ import java.sql.SQLException;
  */
 public class SingleColumnRowMapper<T> implements RowMapper<T> {
 
-    private Class<T> requiredType;
+    private Class<T> mappedClass;
 
-    public SingleColumnRowMapper(Class<T> requiredType) {
-        this.requiredType = requiredType;
+    public SingleColumnRowMapper(Class<T> mappedClass) {
+        this.mappedClass = mappedClass;
     }
 
     @SuppressWarnings("unchecked")
@@ -29,8 +29,13 @@ public class SingleColumnRowMapper<T> implements RowMapper<T> {
             throw new IncorrectResultSetColumnCountException(1, nrOfColumns);
         }
 
-        Object result = getColumnValue(rs, 1, this.requiredType);
+        Object result = getColumnValue(rs, 1, this.mappedClass);
         return (T) result;
+    }
+
+    @Override
+    public Class<T> getMappedClass() {
+        return mappedClass;
     }
 
     protected Object getColumnValue(ResultSet rs, int index, Class requiredType) throws SQLException {

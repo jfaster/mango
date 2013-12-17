@@ -11,8 +11,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.*;
 import java.util.Date;
-import java.util.Scanner;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -92,6 +92,52 @@ public class QueryTest {
     }
 
     @Test
+    public void testQueryUserList() throws Exception {
+        List<User> userList = dao.selectUserList();
+        assertThat(userList.size(), equalTo(users.length));
+        for (int i = 0; i < userList.size(); i++) {
+            assertThat(userList.get(i), equalTo(users[i]));
+        }
+    }
+
+    @Test
+    public void testQueryUserSet() throws Exception {
+        Set<User> userSet = dao.selectUserSet();
+        assertThat(userSet.size(), equalTo(users.length));
+        for (int i = 0; i < users.length; i++) {
+            userSet.remove(users[i]);
+        }
+        assertThat(userSet.size(), equalTo(0));
+    }
+
+    @Test
+    public void testQueryUserArray() throws Exception {
+        User[] userArray = dao.selectUserArray();
+        assertThat(userArray.length, equalTo(users.length));
+        for (int i = 0; i < userArray.length; i++) {
+            assertThat(userArray[i], equalTo(users[i]));
+        }
+    }
+
+    @Test
+    public void testQueryIntegerArray() throws Exception {
+        Integer[] idArray = dao.selectIntegerArray();
+        assertThat(idArray.length, equalTo(users.length));
+        for (int i = 0; i < idArray.length; i++) {
+            assertThat(idArray[i], equalTo(users[i].getId()));
+        }
+    }
+
+    @Test
+    public void testQueryIntArray() throws Exception {
+        int[] idArray = dao.selectIntArray();
+        assertThat(idArray.length, equalTo(users.length));
+        for (int i = 0; i < idArray.length; i++) {
+            assertThat(idArray[i], equalTo(users[i].getId()));
+        }
+    }
+
+    @Test
     public void testQueryIntegerNull() throws Exception {
         int id = Integer.MAX_VALUE;
         Integer r = dao.selectInt(id);
@@ -124,6 +170,7 @@ public class QueryTest {
             long money = System.currentTimeMillis();
             Date updateTime = new Date();
             users[i] = new User(name, age, gender, money, updateTime);
+            users[i].setId(i);
         }
     }
 

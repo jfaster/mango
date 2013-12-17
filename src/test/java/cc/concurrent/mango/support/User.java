@@ -43,6 +43,11 @@ public class User {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(id, name, age, gender, money, updateTime.getTime());
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
                 add("gender", gender).add("money", money).add("updateTime", updateTime).toString();
