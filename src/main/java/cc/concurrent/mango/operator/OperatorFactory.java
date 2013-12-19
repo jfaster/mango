@@ -2,22 +2,21 @@ package cc.concurrent.mango.operator;
 
 import cc.concurrent.mango.annotation.SQL;
 import com.google.common.base.Strings;
-import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author ash
  */
 public class OperatorFactory {
 
-    private static Pattern QUERY_PATTERN = Pattern.compile("^\\s*select\\s+", Pattern.CASE_INSENSITIVE);
+    private static Pattern QUERY_PATTERN = Pattern.compile("^\\s*SELECT\\s+", Pattern.CASE_INSENSITIVE);
 
     public static Operator getOperator(Method method) {
         checkNotNull(method);
@@ -38,7 +37,7 @@ public class OperatorFactory {
                     isBatchUpdate = true;
                 }
             }
-            return isBatchUpdate ? new BatchUpdateOperator(returnType) : new UpdateOperator(returnType);
+            return isBatchUpdate ? new BatchUpdateOperator() : new UpdateOperator(true);
         }
     }
 

@@ -4,10 +4,8 @@ import cc.concurrent.mango.logging.InternalLogger;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Objects;
-import com.google.common.reflect.TypeToken;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 
 /**
@@ -17,8 +15,10 @@ public class UpdateOperator extends AbstractOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
 
-    protected UpdateOperator(Type returnType) {
-        super(returnType);
+    private boolean returnGenerateId;
+
+    protected UpdateOperator(boolean returnGenerateId) {
+        this.returnGenerateId = returnGenerateId;
     }
 
     @Override
@@ -29,6 +29,6 @@ public class UpdateOperator extends AbstractOperator {
         if (logger.isDebugEnabled()) {
             logger.debug(Objects.toStringHelper("UpdateOperator").add("sql", sql).add("args", Arrays.toString(args)).toString());
         }
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return jdbcTemplate.update(ds, sql, args, returnGenerateId);
     }
 }

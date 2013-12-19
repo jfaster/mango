@@ -137,11 +137,10 @@ public class QueryTest {
         }
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testQueryIntegerNull() throws Exception {
         int id = Integer.MAX_VALUE;
-        Integer r = dao.selectInt(id);
-        System.out.println(r);
+        dao.selectInt(id);
     }
 
     /**

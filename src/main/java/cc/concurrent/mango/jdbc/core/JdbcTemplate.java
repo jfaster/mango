@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * @author ash
  */
@@ -18,23 +20,61 @@ public class JdbcTemplate {
 
 
     public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return execute(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
+        return executeQuery(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
     }
 
     public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return execute(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
+        return executeQuery(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
     public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return execute(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
+        return executeQuery(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
     public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return execute(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
+        return executeQuery(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 
+    public int update(DataSource ds, String sql, Object[] args, boolean returnGenerateId) {
+        Connection conn = JdbcUtils.getConnection(ds);
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement(sql);
+            setValues(ps, args);
+            int r = ps.executeUpdate();
+            if (!returnGenerateId) { // 不生成自增id
+                return r;
+            }
+            // 生成自增id
+            rs = ps.getGeneratedKeys();
+            checkState(rs.next(), "getGeneratedKeys error");
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new DataAccessException(e);
+        } finally {
+            JdbcUtils.closeResultSet(rs);
+            JdbcUtils.closeStatement(ps);
+            JdbcUtils.closeConnection(conn);
+        }
+    }
 
-    private <T> T execute(DataSource ds, String sql, Object[] args, ResultSetExtractor<T> rse) {
+    public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        Connection conn = JdbcUtils.getConnection(ds);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(sql);
+            setBatchValues(ps, batchArgs);
+            return ps.executeBatch();
+        } catch (SQLException e) {
+            throw new DataAccessException(e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            JdbcUtils.closeConnection(conn);
+        }
+    }
+
+    private <T> T executeQuery(DataSource ds, String sql, Object[] args, ResultSetExtractor<T> rse) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -56,6 +96,16 @@ public class JdbcTemplate {
         int t = 0;
         for (Object arg : args) {
             ps.setObject(++t, arg);
+        }
+    }
+
+    private void setBatchValues(PreparedStatement ps, List<Object[]> batchArgs) throws SQLException {
+        for (Object[] args : batchArgs) {
+            int t = 0;
+            for (Object arg : args) {
+                ps.setObject(++t, arg);
+            }
+            ps.addBatch();
         }
     }
 

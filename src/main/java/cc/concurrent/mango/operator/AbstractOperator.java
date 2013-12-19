@@ -9,12 +9,9 @@ import java.lang.reflect.Type;
  */
 public abstract class AbstractOperator implements Operator {
 
-    protected final Type returnType;
-
     protected JdbcTemplate jdbcTemplate;
 
-    protected AbstractOperator(Type returnType) {
-        this.returnType = returnType;
+    protected AbstractOperator() {
         this.jdbcTemplate = new JdbcTemplate();
     }
 

@@ -7,7 +7,6 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,10 +18,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class BatchUpdateOperator extends AbstractOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
-
-    protected BatchUpdateOperator(Type returnType) {
-        super(returnType);
-    }
 
     @Override
     public Object execute(DataSource ds, ParsedSql... parsedSqls) {
@@ -42,7 +37,7 @@ public class BatchUpdateOperator extends AbstractOperator {
             }
             logger.debug(Objects.toStringHelper("BatchUpdateOperator").add("sql", sql).add("batchArgs", str).toString());
         }
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return jdbcTemplate.batchUpdate(ds, sql, batchArgs);
     }
 
 }
