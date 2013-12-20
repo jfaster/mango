@@ -53,4 +53,16 @@ public interface UserDao {
     @SQL("select id from user order by id")
     public int[] selectIntArray();
 
+    @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+    public List<User> selectUserInList(List<Integer> ids);
+
+    @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+    public List<User> selectUserInSet(Set<Integer> ids);
+
+    @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+    public List<User> selectUserInIntegerArray(Integer[] ids);
+
+    @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+    public List<User> selectUserInIntArray(int[] ids);
+
 }

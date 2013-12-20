@@ -43,12 +43,12 @@ public class ASTInParam extends SimpleNode {
         Object v = context.getPropertyValue(beanName, propertyName);
         checkNotNull(v, "parameter " + getParamName() + " can't be null");
         List<Object> values = Lists.newArrayList();
-        if (v.getClass().isArray()) {
+        if (v.getClass().isArray()) { // 数组
             Object[] objs = (Object[]) v;
             for (Object obj : objs) {
                 values.add(obj);
             }
-        } else if (v instanceof Collection) {
+        } else if (v instanceof Collection) { // 集合
             for (Object o : (Collection) v) {
                 values.add(o);
             }

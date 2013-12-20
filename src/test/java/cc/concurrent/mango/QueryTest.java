@@ -4,6 +4,8 @@ import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.logging.Slf4JLoggerFactory;
 import cc.concurrent.mango.support.User;
 import cc.concurrent.mango.support.UserDao;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -134,6 +136,59 @@ public class QueryTest {
         assertThat(idArray.length, equalTo(users.length));
         for (int i = 0; i < idArray.length; i++) {
             assertThat(idArray[i], equalTo(users[i].getId()));
+        }
+    }
+
+    @Test
+    public void testQeuryInList() throws Exception {
+        List<Integer> ids = Lists.newArrayList();
+        for (User user : users) {
+            ids.add(user.getId());
+        }
+        List<User> userList = dao.selectUserInList(ids);
+        assertThat(userList.size(), equalTo(users.length));
+        for (int i = 0; i < userList.size(); i++) {
+            assertThat(userList.get(i), equalTo(users[i]));
+        }
+    }
+
+    @Test
+    public void testQueryInSet() throws Exception {
+        Set<Integer> ids = Sets.newHashSet();
+        for (User user : users) {
+            ids.add(user.getId());
+        }
+        List<User> userList = dao.selectUserInSet(ids);
+        assertThat(userList.size(), equalTo(users.length));
+        for (int i = 0; i < users.length; i++) {
+            userList.remove(users[i]);
+        }
+        assertThat(userList.size(), equalTo(0));
+    }
+
+    @Test
+    public void testQueryInIntegerArray() throws Exception {
+        Integer[] ids = new Integer[users.length];
+        for (int i = 0; i < users.length; i++) {
+            ids[i] = users[i].getId();
+        }
+        List<User> userList = dao.selectUserInIntegerArray(ids);
+        assertThat(userList.size(), equalTo(users.length));
+        for (int i = 0; i < userList.size(); i++) {
+            assertThat(userList.get(i), equalTo(users[i]));
+        }
+    }
+
+    @Test
+    public void testQueryInIntArray() throws Exception {
+        int[] ids = new int[users.length];
+        for (int i = 0; i < users.length; i++) {
+            ids[i] = users[i].getId();
+        }
+        List<User> userList = dao.selectUserInIntArray(ids);
+        assertThat(userList.size(), equalTo(users.length));
+        for (int i = 0; i < userList.size(); i++) {
+            assertThat(userList.get(i), equalTo(users[i]));
         }
     }
 

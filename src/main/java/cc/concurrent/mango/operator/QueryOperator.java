@@ -33,6 +33,10 @@ public class QueryOperator extends AbstractOperator {
     private RowMapper<?> rowMapper;
 
     protected QueryOperator(Type type) {
+        initialize(type);
+    }
+
+    private void initialize(Type type) {
         Class<?> mappedClass = null;
         if (type instanceof ParameterizedType) { // 参数化类型
             ParameterizedType parameterizedType = (ParameterizedType) type;

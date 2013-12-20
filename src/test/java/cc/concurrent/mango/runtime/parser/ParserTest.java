@@ -34,4 +34,10 @@ public class ParserTest {
         System.out.println(Arrays.toString(tuple.getArgs()));
     }
 
+    @Test
+    public void test3() throws Exception {
+        Parser p = new Parser("select id, name, age, gender, money, update_time from user where id in (:1)");
+        p.parse().dump("");
+    }
+
 }

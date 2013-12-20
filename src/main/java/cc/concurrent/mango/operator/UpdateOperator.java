@@ -15,10 +15,10 @@ public class UpdateOperator extends AbstractOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
 
-    private boolean returnGenerateId;
+    private boolean returnGeneratedId;
 
-    protected UpdateOperator(boolean returnGenerateId) {
-        this.returnGenerateId = returnGenerateId;
+    protected UpdateOperator(boolean returnGeneratedId) {
+        this.returnGeneratedId = returnGeneratedId;
     }
 
     @Override
@@ -29,6 +29,6 @@ public class UpdateOperator extends AbstractOperator {
         if (logger.isDebugEnabled()) {
             logger.debug(Objects.toStringHelper("UpdateOperator").add("sql", sql).add("args", Arrays.toString(args)).toString());
         }
-        return jdbcTemplate.update(ds, sql, args, returnGenerateId);
+        return jdbcTemplate.update(ds, sql, args, returnGeneratedId);
     }
 }

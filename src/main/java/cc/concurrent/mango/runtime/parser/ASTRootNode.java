@@ -40,7 +40,7 @@ public class ASTRootNode extends SimpleNode {
                 ASTInParam outParam = (ASTInParam) node;
                 List<Object> objs = outParam.values(context);
                 args.addAll(objs);
-                sql.append("(?");
+                sql.append("in (?");
                 for (int j = 1; j < objs.size(); j++) {
                     sql.append(",?");
                 }
