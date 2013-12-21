@@ -140,9 +140,12 @@ public class JdbcUtils {
         return value;
     }
 
-
     public static void setParameterValue(PreparedStatement ps, int index, Object value) throws SQLException {
-        ps.setObject(index, value);
+        if (value != null && java.util.Date.class.equals(value.getClass())) {
+            ps.setTimestamp(index, new java.sql.Timestamp(((java.util.Date) value).getTime()));
+        } else {
+            ps.setObject(index, value);
+        }
     }
 
     private final static Set<Class<?>> singleColumClassSet = Sets.newHashSet();
