@@ -4,10 +4,8 @@ import cc.concurrent.mango.jdbc.exception.DataAccessException;
 import cc.concurrent.mango.jdbc.support.JdbcUtils;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -93,17 +91,17 @@ public class JdbcTemplate {
     }
 
     private void setValues(PreparedStatement ps, Object[] args) throws SQLException {
-        int t = 0;
+        int index = 0;
         for (Object arg : args) {
-            ps.setObject(++t, arg);
+            JdbcUtils.setParameterValue(ps, ++index, arg);
         }
     }
 
     private void setBatchValues(PreparedStatement ps, List<Object[]> batchArgs) throws SQLException {
         for (Object[] args : batchArgs) {
-            int t = 0;
+            int index = 0;
             for (Object arg : args) {
-                ps.setObject(++t, arg);
+                JdbcUtils.setParameterValue(ps, ++index, arg);
             }
             ps.addBatch();
         }

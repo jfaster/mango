@@ -13,8 +13,10 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -209,7 +211,11 @@ public class MangoTest {
         long money = 9999999999L;
         Date updateTime = new Date();
         User user = new User(name, age, gender, money, updateTime);
+        int maxId = dao.selectMaxInt();
+        user.setId(maxId + 1);
         dao.insertUser(user);
+        User user2 = dao.selectUser(user.getId());
+        assertThat(user2, equalTo(user));
     }
 
 

@@ -50,7 +50,7 @@ public class User {
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
-                add("gender", gender).add("money", money).add("updateTime", updateTime).toString();
+                add("gender", gender).add("money", money).add("updateTime", updateTime.getTime()).toString();
     }
 
     public int getId() {

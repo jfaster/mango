@@ -4,7 +4,6 @@ import cc.concurrent.mango.jdbc.exception.CannotGetJdbcConnectionException;
 import cc.concurrent.mango.logging.InternalLogger;
 import cc.concurrent.mango.logging.InternalLoggerFactory;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Primitives;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -141,6 +140,10 @@ public class JdbcUtils {
         return value;
     }
 
+
+    public static void setParameterValue(PreparedStatement ps, int index, Object value) throws SQLException {
+        ps.setObject(index, value);
+    }
 
     private final static Set<Class<?>> singleColumClassSet = Sets.newHashSet();
     static {
