@@ -65,4 +65,10 @@ public interface UserDao {
     @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
     public List<User> selectUserInIntArray(int[] ids);
 
+/***********************************************************************/
+
+    @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
+    public void insertUser(User user);
+
+
 }

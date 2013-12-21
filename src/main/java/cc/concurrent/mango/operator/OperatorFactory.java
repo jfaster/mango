@@ -5,7 +5,6 @@ import cc.concurrent.mango.annotation.SQL;
 import com.google.common.base.Strings;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -46,9 +45,8 @@ public class OperatorFactory {
             }
         }
 
-        Type returnType = method.getGenericReturnType();
         if (sqlType == SQLType.READ) {
-            return new QueryOperator(returnType);
+            return new QueryOperator(method.getGenericReturnType());
         } else {
             Class<?>[] arameterTypes = method.getParameterTypes();
             boolean isBatchUpdate = false;
@@ -60,12 +58,12 @@ public class OperatorFactory {
             }
 
             if (isBatchUpdate) { // 批量增删改
-                return new BatchUpdateOperator(returnType);
+                return new BatchUpdateOperator(method.getReturnType());
             } else { // 单独增删改
                 ReturnGeneratedId returnGeneratedIdAnno = method.getAnnotation(ReturnGeneratedId.class);
                 boolean returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                         && INSERT_PATTERN.matcher(sql).find(); // 是插入语句
-                return new UpdateOperator(returnType, returnGeneratedId);
+                return new UpdateOperator(method.getReturnType(), returnGeneratedId);
             }
         }
     }

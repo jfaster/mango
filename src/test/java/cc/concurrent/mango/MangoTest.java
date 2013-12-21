@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author ash
  */
-public class QueryTest {
+public class MangoTest {
 
     private static DataSource ds;
     private static UserDao dao;
@@ -198,13 +198,30 @@ public class QueryTest {
         dao.selectInt(id);
     }
 
+
+/***********************************************************************/
+
+    @Test
+    public void testUpdate() throws Exception {
+        String name = "ash";
+        int age = 11000;
+        boolean gender = true;
+        long money = 9999999999L;
+        Date updateTime = new Date();
+        User user = new User(name, age, gender, money, updateTime);
+        dao.insertUser(user);
+    }
+
+
+
+
     /**
      * 从文本文件中获得建表语句
      * @param name
      * @return
      */
     private static String fileToString(String name) {
-        InputStream is = QueryTest.class.getResourceAsStream(name);
+        InputStream is = MangoTest.class.getResourceAsStream(name);
         Scanner s = new Scanner(is);
         StringBuffer sb = new StringBuffer();
         while (s.hasNextLine()) {

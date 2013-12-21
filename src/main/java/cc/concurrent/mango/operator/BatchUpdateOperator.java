@@ -7,12 +7,12 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import javax.sql.DataSource;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author ash
@@ -21,18 +21,17 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
 
-    public BatchUpdateOperator(Type returnType) {
-        checkReturnType(returnType);
+    private boolean isIntegerArray;
+
+    public BatchUpdateOperator(Class<?> returnClass) {
+        checkReturnType(returnClass);
+        this.isIntegerArray = Integer[].class.equals(returnClass);
     }
 
-    private void checkReturnType(Type returnType) {
-        if (returnType instanceof Class) {
-            Class<?> clazz = (Class<?>) returnType;
-            if (int[].class.equals(clazz) || void.class.equals(clazz)) {
-                return;
-            }
-        }
-        throw new IllegalStateException("batch update return type need int[] or void but " + returnType);
+    private void checkReturnType(Class<?> returnClass) {
+        checkState(Integer[].class.equals(returnClass) || int[].class.equals(returnClass) ||
+                Void.class.equals(returnClass) || void.class.equals(returnClass),
+                "need Integer[] or int[] or Void or void but " + returnClass);
     }
 
     @Override
@@ -53,7 +52,15 @@ public class BatchUpdateOperator extends AbstractOperator {
             }
             logger.debug(Objects.toStringHelper("BatchUpdateOperator").add("sql", sql).add("batchArgs", str).toString());
         }
-        return jdbcTemplate.batchUpdate(ds, sql, batchArgs);
+        int[] ints = jdbcTemplate.batchUpdate(ds, sql, batchArgs);
+        if (!isIntegerArray) {
+            return ints;
+        }
+        Object array = Array.newInstance(Integer[].class, ints.length);
+        for (int i = 0; i < ints.length; i++) {
+            Array.set(array, i, ints[i]);
+        }
+        return array;
     }
 
 }

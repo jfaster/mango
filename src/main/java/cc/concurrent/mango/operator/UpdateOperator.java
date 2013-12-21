@@ -6,8 +6,9 @@ import cc.concurrent.mango.runtime.ParsedSql;
 import com.google.common.base.Objects;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Type;
 import java.util.Arrays;
+
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author ash
@@ -18,19 +19,20 @@ public class UpdateOperator extends AbstractOperator {
 
     private boolean returnGeneratedId;
 
-    protected UpdateOperator(Type returnType, boolean returnGeneratedId) {
+    protected UpdateOperator(Class<?> returnClass, boolean returnGeneratedId) {
         this.returnGeneratedId = returnGeneratedId;
-        checkReturnType(returnType);
+        checkReturnType(returnClass);
     }
 
-    private void checkReturnType(Type returnType) {
-        if (returnType instanceof Class) {
-            Class<?> clazz = (Class<?>) returnType;
-            if (Integer.class.equals(clazz) || int.class.equals(clazz) || void.class.equals(clazz)) {
-                return;
-            }
+    private void checkReturnType(Class<?> returnClass) {
+        if (returnGeneratedId) {
+            checkState(Integer.class.equals(returnClass) || int.class.equals(returnClass),
+                    "need Integer or int but " + returnClass);
+        } else {
+            checkState(Integer.class.equals(returnClass) || int.class.equals(returnClass) ||
+                    Void.class.equals(returnClass) || void.class.equals(returnClass),
+                    "need Integer or int or Void or void but " + returnClass);
         }
-        throw new IllegalStateException("update return type need Integer or int or void but " + returnType);
     }
 
     @Override
