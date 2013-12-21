@@ -4,6 +4,7 @@ import cc.concurrent.mango.runtime.RuntimeContext;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -44,9 +45,9 @@ public class ASTInParam extends SimpleNode {
         checkNotNull(v, "parameter " + getParamName() + " can't be null");
         List<Object> values = Lists.newArrayList();
         if (v.getClass().isArray()) { // 数组
-            Object[] objs = (Object[]) v;
-            for (Object obj : objs) {
-                values.add(obj);
+            int size = Array.getLength(v);
+            for (int i = 0; i < size; i++) {
+                values.add(Array.get(v, i));
             }
         } else if (v instanceof Collection) { // 集合
             for (Object o : (Collection) v) {

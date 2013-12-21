@@ -32,14 +32,14 @@ public class QueryOperator extends AbstractOperator {
     private boolean isForArray = false;
     private RowMapper<?> rowMapper;
 
-    protected QueryOperator(Type type) {
-        initialize(type);
+    protected QueryOperator(Type returnType) {
+        initialize(returnType);
     }
 
-    private void initialize(Type type) {
+    private void initialize(Type returnType) {
         Class<?> mappedClass = null;
-        if (type instanceof ParameterizedType) { // 参数化类型
-            ParameterizedType parameterizedType = (ParameterizedType) type;
+        if (returnType instanceof ParameterizedType) { // 参数化类型
+            ParameterizedType parameterizedType = (ParameterizedType) returnType;
             Type rawType = parameterizedType.getRawType();
             if (rawType instanceof Class) {
                 Class<?> rawClass = (Class<?>) rawType;
@@ -57,8 +57,8 @@ public class QueryOperator extends AbstractOperator {
                     }
                 }
             }
-        } else if (type instanceof Class) { // 没有参数化
-            Class<?> clazz = (Class<?>) type;
+        } else if (returnType instanceof Class) { // 没有参数化
+            Class<?> clazz = (Class<?>) returnType;
             if (clazz.isArray()) { // 数组
                 isForArray = true;
                 mappedClass = clazz.getComponentType();

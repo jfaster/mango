@@ -60,12 +60,12 @@ public class OperatorFactory {
             }
 
             if (isBatchUpdate) { // 批量增删改
-                return new BatchUpdateOperator();
+                return new BatchUpdateOperator(returnType);
             } else { // 单独增删改
                 ReturnGeneratedId returnGeneratedIdAnno = method.getAnnotation(ReturnGeneratedId.class);
                 boolean returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                         && INSERT_PATTERN.matcher(sql).find(); // 是插入语句
-                return new UpdateOperator(returnGeneratedId);
+                return new UpdateOperator(returnType, returnGeneratedId);
             }
         }
     }
