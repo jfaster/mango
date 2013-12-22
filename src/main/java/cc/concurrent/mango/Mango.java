@@ -2,6 +2,7 @@ package cc.concurrent.mango;
 
 import cc.concurrent.mango.annotation.SQL;
 import cc.concurrent.mango.exception.EmptyParameterException;
+import cc.concurrent.mango.exception.NullParameterException;
 import cc.concurrent.mango.operator.BatchUpdateOperator;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
@@ -59,7 +60,7 @@ public class Mango {
         }
         Object arg0 = args[0];
         if (arg0 == null) {
-            throw new EmptyParameterException("batchUpdate's parameter can't be null");
+            throw new NullParameterException("batchUpdate's parameter can't be null");
         }
         ParsedSql[] parsedSqls;
         if (arg0.getClass().isArray()) { // 数组

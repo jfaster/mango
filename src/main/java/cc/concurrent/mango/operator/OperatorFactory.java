@@ -2,16 +2,13 @@ package cc.concurrent.mango.operator;
 
 import cc.concurrent.mango.annotation.ReturnGeneratedId;
 import cc.concurrent.mango.annotation.SQL;
-import cc.concurrent.mango.exception.EmptySqlException;
+import cc.concurrent.mango.exception.IncorrectSqlException;
 import cc.concurrent.mango.exception.NoSqlAnnotationException;
 import com.google.common.base.Strings;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.regex.Pattern;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author ash
@@ -40,7 +37,7 @@ public class OperatorFactory {
         }
         String sql = sqlAnno.value();
         if (Strings.isNullOrEmpty(sql)) {
-            throw new EmptySqlException("sql annotation's value is null or empty");
+            throw new IncorrectSqlException("sql is null or empty");
         }
 
         SQLType sqlType = SQLType.WRITE;

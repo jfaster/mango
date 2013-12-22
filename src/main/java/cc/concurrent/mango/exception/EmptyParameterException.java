@@ -1,7 +1,7 @@
 package cc.concurrent.mango.exception;
 
 /**
- * 传入参数为null异常
+ * 传入参数为空（长度为0）异常
  *
  * @author ash
  */
