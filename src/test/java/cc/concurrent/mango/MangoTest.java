@@ -267,6 +267,7 @@ public class MangoTest {
             user.setId(user2.getId());
             assertThat(user2, equalTo(user));
         }
+        dao.deleteUserByAge(age);
     }
 
     @Test
@@ -288,6 +289,7 @@ public class MangoTest {
         }
         List<User> userList2 = dao.selectUserByAge(age);
         assertThat(userList2.size(), equalTo(userSet.size()));
+        dao.deleteUserByAge(age);
     }
 
     @Test
@@ -315,6 +317,7 @@ public class MangoTest {
             user.setId(user2.getId());
             assertThat(user2, equalTo(user));
         }
+        dao.deleteUserByAge(age);
     }
 
 

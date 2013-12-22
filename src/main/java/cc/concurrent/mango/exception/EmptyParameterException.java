@@ -5,9 +5,9 @@ package cc.concurrent.mango.exception;
  *
  * @author ash
  */
-public class ParameterNullException extends RuntimeException {
+public class EmptyParameterException extends RuntimeException {
 
-    public ParameterNullException(String message) {
+    public EmptyParameterException(String message) {
         super(message);
     }
 

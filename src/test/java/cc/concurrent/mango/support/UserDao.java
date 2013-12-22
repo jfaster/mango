@@ -84,6 +84,9 @@ public interface UserDao {
     @SQL("delete from user where id=:1")
     public int deleteUser(int id);
 
+    @SQL("delete from user where age=:1")
+    public int deleteUserByAge(int age);
+
 /***********************************************************************/
 
     @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")

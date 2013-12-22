@@ -2,6 +2,8 @@ package cc.concurrent.mango.operator;
 
 import cc.concurrent.mango.annotation.ReturnGeneratedId;
 import cc.concurrent.mango.annotation.SQL;
+import cc.concurrent.mango.exception.EmptySqlException;
+import cc.concurrent.mango.exception.NoSqlAnnotationException;
 import com.google.common.base.Strings;
 
 import java.lang.reflect.Method;
@@ -32,11 +34,14 @@ public class OperatorFactory {
     private final static Pattern INSERT_PATTERN = Pattern.compile("^\\s*INSERT\\s+", Pattern.CASE_INSENSITIVE);
 
     public static Operator getOperator(Method method) {
-        checkNotNull(method);
         SQL sqlAnno = method.getAnnotation(SQL.class);
-        checkNotNull(sqlAnno);
+        if (sqlAnno == null) {
+            throw new NoSqlAnnotationException("need cc.concurrent.mango.annotation.SQL annotation on method");
+        }
         String sql = sqlAnno.value();
-        checkArgument(!Strings.isNullOrEmpty(sql));
+        if (Strings.isNullOrEmpty(sql)) {
+            throw new EmptySqlException("sql annotation's value is null or empty");
+        }
 
         SQLType sqlType = SQLType.WRITE;
         for (Pattern pattern : QUERY_PATTERNS) {

@@ -1,9 +1,7 @@
 package cc.concurrent.mango;
 
 import cc.concurrent.mango.annotation.SQL;
-import cc.concurrent.mango.exception.ParameterArrayEmptyException;
-import cc.concurrent.mango.exception.ParameterCollectionEmptyException;
-import cc.concurrent.mango.exception.ParameterNullException;
+import cc.concurrent.mango.exception.EmptyParameterException;
 import cc.concurrent.mango.operator.BatchUpdateOperator;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
@@ -61,24 +59,23 @@ public class Mango {
         }
         Object arg0 = args[0];
         if (arg0 == null) {
-            throw new ParameterNullException("batchUpdate's parameter can't be null");
+            throw new EmptyParameterException("batchUpdate's parameter can't be null");
         }
         ParsedSql[] parsedSqls;
         if (arg0.getClass().isArray()) { // 数组
             int length = Array.getLength(arg0);
             if (length == 0) {
-                // 批量更新输入数组不能为空
-                throw new ParameterArrayEmptyException("array can't be empty");
+                throw new EmptyParameterException("array can't be empty");
             }
             parsedSqls = new ParsedSql[length];
             for (int i = 0; i < length; i++) {
                 Object obj = Array.get(arg0, i);
                 parsedSqls[i] = getParsedSql(node, obj);
             }
-        } else if (Collection.class.isAssignableFrom(arg0.getClass())) {
+        } else if (Collection.class.isAssignableFrom(arg0.getClass())) { // 集合
             Collection<?> collection = (Collection<?>) arg0;
             if (collection.size() == 0) {
-                throw new ParameterCollectionEmptyException("collection can't be empty");
+                throw new EmptyParameterException("collection can't be empty");
             }
             parsedSqls = new ParsedSql[collection.size()];
             int i = 0;
