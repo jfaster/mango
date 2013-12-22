@@ -1,4 +1,4 @@
-package cc.concurrent.mango.jdbc.core;
+package cc.concurrent.mango.jdbc;
 
 
 import java.sql.ResultSet;

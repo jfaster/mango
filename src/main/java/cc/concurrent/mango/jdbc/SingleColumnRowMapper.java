@@ -1,7 +1,6 @@
-package cc.concurrent.mango.jdbc.core;
+package cc.concurrent.mango.jdbc;
 
-import cc.concurrent.mango.jdbc.exception.IncorrectResultSetColumnCountException;
-import cc.concurrent.mango.jdbc.support.JdbcUtils;
+import cc.concurrent.mango.exception.IncorrectResultSetColumnCountException;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

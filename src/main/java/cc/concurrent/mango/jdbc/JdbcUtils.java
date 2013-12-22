@@ -1,6 +1,6 @@
-package cc.concurrent.mango.jdbc.support;
+package cc.concurrent.mango.jdbc;
 
-import cc.concurrent.mango.jdbc.exception.CannotGetJdbcConnectionException;
+import cc.concurrent.mango.exception.CannotGetJdbcConnectionException;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.collect.Sets;
@@ -118,11 +118,11 @@ public class JdbcUtils {
             wasNullCheck = true;
         } else if (byte[].class.equals(requiredType)) {
             value = rs.getBytes(index);
-        } else if (java.sql.Date.class.equals(requiredType)) {
+        } else if (Date.class.equals(requiredType)) {
             value = rs.getDate(index);
-        } else if (java.sql.Time.class.equals(requiredType)) {
+        } else if (Time.class.equals(requiredType)) {
             value = rs.getTime(index);
-        } else if (java.sql.Timestamp.class.equals(requiredType) || java.util.Date.class.equals(requiredType)) {
+        } else if (Timestamp.class.equals(requiredType) || java.util.Date.class.equals(requiredType)) {
             value = rs.getTimestamp(index);
         } else if (BigDecimal.class.equals(requiredType)) {
             value = rs.getBigDecimal(index);
@@ -142,7 +142,7 @@ public class JdbcUtils {
 
     public static void setParameterValue(PreparedStatement ps, int index, Object value) throws SQLException {
         if (value != null && java.util.Date.class.equals(value.getClass())) {
-            ps.setTimestamp(index, new java.sql.Timestamp(((java.util.Date) value).getTime()));
+            ps.setTimestamp(index, new Timestamp(((java.util.Date) value).getTime()));
         } else {
             ps.setObject(index, value);
         }
@@ -152,9 +152,9 @@ public class JdbcUtils {
     static {
         // jdbc中的类型
         singleColumClassSet.add(byte[].class);
-        singleColumClassSet.add(java.sql.Date.class);
-        singleColumClassSet.add(java.sql.Time.class);
-        singleColumClassSet.add(java.sql.Timestamp.class);
+        singleColumClassSet.add(Date.class);
+        singleColumClassSet.add(Time.class);
+        singleColumClassSet.add(Timestamp.class);
         singleColumClassSet.add(java.util.Date.class);
         singleColumClassSet.add(BigDecimal.class);
         singleColumClassSet.add(Blob.class);
@@ -199,7 +199,7 @@ public class JdbcUtils {
      * @param resultSetMetaData
      * @param columnIndex
      * @return
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public static String lookupColumnName(ResultSetMetaData resultSetMetaData, int columnIndex) throws SQLException {
         String name = resultSetMetaData.getColumnLabel(columnIndex);

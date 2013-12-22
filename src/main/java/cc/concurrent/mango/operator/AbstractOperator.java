@@ -1,8 +1,6 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.jdbc.core.JdbcTemplate;
-
-import java.lang.reflect.Type;
+import cc.concurrent.mango.jdbc.JdbcTemplate;
 
 /**
  * @author ash

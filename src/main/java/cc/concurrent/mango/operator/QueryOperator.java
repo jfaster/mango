@@ -1,9 +1,9 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.jdbc.core.BeanPropertyRowMapper;
-import cc.concurrent.mango.jdbc.core.RowMapper;
-import cc.concurrent.mango.jdbc.core.SingleColumnRowMapper;
-import cc.concurrent.mango.jdbc.support.JdbcUtils;
+import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
+import cc.concurrent.mango.jdbc.JdbcUtils;
+import cc.concurrent.mango.jdbc.RowMapper;
+import cc.concurrent.mango.jdbc.SingleColumnRowMapper;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;

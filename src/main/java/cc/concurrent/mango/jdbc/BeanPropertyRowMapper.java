@@ -1,6 +1,5 @@
-package cc.concurrent.mango.jdbc.core;
+package cc.concurrent.mango.jdbc;
 
-import cc.concurrent.mango.jdbc.support.JdbcUtils;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Strings;

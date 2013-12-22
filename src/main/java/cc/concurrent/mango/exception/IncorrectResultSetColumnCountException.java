@@ -1,4 +1,4 @@
-package cc.concurrent.mango.jdbc.exception;
+package cc.concurrent.mango.exception;
 
 /**
  * @author ash

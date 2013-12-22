@@ -1,15 +1,13 @@
-package cc.concurrent.mango.jdbc.core;
+package cc.concurrent.mango.jdbc;
 
-import cc.concurrent.mango.jdbc.exception.DataAccessException;
-import cc.concurrent.mango.jdbc.support.JdbcUtils;
+import cc.concurrent.mango.exception.DataAccessException;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author ash
