@@ -1,6 +1,9 @@
 package cc.concurrent.mango;
 
 import cc.concurrent.mango.annotation.SQL;
+import cc.concurrent.mango.exception.ParameterArrayEmptyException;
+import cc.concurrent.mango.exception.ParameterCollectionEmptyException;
+import cc.concurrent.mango.exception.ParameterNullException;
 import cc.concurrent.mango.operator.BatchUpdateOperator;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
@@ -18,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.reflect.Reflection;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
@@ -52,23 +56,48 @@ public class Mango {
     }
 
     private Object handleBatchUpdate(ASTRootNode node, Object[] args, Operator operator) {
-        checkArgument(args.length == 1, "need one and only one parameter but " + args.length);
+        if (args.length != 1) {
+            throw new IllegalStateException(); // 理论上不会抛出这个异常，如果抛出这个异常，说明程序上存在bug
+        }
         Object arg0 = args[0];
-
-        checkArgument(arg0 instanceof Collection, "first parameter must be instance of Collection");
-        Collection collection = (Collection) arg0;
-        checkArgument(collection.size() > 0, "first parameter can't be empty");
-        ParsedSql[] parsedSqls = new ParsedSql[collection.size()];
-        int index = 0;
-        for (Object obj : collection) {
-            Map<String, Object> parameters = Maps.newHashMap();
-            parameters.put("1", obj);
-            RuntimeContext context = new RuntimeContextImpl(parameters);
-            ParsedSql parsedSql = node.getSqlAndArgs(context);
-            parsedSqls[index++] = parsedSql;
+        if (arg0 == null) {
+            throw new ParameterNullException("batchUpdate's parameter can't be null");
+        }
+        ParsedSql[] parsedSqls;
+        if (arg0.getClass().isArray()) { // 数组
+            int length = Array.getLength(arg0);
+            if (length == 0) {
+                // 批量更新输入数组不能为空
+                throw new ParameterArrayEmptyException("array can't be empty");
+            }
+            parsedSqls = new ParsedSql[length];
+            for (int i = 0; i < length; i++) {
+                Object obj = Array.get(arg0, i);
+                parsedSqls[i] = getParsedSql(node, obj);
+            }
+        } else if (Collection.class.isAssignableFrom(arg0.getClass())) {
+            Collection<?> collection = (Collection<?>) arg0;
+            if (collection.size() == 0) {
+                throw new ParameterCollectionEmptyException("collection can't be empty");
+            }
+            parsedSqls = new ParsedSql[collection.size()];
+            int i = 0;
+            for (Object obj : collection) {
+                parsedSqls[i++] = getParsedSql(node, obj);
+            }
+        } else {
+            throw new IllegalStateException(); // 理论上不会抛出这个异常，如果抛出这个异常，说明程序上存在bug
         }
         return operator.execute(this.dataSource, parsedSqls);
     }
+
+    private ParsedSql getParsedSql(ASTRootNode node, Object obj) {
+        Map<String, Object> parameters = Maps.newHashMap();
+        parameters.put("1", obj);
+        RuntimeContext context = new RuntimeContextImpl(parameters);
+        return node.getSqlAndArgs(context);
+    }
+
 
     private Object handleQueryOrUpdate(ASTRootNode node, Object[] args, Operator operator) {
         Map<String, Object> parameters = Maps.newHashMap();
