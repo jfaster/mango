@@ -37,10 +37,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package cc.concurrent.mango.logging;
+package cc.concurrent.mango.util.logging;
 
 /**
- * Holds the results of formatting done by {@link MessageFormatter}.
+ * Holds the results of formatting done by {@link cc.concurrent.mango.logging.MessageFormatter}.
  */
 class FormattingTuple {
 

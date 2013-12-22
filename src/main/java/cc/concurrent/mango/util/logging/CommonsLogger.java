@@ -37,7 +37,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package cc.concurrent.mango.logging;
+package cc.concurrent.mango.util.logging;
 
 import org.apache.commons.logging.Log;
 
@@ -60,8 +60,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#isTraceEnabled} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#isTraceEnabled} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      */
     @Override
     public boolean isTraceEnabled() {
@@ -69,8 +69,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#trace(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#trace(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg - the message object to be logged
      */
@@ -80,8 +80,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#trace(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#trace(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -102,8 +102,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#trace(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#trace(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -126,8 +126,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#trace(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#trace(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -146,8 +146,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#trace(Object, Throwable)} method of
-     * the underlying {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#trace(Object, Throwable)} method of
+     * the underlying {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg
      *          the message accompanying the exception
@@ -160,8 +160,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#isDebugEnabled} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#isDebugEnabled} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      */
     @Override
     public boolean isDebugEnabled() {
@@ -171,8 +171,8 @@ class CommonsLogger extends AbstractInternalLogger {
     //
 
     /**
-     * Delegates to the {@link Log#debug(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#debug(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg - the message object to be logged
      */
@@ -182,8 +182,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#debug(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#debug(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -204,8 +204,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#debug(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#debug(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -228,8 +228,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#debug(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#debug(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -248,8 +248,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#debug(Object, Throwable)} method of
-     * the underlying {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#debug(Object, Throwable)} method of
+     * the underlying {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg
      *          the message accompanying the exception
@@ -262,8 +262,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#isInfoEnabled} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#isInfoEnabled} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      */
     @Override
     public boolean isInfoEnabled() {
@@ -271,8 +271,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#debug(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#debug(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg - the message object to be logged
      */
@@ -282,8 +282,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#info(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#info(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -304,8 +304,8 @@ class CommonsLogger extends AbstractInternalLogger {
         }
     }
     /**
-     * Delegates to the {@link Log#info(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#info(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -328,8 +328,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#info(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#info(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -348,8 +348,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#info(Object, Throwable)} method of
-     * the underlying {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#info(Object, Throwable)} method of
+     * the underlying {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg
      *          the message accompanying the exception
@@ -362,8 +362,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#isWarnEnabled} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#isWarnEnabled} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      */
     @Override
     public boolean isWarnEnabled() {
@@ -371,8 +371,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#warn(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#warn(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg - the message object to be logged
      */
@@ -382,8 +382,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#warn(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#warn(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -404,8 +404,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#warn(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#warn(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -428,8 +428,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#warn(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#warn(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -448,8 +448,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#warn(Object, Throwable)} method of
-     * the underlying {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#warn(Object, Throwable)} method of
+     * the underlying {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg
      *          the message accompanying the exception
@@ -463,8 +463,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#isErrorEnabled} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#isErrorEnabled} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      */
     @Override
     public boolean isErrorEnabled() {
@@ -472,8 +472,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#error(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#error(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg - the message object to be logged
      */
@@ -483,8 +483,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#error(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#error(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -505,8 +505,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#error(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#error(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -529,8 +529,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#error(Object)} method of the underlying
-     * {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#error(Object)} method of the underlying
+     * {@link org.apache.commons.logging.Log} instance.
      *
      * <p>
      * However, this form avoids superfluous object creation when the logger is disabled
@@ -549,8 +549,8 @@ class CommonsLogger extends AbstractInternalLogger {
     }
 
     /**
-     * Delegates to the {@link Log#error(Object, Throwable)} method of
-     * the underlying {@link Log} instance.
+     * Delegates to the {@link org.apache.commons.logging.Log#error(Object, Throwable)} method of
+     * the underlying {@link org.apache.commons.logging.Log} instance.
      *
      * @param msg
      *          the message accompanying the exception

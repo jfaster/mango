@@ -4,9 +4,9 @@ import cc.concurrent.mango.jdbc.core.BeanPropertyRowMapper;
 import cc.concurrent.mango.jdbc.core.RowMapper;
 import cc.concurrent.mango.jdbc.core.SingleColumnRowMapper;
 import cc.concurrent.mango.jdbc.support.JdbcUtils;
-import cc.concurrent.mango.logging.InternalLogger;
-import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
+import cc.concurrent.mango.util.logging.InternalLogger;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
 
 import javax.sql.DataSource;

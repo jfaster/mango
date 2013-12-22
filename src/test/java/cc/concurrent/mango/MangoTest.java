@@ -1,9 +1,9 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.logging.InternalLoggerFactory;
-import cc.concurrent.mango.logging.Slf4JLoggerFactory;
 import cc.concurrent.mango.support.User;
 import cc.concurrent.mango.support.UserDao;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
+import cc.concurrent.mango.util.logging.Slf4JLoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.BeforeClass;
@@ -40,6 +40,8 @@ public class MangoTest {
         createTable();
         insertData();
     }
+
+/*********************************测试查询开始*************************************/
 
     @Test
     public void testQueryInteger() throws Exception {
@@ -201,25 +203,122 @@ public class MangoTest {
     }
 
 
-/***********************************************************************/
+/********************************测试更新开始***************************************/
 
     @Test
     public void testUpdate() throws Exception {
-        String name = "ash";
-        int age = 11000;
-        boolean gender = true;
-        long money = 9999999999L;
-        Date updateTime = new Date();
-        User user = new User(name, age, gender, money, updateTime);
-        int maxId = dao.selectMaxInt();
-        user.setId(maxId + 1);
-        dao.insertUser(user);
-        User user2 = dao.selectUser(user.getId());
+        User user = new User("ash", 11000, true, 9999999999L, new Date());
+        int id = dao.insertUser(user);
+        user.setId(id);
+        User user2 = dao.selectUser(id);
         assertThat(user2, equalTo(user));
+        User user3 = new User("lucy", 11001, false, 1000000000L, new Date(System.currentTimeMillis() + 100000L));
+        user3.setId(id);
+        int r = dao.updateUser(user3);
+        assertThat(r, equalTo(1));
+        User user4 = dao.selectUser(id);
+        assertThat(user4, equalTo(user3));
+        r = dao.deleteUser(id);
+        assertThat(r, equalTo(1));
+        User user5 = dao.selectUser(id);
+        assertThat(user5, equalTo(null));
+    }
+
+    @Test
+    public void testUpdateSelectNull() throws Exception {
+        User user = new User(null, 11000, true, 9999999999L, null);
+        int id = dao.insertUser(user);
+        user.setId(id);
+        User user2 = dao.selectUser(id);
+        assertThat(user2, equalTo(user));
+        String r = dao.selectString(id);
+        assertThat(r, equalTo(null));
+        user.setMoney(null);
+        int r2 = dao.updateUser(user);
+        assertThat(r2, equalTo(1));
+        Long r3 = dao.selectLongObj(id);
+        assertThat(r3, equalTo(null));
+    }
+
+/********************************测试批量更新开始***************************************/
+
+    @Test
+    public void testBatchUpdateList() throws Exception {
+        List<User> userList = Lists.newArrayList();
+        int age = 10086;
+        for (int i = 0; i < 5; i++) {
+            String name = "batch" + i;
+            boolean gender = (i % 2 == 0 ? true : false);
+            long money = System.currentTimeMillis();
+            Date updateTime = new Date();
+            User user = new User(name, age, gender, money, updateTime);
+            userList.add(user);
+        }
+        int[] r = dao.batchInsertUserList(userList);
+        assertThat(r.length, equalTo(userList.size()));
+        for (int i = 0; i < userList.size(); i++) {
+            assertThat(r[i], equalTo(1));
+        }
+        List<User> userList2 = dao.selectUserByAge(age);
+        assertThat(userList2.size(), equalTo(userList.size()));
+        for (int i = 0; i < userList.size(); i++) {
+            User user = userList.get(i);
+            User user2 = userList2.get(i);
+            user.setId(user2.getId());
+            assertThat(user2, equalTo(user));
+        }
+    }
+
+    @Test
+    public void testBatchUpdateSet() throws Exception {
+        Set<User> userSet = Sets.newHashSet();
+        int age = 10086;
+        for (int i = 0; i < 5; i++) {
+            String name = "batch" + i;
+            boolean gender = (i % 2 == 0 ? true : false);
+            long money = System.currentTimeMillis();
+            Date updateTime = new Date();
+            User user = new User(name, age, gender, money, updateTime);
+            userSet.add(user);
+        }
+        int[] r = dao.batchInsertUserSet(userSet);
+        assertThat(r.length, equalTo(userSet.size()));
+        for (int i = 0; i < userSet.size(); i++) {
+            assertThat(r[i], equalTo(1));
+        }
+        List<User> userList2 = dao.selectUserByAge(age);
+        assertThat(userList2.size(), equalTo(userSet.size()));
+    }
+
+    @Test
+    public void testBatchUpdateArray() throws Exception {
+        User[] users = new User[5];
+        int age = 10086;
+        for (int i = 0; i < users.length; i++) {
+            String name = "batch" + i;
+            boolean gender = (i % 2 == 0 ? true : false);
+            long money = System.currentTimeMillis();
+            Date updateTime = new Date();
+            User user = new User(name, age, gender, money, updateTime);
+            users[i] = user;
+        }
+        int[] r = dao.batchInsertUserArray(users);
+        assertThat(r.length, equalTo(users.length));
+        for (int i = 0; i < users.length; i++) {
+            assertThat(r[i], equalTo(1));
+        }
+        List<User> userList2 = dao.selectUserByAge(age);
+        assertThat(userList2.size(), equalTo(users.length));
+        for (int i = 0; i < users.length; i++) {
+            User user = users[i];
+            User user2 = userList2.get(i);
+            user.setId(user2.getId());
+            assertThat(user2, equalTo(user));
+        }
     }
 
 
-
+/********************************初始化数据***************************************/
 
     /**
      * 从文本文件中获得建表语句

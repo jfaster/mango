@@ -13,20 +13,20 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package cc.concurrent.mango.logging;
+package cc.concurrent.mango.util.logging;
 
 /**
  * Creates an {@link InternalLogger} or changes the default factory
  * implementation.  This factory allows you to choose what logging framework
- * Netty should use.  The default factory is {@link JdkLoggerFactory}.
+ * Netty should use.  The default factory is {@link cc.concurrent.mango.util.logging.JdkLoggerFactory}.
  * You can change it to your preferred logging framework before other Netty
  * classes are loaded:
  * <pre>
- * {@link cc.concurrent.mango.logging.InternalLoggerFactory}.setDefaultFactory(new {@link Log4JLoggerFactory}());
+ * {@link cc.concurrent.mango.util.logging.InternalLoggerFactory}.setDefaultFactory(new {@link Log4JLoggerFactory}());
  * </pre>
  * Please note that the new default factory is effective only for the classes
  * which were loaded after the default factory is changed.  Therefore,
- * {@link #setDefaultFactory(cc.concurrent.mango.logging.InternalLoggerFactory)} should be called as early
+ * {@link #setDefaultFactory(cc.concurrent.mango.util.logging.InternalLoggerFactory)} should be called as early
  * as possible and shouldn't be called more than once.
  */
 public abstract class InternalLoggerFactory {
@@ -54,7 +54,7 @@ public abstract class InternalLoggerFactory {
 
     /**
      * Returns the default factory.  The initial default factory is
-     * {@link JdkLoggerFactory}.
+     * {@link cc.concurrent.mango.util.logging.JdkLoggerFactory}.
      */
     public static InternalLoggerFactory getDefaultFactory() {
         return defaultFactory;

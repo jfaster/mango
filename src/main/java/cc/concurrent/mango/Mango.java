@@ -54,7 +54,8 @@ public class Mango {
     private Object handleBatchUpdate(ASTRootNode node, Object[] args, Operator operator) {
         checkArgument(args.length == 1, "need one and only one parameter but " + args.length);
         Object arg0 = args[0];
-        checkArgument(arg0 instanceof Collection, "first parameter must be instanceof Collection");
+
+        checkArgument(arg0 instanceof Collection, "first parameter must be instance of Collection");
         Collection collection = (Collection) arg0;
         checkArgument(collection.size() > 0, "first parameter can't be empty");
         ParsedSql[] parsedSqls = new ParsedSql[collection.size()];

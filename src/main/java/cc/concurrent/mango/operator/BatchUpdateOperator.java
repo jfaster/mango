@@ -1,8 +1,8 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.logging.InternalLogger;
-import cc.concurrent.mango.logging.InternalLoggerFactory;
 import cc.concurrent.mango.runtime.ParsedSql;
+import cc.concurrent.mango.util.logging.InternalLogger;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 

@@ -38,7 +38,9 @@ public class JdbcTemplate {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement(sql);
+            ps = returnGenerateId ?
+                    conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : // 生成自增id
+                    conn.prepareStatement(sql); // 不生成自增id
             setValues(ps, args);
             int r = ps.executeUpdate();
             if (!returnGenerateId) { // 不生成自增id

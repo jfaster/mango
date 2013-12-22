@@ -1,8 +1,8 @@
 package cc.concurrent.mango.jdbc.support;
 
 import cc.concurrent.mango.jdbc.exception.CannotGetJdbcConnectionException;
-import cc.concurrent.mango.logging.InternalLogger;
-import cc.concurrent.mango.logging.InternalLoggerFactory;
+import cc.concurrent.mango.util.logging.InternalLogger;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.collect.Sets;
 
 import javax.sql.DataSource;

@@ -37,9 +37,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package cc.concurrent.mango.logging;
+package cc.concurrent.mango.util.logging;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 

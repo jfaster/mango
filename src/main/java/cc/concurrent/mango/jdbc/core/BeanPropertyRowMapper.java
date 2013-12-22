@@ -1,8 +1,8 @@
 package cc.concurrent.mango.jdbc.core;
 
 import cc.concurrent.mango.jdbc.support.JdbcUtils;
-import cc.concurrent.mango.logging.InternalLogger;
-import cc.concurrent.mango.logging.InternalLoggerFactory;
+import cc.concurrent.mango.util.logging.InternalLogger;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;

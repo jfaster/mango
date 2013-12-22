@@ -1,5 +1,6 @@
 package cc.concurrent.mango.support;
 
+import cc.concurrent.mango.annotation.ReturnGeneratedId;
 import cc.concurrent.mango.annotation.SQL;
 
 import java.util.Date;
@@ -65,13 +66,33 @@ public interface UserDao {
     @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
     public List<User> selectUserInIntArray(int[] ids);
 
+    @SQL("select id, name, age, gender, money, update_time from user where age=:1 order by id")
+    public List<User> selectUserByAge(int age);
+
     @SQL("select max(id) from user")
     public int selectMaxInt();
 
 /***********************************************************************/
 
+    @ReturnGeneratedId
     @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
-    public void insertUser(User user);
+    public int insertUser(User user);
 
+    @SQL("update user set name=:1.name, age=:1.age, gender=:1.gender, money=:1.money, update_time=:1.updateTime where id=:1.id")
+    public int updateUser(User user);
+
+    @SQL("delete from user where id=:1")
+    public int deleteUser(int id);
+
+/***********************************************************************/
+
+    @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
+    public int[] batchInsertUserList(List<User> userList);
+
+    @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
+    public int[] batchInsertUserSet(Set<User> userSet);
+
+    @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
+    public int[] batchInsertUserArray(User[] users);
 
 }

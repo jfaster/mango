@@ -1,7 +1,5 @@
 package cc.concurrent.mango.jdbc.core;
 
-import com.google.common.primitives.Primitives;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -19,8 +17,7 @@ public class ObjectResultSetExtractor<T> implements ResultSetExtractor<T> {
     @Override
     public T extractData(ResultSet rs) throws SQLException {
         Class<T> mappedClass = rowMapper.getMappedClass();
-        boolean isWrapperType = Primitives.isWrapperType(mappedClass);
-        if (isWrapperType) {
+        if (!mappedClass.isPrimitive()) {
             return rs.next() ? rowMapper.mapRow(rs, 1) : null;
         }
 
@@ -30,7 +27,7 @@ public class ObjectResultSetExtractor<T> implements ResultSetExtractor<T> {
         }
         T r = rowMapper.mapRow(rs, 1);
         if (r == null) {
-            throw new NullPointerException("can't cast null to primitive type" + mappedClass);
+            throw new NullPointerException("can't cast null to primitive type " + mappedClass);
         }
         return r;
     }

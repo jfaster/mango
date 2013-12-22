@@ -13,7 +13,7 @@ public class User {
     private String name;
     private int age;
     private boolean gender;
-    private long money;
+    private Long money;
     private Date updateTime;
 
     public User() {
@@ -34,23 +34,25 @@ public class User {
         if (getClass() != obj.getClass())
             return false;
         final User other = (User) obj;
+        Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
+        Long otherUpdateTime = other.updateTime != null ? other.updateTime.getTime() : null;
         return Objects.equal(this.id, other.id)
                 && Objects.equal(this.name, other.name)
                 && Objects.equal(this.age, other.age)
                 && Objects.equal(this.gender, other.gender)
                 && Objects.equal(this.money, other.money)
-                && Objects.equal(this.updateTime.getTime(), other.updateTime.getTime());
+                && Objects.equal(thisUpdateTime, otherUpdateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name, age, gender, money, updateTime.getTime());
+        return Objects.hashCode(id, name, age, gender, money, updateTime != null ? updateTime.getTime() : null);
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
-                add("gender", gender).add("money", money).add("updateTime", updateTime.getTime()).toString();
+                add("gender", gender).add("money", money).add("updateTime", updateTime).toString();
     }
 
     public int getId() {
@@ -85,11 +87,11 @@ public class User {
         this.gender = gender;
     }
 
-    public long getMoney() {
+    public Long getMoney() {
         return money;
     }
 
-    public void setMoney(long money) {
+    public void setMoney(Long money) {
         this.money = money;
     }
 

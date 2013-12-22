@@ -13,30 +13,19 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package cc.concurrent.mango.logging;
+package cc.concurrent.mango.util.logging;
+
+import org.apache.log4j.Logger;
 
 /**
- * The log level that {@link InternalLogger} can log at.
+ * Logger factory which creates an
+ * <a href="http://logging.apache.org/log4j/1.2/index.html">Apache Log4J</a>
+ * logger.
  */
-public enum InternalLogLevel {
-    /**
-     * 'TRACE' log level.
-     */
-    TRACE,
-    /**
-     * 'DEBUG' log level.
-     */
-    DEBUG,
-    /**
-     * 'INFO' log level.
-     */
-    INFO,
-    /**
-     * 'WARN' log level.
-     */
-    WARN,
-    /**
-     * 'ERROR' log level.
-     */
-    ERROR
+public class Log4JLoggerFactory extends InternalLoggerFactory {
+
+    @Override
+    public InternalLogger newInstance(String name) {
+        return new Log4JLogger(Logger.getLogger(name));
+    }
 }

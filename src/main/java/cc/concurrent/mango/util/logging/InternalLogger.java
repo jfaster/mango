@@ -37,7 +37,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package cc.concurrent.mango.logging;
+package cc.concurrent.mango.util.logging;
 
 /**
  * <em>Internal-use-only</em> logger used by Netty.  <strong>DO NOT</strong>
@@ -46,7 +46,7 @@ package cc.concurrent.mango.logging;
 public interface InternalLogger {
 
     /**
-     * Return the name of this {@link cc.concurrent.mango.logging.InternalLogger} instance.
+     * Return the name of this {@link cc.concurrent.mango.util.logging.InternalLogger} instance.
      *
      * @return name of this logger instance
      */

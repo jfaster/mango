@@ -29,7 +29,7 @@ public class OperatorFactory {
     /**
      * 插入
      */
-    private final static Pattern INSERT_PATTERN = Pattern.compile("\"^\\\\s*INSERT\\\\s+\"", Pattern.CASE_INSENSITIVE);
+    private final static Pattern INSERT_PATTERN = Pattern.compile("^\\s*INSERT\\s+", Pattern.CASE_INSENSITIVE);
 
     public static Operator getOperator(Method method) {
         checkNotNull(method);
@@ -48,11 +48,13 @@ public class OperatorFactory {
         if (sqlType == SQLType.READ) {
             return new QueryOperator(method.getGenericReturnType());
         } else {
-            Class<?>[] arameterTypes = method.getParameterTypes();
+            Class<?>[] parameterTypes = method.getParameterTypes();
             boolean isBatchUpdate = false;
-            if (arameterTypes.length == 1) {
-                Class<?> arameterType = arameterTypes[0];
-                if (Collection.class.isAssignableFrom(arameterType)) {
+            if (parameterTypes.length == 1) {
+                Class<?> parameterType = parameterTypes[0];
+                if (Collection.class.isAssignableFrom(parameterType)) {
+                    isBatchUpdate = true;
+                } else if (parameterType.isArray()) {
                     isBatchUpdate = true;
                 }
             }
