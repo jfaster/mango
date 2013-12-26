@@ -1,6 +1,7 @@
 package cc.concurrent.mango.operator;
 
 import cc.concurrent.mango.runtime.ParsedSql;
+import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
@@ -21,17 +22,10 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
 
-    private boolean isIntegerArray;
+    private ASTRootNode rootNode;
 
-    public BatchUpdateOperator(Class<?> returnClass) {
-        checkReturnType(returnClass);
-        this.isIntegerArray = Integer[].class.equals(returnClass);
-    }
-
-    private void checkReturnType(Class<?> returnClass) {
-        checkState(Integer[].class.equals(returnClass) || int[].class.equals(returnClass) ||
-                Void.class.equals(returnClass) || void.class.equals(returnClass),
-                "need Integer[] or int[] or Void or void but " + returnClass);
+    public BatchUpdateOperator(ASTRootNode rootNode) {
+        this.rootNode = rootNode;
     }
 
     @Override
@@ -53,14 +47,7 @@ public class BatchUpdateOperator extends AbstractOperator {
             logger.debug(Objects.toStringHelper("BatchUpdateOperator").add("sql", sql).add("batchArgs", str).toString());
         }
         int[] ints = jdbcTemplate.batchUpdate(ds, sql, batchArgs);
-        if (!isIntegerArray) {
-            return ints;
-        }
-        Object array = Array.newInstance(Integer[].class, ints.length);
-        for (int i = 0; i < ints.length; i++) {
-            Array.set(array, i, ints[i]);
-        }
-        return array;
+        return ints;
     }
 
 }

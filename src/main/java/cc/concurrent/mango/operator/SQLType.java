@@ -6,13 +6,23 @@ package cc.concurrent.mango.operator;
 public enum SQLType {
 
     /**
-     * 查询类语句
+     * 增
      */
-    READ,
+    INSERT,
 
     /**
-     * 更新类语句
+     * 删
      */
-    WRITE,
+    DELETE,
+
+    /**
+     * 改
+     */
+    UPDATE,
+
+    /**
+     * 查
+     */
+    SELECT,
 
 }

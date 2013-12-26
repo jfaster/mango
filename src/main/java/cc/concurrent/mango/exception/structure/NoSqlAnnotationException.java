@@ -1,4 +1,4 @@
-package cc.concurrent.mango.exception;
+package cc.concurrent.mango.exception.structure;
 
 /**
  * 在方法上没有SQL注解异常

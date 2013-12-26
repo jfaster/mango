@@ -1,4 +1,4 @@
-package cc.concurrent.mango.exception;
+package cc.concurrent.mango.exception.structure;
 
 /**
  * 不正确的sql异常

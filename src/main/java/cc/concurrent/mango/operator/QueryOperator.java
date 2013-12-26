@@ -1,22 +1,14 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
-import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.jdbc.RowMapper;
-import cc.concurrent.mango.jdbc.SingleColumnRowMapper;
 import cc.concurrent.mango.runtime.ParsedSql;
+import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
 
 import javax.sql.DataSource;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 处理所有的查询操作
@@ -27,54 +19,21 @@ public class QueryOperator extends AbstractOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(QueryOperator.class);
 
-    private boolean isForList = false;
-    private boolean isForSet = false;
-    private boolean isForArray = false;
+    private ASTRootNode rootNode;
     private RowMapper<?> rowMapper;
+    private boolean isForList;
+    private boolean isForSet;
+    private boolean isForArray;
 
-    protected QueryOperator(Type returnType) {
-        initialize(returnType);
+    public QueryOperator(ASTRootNode rootNode, RowMapper<?> rowMapper, boolean isForList, boolean isForSet, boolean isForArray) {
+        this.rootNode = rootNode;
+        this.rowMapper = rowMapper;
+        this.isForList = isForList;
+        this.isForSet = isForSet;
+        this.isForArray = isForArray;
     }
 
-    private void initialize(Type returnType) {
-        Class<?> mappedClass = null;
-        if (returnType instanceof ParameterizedType) { // 参数化类型
-            ParameterizedType parameterizedType = (ParameterizedType) returnType;
-            Type rawType = parameterizedType.getRawType();
-            if (rawType instanceof Class) {
-                Class<?> rawClass = (Class<?>) rawType;
-                if (List.class.equals(rawClass)) {
-                    isForList = true;
-                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                    if (typeArgument instanceof Class) {
-                        mappedClass = (Class<?>) typeArgument;
-                    }
-                } else if (Set.class.equals(rawClass)) {
-                    isForSet = true;
-                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                    if (typeArgument instanceof Class) {
-                        mappedClass = (Class<?>) typeArgument;
-                    }
-                }
-            }
-        } else if (returnType instanceof Class) { // 没有参数化
-            Class<?> clazz = (Class<?>) returnType;
-            if (clazz.isArray()) { // 数组
-                isForArray = true;
-                mappedClass = clazz.getComponentType();
-            } else { // 普通类
-                mappedClass = clazz;
-            }
-        }
-        checkNotNull(mappedClass);
-        rowMapper = getRowMapper(mappedClass);
-    }
 
-    private <T> RowMapper<T> getRowMapper(Class<T> clazz) {
-        return JdbcUtils.isSingleColumnClass(clazz) ?
-                new SingleColumnRowMapper<T>(clazz) :
-                new BeanPropertyRowMapper<T>(clazz);
-    }
 
     @Override
     public Object execute(DataSource ds, ParsedSql... parsedSqls) {

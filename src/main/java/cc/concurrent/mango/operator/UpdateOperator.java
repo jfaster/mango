@@ -1,6 +1,7 @@
 package cc.concurrent.mango.operator;
 
 import cc.concurrent.mango.runtime.ParsedSql;
+import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
@@ -17,22 +18,12 @@ public class UpdateOperator extends AbstractOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
 
+    private ASTRootNode rootNode;
     private boolean returnGeneratedId;
 
-    protected UpdateOperator(Class<?> returnClass, boolean returnGeneratedId) {
+    public UpdateOperator(ASTRootNode rootNode, boolean returnGeneratedId) {
+        this.rootNode = rootNode;
         this.returnGeneratedId = returnGeneratedId;
-        checkReturnType(returnClass);
-    }
-
-    private void checkReturnType(Class<?> returnClass) {
-        if (returnGeneratedId) {
-            checkState(Integer.class.equals(returnClass) || int.class.equals(returnClass),
-                    "need Integer or int but " + returnClass);
-        } else {
-            checkState(Integer.class.equals(returnClass) || int.class.equals(returnClass) ||
-                    Void.class.equals(returnClass) || void.class.equals(returnClass),
-                    "need Integer or int or Void or void but " + returnClass);
-        }
     }
 
     @Override
