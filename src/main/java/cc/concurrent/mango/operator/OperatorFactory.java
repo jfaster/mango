@@ -27,10 +27,10 @@ import java.util.regex.Pattern;
  */
 public class OperatorFactory {
 
-    private final static Pattern INSERT_PATTERN = Pattern.compile("^\\s*INSERT\\s+");
-    private final static Pattern DELETE_PATTERN = Pattern.compile("^\\s*DELETE\\s+");
-    private final static Pattern UPDATE_PATTERN = Pattern.compile("^\\s*UPDATE\\s+");
-    private final static Pattern SELECT_PATTERN = Pattern.compile("^\\s*SELECT\\s+");
+    private final static Pattern INSERT_PATTERN = Pattern.compile("^\\s*INSERT\\s+", Pattern.CASE_INSENSITIVE);
+    private final static Pattern DELETE_PATTERN = Pattern.compile("^\\s*DELETE\\s+", Pattern.CASE_INSENSITIVE);
+    private final static Pattern UPDATE_PATTERN = Pattern.compile("^\\s*UPDATE\\s+", Pattern.CASE_INSENSITIVE);
+    private final static Pattern SELECT_PATTERN = Pattern.compile("^\\s*SELECT\\s+", Pattern.CASE_INSENSITIVE);
 
 
     /**
@@ -112,6 +112,7 @@ public class OperatorFactory {
         if (mappedClass == null) {
             throw new IncorrectReturnTypeException("return type " + method.getGenericReturnType() + " is error");
         }
+        //TODO 添加构造函数验证与method参数验证
         return new QueryOperator(rootNode, getRowMapper(mappedClass), isForList, isForSet, isForArray);
     }
 
