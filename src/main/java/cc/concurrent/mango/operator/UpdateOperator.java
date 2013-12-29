@@ -13,8 +13,6 @@ import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkState;
-
 /**
  * @author ash
  */

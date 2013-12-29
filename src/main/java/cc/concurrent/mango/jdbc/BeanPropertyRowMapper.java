@@ -2,10 +2,10 @@ package cc.concurrent.mango.jdbc;
 
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
+import cc.concurrent.mango.util.reflect.BeanWrapper;
+import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
+import cc.concurrent.mango.util.reflect.Reflects;
 import com.google.common.base.Strings;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.PropertyAccessorFactory;
 
 import java.beans.PropertyDescriptor;
 import java.sql.ResultSet;
@@ -35,7 +35,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     protected void initialize(Class<T> mappedClass) {
         this.mappedClass = mappedClass;
         this.mappedFields = new HashMap<String, PropertyDescriptor>();
-        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(mappedClass);
+        PropertyDescriptor[] pds = Reflects.getPropertyDescriptors(mappedClass);
         for (PropertyDescriptor pd : pds) {
             if (pd.getWriteMethod() != null) {
                 this.mappedFields.put(pd.getName().toLowerCase(), pd);
@@ -66,8 +66,8 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     }
 
     public T mapRow(ResultSet rs, int rowNumber) throws SQLException {
-        T mappedObject = BeanUtils.instantiate(this.mappedClass);
-        BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(mappedObject);
+        T mappedObject = Reflects.instantiate(this.mappedClass);
+        BeanWrapper bw = new BeanWrapperImpl(mappedObject);
 
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();

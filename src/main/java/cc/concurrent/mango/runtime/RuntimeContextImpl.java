@@ -1,9 +1,9 @@
 package cc.concurrent.mango.runtime;
 
+import cc.concurrent.mango.util.reflect.BeanWrapper;
+import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 
 import java.util.Map;
 
