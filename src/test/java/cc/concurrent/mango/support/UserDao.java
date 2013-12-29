@@ -1,7 +1,7 @@
 package cc.concurrent.mango.support;
 
-import cc.concurrent.mango.annotation.ReturnGeneratedId;
-import cc.concurrent.mango.annotation.SQL;
+import cc.concurrent.mango.ReturnGeneratedId;
+import cc.concurrent.mango.SQL;
 
 import java.util.Date;
 import java.util.List;

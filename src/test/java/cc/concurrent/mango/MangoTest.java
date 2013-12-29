@@ -33,7 +33,7 @@ public class MangoTest {
     public static void beforeClass() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
         ds = new DriverManagerDataSource("jdbc:hsqldb:mem:test", "sa", "");
-        dao = new Mango(ds).create(UserDao.class);
+        dao = new Mango(ds, null).create(UserDao.class);
 
         initUsers();
         createTable();

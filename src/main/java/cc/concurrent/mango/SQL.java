@@ -1,4 +1,4 @@
-package cc.concurrent.mango.annotation;
+package cc.concurrent.mango;
 
 import java.lang.annotation.*;
 
@@ -8,5 +8,8 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ReturnGeneratedId {
+public @interface SQL {
+
+    String value();
+
 }

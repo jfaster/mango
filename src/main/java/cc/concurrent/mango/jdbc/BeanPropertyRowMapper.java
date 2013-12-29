@@ -4,7 +4,7 @@ import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanWrapper;
 import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
-import cc.concurrent.mango.util.reflect.Reflects;
+import cc.concurrent.mango.util.reflect.Reflection;
 import com.google.common.base.Strings;
 
 import java.beans.PropertyDescriptor;
@@ -35,7 +35,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     protected void initialize(Class<T> mappedClass) {
         this.mappedClass = mappedClass;
         this.mappedFields = new HashMap<String, PropertyDescriptor>();
-        PropertyDescriptor[] pds = Reflects.getPropertyDescriptors(mappedClass);
+        PropertyDescriptor[] pds = Reflection.getPropertyDescriptors(mappedClass);
         for (PropertyDescriptor pd : pds) {
             if (pd.getWriteMethod() != null) {
                 this.mappedFields.put(pd.getName().toLowerCase(), pd);
@@ -66,7 +66,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     }
 
     public T mapRow(ResultSet rs, int rowNumber) throws SQLException {
-        T mappedObject = Reflects.instantiate(this.mappedClass);
+        T mappedObject = Reflection.instantiate(this.mappedClass);
         BeanWrapper bw = new BeanWrapperImpl(mappedObject);
 
         ResultSetMetaData rsmd = rs.getMetaData();

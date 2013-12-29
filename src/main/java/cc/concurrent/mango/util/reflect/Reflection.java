@@ -12,7 +12,7 @@ import java.beans.PropertyDescriptor;
 /**
  * @author ash
  */
-public class Reflects {
+public class Reflection {
 
     public static <T> T instantiate(Class<T> clazz) throws BeanInstantiationException {
         if (clazz.isInterface()) {

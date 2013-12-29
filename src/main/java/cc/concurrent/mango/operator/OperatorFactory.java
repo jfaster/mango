@@ -1,7 +1,8 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.annotation.ReturnGeneratedId;
-import cc.concurrent.mango.annotation.SQL;
+import cc.concurrent.mango.DataCache;
+import cc.concurrent.mango.ReturnGeneratedId;
+import cc.concurrent.mango.SQL;
 import cc.concurrent.mango.exception.structure.IncorrectReturnTypeException;
 import cc.concurrent.mango.exception.structure.IncorrectSqlException;
 import cc.concurrent.mango.exception.structure.NoSqlAnnotationException;
@@ -40,21 +41,21 @@ public class OperatorFactory {
      * @return
      * @throws Exception
      */
-    public static Operator getOperator(Method method) throws Exception {
+    public static Operator getOperator(Method method, String cacheKeyPrefix) throws Exception {
         SQL sqlAnno = method.getAnnotation(SQL.class);
         if (sqlAnno == null) {
-            throw new NoSqlAnnotationException("expected cc.concurrent.mango.annotation.SQL annotation on method");
+            throw new NoSqlAnnotationException("expected cc.concurrent.mango.SQL annotation on method");
         }
         String sql = sqlAnno.value();
         if (Strings.isNullOrEmpty(sql)) {
             throw new IncorrectSqlException("sql is null or empty");
         }
-
         ASTRootNode rootNode = new Parser(sql).parse();
         SQLType sqlType = getSQLType(sql);
         if (sqlType == null) {
             throw new IncorrectSqlException("sql must start with INSERT or DELETE or UPDATE or SELECT");
         }
+
 
         if (sqlType == SQLType.SELECT) {
             return buildQueryOperator(method, rootNode);

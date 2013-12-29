@@ -14,20 +14,25 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class JdbcTemplate {
 
+    private DataSource ds;
 
-    public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public JdbcTemplate(DataSource ds) {
+        this.ds = ds;
+    }
+
+    public <T> T queryForObject(String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> List<T> queryForList(String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> Set<T> queryForSet(String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> Object queryForArray(String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 

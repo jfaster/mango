@@ -53,13 +53,13 @@ public class QueryOperator extends AbstractOperator {
         }
         Object r;
         if (isForList) {
-            r = jdbcTemplate.queryForList(ds, sql, args, rowMapper);
+            r = jdbcTemplate.queryForList(sql, args, rowMapper);
         } else if (isForSet) {
-            r = jdbcTemplate.queryForSet(ds, sql, args, rowMapper);
+            r = jdbcTemplate.queryForSet(sql, args, rowMapper);
         } else if (isForArray) {
-            r = jdbcTemplate.queryForArray(ds, sql, args, rowMapper);
+            r = jdbcTemplate.queryForArray(sql, args, rowMapper);
         } else {
-            r = jdbcTemplate.queryForObject(ds, sql, args, rowMapper);
+            r = jdbcTemplate.queryForObject(sql, args, rowMapper);
         }
         return r;
     }
