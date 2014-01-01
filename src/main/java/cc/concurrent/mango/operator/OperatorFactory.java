@@ -1,6 +1,5 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.DataCache;
 import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.SQL;
 import cc.concurrent.mango.exception.structure.IncorrectReturnTypeException;
@@ -41,7 +40,7 @@ public class OperatorFactory {
      * @return
      * @throws Exception
      */
-    public static Operator getOperator(Method method, String cacheKeyPrefix) throws Exception {
+    public static Operator getOperator(Method method) throws Exception {
         SQL sqlAnno = method.getAnnotation(SQL.class);
         if (sqlAnno == null) {
             throw new NoSqlAnnotationException("expected cc.concurrent.mango.SQL annotation on method");

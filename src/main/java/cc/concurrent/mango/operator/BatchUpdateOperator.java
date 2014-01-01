@@ -14,7 +14,6 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class BatchUpdateOperator extends AbstractOperator {
     }
 
     @Override
-    public Object execute(DataSource ds, Object[] methodArgs) {
+    public Object execute(Object[] methodArgs) {
         Object methodArg = methodArgs[0];
         if (methodArg == null) {
             throw new NullParameterException("batchUpdate's parameter can't be null");
@@ -62,7 +61,7 @@ public class BatchUpdateOperator extends AbstractOperator {
             }
             logger.debug(Objects.toStringHelper("BatchUpdateOperator").add("sql", sql).add("batchArgs", str).toString());
         }
-        int[] ints = jdbcTemplate.batchUpdate(ds, sql, batchArgs);
+        int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
         return ints;
     }
 

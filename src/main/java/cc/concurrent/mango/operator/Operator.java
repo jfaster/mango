@@ -10,7 +10,7 @@ import javax.sql.DataSource;
  */
 public interface Operator {
 
-    public Object execute(DataSource ds, Object[] methodArgs);
+    public Object execute(Object[] methodArgs);
 
     public void setDataSource(DataSource ds);
 

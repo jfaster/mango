@@ -21,22 +21,22 @@ public class JdbcTemplate {
     }
 
     public <T> T queryForObject(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
+        return executeQuery(sql, args, new ObjectResultSetExtractor<T>(rowMapper));
     }
 
     public <T> List<T> queryForList(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
+        return executeQuery(sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
     public <T> Set<T> queryForSet(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
+        return executeQuery(sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
     public <T> Object queryForArray(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
+        return executeQuery(sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 
-    public int update(DataSource ds, String sql, Object[] args, boolean returnGenerateId) {
+    public int update(String sql, Object[] args, boolean returnGenerateId) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -62,7 +62,7 @@ public class JdbcTemplate {
         }
     }
 
-    public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+    public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         try {
@@ -77,7 +77,7 @@ public class JdbcTemplate {
         }
     }
 
-    private <T> T executeQuery(DataSource ds, String sql, Object[] args, ResultSetExtractor<T> rse) {
+    private <T> T executeQuery(String sql, Object[] args, ResultSetExtractor<T> rse) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;

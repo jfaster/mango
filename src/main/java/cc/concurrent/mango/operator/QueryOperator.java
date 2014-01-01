@@ -10,7 +10,6 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ public class QueryOperator extends AbstractOperator {
     }
 
     @Override
-    public Object execute(DataSource ds, Object[] methodArgs) {
+    public Object execute(Object[] methodArgs) {
         Map<String, Object> parameters = Maps.newHashMap();
         for (int i = 0; i < methodArgs.length; i++) {
             parameters.put(String.valueOf(i + 1), methodArgs[i]);

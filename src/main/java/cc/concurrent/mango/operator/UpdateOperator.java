@@ -9,7 +9,6 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ public class UpdateOperator extends AbstractOperator {
     }
 
     @Override
-    public Object execute(DataSource ds, Object[] methodArgs) {
+    public Object execute(Object[] methodArgs) {
         Map<String, Object> parameters = Maps.newHashMap();
         for (int i = 0; i < methodArgs.length; i++) {
             parameters.put(String.valueOf(i + 1), methodArgs[i]);
@@ -41,7 +40,7 @@ public class UpdateOperator extends AbstractOperator {
         if (logger.isDebugEnabled()) {
             logger.debug(Objects.toStringHelper("UpdateOperator").add("sql", sql).add("args", Arrays.toString(args)).toString());
         }
-        return jdbcTemplate.update(ds, sql, args, returnGeneratedId);
+        return jdbcTemplate.update(sql, args, returnGeneratedId);
     }
 
 }
