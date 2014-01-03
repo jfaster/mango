@@ -1,6 +1,7 @@
 package cc.concurrent.mango.operator;
 
 
+import cc.concurrent.mango.CacheDescriptor;
 import cc.concurrent.mango.DataCache;
 
 import javax.sql.DataSource;
@@ -12,8 +13,10 @@ public interface Operator {
 
     public Object execute(Object[] methodArgs);
 
-    public void setDataSource(DataSource ds);
+    public void setDataSource(DataSource dataSource);
 
-    public void setDataCache(DataCache dc);
+    public void setDataCache(DataCache dataCache);
+
+    public void setCacheDescriptor(CacheDescriptor cacheDescriptor);
 
 }

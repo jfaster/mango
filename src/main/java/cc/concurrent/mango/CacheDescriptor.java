@@ -9,8 +9,6 @@ public class CacheDescriptor {
 
     private String prefix;
 
-    private boolean ignoreCache;
-
     private String beanName;
 
     private String propertyName; // 为""的时候表示没有属性
@@ -29,14 +27,6 @@ public class CacheDescriptor {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
-    }
-
-    public boolean isIgnoreCache() {
-        return ignoreCache;
-    }
-
-    public void setIgnoreCache(boolean ignoreCache) {
-        this.ignoreCache = ignoreCache;
     }
 
     public String getBeanName() {

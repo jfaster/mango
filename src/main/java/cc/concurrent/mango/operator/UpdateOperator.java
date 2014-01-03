@@ -40,7 +40,13 @@ public class UpdateOperator extends AbstractOperator {
         if (logger.isDebugEnabled()) {
             logger.debug(Objects.toStringHelper("UpdateOperator").add("sql", sql).add("args", Arrays.toString(args)).toString());
         }
-        return jdbcTemplate.update(sql, args, returnGeneratedId);
+        int r = jdbcTemplate.update(sql, args, returnGeneratedId);
+        if (cacheDescriptor.isUseCache()) {
+            String key = cacheDescriptor.getPrefix() +
+                    context.getPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyName());
+            dataCache.delete(key);
+        }
+        return r;
     }
 
 }

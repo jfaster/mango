@@ -5,11 +5,8 @@ import java.lang.annotation.*;
 /**
  * @author ash
  */
-@Target({ElementType.PARAMETER})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface CacheBy {
-
-    String value() default "";
-
+public @interface CacheIgnored {
 }
