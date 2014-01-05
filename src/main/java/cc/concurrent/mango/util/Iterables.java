@@ -11,14 +11,14 @@ import static com.google.common.base.Preconditions.*;
  *
  * @author ash
  */
-public class IterableHolder implements Iterable {
+public class Iterables implements Iterable {
 
     private Collection<?> collection = null;
     private Object array = null;
     private Integer size = null;
     private Object object = null;
 
-    public IterableHolder(Object object) {
+    public Iterables(Object object) {
         checkNotNull(object);
         if (Collection.class.isAssignableFrom(object.getClass())) { // 集合
             this.collection = (Collection<?>) object;

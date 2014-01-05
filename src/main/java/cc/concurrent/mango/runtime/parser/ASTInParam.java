@@ -4,7 +4,7 @@ import cc.concurrent.mango.exception.EmptyParameterException;
 import cc.concurrent.mango.exception.NullParameterException;
 import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.util.IterableHolder;
+import cc.concurrent.mango.util.Iterables;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 
@@ -48,16 +48,16 @@ public class ASTInParam extends SimpleNode {
         if (v == null) {
             throw new NullParameterException("parameter " + getParamName() + " can't be null");
         }
-        IterableHolder iterableHolder = new IterableHolder(v);
-        if (!iterableHolder.isIterable()) {
+        Iterables iterables = new Iterables(v);
+        if (!iterables.isIterable()) {
             throw new IncorrectParameterTypeException("expected collection or array but " + v.getClass());
         }
-        if (iterableHolder.isEmpty()) {
+        if (iterables.isEmpty()) {
             throw new EmptyParameterException("batchUpdate's parameter can't be empty");
         }
 
         List<Object> values = Lists.newArrayList();
-        for (Object obj : iterableHolder) {
+        for (Object obj : iterables) {
             values.add(obj);
         }
         return values;

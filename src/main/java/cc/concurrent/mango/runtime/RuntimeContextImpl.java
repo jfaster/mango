@@ -39,6 +39,16 @@ public class RuntimeContextImpl implements RuntimeContext {
         return value;
     }
 
+    @Override
+    public void setPropertyValue(String beanName, String propertyName, Object value) {
+        if (Strings.isNullOrEmpty(propertyName)) {
+            parameters.put(beanName, value);
+        } else {
+            String key = getCacheKey(beanName, propertyName);
+            cache.put(key, value);
+        }
+    }
+
     public String getCacheKey(String beanName, String propertyName) {
         return beanName + "." + propertyName;
     }

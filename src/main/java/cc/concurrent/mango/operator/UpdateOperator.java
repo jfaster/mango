@@ -8,6 +8,7 @@ import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -42,9 +43,7 @@ public class UpdateOperator extends AbstractOperator {
         }
         int r = jdbcTemplate.update(sql, args, returnGeneratedId);
         if (cacheDescriptor.isUseCache()) {
-            String key = cacheDescriptor.getPrefix() +
-                    context.getPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyName());
-            dataCache.delete(key);
+            dataCache.delete(Sets.newHashSet(getKey(context)));
         }
         return r;
     }

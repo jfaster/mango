@@ -12,9 +12,9 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * @author ash
@@ -35,7 +35,7 @@ public class MangoCacheTest {
             }
 
             @Override
-            public Map<String, Object> getBulk(List<String> keys) {
+            public Map<String, Object> getBulk(Set<String> keys) {
                 return null;
             }
 
@@ -44,8 +44,8 @@ public class MangoCacheTest {
             }
 
             @Override
-            public void delete(String key) {
-                System.out.println(key);
+            public void delete(Set<String> keys) {
+                System.out.println(keys);
             }
         }).create(CacheUserDao.class);
     }

@@ -3,6 +3,7 @@ package cc.concurrent.mango.operator;
 import cc.concurrent.mango.CacheDescriptor;
 import cc.concurrent.mango.DataCache;
 import cc.concurrent.mango.jdbc.JdbcTemplate;
+import cc.concurrent.mango.runtime.RuntimeContext;
 
 import javax.sql.DataSource;
 
@@ -28,6 +29,12 @@ public abstract class AbstractOperator implements Operator {
 
     public void setDataCache(DataCache dataCache) {
         this.dataCache = dataCache;
+    }
+
+    protected String getKey(RuntimeContext context) {
+        String key = cacheDescriptor.getPrefix() +
+                context.getPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyName());
+        return key;
     }
 
 }
