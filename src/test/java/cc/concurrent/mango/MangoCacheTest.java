@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -28,26 +29,7 @@ public class MangoCacheTest {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
         DriverManagerDataSource ds = new DriverManagerDataSource("jdbc:hsqldb:mem:test", "sa", "");
         createTable(ds);
-        dao = new Mango(ds, new DataCache() {
-            @Override
-            public Object get(String key) {
-                return null;
-            }
-
-            @Override
-            public Map<String, Object> getBulk(Set<String> keys) {
-                return null;
-            }
-
-            @Override
-            public void set(String key, Object value) {
-            }
-
-            @Override
-            public void delete(Set<String> keys) {
-                System.out.println(keys);
-            }
-        }).create(CacheUserDao.class);
+        dao = new Mango(ds, new DataCacheImpl()).create(CacheUserDao.class);
     }
 
     @Test
@@ -86,6 +68,37 @@ public class MangoCacheTest {
             sb.append(s.nextLine()).append(System.getProperty("line.separator"));
         }
         return sb.toString();
+    }
+
+    private static class DataCacheImpl implements DataCache {
+
+        private Map<String, Object> cache = new HashMap<String, Object>();
+
+        @Override
+        public Object get(String key) {
+            return cache.get(key);
+        }
+
+        @Override
+        public Map<String, Object> getBulk(Set<String> keys) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            for (String key : keys) {
+                map.put(key, cache.get(key));
+            }
+            return map;
+        }
+
+        @Override
+        public void set(String key, Object value) {
+            cache.put(key, value);
+        }
+
+        @Override
+        public void delete(Set<String> keys) {
+            for (String key : keys) {
+                cache.remove(key);
+            }
+        }
     }
 
 }

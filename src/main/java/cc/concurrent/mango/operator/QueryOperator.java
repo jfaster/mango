@@ -80,7 +80,7 @@ public class QueryOperator extends AbstractOperator {
         Set<U> missKeyObjs = Sets.newHashSet();
         for (Object keyObj : iterables) {
             String key = cacheDescriptor.getPrefix() + keyObj;
-            Object value = map.get(key);
+            Object value = map != null ? map.get(key) : null;
             if (value == null) {
                 missKeyObjs.add(keyClass.cast(keyObj));
             } else {
