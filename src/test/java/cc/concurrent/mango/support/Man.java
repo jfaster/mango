@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * @author ash
  */
-public class CacheUser {
+public class Man {
 
     private int id;
     private String name;
@@ -16,10 +16,10 @@ public class CacheUser {
     private Long money;
     private Date updateTime;
 
-    public CacheUser() {
+    public Man() {
     }
 
-    public CacheUser(String name, int age, boolean gender, long money, Date updateTime) {
+    public Man(String name, int age, boolean gender, long money, Date updateTime) {
         this.name = name;
         this.age = age;
         this.gender = gender;
@@ -33,7 +33,7 @@ public class CacheUser {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final CacheUser other = (CacheUser) obj;
+        final Man other = (Man) obj;
         Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
         Long otherUpdateTime = other.updateTime != null ? other.updateTime.getTime() : null;
         return Objects.equal(this.id, other.id)

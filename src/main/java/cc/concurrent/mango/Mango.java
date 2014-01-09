@@ -1,5 +1,6 @@
 package cc.concurrent.mango;
 
+import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
 import com.google.common.cache.CacheBuilder;
@@ -70,14 +71,19 @@ public class Mango {
                                         cacheDescriptor.setUseCache(true);
                                         cacheDescriptor.setPrefix(cacheAnno.prefix());
                                         Annotation[][] pass = method.getParameterAnnotations();
+                                        int num = 0;
                                         for (int i = 0; i < pass.length; i++) {
                                             Annotation[] pas = pass[i];
                                             for (Annotation pa : pas) {
                                                 if (CacheBy.class.equals(pa.annotationType())) {
                                                     cacheDescriptor.setBeanName(String.valueOf(i + 1));
                                                     cacheDescriptor.setPropertyName(((CacheBy) pa).value());
+                                                    num++;
                                                 }
                                             }
+                                        }
+                                        if (num != 1) {
+                                            throw new CacheByAnnotationException("need 1 but " + num);
                                         }
                                     }
                                 }
