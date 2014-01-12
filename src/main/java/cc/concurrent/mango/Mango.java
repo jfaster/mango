@@ -3,6 +3,9 @@ package cc.concurrent.mango;
 import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
+import cc.concurrent.mango.util.ToStringHelper;
+import cc.concurrent.mango.util.logging.InternalLogger;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -18,6 +21,8 @@ import java.lang.reflect.Method;
  * @author ash
  */
 public class Mango {
+
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
     private final DataSource dataSource;
     private final DataCache defaultDataCache;
@@ -93,8 +98,15 @@ public class Mango {
 
         @Override
         protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} #args={}", ToStringHelper.toString(method), args);
+            }
             Operator operator = cache.get(method);
-            return operator.execute(args);
+            Object r = operator.execute(args);
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} #result={}", ToStringHelper.toString(method), r);
+            }
+            return r;
         }
 
     }

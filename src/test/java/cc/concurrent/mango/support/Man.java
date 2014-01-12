@@ -1,13 +1,14 @@
 package cc.concurrent.mango.support;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
 
 import java.util.Date;
 
 /**
  * @author ash
  */
-public class Man {
+public class Man implements Comparable {
 
     private int id;
     private String name;
@@ -42,6 +43,21 @@ public class Man {
                 && Objects.equal(this.gender, other.gender)
                 && Objects.equal(this.money, other.money)
                 && Objects.equal(thisUpdateTime, otherUpdateTime);
+    }
+
+    @Override
+    public int compareTo(Object obj) {
+        final Man other = (Man) obj;
+        Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
+        Long otherUpdateTime = other.updateTime != null ? other.updateTime.getTime() : null;
+        return ComparisonChain.start()
+                .compare(this.id, other.id)
+                .compare(this.name, other.name)
+                .compare(this.age, other.age)
+                .compareTrueFirst(this.gender, other.gender)
+                .compare(this.money, other.money)
+                .compare(thisUpdateTime, otherUpdateTime)
+                .result();
     }
 
     @Override

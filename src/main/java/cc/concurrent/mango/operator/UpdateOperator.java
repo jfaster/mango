@@ -6,11 +6,9 @@ import cc.concurrent.mango.runtime.RuntimeContextImpl;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -39,11 +37,17 @@ public class UpdateOperator extends AbstractOperator {
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
         if (logger.isDebugEnabled()) {
-            logger.debug(Objects.toStringHelper("UpdateOperator").add("sql", sql).add("args", Arrays.toString(args)).toString());
+            logger.debug("{} #args={}", sql, args);
         }
         int r = jdbcTemplate.update(sql, args, returnGeneratedId);
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} #result={}", sql, r);
+        }
         if (cacheDescriptor.isUseCache()) {
-            dataCache.delete(Sets.newHashSet(getKey(context)));
+            dataCache.delete(Sets.newHashSet(getSingleKey(context)));
+            if (logger.isDebugEnabled()) {
+                logger.debug("cache delete #key={}", getSingleKey(context));
+            }
         }
         return r;
     }

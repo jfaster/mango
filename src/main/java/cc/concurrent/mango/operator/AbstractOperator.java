@@ -31,10 +31,13 @@ public abstract class AbstractOperator implements Operator {
         this.dataCache = dataCache;
     }
 
-    protected String getKey(RuntimeContext context) {
-        String key = cacheDescriptor.getPrefix() +
-                context.getPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyName());
-        return key;
+    protected String getSingleKey(RuntimeContext context) {
+        return getKey(cacheDescriptor.getPrefix(), context.getPropertyValue(cacheDescriptor.getBeanName(),
+                cacheDescriptor.getPropertyName()));
+    }
+
+    protected String getKey(String prefix, Object keyObj) {
+        return prefix + keyObj;
     }
 
 }

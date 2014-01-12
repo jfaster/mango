@@ -4,6 +4,8 @@ import cc.concurrent.mango.support.Man;
 import cc.concurrent.mango.support.ManDao;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.logging.Slf4JLoggerFactory;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -37,37 +39,45 @@ public class MangoCacheTest {
 
     // TODO 便利的debug log
     @Test
-    public void testOne() throws Exception {
+    public void testSingleKey() throws Exception {
         Man man = new Man("ash", 26, true, 10086, new Date());
         int id = dao.insert(man);
         String key = getKey(id);
         man.setId(id);
         assertThat(dataCache.get(key), nullValue());
-        Man man2 = dao.select(id);
-        assertThat(man2, equalTo(man));
-        Man man3 = (Man) dataCache.get(key);
-        assertThat(man3, equalTo(man));
-        Man man4 = dao.select(id);
-        assertThat(man4, equalTo(man));
+        assertThat(dao.select(id), equalTo(man));
+        assertThat((Man) dataCache.get(key), equalTo(man));
+        assertThat(dao.select(id), equalTo(man));
 
         man.setName("lulu");
         dao.update(man);
         assertThat(dataCache.get(key), nullValue());
-        Man man5 = dao.select(id);
-        assertThat(man5, equalTo(man));
-        Man man6 = (Man) dataCache.get(key);
-        assertThat(man6, equalTo(man));
-        Man man7 = dao.select(id);
-        assertThat(man7, equalTo(man));
+        assertThat(dao.select(id), equalTo(man));
+        assertThat((Man) dataCache.get(key), equalTo(man));
 
         dao.delete(id);
         assertThat(dataCache.get(key), nullValue());
-        Man man8 = dao.select(id);
-        assertThat(man8, nullValue());
-        assertThat(dataCache.get(key), nullValue());
-        Man man9 = dao.select(id);
-        assertThat(man9, nullValue());
+        assertThat(dao.select(id), nullValue());
     }
+
+    @Test
+    public void testMultiKeys() throws Exception {
+        int num = 5;
+        String name = "ash";
+        TreeSet<Man> mans = Sets.newTreeSet();
+        List<Integer> ids = Lists.newArrayList();
+        for (int i = 0; i < num; i++) {
+            Man man = new Man(name, 26 + i, true, 10086, new Date());
+            int id = dao.insert(man);
+            man.setId(id);
+            mans.add(man);
+            ids.add(id);
+        }
+        assertThat(Sets.newTreeSet(dao.selectList(ids, name)), equalTo(mans));
+        assertThat(Sets.newTreeSet(dao.selectList(ids, name)), equalTo(mans));
+    }
+
+
 
     /**
      * 创建表

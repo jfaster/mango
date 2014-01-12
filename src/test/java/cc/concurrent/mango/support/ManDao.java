@@ -2,6 +2,8 @@ package cc.concurrent.mango.support;
 
 import cc.concurrent.mango.*;
 
+import java.util.List;
+
 /**
  * @author ash
  */
@@ -21,5 +23,8 @@ public interface ManDao {
 
     @SQL("select id, name, age, gender, money, update_time from man where id=:1")
     public Man select(@CacheBy() int id);
+
+    @SQL("select id, name, age, gender, money, update_time from man where id in (:1) and name=:2")
+    public List<Man> selectList(@CacheBy() List<Integer> ids, String name);
 
 }
