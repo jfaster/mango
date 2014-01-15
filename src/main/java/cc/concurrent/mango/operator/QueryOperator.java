@@ -140,7 +140,7 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private <T> Object executeFromDb(RuntimeContext context, RowMapper<T> rowMapper, List<?> hitValues) {
-        ParsedSql parsedSql = rootNode.getSqlAndArgs(context);
+        ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
         if (logger.isDebugEnabled()) {

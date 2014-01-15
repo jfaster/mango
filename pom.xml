@@ -52,6 +52,11 @@
         <!--<artifactId>spring-jdbc</artifactId>-->
         <!--<version>3.2.5.RELEASE</version>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.1</version>
+        </dependency>
 
         <!-- 测试 -->
         <dependency>

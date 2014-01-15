@@ -1,7 +1,7 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.ReturnGeneratedId;
-import cc.concurrent.mango.SQL;
+import cc.concurrent.mango.*;
+import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
 import cc.concurrent.mango.exception.structure.IncorrectReturnTypeException;
 import cc.concurrent.mango.exception.structure.IncorrectSqlException;
 import cc.concurrent.mango.exception.structure.NoSqlAnnotationException;
@@ -13,6 +13,7 @@ import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.runtime.parser.Parser;
 import com.google.common.base.Strings;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -55,7 +56,6 @@ public class OperatorFactory {
             throw new IncorrectSqlException("sql must start with INSERT or DELETE or UPDATE or SELECT");
         }
 
-
         if (sqlType == SQLType.SELECT) {
             return buildQueryOperator(method, rootNode);
         } else if (int.class.equals(method.getReturnType())) {
@@ -75,7 +75,7 @@ public class OperatorFactory {
      * @param rootNode
      * @return
      */
-    private static QueryOperator buildQueryOperator(Method method, ASTRootNode rootNode) {
+    private static Operator buildQueryOperator(Method method, ASTRootNode rootNode) {
         Class<?> mappedClass = null;
         boolean isForList = false;
         boolean isForSet = false;
@@ -112,8 +112,14 @@ public class OperatorFactory {
         if (mappedClass == null) {
             throw new IncorrectReturnTypeException("return type " + method.getGenericReturnType() + " is error");
         }
+
+        CacheDescriptor cacheDescriptor = getCacheDescriptor(method);
         //TODO 添加构造函数验证与method参数验证
-        return new QueryOperator(rootNode, getRowMapper(mappedClass), isForList, isForSet, isForArray);
+
+
+        Operator operator = new QueryOperator(rootNode, getRowMapper(mappedClass), isForList, isForSet, isForArray);
+        operator.setCacheDescriptor(cacheDescriptor);
+        return operator;
     }
 
     /**
@@ -158,6 +164,35 @@ public class OperatorFactory {
         return JdbcUtils.isSingleColumnClass(clazz) ?
                 new SingleColumnRowMapper<T>(clazz) :
                 new BeanPropertyRowMapper<T>(clazz);
+    }
+
+    private static CacheDescriptor getCacheDescriptor(Method method) {
+        Class<?> daoClass = method.getDeclaringClass();
+        Cache cacheAnno = daoClass.getAnnotation(Cache.class);
+        CacheDescriptor cacheDescriptor = new CacheDescriptor();
+        if (cacheAnno != null) { // dao类使用cache
+            CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
+            if (cacheIgnoredAnno == null) { // method不禁用cache
+                cacheDescriptor.setUseCache(true);
+                cacheDescriptor.setPrefix(cacheAnno.prefix());
+                Annotation[][] pass = method.getParameterAnnotations();
+                int num = 0;
+                for (int i = 0; i < pass.length; i++) {
+                    Annotation[] pas = pass[i];
+                    for (Annotation pa : pas) {
+                        if (CacheBy.class.equals(pa.annotationType())) {
+                            cacheDescriptor.setBeanName(String.valueOf(i + 1));
+                            cacheDescriptor.setPropertyName(((CacheBy) pa).value());
+                            num++;
+                        }
+                    }
+                }
+                if (num != 1) { //TODO 合适得异常处理
+                    throw new CacheByAnnotationException("need 1 but " + num);
+                }
+            }
+        }
+        return cacheDescriptor;
     }
 
 }

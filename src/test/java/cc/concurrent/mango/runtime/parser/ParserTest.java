@@ -29,7 +29,7 @@ public class ParserTest {
         map.put("1", 105);
         map.put("2", Lists.newArrayList());
         RuntimeContext context = new RuntimeContextImpl(map);
-        ParsedSql tuple = root.getSqlAndArgs(context);
+        ParsedSql tuple = root.buildSqlAndArgs(context);
         System.out.println(tuple.getSql());
         System.out.println(Arrays.toString(tuple.getArgs()));
     }

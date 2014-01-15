@@ -49,7 +49,7 @@ public class RuntimeContextImpl implements RuntimeContext {
         }
     }
 
-    public String getCacheKey(String beanName, String propertyName) {
+    private String getCacheKey(String beanName, String propertyName) {
         return beanName + "." + propertyName;
     }
 

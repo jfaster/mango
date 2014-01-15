@@ -1,6 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.runtime.RuntimeContext;
+import cc.concurrent.mango.runtime.TypeContext;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,16 +11,16 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * @author ash
  */
-public class ASTParam extends SimpleNode {
+public class ASTObjectParameter extends ASTExpressionNode {
 
     private String beanName;
     private String propertyName; // 为""的时候表示没有属性
 
-    public ASTParam(int i) {
+    public ASTObjectParameter(int i) {
         super(i);
     }
 
-    public ASTParam(Parser p, int i) {
+    public ASTObjectParameter(Parser p, int i) {
         super(p, i);
     }
 
@@ -37,6 +38,11 @@ public class ASTParam extends SimpleNode {
     @Override
     public Object value(RuntimeContext context) {
         return context.getPropertyValue(beanName, propertyName);
+    }
+
+    @Override
+    public void checkType(TypeContext context) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }

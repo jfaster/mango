@@ -4,6 +4,7 @@ import cc.concurrent.mango.exception.EmptyParameterException;
 import cc.concurrent.mango.exception.NullParameterException;
 import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
+import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.util.Iterables;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
@@ -12,22 +13,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author ash
  */
-public class ASTInParam extends SimpleNode {
+public class ASTIterableParameter extends ASTExpressionNode {
 
     private String beanName;
     private String propertyName; // 为""的时候表示没有属性
+    //private String field; // "a in (:1)"中的a
 
-    public ASTInParam(int i) {
+    public ASTIterableParameter(int i) {
         super(i);
     }
 
-    public ASTInParam(Parser p, int i) {
+    public ASTIterableParameter(Parser p, int i) {
         super(p, i);
     }
 
@@ -43,7 +44,8 @@ public class ASTInParam extends SimpleNode {
         }
     }
 
-    public List<Object> values(RuntimeContext context) {
+    @Override
+    public Object value(RuntimeContext context) {
         Object v = context.getPropertyValue(beanName, propertyName);
         if (v == null) {
             throw new NullParameterException("parameter " + getParamName() + " can't be null");
@@ -61,6 +63,15 @@ public class ASTInParam extends SimpleNode {
             values.add(obj);
         }
         return values;
+    }
+
+    @Override
+    public void checkType(TypeContext context) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Class<?> type(TypeContext context) {
+        return context.getPropertyType(beanName, propertyName);
     }
 
     private String getParamName() {

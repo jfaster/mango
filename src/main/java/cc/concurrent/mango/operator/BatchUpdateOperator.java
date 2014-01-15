@@ -58,7 +58,7 @@ public class BatchUpdateOperator extends AbstractOperator {
             if (isUseCache) {
                 keys.add(getSingleKey(context));
             }
-            ParsedSql parsedSql= rootNode.getSqlAndArgs(context);
+            ParsedSql parsedSql= rootNode.buildSqlAndArgs(context);
             if (sql == null) {
                 sql = parsedSql.getSql();
             }

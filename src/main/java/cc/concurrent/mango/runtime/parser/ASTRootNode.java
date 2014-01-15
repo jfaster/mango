@@ -20,10 +20,9 @@ public class ASTRootNode extends SimpleNode {
         super(p, i);
     }
 
-    public ParsedSql getSqlAndArgs(RuntimeContext context) {
+    public ParsedSql buildSqlAndArgs(RuntimeContext context) {
         StringBuffer sql = new StringBuffer();
         List<Object> args = Lists.newArrayList();
-
         for (int i = 0; i < jjtGetNumChildren(); i++) {
             Node node = jjtGetChild(i);
             if (node instanceof ASTText) {
@@ -32,13 +31,13 @@ public class ASTRootNode extends SimpleNode {
             } else if (node instanceof ASTBlank) {
                 ASTBlank text = (ASTBlank) node;
                 sql.append(text.getBlank());
-            } else if (node instanceof ASTOutParam) {
-                ASTOutParam outParam = (ASTOutParam) node;
+            } else if (node instanceof ASTObjectParameter) {
+                ASTObjectParameter outParam = (ASTObjectParameter) node;
                 args.add(outParam.value(context));
                 sql.append("?");
-            } else if (node instanceof ASTInParam) {
-                ASTInParam outParam = (ASTInParam) node;
-                List<Object> objs = outParam.values(context);
+            } else if (node instanceof ASTIterableParameter) {
+                ASTIterableParameter listParam = (ASTIterableParameter) node;
+                List<?> objs = (List<?>) listParam.value(context);
                 args.addAll(objs);
                 sql.append("in (?");
                 for (int j = 1; j < objs.size(); j++) {
@@ -46,10 +45,9 @@ public class ASTRootNode extends SimpleNode {
                 }
                 sql.append(")");
             } else {
-                sql.append(node.value(context));
+                // TODO Exception ??  sql.append(node.value(context));
             }
         }
-
         return new ParsedSql(sql.toString(), args.toArray());
     }
 

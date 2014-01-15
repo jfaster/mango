@@ -36,8 +36,8 @@ TOKEN :
     |   <#DOT: "." >
     |   <#FIELD: ["a"-"z","_"] (["a"-"z","_", "0"-"9"])* >
     |   <#BLANK: (" ")* >
-    |   <IN_PARAM: "in" <BLANK> "(" <BLANK> <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* <BLANK> ")" >
-    |   <OUT_PARAM: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
+    |   <ITERABLE_PARAMETER: "in" <BLANK> "(" <BLANK> <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* <BLANK> ")" >
+    |   <OBJECT_PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
     |   <BLANK_MORE: (" ")+ >
     |   <EXPR_START: "${" > {SwitchTo(G);}
 }
@@ -50,7 +50,7 @@ TOKEN:
 <G>
 TOKEN:
 {
-        <PARAM: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
+        <MATH_PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
     |   <MINUS: "-">
     |   <PLUS: "+">
     |   <MULTIPLY: "*">
@@ -73,29 +73,29 @@ ASTRootNode parse()  #RootNode :
 {
 }
 {
-    (Text() | Blank() | OutParam() | InParam() | Expr())+ <EOF>
+    (Text() | Blank() | ObjectParameter() | IterableParameter() | MathExpression())+ <EOF>
     {
         return jjtThis;
     }
 }
 
-void OutParam() :
+void ObjectParameter() :
 {
     Token t;
 }
 {
-    t=<OUT_PARAM>
+    t=<OBJECT_PARAMETER>
     {
         jjtThis.setParam(t.image);
     }
 }
 
-void InParam() :
+void IterableParameter() :
 {
     Token t;
 }
 {
-    t=<IN_PARAM>
+    t=<ITERABLE_PARAMETER>
     {
         jjtThis.setParam(t.image);
     }
@@ -123,7 +123,7 @@ void Blank() :
     }
 }
 
-void Expr() #void : // 标记为void不生成节点
+void MathExpression() #void : // 标记为void不生成节点
 {
 
 }
@@ -155,17 +155,17 @@ void MultiplicativeExpression() #void : // 标记为void不生成节点
 void PrimaryExpression() #void :
 {}
 {
-        Param()
+        MathParameter()
     |   IntegerLiteral()
     |   <LPAREN> AdditiveExpression() <RPAREN>
 }
 
-void Param() :
+void MathParameter() :
 {
     Token t;
 }
 {
-    t=<PARAM>
+    t=<MATH_PARAMETER>
     {
         jjtThis.setParam(t.image);
     }

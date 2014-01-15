@@ -33,7 +33,7 @@ public class UpdateOperator extends AbstractOperator {
             parameters.put(String.valueOf(i + 1), methodArgs[i]);
         }
         RuntimeContext context = new RuntimeContextImpl(parameters);
-        ParsedSql parsedSql = rootNode.getSqlAndArgs(context);
+        ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
         if (logger.isDebugEnabled()) {

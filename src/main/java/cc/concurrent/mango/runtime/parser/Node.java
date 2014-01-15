@@ -3,9 +3,6 @@ package cc.concurrent.mango.runtime.parser;
 /* All AST nodes must implement this interface.  It provides basic
    machinery for constructing the parent and child relationships
    between nodes. */
-
-import cc.concurrent.mango.runtime.RuntimeContext;
-
 public interface Node {
 
     /**
@@ -50,6 +47,4 @@ public interface Node {
      */
     public Object jjtAccept(ParserVisitor visitor, Object data);
 
-
-    public Object value(RuntimeContext context);
 }

@@ -1,7 +1,5 @@
 package cc.concurrent.mango.util.reflect;
 
-import cc.concurrent.mango.exception.reflect.BeansException;
-
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,14 +10,14 @@ import java.lang.reflect.Method;
  */
 public class BeanWrapperImpl implements BeanWrapper {
 
-    private Object object;
+    private final Object object;
 
     public BeanWrapperImpl(Object object) {
         this.object = object;
     }
 
     @Override
-    public void setPropertyValue(String propertyPath, Object value) throws BeansException {
+    public void setPropertyValue(String propertyPath, Object value) {
         Object obj = object;
         int pos = propertyPath.indexOf('.');
         while (pos > -1) {
@@ -52,7 +50,7 @@ public class BeanWrapperImpl implements BeanWrapper {
     }
 
     @Override
-    public Object getPropertyValue(String propertyPath) throws BeansException {
+    public Object getPropertyValue(String propertyPath) {
         Object value = object;
         int pos = propertyPath.indexOf('.');
         while (pos > -1) {

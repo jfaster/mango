@@ -40,59 +40,27 @@ public class Mango {
         if (dataCache == null) {
             dataCache = defaultDataCache;
         }
-        return Reflection.newProxy(daoClass, new MangoInvocationHandler(dataSource, dataCache, daoClass));
+        return Reflection.newProxy(daoClass, new MangoInvocationHandler(dataSource, dataCache));
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
         private DataSource dataSource;
         private final DataCache dataCache;
-        private final Class<?> daoClass;
 
-        private MangoInvocationHandler(DataSource dataSource, DataCache dataCache, Class<?> daoClass) {
+        private MangoInvocationHandler(DataSource dataSource, DataCache dataCache) {
             this.dataSource = dataSource;
             this.dataCache = dataCache;
-            this.daoClass = daoClass;
         }
 
         LoadingCache<Method, Operator> cache = CacheBuilder.newBuilder()
                 .build(
                         new CacheLoader<Method, Operator>() {
                             public Operator load(Method method) throws Exception {
-                                CacheDescriptor cacheDescriptor = getCacheDescriptor(method);
                                 Operator operator = OperatorFactory.getOperator(method);
                                 operator.setDataSource(dataSource);
                                 operator.setDataCache(dataCache);
-                                operator.setCacheDescriptor(cacheDescriptor);
                                 return operator;
-                            }
-
-                            private CacheDescriptor getCacheDescriptor(Method method) {
-                                Cache cacheAnno = daoClass.getAnnotation(Cache.class);
-                                CacheDescriptor cacheDescriptor = new CacheDescriptor();
-                                if (cacheAnno != null) { // dao类使用cache
-                                    CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
-                                    if (cacheIgnoredAnno == null) { // method不禁用cache
-                                        cacheDescriptor.setUseCache(true);
-                                        cacheDescriptor.setPrefix(cacheAnno.prefix());
-                                        Annotation[][] pass = method.getParameterAnnotations();
-                                        int num = 0;
-                                        for (int i = 0; i < pass.length; i++) {
-                                            Annotation[] pas = pass[i];
-                                            for (Annotation pa : pas) {
-                                                if (CacheBy.class.equals(pa.annotationType())) {
-                                                    cacheDescriptor.setBeanName(String.valueOf(i + 1));
-                                                    cacheDescriptor.setPropertyName(((CacheBy) pa).value());
-                                                    num++;
-                                                }
-                                            }
-                                        }
-                                        if (num != 1) {
-                                            throw new CacheByAnnotationException("need 1 but " + num);
-                                        }
-                                    }
-                                }
-                                return cacheDescriptor;
                             }
                         });
 

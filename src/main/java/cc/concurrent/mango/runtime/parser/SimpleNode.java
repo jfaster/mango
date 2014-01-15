@@ -1,7 +1,5 @@
 package cc.concurrent.mango.runtime.parser;
 
-import cc.concurrent.mango.runtime.RuntimeContext;
-
 public class SimpleNode implements Node {
 
     protected Node parent;
@@ -106,11 +104,6 @@ public class SimpleNode implements Node {
                 }
             }
         }
-    }
-
-    @Override
-    public Object value(RuntimeContext context) {
-        return null;
     }
 
 }
