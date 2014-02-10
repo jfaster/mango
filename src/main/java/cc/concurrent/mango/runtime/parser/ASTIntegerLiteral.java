@@ -29,7 +29,6 @@ public class ASTIntegerLiteral extends ASTExpressionNode {
 
     @Override
     public void checkType(TypeContext context) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }

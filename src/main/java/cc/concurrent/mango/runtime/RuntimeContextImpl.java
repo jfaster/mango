@@ -14,17 +14,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class RuntimeContextImpl implements RuntimeContext {
 
-    private final Map<String, Object> parameters;
+    private final Map<String, Object> parameterMap;
     private final Map<String, Object> cache;
 
-    public RuntimeContextImpl(Map<String, Object> parameters) {
-        this.parameters = parameters;
+    public RuntimeContextImpl(Map<String, Object> parameterMap) {
+        this.parameterMap = parameterMap;
         this.cache = Maps.newHashMap();
     }
 
     @Override
     public Object getPropertyValue(String beanName, String propertyName) {
-        Object bean = parameters.get(beanName);
+        Object bean = parameterMap.get(beanName);
         if (Strings.isNullOrEmpty(propertyName)) {
             return bean;
         }
@@ -42,7 +42,7 @@ public class RuntimeContextImpl implements RuntimeContext {
     @Override
     public void setPropertyValue(String beanName, String propertyName, Object value) {
         if (Strings.isNullOrEmpty(propertyName)) {
-            parameters.put(beanName, value);
+            parameterMap.put(beanName, value);
         } else {
             String key = getCacheKey(beanName, propertyName);
             cache.put(key, value);

@@ -9,6 +9,8 @@ import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.jdbc.RowMapper;
 import cc.concurrent.mango.jdbc.SingleColumnRowMapper;
+import cc.concurrent.mango.runtime.TypeContext;
+import cc.concurrent.mango.runtime.TypeContextImpl;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.runtime.parser.Parser;
 import com.google.common.base.Strings;
@@ -17,7 +19,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -55,6 +59,9 @@ public class OperatorFactory {
         if (sqlType == null) {
             throw new IncorrectSqlException("sql must start with INSERT or DELETE or UPDATE or SELECT");
         }
+
+        TypeContext context = getTypeContext(method);
+        rootNode.checkType(context); // 监测参数类型
 
         if (sqlType == SQLType.SELECT) {
             return buildQueryOperator(method, rootNode);
@@ -113,12 +120,11 @@ public class OperatorFactory {
             throw new IncorrectReturnTypeException("return type " + method.getGenericReturnType() + " is error");
         }
 
+        Operator operator = new QueryOperator(rootNode, getRowMapper(mappedClass), isForList, isForSet, isForArray);
         CacheDescriptor cacheDescriptor = getCacheDescriptor(method);
+        operator.setCacheDescriptor(cacheDescriptor);
         //TODO 添加构造函数验证与method参数验证
 
-
-        Operator operator = new QueryOperator(rootNode, getRowMapper(mappedClass), isForList, isForSet, isForArray);
-        operator.setCacheDescriptor(cacheDescriptor);
         return operator;
     }
 
@@ -193,6 +199,15 @@ public class OperatorFactory {
             }
         }
         return cacheDescriptor;
+    }
+
+    private static TypeContext getTypeContext(Method method) {
+        Map<String, Class<?>> parameterTypeMap = new HashMap<String, Class<?>>();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++) {
+            parameterTypeMap.put(String.valueOf(i + 1), parameterTypes[i]);
+        }
+        return new TypeContextImpl(parameterTypeMap);
     }
 
 }

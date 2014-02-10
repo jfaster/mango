@@ -9,10 +9,12 @@ import cc.concurrent.mango.util.Iterables;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -67,7 +69,17 @@ public class ASTIterableParameter extends ASTExpressionNode {
 
     @Override
     public void checkType(TypeContext context) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Class<?> type = context.getPropertyType(beanName, propertyName);
+        checkNotNull(type);
+        boolean isIterable = false;
+        if (Collection.class.isAssignableFrom(type)) { // 集合
+            isIterable = true;
+        } else if (type.isArray()) { // 数组
+            isIterable = true;
+        }
+        if (!isIterable) {
+            throw new IncorrectParameterTypeException("need iterableClass but " + type);
+        }
     }
 
     public Class<?> type(TypeContext context) {

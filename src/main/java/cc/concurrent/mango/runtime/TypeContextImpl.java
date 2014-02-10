@@ -1,5 +1,6 @@
 package cc.concurrent.mango.runtime;
 
+import cc.concurrent.mango.util.reflect.TypeUtil;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -12,31 +13,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TypeContextImpl implements TypeContext {
 
-    private final Map<String, Class<?>> types;
+    private final Map<String, Class<?>> parameterTypeMap;
     private final Map<String, Class<?>> cache;
 
-    public TypeContextImpl(Map<String, Class<?>> types) {
-        this.types = types;
+    public TypeContextImpl(Map<String, Class<?>> parameterTypeMap) {
+        this.parameterTypeMap = parameterTypeMap;
         this.cache = Maps.newHashMap();
     }
 
     @Override
     public Class<?> getPropertyType(String beanName, String propertyName) {
-        Class<?> type = types.get(beanName);
+        Class<?> parameterType = parameterTypeMap.get(beanName);
         if (Strings.isNullOrEmpty(propertyName)) {
-            return type;
+            return parameterType;
         }
-        checkNotNull(type);
+        checkNotNull(parameterType);
         String key = getCacheKey(beanName, propertyName);
         if (cache.containsKey(key)) {
             return cache.get(key);
         }
-
-//        BeanWrapper bw = new BeanWrapperImpl(bean);
-//        Object value = bw.getPropertyValue(propertyName);
-//        cache.put(key, value);
-//        return value;
-        return null;
+        Class<?> type = TypeUtil.getPropertyType(parameterType, propertyName);
+        cache.put(key, type);
+        return type;
     }
 
     private String getCacheKey(String beanName, String propertyName) {

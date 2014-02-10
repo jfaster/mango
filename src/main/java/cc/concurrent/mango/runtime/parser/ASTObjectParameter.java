@@ -1,5 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
+import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
+import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 
@@ -42,7 +44,10 @@ public class ASTObjectParameter extends ASTExpressionNode {
 
     @Override
     public void checkType(TypeContext context) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Class<?> type = context.getPropertyType(beanName, propertyName);
+        if (!JdbcUtils.isSingleColumnClass(type)) {
+            throw new IncorrectParameterTypeException("need singleColumnClass but " + type);
+        }
     }
 
 }

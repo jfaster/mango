@@ -3,6 +3,7 @@ package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
+import cc.concurrent.mango.runtime.TypeContext;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -18,6 +19,15 @@ public class ASTRootNode extends SimpleNode {
 
     public ASTRootNode(Parser p, int i) {
         super(p, i);
+    }
+
+    public void checkType(TypeContext context) {
+        for (int i = 0; i < jjtGetNumChildren(); i++) {
+            Node node = jjtGetChild(i);
+            if (node instanceof ASTExpressionNode) {
+                ((ASTExpressionNode) node).checkType(context);
+            }
+        }
     }
 
     public ParsedSql buildSqlAndArgs(RuntimeContext context) {
