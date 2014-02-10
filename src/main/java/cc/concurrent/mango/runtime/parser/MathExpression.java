@@ -6,20 +6,20 @@ import cc.concurrent.mango.runtime.TypeContext;
 /**
  * @author ash
  */
-public abstract class ASTMathNode extends ASTExpressionNode {
+public abstract class MathExpression extends ValuableExpression {
 
-    public ASTMathNode(int i) {
+    public MathExpression(int i) {
         super(i);
     }
 
-    public ASTMathNode(Parser p, int i) {
+    public MathExpression(Parser p, int i) {
         super(p, i);
     }
 
     @Override
     public Object value(RuntimeContext context) {
-        Object left = ((ASTExpressionNode) jjtGetChild(0)).value(context);
-        Object right = ((ASTExpressionNode) jjtGetChild(1)).value(context);
+        Object left = ((ValuableExpression) jjtGetChild(0)).value(context);
+        Object right = ((ValuableExpression) jjtGetChild(1)).value(context);
 
         Object special = handleSpecial(left, right);
         if (special != null) {

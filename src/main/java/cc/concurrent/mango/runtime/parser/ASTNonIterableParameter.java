@@ -2,7 +2,6 @@ package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.jdbc.JdbcUtils;
-import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 
 import java.util.regex.Matcher;
@@ -11,18 +10,18 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
+ * 不可迭代参数
+ *
  * @author ash
  */
-public class ASTObjectParameter extends ASTExpressionNode {
+public class ASTNonIterableParameter extends ValuableParameter {
 
-    private String beanName;
-    private String propertyName; // 为""的时候表示没有属性
 
-    public ASTObjectParameter(int i) {
+    public ASTNonIterableParameter(int i) {
         super(i);
     }
 
-    public ASTObjectParameter(Parser p, int i) {
+    public ASTNonIterableParameter(Parser p, int i) {
         super(p, i);
     }
 
@@ -31,20 +30,15 @@ public class ASTObjectParameter extends ASTExpressionNode {
         Matcher m = p.matcher(param);
         checkState(m.matches());
         beanName = m.group(1);
-        propertyName = param.substring(m.end(1));
-        if (!propertyName.isEmpty()) {
-            propertyName = propertyName.substring(1);  // .a.b.c变为a.b.c
+        propertyPath = param.substring(m.end(1));
+        if (!propertyPath.isEmpty()) {
+            propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
         }
     }
 
     @Override
-    public Object value(RuntimeContext context) {
-        return context.getPropertyValue(beanName, propertyName);
-    }
-
-    @Override
     public void checkType(TypeContext context) {
-        Class<?> type = context.getPropertyType(beanName, propertyName);
+        Class<?> type = context.getPropertyType(beanName, propertyPath);
         if (!JdbcUtils.isSingleColumnClass(type)) {
             throw new IncorrectParameterTypeException("need singleColumnClass but " + type);
         }

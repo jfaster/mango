@@ -3,7 +3,7 @@ package cc.concurrent.mango.runtime.parser;
 /**
  * @author ash
  */
-public class ASTMulNode extends ASTMathNode {
+public class ASTMulNode extends MathExpression {
 
     public ASTMulNode(int i) {
         super(i);

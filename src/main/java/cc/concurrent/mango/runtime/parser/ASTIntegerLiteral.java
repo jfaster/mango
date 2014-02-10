@@ -4,9 +4,11 @@ import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 
 /**
+ * 整数字面值
+ *
  * @author ash
  */
-public class ASTIntegerLiteral extends ASTExpressionNode {
+public class ASTIntegerLiteral extends PrimaryExpression {
 
     private Integer value;
 

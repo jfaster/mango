@@ -73,13 +73,13 @@ ASTRootNode parse()  #RootNode :
 {
 }
 {
-    (Text() | Blank() | ObjectParameter() | IterableParameter() | MathExpression())+ <EOF>
+    (Text() | Blank() | NonIterableParameter() | IterableParameter() | ValuableExpression())+ <EOF>
     {
         return jjtThis;
     }
 }
 
-void ObjectParameter() :
+void NonIterableParameter() :
 {
     Token t;
 }
@@ -123,7 +123,7 @@ void Blank() :
     }
 }
 
-void MathExpression() #void : // 标记为void不生成节点
+void ValuableExpression() #void : // 标记为void不生成节点
 {
 
 }
@@ -155,12 +155,12 @@ void MultiplicativeExpression() #void : // 标记为void不生成节点
 void PrimaryExpression() #void :
 {}
 {
-        MathParameter()
+        Variable()
     |   IntegerLiteral()
     |   <LPAREN> AdditiveExpression() <RPAREN>
 }
 
-void MathParameter() :
+void Variable() :
 {
     Token t;
 }

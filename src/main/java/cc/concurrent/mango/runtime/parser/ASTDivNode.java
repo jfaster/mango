@@ -3,7 +3,7 @@ package cc.concurrent.mango.runtime.parser;
 /**
  * @author ash
  */
-public class ASTDivNode extends ASTMathNode {
+public class ASTDivNode extends MathExpression {
 
     public ASTDivNode(int i) {
         super(i);

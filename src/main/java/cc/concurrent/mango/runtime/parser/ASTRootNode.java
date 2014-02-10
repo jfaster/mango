@@ -24,8 +24,8 @@ public class ASTRootNode extends SimpleNode {
     public void checkType(TypeContext context) {
         for (int i = 0; i < jjtGetNumChildren(); i++) {
             Node node = jjtGetChild(i);
-            if (node instanceof ASTExpressionNode) {
-                ((ASTExpressionNode) node).checkType(context);
+            if (node instanceof ValuableExpression) {
+                ((ValuableExpression) node).checkType(context);
             }
         }
     }
@@ -41,8 +41,8 @@ public class ASTRootNode extends SimpleNode {
             } else if (node instanceof ASTBlank) {
                 ASTBlank text = (ASTBlank) node;
                 sql.append(text.getBlank());
-            } else if (node instanceof ASTObjectParameter) {
-                ASTObjectParameter outParam = (ASTObjectParameter) node;
+            } else if (node instanceof ASTNonIterableParameter) {
+                ASTNonIterableParameter outParam = (ASTNonIterableParameter) node;
                 args.add(outParam.value(context));
                 sql.append("?");
             } else if (node instanceof ASTIterableParameter) {
