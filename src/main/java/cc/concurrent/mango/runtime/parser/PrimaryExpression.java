@@ -18,6 +18,17 @@ public abstract class PrimaryExpression extends ValuableExpression {
     }
 
     @Override
+    Token getFirstToken() {
+        return jjtGetFirstToken();
+    }
+
+    @Override
+    Token getLastToken() {
+        return jjtGetLastToken();
+    }
+
+    @Override
     void checkType(TypeContext context) {
     }
+
 }

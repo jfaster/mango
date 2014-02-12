@@ -1,14 +1,6 @@
 package cc.concurrent.mango.runtime.parser;
 
-import cc.concurrent.mango.runtime.ParsedSql;
-import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.RuntimeContextImpl;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * @author ash
@@ -16,27 +8,20 @@ import java.util.Map;
 public class ParserTest {
 
     @Test
-    public void test() throws ParseException {
-        Parser p = new Parser("select ${:2  + :1 + 2} table");
+    public void test() throws Exception {
+        Parser p = new Parser("${:2  + (:1 + 3)}");
         p.parse().dump("");
     }
 
     @Test
-    public void test2() throws ParseException {
-        Parser p = new Parser("select * from table_${:1 % 100} where a = :1 and b in (:2)");
-        ASTRootNode root = p.parse();
-        Map<String, Object> map = Maps.newHashMap();
-        map.put("1", 105);
-        map.put("2", Lists.newArrayList());
-        RuntimeContext context = new RuntimeContextImpl(map);
-        ParsedSql tuple = root.buildSqlAndArgs(context);
-        System.out.println(tuple.getSql());
-        System.out.println(Arrays.toString(tuple.getArgs()));
+    public void test2() throws Exception {
+        Parser p = new Parser("${(:2  + :1) + 3}");
+        p.parse().dump("");
     }
 
     @Test
     public void test3() throws Exception {
-        Parser p = new Parser("select id, name, age, gender, money, update_time from user where id in (:1)");
+        Parser p = new Parser("${((:2  + :1)) + 3}");
         p.parse().dump("");
     }
 
