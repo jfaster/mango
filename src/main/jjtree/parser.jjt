@@ -6,6 +6,9 @@ options
     /** 生成非静态方法 */
     static = false;
 
+    /** 标记开始token与结束token */
+    TRACK_TOKENS=true;
+
     /** 让jjtree给每个非终结符生成一个对象 */
     MULTI = true;
 
@@ -14,6 +17,7 @@ options
 
     /** 忽略大小写 */
     IGNORE_CASE = true;
+
 }
 
 PARSER_BEGIN(Parser)

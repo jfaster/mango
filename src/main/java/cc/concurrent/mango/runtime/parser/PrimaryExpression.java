@@ -1,5 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
+import cc.concurrent.mango.runtime.TypeContext;
+
 /**
  * 一元表达式
  *
@@ -15,4 +17,7 @@ public abstract class PrimaryExpression extends ValuableExpression {
         super(p, i);
     }
 
+    @Override
+    void checkType(TypeContext context) {
+    }
 }

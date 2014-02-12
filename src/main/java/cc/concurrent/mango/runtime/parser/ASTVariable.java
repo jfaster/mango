@@ -1,10 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
-import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.TypeContext;
 
-import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,14 +37,6 @@ public class ASTVariable extends PrimaryExpression {
     @Override
     public Object value(RuntimeContext context) {
         return context.getPropertyValue(beanName, propertyPath);
-    }
-
-    @Override
-    public void checkType(TypeContext context) {
-        Class<?> type = context.getPropertyType(beanName, propertyPath);
-        if (Collection.class.isAssignableFrom(type)) {
-            throw new IncorrectParameterTypeException("need singleColumnClass but " + type);
-        }
     }
 
 }

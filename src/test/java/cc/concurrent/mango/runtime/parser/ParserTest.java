@@ -17,7 +17,7 @@ public class ParserTest {
 
     @Test
     public void test() throws ParseException {
-        Parser p = new Parser("select * from table_${:uid % 100 + 1 + :3.uid} where a = :1 and b in (:2.a)");
+        Parser p = new Parser("select ${:2  + :1 + 2} table");
         p.parse().dump("");
     }
 

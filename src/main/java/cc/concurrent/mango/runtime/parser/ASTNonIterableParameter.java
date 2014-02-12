@@ -40,7 +40,7 @@ public class ASTNonIterableParameter extends ValuableParameter {
     public void checkType(TypeContext context) {
         Class<?> type = context.getPropertyType(beanName, propertyPath);
         if (!JdbcUtils.isSingleColumnClass(type)) {
-            throw new IncorrectParameterTypeException("need singleColumnClass but " + type);
+            throw new IncorrectParameterTypeException("need single colum class but " + type);
         }
     }
 
