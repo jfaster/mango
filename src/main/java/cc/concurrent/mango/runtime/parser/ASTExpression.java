@@ -17,6 +17,16 @@ public class ASTExpression extends ValuableExpression {
     }
 
     @Override
+    Object value(RuntimeContext context) {
+        return ((ValuableExpression) jjtGetChild(0)).value(context);
+    }
+
+    @Override
+    void checkType(TypeContext context) {
+        ((ValuableExpression) jjtGetChild(0)).checkType(context);
+    }
+
+    @Override
     Token getFirstToken() {
         return jjtGetFirstToken();
     }
@@ -24,16 +34,6 @@ public class ASTExpression extends ValuableExpression {
     @Override
     Token getLastToken() {
         return jjtGetLastToken();
-    }
-
-    @Override
-    Object value(RuntimeContext context) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    void checkType(TypeContext context) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }

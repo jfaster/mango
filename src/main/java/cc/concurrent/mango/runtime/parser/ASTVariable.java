@@ -1,6 +1,8 @@
 package cc.concurrent.mango.runtime.parser;
 
+import cc.concurrent.mango.exception.MathException;
 import cc.concurrent.mango.runtime.RuntimeContext;
+import cc.concurrent.mango.runtime.TypeContext;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +33,24 @@ public class ASTVariable extends PrimaryExpression {
         propertyPath = param.substring(m.end(1));
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
+        }
+    }
+
+    @Override
+    void checkType(TypeContext context) {
+        Class<?> type = context.getPropertyType(beanName, propertyPath);
+        Node node = this;
+        do {
+            node = node.jjtGetParent();
+        } while (!(node instanceof ASTExpression) && (node instanceof ASTAddNode));
+        if (node instanceof ASTExpression) { // 到达根节点都是加法
+            if (!Integer.class.equals(type) && !int.class.equals(type) && !String.class.equals(type)) {
+                throw new MathException("Variable " + literal() + " need Integer or int or String but " + type.getName());
+            }
+        } else { // 到达根节点的途中遇到了非加法
+            if (!Integer.class.equals(type) && !int.class.equals(type)) {
+                throw new MathException("Variable " + literal() + " need Integer or int but " + type.getName());
+            }
         }
     }
 

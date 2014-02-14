@@ -17,6 +17,28 @@ public abstract class MathExpression extends ValuableExpression {
     }
 
     @Override
+    void checkType(TypeContext context) {
+        ((ValuableExpression) jjtGetChild(0)).checkType(context);
+        ((ValuableExpression) jjtGetChild(1)).checkType(context);
+    }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        Object left = ((ValuableExpression) jjtGetChild(0)).value(context);
+        Object right = ((ValuableExpression) jjtGetChild(1)).value(context);
+
+        Object special = handleSpecial(left, right);
+        if (special != null) {
+            return special;
+        }
+
+        if (!(left instanceof Integer) || !(right instanceof Integer)) {
+            throw new IllegalStateException("error type");
+        }
+        return perform((Integer) left, (Integer) right);
+    }
+
+    @Override
     Token getFirstToken() {
         ValuableExpression parent = (ValuableExpression) jjtGetParent();
         if (parent instanceof ASTExpression) { // 父节点是表达式根节点
@@ -45,27 +67,6 @@ public abstract class MathExpression extends ValuableExpression {
             }
             return t;
         }
-    }
-
-    @Override
-    public Object value(RuntimeContext context) {
-        Object left = ((ValuableExpression) jjtGetChild(0)).value(context);
-        Object right = ((ValuableExpression) jjtGetChild(1)).value(context);
-
-        Object special = handleSpecial(left, right);
-        if (special != null) {
-            return special;
-        }
-
-        if (!(left instanceof Integer) || !(right instanceof Integer)) {
-            throw new IllegalStateException("error type");
-        }
-        return perform((Integer) left, (Integer) right);
-    }
-
-    @Override
-    public void checkType(TypeContext context) {
-        return;
     }
 
     protected Object handleSpecial(Object left, Object right) {

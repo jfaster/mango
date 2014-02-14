@@ -27,8 +27,4 @@ public abstract class PrimaryExpression extends ValuableExpression {
         return jjtGetLastToken();
     }
 
-    @Override
-    void checkType(TypeContext context) {
-    }
-
 }

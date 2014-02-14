@@ -1,6 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.runtime.RuntimeContext;
+import cc.concurrent.mango.runtime.TypeContext;
 
 /**
  * 整数字面值
@@ -21,6 +22,11 @@ public class ASTIntegerLiteral extends PrimaryExpression {
 
     public void setValue(Integer value) {
         this.value = value;
+    }
+
+    @Override
+    void checkType(TypeContext context) {
+        return;
     }
 
     @Override

@@ -24,8 +24,8 @@ public class ASTRootNode extends SimpleNode {
     public void checkType(TypeContext context) {
         for (int i = 0; i < jjtGetNumChildren(); i++) {
             Node node = jjtGetChild(i);
-            if (node instanceof ValuableExpression) {
-                ((ValuableExpression) node).checkType(context);
+            if (node instanceof ASTExpression) {
+                ((ASTExpression) node).checkType(context);
             }
         }
     }
