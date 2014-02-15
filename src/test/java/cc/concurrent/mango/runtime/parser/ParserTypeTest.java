@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * @author ash
  */
-public class ParserExpressionTest {
+public class ParserTypeTest {
 
     @Test
     public void test() throws Exception {
@@ -36,11 +36,12 @@ public class ParserExpressionTest {
 
     @Test
     public void test3() throws Exception {
-        int i = 0;
-        do {
-            i++;
-            System.out.println(i);
-        } while (i < 10);
+        Parser p = new Parser("a in (:1)");
+        ASTRootNode root = p.parse();
+        Map<String, Class<?>> map = Maps.newHashMap();
+        map.put("1", Integer.class);
+        TypeContext context = new TypeContextImpl(map);
+        root.checkType(context);
     }
 
 

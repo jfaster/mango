@@ -41,7 +41,7 @@ TOKEN :
     |   <#FIELD: ["a"-"z","_"] (["a"-"z","_", "0"-"9"])* >
     |   <#BLANK: (" ")* >
     |   <ITERABLE_PARAMETER: "in" <BLANK> "(" <BLANK> <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* <BLANK> ")" >
-    |   <OBJECT_PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
+    |   <NON_ITERABLE_PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
     |   <BLANK_MORE: (" ")+ >
     |   <EXPR_START: "${" > {SwitchTo(G);}
 }
@@ -88,7 +88,7 @@ void NonIterableParameter() :
     Token t;
 }
 {
-    t=<OBJECT_PARAMETER>
+    t=<NON_ITERABLE_PARAMETER>
     {
         jjtThis.setParam(t.image);
     }

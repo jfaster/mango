@@ -1,7 +1,5 @@
 package cc.concurrent.mango.runtime.parser;
 
-import cc.concurrent.mango.runtime.TypeContext;
-
 /**
  * 一元表达式
  *

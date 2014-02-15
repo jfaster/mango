@@ -42,15 +42,9 @@ public class ASTIterableParameter extends ValuableParameter {
     @Override
     public void checkType(TypeContext context) {
         Class<?> type = context.getPropertyType(beanName, propertyPath);
-        checkNotNull(type);
-        boolean isIterable = false;
-        if (Collection.class.isAssignableFrom(type)) { // 集合
-            isIterable = true;
-        } else if (type.isArray()) { // 数组
-            isIterable = true;
-        }
-        if (!isIterable) {
-            throw new IncorrectParameterTypeException("need iterable class but " + type);
+        if (!Collection.class.isAssignableFrom(type) && !type.isArray()) { // 不是集合或数组抛出异常
+            throw new IncorrectParameterTypeException(getLocation() + " " + literal() +
+                    " expected Collection or Array but " + type.getName());
         }
     }
 

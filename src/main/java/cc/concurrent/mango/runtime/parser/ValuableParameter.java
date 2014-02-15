@@ -23,5 +23,14 @@ public abstract class ValuableParameter extends ValuableNode {
         return context.getPropertyValue(beanName, propertyPath);
     }
 
+    @Override
+    Token getFirstToken() {
+        return jjtGetFirstToken();
+    }
+
+    @Override
+    Token getLastToken() {
+        return jjtGetLastToken();
+    }
 
 }
