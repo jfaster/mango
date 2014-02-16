@@ -3,6 +3,7 @@ package cc.concurrent.mango.runtime.parser;
 import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.TypeContext;
+import com.google.common.base.Strings;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +43,11 @@ public class ASTNonIterableParameter extends ValuableParameter {
         if (!JdbcUtils.isSingleColumnClass(type)) {
             throw new IncorrectParameterTypeException("need single colum class but " + type);
         }
+    }
+
+    @Override
+    public String toString() {
+        return ":" + (Strings.isNullOrEmpty(propertyPath) ? beanName : beanName + propertyPath);
     }
 
 }

@@ -2,13 +2,12 @@ package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.runtime.TypeContext;
-import com.google.common.base.CharMatcher;
+import com.google.common.base.Strings;
 
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -50,6 +49,11 @@ public class ASTIterableParameter extends ValuableParameter {
             throw new IncorrectParameterTypeException(getLocation() + " " + literal() +
                     " expected Collection or Array but " + type.getName());
         }
+    }
+
+    @Override
+    public String toString() {
+        return field + " in (:" + (Strings.isNullOrEmpty(propertyPath) ? beanName : beanName + propertyPath) + ")";
     }
 
 }

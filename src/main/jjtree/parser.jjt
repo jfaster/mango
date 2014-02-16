@@ -44,20 +44,14 @@ TOKEN:
     |   <#NUMBER: ["1"-"9"] (["0"-"9"])* >
     |   <#DOT: "." >
     |   <#FIELD: ["a"-"z","_"] (["a"-"z","_", "0"-"9"])* >
-    |   <PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
-    |   <IN: "in" >
-    |   <LEFT_PAREN: "(" >
-    |   <RIGHT_PAREN: ")" >
-    |   <DOLLAR: "$" >
-    |   <LEFT_CURLEY: "{" >
-    |   <RIGHT_CURLEY: "}" >
+    |   <#PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
 }
 
 TOKEN:
 {
         <NON_ITERABLE_PARAMETER: <PARAMETER> >
-    |   <IN_START: <IN> (" ")* <LEFT_PAREN> > {SwitchTo(I);}
-    |   <EXPR_START: <DOLLAR> <LEFT_CURLEY> > {SwitchTo(G);}
+    |   <IN_START: "in" (" ")* "(" > {SwitchTo(I);}
+    |   <EXPR_START: "${" > {SwitchTo(G);}
     |   <TEXT: (~[":", "$", " "])+ >
 }
 
@@ -71,7 +65,7 @@ SKIP :
 TOKEN :
 {
         <ITERABLE_PARAMETER: <PARAMETER> >
-    |   <IN_END: <RIGHT_PAREN> > {SwitchTo(DEFAULT);}
+    |   <IN_END: ")" > {SwitchTo(DEFAULT);}
 }
 
 
@@ -91,7 +85,9 @@ TOKEN :
     |   <DIVIDE: "/">
     |   <MODULUS: "%">
     |   <INTEGER_LITERAL: ["1"-"9"] (["0"-"9"])* >
-    |   <EXPR_END: <RIGHT_CURLEY> > {SwitchTo(DEFAULT);}
+    |   <LEFT_PAREN: "(" >
+    |   <RIGHT_PAREN: ")" >
+    |   <EXPR_END: "}" > {SwitchTo(DEFAULT);}
 }
 
 ASTRootNode parse()  #RootNode :
