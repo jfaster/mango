@@ -42,7 +42,7 @@ public class ASTVariable extends PrimaryExpression {
         Node node = this;
         do {
             node = node.jjtGetParent();
-        } while (!(node instanceof ASTExpression) && (node instanceof ASTAddNode));
+        } while (!(node instanceof ASTExpression) && (node instanceof ASTAddExpression));
         if (node instanceof ASTExpression) { // 到达根节点都是加法
             if (!Integer.class.equals(type) && !int.class.equals(type) && !String.class.equals(type)) {
                 throw new MathException("Variable " + literal() + " need Integer or int or String but " + type.getName());
