@@ -33,38 +33,47 @@ public class Parser {
 }
 PARSER_END(Parser)
 
-TOKEN :
+SKIP :
+{
+        " "
+}
+
+TOKEN:
 {
         <#COLON: ":" >
     |   <#NUMBER: ["1"-"9"] (["0"-"9"])* >
     |   <#DOT: "." >
     |   <#FIELD: ["a"-"z","_"] (["a"-"z","_", "0"-"9"])* >
-    |   <#BLANK: (" ")* >
-    |   <ITERABLE_PARAMETER: "in" <BLANK> "(" <BLANK> <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* <BLANK> ")" >
-    |   <NON_ITERABLE_PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
-    |   <BLANK_MORE: (" ")+ >
-    |   <EXPR_START: "${" > {SwitchTo(G);}
+    |   <PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
+    |   <IN: "in" >
+    |   <LEFT_PAREN: "(" >
+    |   <RIGHT_PAREN: ")" >
+    |   <DOLLAR: "$" >
+    |   <LEFT_CURLEY: "{" >
+    |   <RIGHT_CURLEY: "}" >
 }
 
 TOKEN:
 {
-        <TEXT: (~[":", "$", " "])+ >
+        <NON_ITERABLE_PARAMETER: <PARAMETER> >
+    |   <IN_START: <IN> (" ")* <LEFT_PAREN> > {SwitchTo(I);}
+    |   <EXPR_START: <DOLLAR> <LEFT_CURLEY> > {SwitchTo(G);}
+    |   <TEXT: (~[":", "$", " "])+ >
 }
 
-<G>
-TOKEN:
+<I>
+SKIP :
 {
-        <MATH_PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
-    |   <MINUS: "-">
-    |   <PLUS: "+">
-    |   <MULTIPLY: "*">
-    |   <DIVIDE: "/">
-    |   <MODULUS: "%">
-    |   <EXPR_END: "}" > {SwitchTo(DEFAULT);}
-    |   <INTEGER_LITERAL: ["1"-"9"] (["0"-"9"])* >
-    |   <LPAREN: "(" >
-    |   <RPAREN: ")" >
+        " "
 }
+
+<I>
+TOKEN :
+{
+        <ITERABLE_PARAMETER: <PARAMETER> >
+    |   <IN_END: <RIGHT_PAREN> > {SwitchTo(DEFAULT);}
+}
+
 
 <G>
 SKIP :
@@ -72,12 +81,24 @@ SKIP :
         " "
 }
 
+<G>
+TOKEN :
+{
+        <VARIABLE: <PARAMETER> >
+    |   <MINUS: "-">
+    |   <PLUS: "+">
+    |   <MULTIPLY: "*">
+    |   <DIVIDE: "/">
+    |   <MODULUS: "%">
+    |   <INTEGER_LITERAL: ["1"-"9"] (["0"-"9"])* >
+    |   <EXPR_END: <RIGHT_CURLEY> > {SwitchTo(DEFAULT);}
+}
 
 ASTRootNode parse()  #RootNode :
 {
 }
 {
-    (Text() | Blank() | NonIterableParameter() | IterableParameter() | DirectiveExpression())+ <EOF>
+    (LOOKAHEAD(2) IterableParameter() | Text() | NonIterableParameter() | DirectiveExpression())+ <EOF>
     {
         return jjtThis;
     }
@@ -90,7 +111,7 @@ void NonIterableParameter() :
 {
     t=<NON_ITERABLE_PARAMETER>
     {
-        jjtThis.setParam(t.image);
+        jjtThis.setParameter(t.image);
     }
 }
 
@@ -99,10 +120,7 @@ void IterableParameter() :
     Token t;
 }
 {
-    t=<ITERABLE_PARAMETER>
-    {
-        jjtThis.setParam(t.image);
-    }
+    t=<TEXT> {jjtThis.setField(t.image);} <IN_START> t=<ITERABLE_PARAMETER> {jjtThis.setParameter(t.image);} <IN_END>
 }
 
 void Text() :
@@ -113,17 +131,6 @@ void Text() :
     t=<TEXT>
     {
         jjtThis.setText(t.image);
-    }
-}
-
-void Blank() :
-{
-    Token t;
-}
-{
-    t=<BLANK_MORE>
-    {
-        jjtThis.setBlank(t.image);
     }
 }
 
@@ -168,7 +175,7 @@ void PrimaryExpression() #void :
 {
         Variable()
     |   IntegerLiteral()
-    |   <LPAREN> AdditiveExpression() <RPAREN>
+    |   <LEFT_PAREN> AdditiveExpression() <RIGHT_PAREN>
 }
 
 void Variable() :
@@ -176,9 +183,9 @@ void Variable() :
     Token t;
 }
 {
-    t=<MATH_PARAMETER>
+    t=<VARIABLE>
     {
-        jjtThis.setParam(t.image);
+        jjtThis.setParameter(t.image);
     }
 }
 

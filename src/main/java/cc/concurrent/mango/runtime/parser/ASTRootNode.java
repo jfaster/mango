@@ -38,9 +38,6 @@ public class ASTRootNode extends SimpleNode {
             if (node instanceof ASTText) {
                 ASTText text = (ASTText) node;
                 sql.append(text.getText());
-            } else if (node instanceof ASTBlank) {
-                ASTBlank text = (ASTBlank) node;
-                sql.append(text.getBlank());
             } else if (node instanceof ASTNonIterableParameter) {
                 ASTNonIterableParameter outParam = (ASTNonIterableParameter) node;
                 args.add(outParam.value(context));

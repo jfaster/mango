@@ -9,7 +9,7 @@ public class ParserTest {
 
     @Test
     public void test() throws Exception {
-        Parser p = new Parser("${:2  + (:1 + 3)}");
+        Parser p = new Parser("select * from ${:table / 100 + 1} where a=:1");
         p.parse().dump("");
     }
 

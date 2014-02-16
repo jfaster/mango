@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class ASTIterableParameter extends ValuableParameter {
 
+    private String field; // "a in (:1)"中的a
 
     public ASTIterableParameter(int i) {
         super(i);
@@ -27,13 +28,16 @@ public class ASTIterableParameter extends ValuableParameter {
         super(p, i);
     }
 
-    public void setParam(String param) {
-        Pattern p = Pattern.compile("in\\s*\\(\\s*:(\\w+)(\\.\\w+)*\\s*\\)");
-        Matcher m = p.matcher(param);
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public void setParameter(String parameter) {
+        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
+        Matcher m = p.matcher(parameter);
         checkState(m.matches());
         beanName = m.group(1);
-        CharMatcher toRemove = CharMatcher.is(' ').or(CharMatcher.is(')'));
-        propertyPath = toRemove.removeFrom(param.substring(m.end(1))); // 去掉空格与)
+        propertyPath = parameter.substring(m.end(1));
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
         }

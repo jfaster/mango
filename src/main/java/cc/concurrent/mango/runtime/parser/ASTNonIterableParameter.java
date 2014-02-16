@@ -25,12 +25,12 @@ public class ASTNonIterableParameter extends ValuableParameter {
         super(p, i);
     }
 
-    public void setParam(String param) {
+    public void setParameter(String parameter) {
         Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
-        Matcher m = p.matcher(param);
+        Matcher m = p.matcher(parameter);
         checkState(m.matches());
         beanName = m.group(1);
-        propertyPath = param.substring(m.end(1));
+        propertyPath = parameter.substring(m.end(1));
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
         }
