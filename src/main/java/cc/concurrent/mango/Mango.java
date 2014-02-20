@@ -1,6 +1,5 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
 import cc.concurrent.mango.util.ToStringHelper;
@@ -13,7 +12,6 @@ import com.google.common.reflect.AbstractInvocationHandler;
 import com.google.common.reflect.Reflection;
 
 import javax.sql.DataSource;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 

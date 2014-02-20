@@ -11,7 +11,7 @@ public class CacheDescriptor {
 
     private String beanName;
 
-    private String propertyName; // 为""的时候表示没有属性
+    private String propertyName; // "a in (:1)"中的a
 
     public boolean isUseCache() {
         return useCache;

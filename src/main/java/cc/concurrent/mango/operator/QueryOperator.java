@@ -1,9 +1,15 @@
 package cc.concurrent.mango.operator;
 
+import cc.concurrent.mango.exception.structure.IncorrectReturnTypeException;
+import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
+import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.jdbc.RowMapper;
+import cc.concurrent.mango.jdbc.SingleColumnRowMapper;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.RuntimeContextImpl;
+import cc.concurrent.mango.runtime.TypeContext;
+import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.logging.InternalLogger;
@@ -13,6 +19,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,12 +41,77 @@ public class QueryOperator extends AbstractOperator {
     private boolean isForSet;
     private boolean isForArray;
 
-    public QueryOperator(ASTRootNode rootNode, RowMapper<?> rowMapper, boolean isForList, boolean isForSet, boolean isForArray) {
+    private QueryOperator(ASTRootNode rootNode, Method method) {
         this.rootNode = rootNode;
-        this.rowMapper = rowMapper;
-        this.isForList = isForList;
-        this.isForSet = isForSet;
-        this.isForArray = isForArray;
+        init(method);
+    }
+
+    private void init(Method method) {
+        Class<?> mappedClass = null;
+        Type genericReturnType = method.getGenericReturnType();
+        if (genericReturnType instanceof ParameterizedType) { // 参数化类型
+            ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
+            Type rawType = parameterizedType.getRawType();
+            if (rawType instanceof Class) {
+                Class<?> rawClass = (Class<?>) rawType;
+                if (List.class.equals(rawClass)) {
+                    isForList = true;
+                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
+                    if (typeArgument instanceof Class) {
+                        mappedClass = (Class<?>) typeArgument;
+                    }
+                } else if (Set.class.equals(rawClass)) {
+                    isForSet = true;
+                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
+                    if (typeArgument instanceof Class) {
+                        mappedClass = (Class<?>) typeArgument;
+                    }
+                }
+            }
+        } else if (genericReturnType instanceof Class) { // 没有参数化
+            Class<?> clazz = (Class<?>) genericReturnType;
+            if (clazz.isArray()) { // 数组
+                isForArray = true;
+                mappedClass = clazz.getComponentType();
+            } else { // 普通类
+                mappedClass = clazz;
+            }
+        }
+        if (mappedClass == null) {
+            throw new IncorrectReturnTypeException("return type " + method.getGenericReturnType() + " is error");
+        }
+        rowMapper = getRowMapper(mappedClass);
+        checkType(method.getParameterTypes());
+    }
+
+    public static QueryOperator create(ASTRootNode rootNode, Method method) {
+        return new QueryOperator(rootNode, method);
+    }
+
+    @Override
+    public void checkType(Class<?>[] methodArgTypes) {
+        // 检测节点type
+        TypeContext context = getTypeContext(methodArgTypes);
+        rootNode.checkType(context);
+
+        List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
+
+        // 检测返回type
+        if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) { // sql中使用了in查询但返回结果不是可迭代类型
+            // TODO
+            throw new RuntimeException("");
+        }
+
+        if (cacheDescriptor.isUseCache()) { // 使用cache
+            if (aips.size() == 1) { // 在sql中只能存在一个in语句
+                String propertyName = aips.get(0).getPropertyName();
+                // TODO mappedClass中必须有properName
+                cacheDescriptor.setPropertyName(propertyName);
+            } else {
+                // TODO
+                throw new RuntimeException("");
+            }
+        }
     }
 
     @Override
@@ -195,6 +269,12 @@ public class QueryOperator extends AbstractOperator {
             }
             return r;
         }
+    }
+
+    private static <T> RowMapper<T> getRowMapper(Class<T> clazz) {
+        return JdbcUtils.isSingleColumnClass(clazz) ?
+                new SingleColumnRowMapper<T>(clazz) :
+                new BeanPropertyRowMapper<T>(clazz);
     }
 
 }

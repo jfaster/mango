@@ -40,7 +40,8 @@ public class ASTNonIterableParameter extends ValuableParameter {
     @Override
     public void checkType(TypeContext context) {
         Class<?> type = context.getPropertyType(beanName, propertyPath);
-        if (!JdbcUtils.isSingleColumnClass(type)) {
+        if (!JdbcUtils.isSingleColumnClass(type) && !java.util.Date.class.equals(type)) {
+            // TODO 合适的Exception 包含 java.util.Date
             throw new IncorrectParameterTypeException("need single colum class but " + type);
         }
     }

@@ -6,6 +6,7 @@ import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.RuntimeContextImpl;
+import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.logging.InternalLogger;
@@ -15,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,24 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     private ASTRootNode rootNode;
 
-    public BatchUpdateOperator(ASTRootNode rootNode) {
+    private BatchUpdateOperator(ASTRootNode rootNode, Method method) {
         this.rootNode = rootNode;
+        init(method);
+    }
+
+    public void init(Method method) {
+        checkType(method.getParameterTypes());
+    }
+
+    public static BatchUpdateOperator create(ASTRootNode rootNode, Method method) {
+        return new BatchUpdateOperator(rootNode, method);
+    }
+
+    @Override
+    public void checkType(Class<?>[] methodArgTypes) {
+        // 检测节点type
+        TypeContext context = getTypeContextForBatch(methodArgTypes);
+        rootNode.checkType(context);
     }
 
     @Override

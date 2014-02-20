@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class ASTIterableParameter extends ValuableParameter {
 
-    private String field; // "a in (:1)"中的a
+    private String propertyName; // "a in (:1)"中的a
 
     public ASTIterableParameter(int i) {
         super(i);
@@ -27,8 +27,8 @@ public class ASTIterableParameter extends ValuableParameter {
         super(p, i);
     }
 
-    public void setField(String field) {
-        this.field = field;
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 
     public void setParameter(String parameter) {
@@ -42,6 +42,10 @@ public class ASTIterableParameter extends ValuableParameter {
         }
     }
 
+    public String getPropertyName() {
+        return propertyName;
+    }
+
     @Override
     public void checkType(TypeContext context) {
         Class<?> type = context.getPropertyType(beanName, propertyPath);
@@ -53,7 +57,7 @@ public class ASTIterableParameter extends ValuableParameter {
 
     @Override
     public String toString() {
-        return field + " in (:" + (Strings.isNullOrEmpty(propertyPath) ? beanName : beanName + propertyPath) + ")";
+        return propertyName + " in (:" + (Strings.isNullOrEmpty(propertyPath) ? beanName : beanName + propertyPath) + ")";
     }
 
 }

@@ -1,14 +1,17 @@
 package cc.concurrent.mango.operator;
 
+import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.RuntimeContextImpl;
+import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -21,9 +24,28 @@ public class UpdateOperator extends AbstractOperator {
     private ASTRootNode rootNode;
     private boolean returnGeneratedId;
 
-    public UpdateOperator(ASTRootNode rootNode, boolean returnGeneratedId) {
+    private UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         this.rootNode = rootNode;
-        this.returnGeneratedId = returnGeneratedId;
+        init(method, sqlType);
+    }
+
+    void init(Method method, SQLType sqlType) {
+        ReturnGeneratedId returnGeneratedIdAnno = method.getAnnotation(ReturnGeneratedId.class);
+        returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
+                && sqlType == SQLType.INSERT; // 是插入语句
+
+        checkType(method.getParameterTypes());
+    }
+
+    public static UpdateOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        return new UpdateOperator(rootNode, method, sqlType);
+    }
+
+    @Override
+    public void checkType(Class<?>[] methodArgTypes) {
+        // 检测节点type
+        TypeContext context = getTypeContext(methodArgTypes);
+        rootNode.checkType(context);
     }
 
     @Override
