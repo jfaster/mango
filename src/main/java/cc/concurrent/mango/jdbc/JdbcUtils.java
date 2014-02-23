@@ -6,7 +6,6 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.collect.Sets;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Set;
 
@@ -118,18 +117,20 @@ public class JdbcUtils {
             wasNullCheck = true;
         } else if (byte[].class.equals(requiredType)) {
             value = rs.getBytes(index);
-        } else if (Date.class.equals(requiredType)) {
+        } else if (java.sql.Date.class.equals(requiredType)) {
             value = rs.getDate(index);
-        } else if (Time.class.equals(requiredType)) {
+        } else if (java.sql.Time.class.equals(requiredType)) {
             value = rs.getTime(index);
-        } else if (Timestamp.class.equals(requiredType) || java.util.Date.class.equals(requiredType)) {
+        } else if (java.sql.Timestamp.class.equals(requiredType) || java.util.Date.class.equals(requiredType)) {
             value = rs.getTimestamp(index);
-        } else if (BigDecimal.class.equals(requiredType)) {
+        } else if (java.math.BigDecimal.class.equals(requiredType)) {
             value = rs.getBigDecimal(index);
-        } else if (Blob.class.equals(requiredType)) {
+        } else if (java.sql.Blob.class.equals(requiredType)) {
             value = rs.getBlob(index);
-        } else if (Clob.class.equals(requiredType)) {
+        } else if (java.sql.Clob.class.equals(requiredType)) {
             value = rs.getClob(index);
+        } else {
+            // TODO Exception
         }
 
         // Perform was-null check if demanded (for results that the
@@ -150,18 +151,20 @@ public class JdbcUtils {
 
     private final static Set<Class<?>> singleColumClassSet = Sets.newHashSet();
     static {
-        // jdbc中的类型
-        singleColumClassSet.add(byte[].class);
-        singleColumClassSet.add(Date.class);
-        singleColumClassSet.add(Time.class);
-        singleColumClassSet.add(Timestamp.class);
-        singleColumClassSet.add(java.util.Date.class);
-        singleColumClassSet.add(BigDecimal.class);
-        singleColumClassSet.add(Blob.class);
-        singleColumClassSet.add(Clob.class);
-
         // 字符串
         singleColumClassSet.add(String.class);
+
+        // 特殊类型
+        singleColumClassSet.add(java.math.BigDecimal.class);
+        singleColumClassSet.add(java.util.Date.class);
+
+        // jdbc中的类型
+        singleColumClassSet.add(byte[].class);
+        singleColumClassSet.add(java.sql.Date.class);
+        singleColumClassSet.add(java.sql.Time.class);
+        singleColumClassSet.add(java.sql.Timestamp.class);
+        singleColumClassSet.add(java.sql.Blob.class);
+        singleColumClassSet.add(java.sql.Clob.class);
 
         // 基本数据类型
         singleColumClassSet.add(boolean.class);

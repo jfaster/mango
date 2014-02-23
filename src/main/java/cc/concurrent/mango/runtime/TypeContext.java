@@ -1,10 +1,12 @@
 package cc.concurrent.mango.runtime;
 
+import java.lang.reflect.Type;
+
 /**
  * @author ash
  */
 public interface TypeContext {
 
-    public Class<?> getPropertyType(String beanName, String propertyName);
+    public Type getPropertyType(String beanName, String propertyName);
 
 }

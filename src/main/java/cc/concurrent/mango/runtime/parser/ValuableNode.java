@@ -62,13 +62,4 @@ public abstract class ValuableNode extends SimpleNode {
         return sb.toString();
     }
 
-    /**
-     * 语法块开始位置
-     * @return
-     */
-    protected String getLocation() {
-        return "at column " + getFirstToken().beginColumn;
-    }
-
-
 }

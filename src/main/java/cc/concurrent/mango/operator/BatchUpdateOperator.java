@@ -3,12 +3,11 @@ package cc.concurrent.mango.operator;
 import cc.concurrent.mango.exception.EmptyParameterException;
 import cc.concurrent.mango.exception.NullParameterException;
 import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
-import cc.concurrent.mango.runtime.ParsedSql;
-import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.RuntimeContextImpl;
-import cc.concurrent.mango.runtime.TypeContext;
+import cc.concurrent.mango.jdbc.JdbcUtils;
+import cc.concurrent.mango.runtime.*;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
+import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
@@ -17,6 +16,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,8 @@ public class BatchUpdateOperator extends AbstractOperator {
     }
 
     public void init(Method method) {
-        checkType(method.getParameterTypes());
+        buildCacheDescriptor(method);
+        checkType(method.getGenericParameterTypes());
     }
 
     public static BatchUpdateOperator create(ASTRootNode rootNode, Method method) {
@@ -45,9 +46,22 @@ public class BatchUpdateOperator extends AbstractOperator {
     }
 
     @Override
-    public void checkType(Class<?>[] methodArgTypes) {
-        // 检测节点type
-        TypeContext context = getTypeContextForBatch(methodArgTypes);
+    public void checkType(Type[] methodArgTypes) {
+        Type type = methodArgTypes[0];
+        TypeToken typeToken = new TypeToken(type);
+        Class<?> mappedClass = typeToken.getMappedClass();
+        if (mappedClass == null) {
+            throw new RuntimeException(""); // TODO
+        }
+        if (JdbcUtils.isSingleColumnClass(mappedClass)) {
+            throw new RuntimeException(""); // TODO
+        }
+        if (!typeToken.isIterable()) {
+            throw new RuntimeException(""); // TODO
+        }
+        Map<String, Type> parameterTypeMap = Maps.newHashMap();
+        parameterTypeMap.put(String.valueOf(1), mappedClass);
+        TypeContextImpl context = new TypeContextImpl(parameterTypeMap);
         rootNode.checkType(context);
     }
 

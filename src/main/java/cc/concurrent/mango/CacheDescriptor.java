@@ -11,6 +11,8 @@ public class CacheDescriptor {
 
     private String beanName;
 
+    private String propertyPath;
+
     private String propertyName; // "a in (:1)"中的a
 
     public boolean isUseCache() {
@@ -35,6 +37,14 @@ public class CacheDescriptor {
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
+    }
+
+    public String getPropertyPath() {
+        return propertyPath;
+    }
+
+    public void setPropertyPath(String propertyPath) {
+        this.propertyPath = propertyPath;
     }
 
     public String getPropertyName() {

@@ -3,8 +3,10 @@ package cc.concurrent.mango.runtime.parser;
 import cc.concurrent.mango.exception.structure.IncorrectParameterTypeException;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.TypeContext;
+import cc.concurrent.mango.util.TypeToken;
 import com.google.common.base.Strings;
 
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,8 +41,16 @@ public class ASTNonIterableParameter extends ValuableParameter {
 
     @Override
     public void checkType(TypeContext context) {
-        Class<?> type = context.getPropertyType(beanName, propertyPath);
-        if (!JdbcUtils.isSingleColumnClass(type) && !java.util.Date.class.equals(type)) {
+        Type type = context.getPropertyType(beanName, propertyPath);
+        TypeToken typeToken = new TypeToken(type);
+        Class<?> mappedClass = typeToken.getMappedClass();
+        if (mappedClass == null) {
+            throw new RuntimeException(""); // TODO Exception
+        }
+        if (typeToken.isIterable()) {
+            throw new RuntimeException(""); // TODO Exception
+        }
+        if (!JdbcUtils.isSingleColumnClass(mappedClass)) {
             // TODO 合适的Exception 包含 java.util.Date
             throw new IncorrectParameterTypeException("need single colum class but " + type);
         }

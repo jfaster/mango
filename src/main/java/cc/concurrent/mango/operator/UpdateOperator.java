@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -26,6 +27,7 @@ public class UpdateOperator extends AbstractOperator {
 
     private UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         this.rootNode = rootNode;
+        buildCacheDescriptor(method);
         init(method, sqlType);
     }
 
@@ -34,7 +36,7 @@ public class UpdateOperator extends AbstractOperator {
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
 
-        checkType(method.getParameterTypes());
+        checkType(method.getGenericParameterTypes());
     }
 
     public static UpdateOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
@@ -42,7 +44,7 @@ public class UpdateOperator extends AbstractOperator {
     }
 
     @Override
-    public void checkType(Class<?>[] methodArgTypes) {
+    public void checkType(Type[] methodArgTypes) {
         // 检测节点type
         TypeContext context = getTypeContext(methodArgTypes);
         rootNode.checkType(context);

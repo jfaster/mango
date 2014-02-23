@@ -43,6 +43,7 @@ public class QueryOperator extends AbstractOperator {
 
     private QueryOperator(ASTRootNode rootNode, Method method) {
         this.rootNode = rootNode;
+        buildCacheDescriptor(method);
         init(method);
     }
 
@@ -81,7 +82,7 @@ public class QueryOperator extends AbstractOperator {
             throw new IncorrectReturnTypeException("return type " + method.getGenericReturnType() + " is error");
         }
         rowMapper = getRowMapper(mappedClass);
-        checkType(method.getParameterTypes());
+        checkType(method.getGenericParameterTypes());
     }
 
     public static QueryOperator create(ASTRootNode rootNode, Method method) {
@@ -89,7 +90,7 @@ public class QueryOperator extends AbstractOperator {
     }
 
     @Override
-    public void checkType(Class<?>[] methodArgTypes) {
+    public void checkType(Type[] methodArgTypes) {
         // 检测节点type
         TypeContext context = getTypeContext(methodArgTypes);
         rootNode.checkType(context);
@@ -98,16 +99,15 @@ public class QueryOperator extends AbstractOperator {
 
         // 检测返回type
         if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) { // sql中使用了in查询但返回结果不是可迭代类型
-            // TODO
-            throw new RuntimeException("");
+            throw new RuntimeException(""); // TODO
         }
 
         if (cacheDescriptor.isUseCache()) { // 使用cache
-            if (aips.size() == 1) { // 在sql中只能存在一个in语句
+            if (aips.size() == 1) { // 在sql中有一个in语句
                 String propertyName = aips.get(0).getPropertyName();
                 // TODO mappedClass中必须有properName
                 cacheDescriptor.setPropertyName(propertyName);
-            } else {
+            } else if (aips.size() != 0) {
                 // TODO
                 throw new RuntimeException("");
             }
@@ -129,7 +129,7 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private Object executeFromCache(RuntimeContext context) {
-        Object obj = context.getPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyName());
+        Object obj = context.getPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyPath());
         Iterables iterables = new Iterables(obj);
         if (iterables.isIterable()) { // 多个key
             Set<String> keys = Sets.newHashSet();
@@ -188,7 +188,7 @@ public class QueryOperator extends AbstractOperator {
                 // TODO exception
             }
         }
-        context.setPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyName(), missKeyObjs);
+        context.setPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyPath(), missKeyObjs);
         return executeFromDb(context, rowMapper, hitValues);
     }
 

@@ -5,6 +5,7 @@ import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 import com.google.common.base.Strings;
 
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,18 +40,18 @@ public class ASTVariable extends PrimaryExpression {
 
     @Override
     void checkType(TypeContext context) {
-        Class<?> type = context.getPropertyType(beanName, propertyPath);
+        Type type = context.getPropertyType(beanName, propertyPath);
         Node node = this;
         do {
             node = node.jjtGetParent();
         } while (!(node instanceof ASTExpression) && (node instanceof ASTAddExpression));
         if (node instanceof ASTExpression) { // 到达根节点都是加法
             if (!Integer.class.equals(type) && !int.class.equals(type) && !String.class.equals(type)) {
-                throw new MathException("Variable " + literal() + " need Integer or int or String but " + type.getName());
+                throw new MathException("Variable " + literal() + " need Integer or int or String but " + type);
             }
         } else { // 到达根节点的途中遇到了非加法
             if (!Integer.class.equals(type) && !int.class.equals(type)) {
-                throw new MathException("Variable " + literal() + " need Integer or int but " + type.getName());
+                throw new MathException("Variable " + literal() + " need Integer or int but " + type);
             }
         }
     }
