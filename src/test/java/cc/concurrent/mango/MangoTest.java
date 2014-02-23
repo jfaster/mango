@@ -1,6 +1,5 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.support.DatabaseConfig;
 import cc.concurrent.mango.support.User;
 import cc.concurrent.mango.support.UserDao;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
@@ -14,9 +13,7 @@ import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,15 +26,16 @@ public class MangoTest {
     private static DataSource ds;
     private static UserDao dao;
     private static User[] users = new User[5];
+    private static TreeSet<User> userSet = Sets.newTreeSet();
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-        String driverClassName = DatabaseConfig.getDriverClassName();
-        String url = DatabaseConfig.getUrl();
-        String username = DatabaseConfig.getUsername();
-        String password = DatabaseConfig.getPassword();
+        String driverClassName = Config.getDriverClassName();
+        String url = Config.getUrl();
+        String username = Config.getUsername();
+        String password = Config.getPassword();
         ds = new DriverManagerDataSource(driverClassName, url, username, password);
 
         dao = new Mango(ds, null).create(UserDao.class);
@@ -51,84 +49,77 @@ public class MangoTest {
 
     @Test
     public void testQueryInteger() throws Exception {
-        int id = 0;
-        assertThat(dao.selectInteger(id), equalTo(users[id].getId()));
+        int id = 1;
+        assertThat(dao.selectInteger(id), equalTo(users[id - 1].getId()));
     }
 
     @Test
     public void testQueryInt() throws Exception {
-        int id = 0;
-        assertThat(dao.selectInt(id), equalTo(users[id].getId()));
+        int id = 1;
+        assertThat(dao.selectInt(id), equalTo(users[id - 1].getId()));
     }
 
     @Test
     public void testQueryString() throws Exception {
-        int id = 0;
-        assertThat(dao.selectString(id), equalTo(users[id].getName()));
+        int id = 1;
+        assertThat(dao.selectString(id), equalTo(users[id - 1].getName()));
     }
 
     @Test
     public void testQueryBooleanObj() throws Exception {
-        int id = 0;
-        assertThat(dao.selectBooleanObj(id), equalTo(users[id].isGender()));
+        int id = 1;
+        assertThat(dao.selectBooleanObj(id), equalTo(users[id - 1].isGender()));
     }
 
     @Test
     public void testQueryBoolean() throws Exception {
-        int id = 0;
-        assertThat(dao.selectBoolean(id), equalTo(users[id].isGender()));
+        int id = 1;
+        assertThat(dao.selectBoolean(id), equalTo(users[id - 1].isGender()));
     }
 
     @Test
     public void testQueryLongObj() throws Exception {
-        int id = 0;
-        assertThat(dao.selectLongObj(id), equalTo(users[id].getMoney()));
+        int id = 1;
+        assertThat(dao.selectLongObj(id), equalTo(users[id - 1].getMoney()));
     }
 
     @Test
     public void testQueryLong() throws Exception {
-        int id = 0;
-        assertThat(dao.selectLong(id), equalTo(users[id].getMoney()));
+        int id = 1;
+        assertThat(dao.selectLong(id), equalTo(users[id - 1].getMoney()));
     }
 
     @Test
     public void testQueryDate() throws Exception {
-        int id = 0;
-        assertThat(dao.selectDate(id).getTime(), equalTo(users[id].getUpdateTime().getTime()));
+        int id = 1;
+        assertThat(dao.selectDate(id).getTime(), equalTo(users[id - 1].getUpdateTime().getTime()));
     }
 
     @Test
     public void testQueryUser() throws Exception {
-        int id = 0;
-        assertThat(dao.selectUser(id), equalTo(users[id]));
+        int id = 1;
+        assertThat(dao.selectUser(id), equalTo(users[id - 1]));
     }
 
     @Test
     public void testQueryUserList() throws Exception {
-        List<User> userList = dao.selectUserList();
-        assertThat(userList.size(), equalTo(users.length));
-        for (int i = 0; i < userList.size(); i++) {
-            assertThat(userList.get(i), equalTo(users[i]));
-        }
+        assertThat(Sets.newTreeSet(dao.selectUserList()), equalTo(userSet));
     }
 
     @Test
     public void testQueryUserSet() throws Exception {
-        Set<User> userSet = dao.selectUserSet();
-        assertThat(userSet.size(), equalTo(users.length));
-        for (int i = 0; i < users.length; i++) {
-            userSet.remove(users[i]);
-        }
-        assertThat(userSet.size(), equalTo(0));
+        assertThat(Sets.newTreeSet(dao.selectUserSet()), equalTo(userSet));
+
     }
 
     @Test
     public void testQueryUserArray() throws Exception {
         User[] userArray = dao.selectUserArray();
-        assertThat(userArray.length, equalTo(users.length));
+        TreeSet<User> actualUserSet = Sets.newTreeSet();
         for (int i = 0; i < userArray.length; i++) {
-            assertThat(userArray[i], equalTo(users[i]));
+            actualUserSet.add(userArray[i]);
         }
+        assertThat(actualUserSet, equalTo(userSet));
     }
 
     @Test
@@ -354,8 +345,10 @@ public class MangoTest {
             boolean gender = (i % 2 == 0 ? true : false);
             long money = System.currentTimeMillis();
             Date updateTime = new Date();
-            users[i] = new User(name, age, gender, money, updateTime);
-            users[i].setId(i);
+            User user = new User(name, age, gender, money, updateTime);
+            user.setId(i + 1);
+            users[i] = user;
+            userSet.add(user);
         }
     }
 
@@ -366,7 +359,8 @@ public class MangoTest {
     private static void createTable() throws SQLException {
         Connection conn = ds.getConnection();
         Statement stat = conn.createStatement();
-        String table = fileToString("/user.sql");
+        String table = fileToString("/" + Config.getDir() + "/user.sql");
+        stat.execute("DROP TABLE IF EXISTS user");
         stat.execute(table);
         stat.close();
         conn.close();

@@ -1,6 +1,5 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.support.DatabaseConfig;
 import cc.concurrent.mango.support.Man;
 import cc.concurrent.mango.support.ManDao;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
@@ -32,10 +31,10 @@ public class MangoCacheTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-        String driverClassName = DatabaseConfig.getDriverClassName();
-        String url = DatabaseConfig.getUrl();
-        String username = DatabaseConfig.getUsername();
-        String password = DatabaseConfig.getPassword();
+        String driverClassName = Config.getDriverClassName();
+        String url = Config.getUrl();
+        String username = Config.getUsername();
+        String password = Config.getPassword();
         DriverManagerDataSource ds = new DriverManagerDataSource(driverClassName, url, username, password);
         createTable(ds);
         dataCache = new DataCacheImpl();
@@ -96,7 +95,7 @@ public class MangoCacheTest {
     private static void createTable(DataSource ds) throws SQLException {
         Connection conn = ds.getConnection();
         Statement stat = conn.createStatement();
-        String table = fileToString("/man.sql");
+        String table = fileToString("/" + Config.getDir() + "/man.sql");
         stat.execute(table);
         stat.close();
         conn.close();

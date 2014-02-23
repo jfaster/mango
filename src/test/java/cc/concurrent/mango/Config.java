@@ -1,4 +1,4 @@
-package cc.concurrent.mango.support;
+package cc.concurrent.mango;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -7,31 +7,37 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 /**
  * @author ash
  */
-public class DatabaseConfig {
+public class Config {
 
-    public static Configuration config;
+    private static String DIR = "hsqldb";
+    private static Configuration CONFIG;
+
     static {
         try {
-            config = new PropertiesConfiguration("database.properties");
+            CONFIG = new PropertiesConfiguration(DIR + "/database.properties");
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
     }
 
+    public static String getDir() {
+        return DIR;
+    }
+
     public static String getDriverClassName() {
-        return config.getString("jdbc.driver");
+        return CONFIG.getString("jdbc.driver");
     }
 
     public static String getUrl() {
-        return config.getString("jdbc.url");
+        return CONFIG.getString("jdbc.url");
     }
 
     public static String getUsername() {
-        return config.getString("jdbc.username");
+        return CONFIG.getString("jdbc.username");
     }
 
     public static String getPassword() {
-        return config.getString("jdbc.password");
+        return CONFIG.getString("jdbc.password");
     }
 
 }
