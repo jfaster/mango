@@ -14,6 +14,8 @@ import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
+import cc.concurrent.mango.util.reflect.BeanWrapper;
+import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -226,7 +228,15 @@ public class QueryOperator extends AbstractOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, list);
             }
-            if (hitValues != null && !hitValues.isEmpty()) {
+            if (cacheDescriptor.isUseCache()) {
+                for (T t : list) {
+                    BeanWrapper beanWrapper = new BeanWrapperImpl(t);
+                    Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
+                    String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+                    dataCache.set(key, t);
+                }
+            }
+            if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
                 for (Object hitValue : hitValues) {
                     list.add(valueClass.cast(hitValue));
                 }
@@ -237,7 +247,15 @@ public class QueryOperator extends AbstractOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, set);
             }
-            if (hitValues != null && !hitValues.isEmpty()) {
+            if (cacheDescriptor.isUseCache()) {
+                for (T t : set) {
+                    BeanWrapper beanWrapper = new BeanWrapperImpl(t);
+                    Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
+                    String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+                    dataCache.set(key, t);
+                }
+            }
+            if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
                 for (Object hitValue : hitValues) {
                     set.add(valueClass.cast(hitValue));
                 }
@@ -248,9 +266,21 @@ public class QueryOperator extends AbstractOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, array);
             }
+            if (cacheDescriptor.isUseCache()) {
+                int size = Array.getLength(array);
+                for (int i = 0; i < size; i++) {
+                    Object o = Array.get(array, i);
+                    BeanWrapper beanWrapper = new BeanWrapperImpl(o);
+                    Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
+                    String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+                    dataCache.set(key, o);
+                }
+            }
             if (hitValues == null || hitValues.isEmpty()) {
                 return array;
             }
+
+            // 拼装cache与db的结果
             int cacheSize = hitValues.size();
             int dbSize = Array.getLength(array);
             int size = cacheSize + dbSize;

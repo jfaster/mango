@@ -64,20 +64,25 @@ public class MangoCacheTest {
     public void testMultiKeys() throws Exception {
         int num = 5;
         String name = "ash";
-        TreeSet<Man> mans = Sets.newTreeSet();
+        TreeSet<Man> manSet = Sets.newTreeSet();
+        List<Man> mans = Lists.newArrayList();
         List<Integer> ids = Lists.newArrayList();
         for (int i = 0; i < num; i++) {
             Man man = new Man(name, 26 + i, true, 10086, new Date());
             int id = dao.insert(man);
             man.setId(id);
+            manSet.add(man);
             mans.add(man);
             ids.add(id);
         }
-        assertThat(Sets.newTreeSet(dao.selectList(ids, name)), equalTo(mans));
-        assertThat(Sets.newTreeSet(dao.selectList(ids, name)), equalTo(mans));
+        assertThat(Sets.newTreeSet(dao.selectList(ids, name)), equalTo(manSet));
+        for (int i = 0; i < ids.size(); i++) {
+            Integer id = ids.get(i);
+            Man man = mans.get(i);
+            assertThat((Man) dataCache.get(getKey(id)), equalTo(man));
+        }
+        assertThat(Sets.newTreeSet(dao.selectList(ids, name)), equalTo(manSet));
     }
-
-
 
     /**
      * 创建表
