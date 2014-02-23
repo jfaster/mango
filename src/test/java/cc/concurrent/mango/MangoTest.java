@@ -1,5 +1,6 @@
 package cc.concurrent.mango;
 
+import cc.concurrent.mango.support.DatabaseConfig;
 import cc.concurrent.mango.support.User;
 import cc.concurrent.mango.support.UserDao;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
@@ -32,7 +33,13 @@ public class MangoTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-        ds = new DriverManagerDataSource("jdbc:hsqldb:mem:test", "sa", "");
+
+        String driverClassName = DatabaseConfig.getDriverClassName();
+        String url = DatabaseConfig.getUrl();
+        String username = DatabaseConfig.getUsername();
+        String password = DatabaseConfig.getPassword();
+        ds = new DriverManagerDataSource(driverClassName, url, username, password);
+
         dao = new Mango(ds, null).create(UserDao.class);
 
         initUsers();

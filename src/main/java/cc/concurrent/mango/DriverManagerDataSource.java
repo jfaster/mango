@@ -1,5 +1,7 @@
 package cc.concurrent.mango;
 
+import org.springframework.util.ClassUtils;
+
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -18,7 +20,14 @@ public class DriverManagerDataSource implements DataSource {
     private String username;
     private String password;
 
-    public DriverManagerDataSource(String url, String username, String password) {
+    public DriverManagerDataSource(String driverClassName, String url, String username, String password) {
+        String driverClassNameToUse = driverClassName.trim();
+        try {
+            Class.forName(driverClassNameToUse, true, ClassUtils.getDefaultClassLoader());
+        }
+        catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
+        }
         this.url = url;
         this.username = username;
         this.password = password;
