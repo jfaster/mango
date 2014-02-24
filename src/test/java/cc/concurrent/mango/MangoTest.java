@@ -4,6 +4,7 @@ import cc.concurrent.mango.support.User;
 import cc.concurrent.mango.support.UserDao;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.logging.Slf4JLoggerFactory;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.BeforeClass;
@@ -359,9 +360,10 @@ public class MangoTest {
     private static void createTable() throws SQLException {
         Connection conn = ds.getConnection();
         Statement stat = conn.createStatement();
-        String table = fileToString("/" + Config.getDir() + "/user.sql");
-        stat.execute("DROP TABLE IF EXISTS user");
-        stat.execute(table);
+        String sqls = fileToString("/" + Config.getDir() + "/user.sql");
+        for (String sql : Splitter.on("####").trimResults().split(sqls)) {
+            stat.execute(sql);
+        }
         stat.close();
         conn.close();
     }

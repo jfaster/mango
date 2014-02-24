@@ -4,6 +4,7 @@ import cc.concurrent.mango.support.Man;
 import cc.concurrent.mango.support.ManDao;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.logging.Slf4JLoggerFactory;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.BeforeClass;
@@ -95,8 +96,10 @@ public class MangoCacheTest {
     private static void createTable(DataSource ds) throws SQLException {
         Connection conn = ds.getConnection();
         Statement stat = conn.createStatement();
-        String table = fileToString("/" + Config.getDir() + "/man.sql");
-        stat.execute(table);
+        String sqls = fileToString("/" + Config.getDir() + "/man.sql");
+        for (String sql : Splitter.on("####").trimResults().split(sqls)) {
+            stat.execute(sql);
+        }
         stat.close();
         conn.close();
     }

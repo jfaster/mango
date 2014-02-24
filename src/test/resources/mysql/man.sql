@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS user
+DROP TABLE IF EXISTS man
 ####
-CREATE TABLE `user` (
+CREATE TABLE `man` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(25) DEFAULT NULL,
   `age` int(11) DEFAULT NULL,
