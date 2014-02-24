@@ -25,7 +25,7 @@ public class Man implements Comparable {
         this.age = age;
         this.gender = gender;
         this.money = money;
-        this.updateTime = updateTime;
+        this.updateTime = updateTime != null ? new Date(updateTime.getTime() / 1000 * 1000) : null; // 精确到秒
     }
 
     @Override
@@ -67,8 +67,9 @@ public class Man implements Comparable {
 
     @Override
     public String toString() {
+        Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
-                add("gender", gender).add("money", money).add("updateTime", updateTime).toString();
+                add("gender", gender).add("money", money).add("updateTime", thisUpdateTime).toString();
     }
 
     public int getId() {
