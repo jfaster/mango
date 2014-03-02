@@ -30,10 +30,14 @@ public class TypeContextImpl implements TypeContext {
         }
         checkNotNull(parameterType);
         String key = getCacheKey(beanName, propertyName);
-        if (cache.containsKey(key)) {
-            return cache.get(key);
+        Type type = cache.get(key);
+        if (type != null) {
+            return type;
         }
-        Type type = TypeUtil.getPropertyType(parameterType, propertyName);
+        type = TypeUtil.getPropertyType(parameterType, propertyName);
+        if (type == null) {
+            throw new RuntimeException(""); // TODO
+        }
         cache.put(key, type);
         return type;
     }

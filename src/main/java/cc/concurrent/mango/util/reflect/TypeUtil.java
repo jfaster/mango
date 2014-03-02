@@ -2,8 +2,6 @@ package cc.concurrent.mango.util.reflect;
 
 import com.google.common.base.Strings;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
@@ -19,32 +17,25 @@ public class TypeUtil {
         int pos = propertyPath.indexOf('.');
         while (pos > -1) {
             String propertyName = propertyPath.substring(0, pos);
-            try {
-                if (type instanceof Class<?>) {
-                    PropertyDescriptor pd = new PropertyDescriptor(propertyName, (Class<?>) type);
-                    Method method = pd.getReadMethod();
-                    type = method.getGenericReturnType();
-                } else {
-                    // TODO Exception
-                }
-            } catch (IntrospectionException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            propertyPath = propertyPath.substring(pos + 1);
-            pos = propertyPath.indexOf('.');
-        }
-        try {
             if (type instanceof Class<?>) {
-                PropertyDescriptor pd = new PropertyDescriptor(propertyPath, (Class<?>) type);
-                Method method = pd.getReadMethod();
-                type = method.getGenericReturnType();
-            } else {
-                // TODO Exception
+                Method method = MethodCache.getReadMethod((Class<?>) type, propertyName);
+                if (method != null) {
+                    type = method.getGenericReturnType();
+                    propertyPath = propertyPath.substring(pos + 1);
+                    pos = propertyPath.indexOf('.');
+                    continue;
+                }
             }
-        } catch (IntrospectionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
         }
-        return type;
+        if (type instanceof Class<?>) {
+            Method method = MethodCache.getReadMethod((Class<?>) type, propertyPath);
+            if (method != null) {
+                type = method.getGenericReturnType();
+                return type;
+            }
+        }
+        return null;
     }
 
 }
