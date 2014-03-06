@@ -12,8 +12,9 @@ public class TypeUtilTest {
 
     @Test
     public void testGetPropertyType() throws Exception {
-        assertThat(TypeUtil.getPropertyType(A.class, "b.i").equals(Integer.class), equalTo(true));
-        assertThat(TypeUtil.getPropertyType(A.class, "s").equals(String.class), equalTo(true));
+        assertThat(TypeUtil.getPropertyType(A.class, "b.i", "1").equals(Integer.class), equalTo(true));
+        assertThat(TypeUtil.getPropertyType(A.class, "s", "2").equals(String.class), equalTo(true));
+        TypeUtil.getPropertyType(A.class, "b.j", "3");
     }
 
 

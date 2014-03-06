@@ -7,8 +7,9 @@ import cc.concurrent.mango.runtime.RuntimeContext;
  */
 public abstract class ValuableParameter extends ValuableNode {
 
-    protected String beanName;
+    protected String parameterName;
     protected String propertyPath; // 为""的时候表示没有属性
+    protected String fullName;
 
     public ValuableParameter(int i) {
         super(i);
@@ -20,7 +21,7 @@ public abstract class ValuableParameter extends ValuableNode {
 
     @Override
     public Object value(RuntimeContext context) {
-        return context.getPropertyValue(beanName, propertyPath);
+        return context.getPropertyValue(parameterName, propertyPath);
     }
 
     @Override

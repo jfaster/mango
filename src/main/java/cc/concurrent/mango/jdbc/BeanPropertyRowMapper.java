@@ -23,7 +23,6 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(BeanPropertyRowMapper.class);
 
-
     private Class<T> mappedClass;
 
     private Map<String, PropertyDescriptor> mappedFields;

@@ -10,7 +10,6 @@ import java.util.Set;
  */
 public class TypeToken {
 
-    private final Type type;
     private Class<?> mappedClass = null;
     private boolean isList;
     private boolean isSet;
@@ -45,11 +44,18 @@ public class TypeToken {
                 mappedClass = clazz;
             }
         }
-        this.type = type;
     }
 
     public boolean isIterable() {
         return isList || isSet || isArray;
+    }
+
+    public boolean isArray() {
+        return isArray;
+    }
+
+    public boolean isCollection() {
+        return isList || isSet;
     }
 
     public Class<?> getMappedClass() {

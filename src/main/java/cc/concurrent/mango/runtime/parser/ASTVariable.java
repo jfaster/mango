@@ -1,9 +1,8 @@
 package cc.concurrent.mango.runtime.parser;
 
-import cc.concurrent.mango.exception.MathException;
+import cc.concurrent.mango.exception.IncorrectVariableTypeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
-import com.google.common.base.Strings;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;
@@ -18,6 +17,7 @@ public class ASTVariable extends PrimaryExpression {
 
     private String beanName;
     private String propertyPath; // 为""的时候表示没有属性
+    private String fullName;
 
     public ASTVariable(int i) {
         super(i);
@@ -36,6 +36,7 @@ public class ASTVariable extends PrimaryExpression {
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
         }
+        fullName = parameter;
     }
 
     @Override
@@ -47,11 +48,13 @@ public class ASTVariable extends PrimaryExpression {
         } while (!(node instanceof ASTExpression) && (node instanceof ASTAddExpression));
         if (node instanceof ASTExpression) { // 到达根节点都是加法
             if (!Integer.class.equals(type) && !int.class.equals(type) && !String.class.equals(type)) {
-                throw new MathException("Variable " + literal() + " need Integer or int or String but " + type);
+                throw new IncorrectVariableTypeException("invalid type of " + fullName + ", " +
+                        "need int or java.lang.Integer or java.lang.String but " + type);
             }
         } else { // 到达根节点的途中遇到了非加法
             if (!Integer.class.equals(type) && !int.class.equals(type)) {
-                throw new MathException("Variable " + literal() + " need Integer or int but " + type);
+                throw new IncorrectVariableTypeException("invalid type of " + fullName + ", " +
+                        "need int or java.lang.Integer but " + type);
             }
         }
     }
@@ -63,6 +66,6 @@ public class ASTVariable extends PrimaryExpression {
 
     @Override
     public String toString() {
-        return ":" +  (Strings.isNullOrEmpty(propertyPath) ? beanName : beanName + propertyPath);
+        return fullName;
     }
 }
