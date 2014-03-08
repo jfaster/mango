@@ -101,7 +101,7 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private Object executeFromCache(RuntimeContext context) {
-        Object obj = context.getPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyPath());
+        Object obj = context.getPropertyValue(cacheDescriptor.getParameterName(), cacheDescriptor.getPropertyPath());
         Iterables iterables = new Iterables(obj);
         if (iterables.isIterable()) { // 多个key
             Set<String> keys = Sets.newHashSet();
@@ -160,7 +160,7 @@ public class QueryOperator extends AbstractOperator {
                 // TODO exception
             }
         }
-        context.setPropertyValue(cacheDescriptor.getBeanName(), cacheDescriptor.getPropertyPath(), missKeyObjs);
+        context.setPropertyValue(cacheDescriptor.getParameterName(), cacheDescriptor.getPropertyPath(), missKeyObjs);
         return executeFromDb(context, rowMapper, hitValues);
     }
 
@@ -172,7 +172,7 @@ public class QueryOperator extends AbstractOperator {
             }
             value = executeFromDb(context, rowMapper, null);
             if (value != null) {
-                dataCache.set(key, value);
+                dataCache.set(key, value, cacheDescriptor.getExpires());
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache set #key={} #value={}", key, value);
                 }
@@ -203,7 +203,7 @@ public class QueryOperator extends AbstractOperator {
                     BeanWrapper beanWrapper = new BeanWrapperImpl(t);
                     Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
                     String key = getKey(cacheDescriptor.getPrefix(), keyObj);
-                    dataCache.set(key, t);
+                    dataCache.set(key, t, cacheDescriptor.getExpires());
                 }
             }
             if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
@@ -222,7 +222,7 @@ public class QueryOperator extends AbstractOperator {
                     BeanWrapper beanWrapper = new BeanWrapperImpl(t);
                     Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
                     String key = getKey(cacheDescriptor.getPrefix(), keyObj);
-                    dataCache.set(key, t);
+                    dataCache.set(key, t, cacheDescriptor.getExpires());
                 }
             }
             if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
@@ -243,7 +243,7 @@ public class QueryOperator extends AbstractOperator {
                     BeanWrapper beanWrapper = new BeanWrapperImpl(o);
                     Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
                     String key = getKey(cacheDescriptor.getPrefix(), keyObj);
-                    dataCache.set(key, o);
+                    dataCache.set(key, o, cacheDescriptor.getExpires());
                 }
             }
             if (hitValues == null || hitValues.isEmpty()) {

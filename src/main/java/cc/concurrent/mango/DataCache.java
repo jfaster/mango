@@ -12,7 +12,7 @@ public interface DataCache {
 
     public Map<String, Object> getBulk(Set<String> keys);
 
-    public void set(String key, Object value);
+    public void set(String key, Object value, int expires);
 
     public void delete(Set<String> keys);
 

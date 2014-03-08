@@ -9,7 +9,11 @@ public class CacheDescriptor {
 
     private String prefix;
 
-    private String beanName;
+    private CacheExpire expire;
+
+    private int num;
+
+    private String parameterName;
 
     private String propertyPath;
 
@@ -31,12 +35,24 @@ public class CacheDescriptor {
         this.prefix = prefix;
     }
 
-    public String getBeanName() {
-        return beanName;
+    public int getExpires() {
+        return expire.getExpireTime() * num;
     }
 
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
+    public void setExpire(CacheExpire expire) {
+        this.expire = expire;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
+
+    public String getParameterName() {
+        return parameterName;
+    }
+
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
     }
 
     public String getPropertyPath() {
@@ -54,4 +70,5 @@ public class CacheDescriptor {
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }
+
 }

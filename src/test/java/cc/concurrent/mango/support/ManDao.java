@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author ash
  */
-@Cache(prefix = "man_")
+@Cache(prefix = "man_", expire = Day.class)
 public interface ManDao {
 
     @ReturnGeneratedId

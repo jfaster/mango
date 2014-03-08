@@ -6,6 +6,7 @@ import cc.concurrent.mango.jdbc.JdbcTemplate;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.TypeContextImpl;
+import cc.concurrent.mango.util.reflect.Reflection;
 import com.google.common.collect.Maps;
 
 import javax.sql.DataSource;
@@ -35,7 +36,7 @@ public abstract class AbstractOperator implements Operator {
     }
 
     protected String getSingleKey(RuntimeContext context) {
-        return getKey(cacheDescriptor.getPrefix(), context.getPropertyValue(cacheDescriptor.getBeanName(),
+        return getKey(cacheDescriptor.getPrefix(), context.getPropertyValue(cacheDescriptor.getParameterName(),
                 cacheDescriptor.getPropertyPath()));
     }
 
@@ -60,13 +61,15 @@ public abstract class AbstractOperator implements Operator {
             if (cacheIgnoredAnno == null) { // method不禁用cache
                 cacheDescriptor.setUseCache(true);
                 cacheDescriptor.setPrefix(cacheAnno.prefix());
+                cacheDescriptor.setExpire(Reflection.instantiate(cacheAnno.expire()));
+                cacheDescriptor.setNum(cacheAnno.num());
                 Annotation[][] pass = method.getParameterAnnotations();
                 int num = 0;
                 for (int i = 0; i < pass.length; i++) {
                     Annotation[] pas = pass[i];
                     for (Annotation pa : pas) {
                         if (CacheBy.class.equals(pa.annotationType())) {
-                            cacheDescriptor.setBeanName(String.valueOf(i + 1));
+                            cacheDescriptor.setParameterName(String.valueOf(i + 1));
                             cacheDescriptor.setPropertyPath(((CacheBy) pa).value());
                             num++;
                         }

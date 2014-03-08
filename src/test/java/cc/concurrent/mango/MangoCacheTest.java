@@ -145,7 +145,7 @@ public class MangoCacheTest {
         }
 
         @Override
-        public void set(String key, Object value) {
+        public void set(String key, Object value, int expires) {
             cache.put(key, value);
         }
 

@@ -12,4 +12,8 @@ public @interface Cache {
 
     String prefix();
 
+    Class<? extends CacheExpire> expire();
+
+    int num() default 1;
+
 }
