@@ -1,14 +1,11 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.support.ByteInfo;
 import cc.concurrent.mango.support.ByteInfoDao;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.logging.Slf4JLoggerFactory;
 import com.google.common.base.Splitter;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import sun.security.util.*;
-import sun.security.util.Cache;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
