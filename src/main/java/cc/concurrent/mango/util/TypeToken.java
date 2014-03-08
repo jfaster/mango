@@ -16,7 +16,9 @@ public class TypeToken {
     private boolean isArray;
 
     public TypeToken(Type type) {
-        if (type instanceof ParameterizedType) { // 参数化类型
+        if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
+            mappedClass = byte[].class;
+        } else if (type instanceof ParameterizedType) { // 参数化类型
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type rawType = parameterizedType.getRawType();
             if (rawType instanceof Class) {
@@ -52,6 +54,14 @@ public class TypeToken {
 
     public boolean isArray() {
         return isArray;
+    }
+
+    public boolean isSet() {
+        return isSet;
+    }
+
+    public boolean isList() {
+        return isList;
     }
 
     public boolean isCollection() {

@@ -1,6 +1,5 @@
 package cc.concurrent.mango.operator;
 
-import cc.concurrent.mango.exception.structure.IncorrectReturnTypeException;
 import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.jdbc.RowMapper;
@@ -12,6 +11,7 @@ import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
+import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanWrapper;
@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -50,40 +49,11 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private void init(Method method) {
-        Class<?> mappedClass = null;
-        Type genericReturnType = method.getGenericReturnType();
-        if (genericReturnType instanceof ParameterizedType) { // 参数化类型
-            ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
-            Type rawType = parameterizedType.getRawType();
-            if (rawType instanceof Class) {
-                Class<?> rawClass = (Class<?>) rawType;
-                if (List.class.equals(rawClass)) {
-                    isForList = true;
-                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                    if (typeArgument instanceof Class) {
-                        mappedClass = (Class<?>) typeArgument;
-                    }
-                } else if (Set.class.equals(rawClass)) {
-                    isForSet = true;
-                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                    if (typeArgument instanceof Class) {
-                        mappedClass = (Class<?>) typeArgument;
-                    }
-                }
-            }
-        } else if (genericReturnType instanceof Class) { // 没有参数化
-            Class<?> clazz = (Class<?>) genericReturnType;
-            if (clazz.isArray()) { // 数组
-                isForArray = true;
-                mappedClass = clazz.getComponentType();
-            } else { // 普通类
-                mappedClass = clazz;
-            }
-        }
-        if (mappedClass == null) {
-            throw new IncorrectReturnTypeException("return type " + method.getGenericReturnType() + " is error");
-        }
-        rowMapper = getRowMapper(mappedClass);
+        TypeToken typeToken = new TypeToken(method.getGenericReturnType());
+        isForList = typeToken.isList();
+        isForSet = typeToken.isSet();
+        isForArray = typeToken.isArray();
+        rowMapper = getRowMapper(typeToken.getMappedClass());
         checkType(method.getGenericParameterTypes());
     }
 

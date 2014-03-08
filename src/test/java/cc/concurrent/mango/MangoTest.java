@@ -20,6 +20,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
+ * 测试db
+ *
  * @author ash
  */
 public class MangoTest {

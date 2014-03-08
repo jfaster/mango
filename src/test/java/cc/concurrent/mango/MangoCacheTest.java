@@ -22,6 +22,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
+ * 测试cache
+ *
  * @author ash
  */
 public class MangoCacheTest {

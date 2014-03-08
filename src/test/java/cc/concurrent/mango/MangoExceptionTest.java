@@ -10,6 +10,8 @@ import org.junit.Test;
 import javax.sql.DataSource;
 
 /**
+ * 测试异常
+ *
  * @author ash
  */
 public class MangoExceptionTest {
