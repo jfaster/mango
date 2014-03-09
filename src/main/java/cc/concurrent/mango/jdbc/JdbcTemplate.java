@@ -14,29 +14,23 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class JdbcTemplate {
 
-    private DataSource ds;
-
-    public JdbcTemplate(DataSource ds) {
-        this.ds = ds;
+    public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> T queryForObject(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(sql, args, new ObjectResultSetExtractor<T>(rowMapper));
+    public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> List<T> queryForList(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(sql, args, new ListResultSetExtractor<T>(rowMapper));
+    public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> Set<T> queryForSet(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(sql, args, new SetResultSetExtractor<T>(rowMapper));
+    public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 
-    public <T> Object queryForArray(String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(sql, args, new ArrayResultSetExtractor<T>(rowMapper));
-    }
-
-    public int update(String sql, Object[] args, boolean returnGenerateId) {
+    public int update(DataSource ds, String sql, Object[] args, boolean returnGenerateId) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -62,7 +56,7 @@ public class JdbcTemplate {
         }
     }
 
-    public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
+    public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         try {
@@ -77,7 +71,7 @@ public class JdbcTemplate {
         }
     }
 
-    private <T> T executeQuery(String sql, Object[] args, ResultSetExtractor<T> rse) {
+    private <T> T executeQuery(DataSource ds, String sql, Object[] args, ResultSetExtractor<T> rse) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;

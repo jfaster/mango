@@ -41,7 +41,7 @@ public class MangoCacheTest {
         DriverManagerDataSource ds = new DriverManagerDataSource(driverClassName, url, username, password);
         createTable(ds);
         dataCache = new DataCacheImpl();
-        dao = new Mango(ds, dataCache).create(ManDao.class);
+        dao = new Mango(new SimpleDataSourceFactory(ds), dataCache).create(ManDao.class);
     }
 
     // TODO 便利的debug log

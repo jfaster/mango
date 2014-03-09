@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -33,18 +34,18 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     private ASTRootNode rootNode;
 
-    private BatchUpdateOperator(ASTRootNode rootNode, Method method) {
-        this.rootNode = rootNode;
-        init(method);
+    private BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        super(method, sqlType);
+        init(rootNode, method);
     }
 
-    public void init(Method method) {
-        buildCacheDescriptor(method);
+    public void init(ASTRootNode rootNode, Method method) {
+        this.rootNode = rootNode;
         checkType(method.getGenericParameterTypes());
     }
 
-    public static BatchUpdateOperator create(ASTRootNode rootNode, Method method) {
-        return new BatchUpdateOperator(rootNode, method);
+    public static BatchUpdateOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        return new BatchUpdateOperator(rootNode, method, sqlType);
     }
 
     @Override
@@ -102,7 +103,7 @@ public class BatchUpdateOperator extends AbstractOperator {
             }
             logger.debug(Objects.toStringHelper("BatchUpdateOperator").add("sql", sql).add("batchArgs", str).toString());
         }
-        int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+        int[] ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
         if (isUseCache) {
             dataCache.delete(keys);
         }

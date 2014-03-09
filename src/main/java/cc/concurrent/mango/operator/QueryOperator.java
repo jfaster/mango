@@ -42,13 +42,13 @@ public class QueryOperator extends AbstractOperator {
     private boolean isForSet;
     private boolean isForArray;
 
-    private QueryOperator(ASTRootNode rootNode, Method method) {
-        this.rootNode = rootNode;
-        buildCacheDescriptor(method);
-        init(method);
+    private QueryOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        super(method, sqlType);
+        init(rootNode, method);
     }
 
-    private void init(Method method) {
+    private void init(ASTRootNode rootNode, Method method) {
+        this.rootNode = rootNode;
         TypeToken typeToken = new TypeToken(method.getGenericReturnType());
         isForList = typeToken.isList();
         isForSet = typeToken.isSet();
@@ -57,8 +57,8 @@ public class QueryOperator extends AbstractOperator {
         checkType(method.getGenericParameterTypes());
     }
 
-    public static QueryOperator create(ASTRootNode rootNode, Method method) {
-        return new QueryOperator(rootNode, method);
+    public static QueryOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        return new QueryOperator(rootNode, method, sqlType);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class QueryOperator extends AbstractOperator {
         }
         Class<T> valueClass = rowMapper.getMappedClass();
         if (isForList) {
-            List<T> list = jdbcTemplate.queryForList(sql, args, rowMapper);
+            List<T> list = jdbcTemplate.queryForList(getDataSource(), sql, args, rowMapper);
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, list);
             }
@@ -213,7 +213,7 @@ public class QueryOperator extends AbstractOperator {
             }
             return list;
         } else if (isForSet) {
-            Set<T> set = jdbcTemplate.queryForSet(sql, args, rowMapper);
+            Set<T> set = jdbcTemplate.queryForSet(getDataSource(), sql, args, rowMapper);
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, set);
             }
@@ -232,7 +232,7 @@ public class QueryOperator extends AbstractOperator {
             }
             return set;
         } else if (isForArray) {
-            Object array = jdbcTemplate.queryForArray(sql, args, rowMapper);
+            Object array = jdbcTemplate.queryForArray(getDataSource(), sql, args, rowMapper);
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, array);
             }
@@ -263,7 +263,7 @@ public class QueryOperator extends AbstractOperator {
             }
             return r;
         } else {
-            Object r = jdbcTemplate.queryForObject(sql, args, rowMapper);
+            Object r = jdbcTemplate.queryForObject(getDataSource(), sql, args, rowMapper);
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, r);
             }

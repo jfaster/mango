@@ -36,7 +36,7 @@ public class MangoByteTest {
         String password = Config.getPassword();
         DriverManagerDataSource ds = new DriverManagerDataSource(driverClassName, url, username, password);
         createTable(ds);
-        dao = new Mango(ds, null).create(ByteInfoDao.class);
+        dao = new Mango(new SimpleDataSourceFactory(ds), null).create(ByteInfoDao.class);
     }
 
 

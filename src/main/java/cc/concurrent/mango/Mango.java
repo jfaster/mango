@@ -11,7 +11,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.reflect.AbstractInvocationHandler;
 import com.google.common.reflect.Reflection;
 
-import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
@@ -22,11 +21,11 @@ public class Mango {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
-    private final DataSource dataSource;
+    private final DataSourceFactory dataSourceFactory;
     private final DataCache defaultDataCache;
 
-    public Mango(DataSource dataSource, DataCache defaultDataCache) {
-        this.dataSource = dataSource;
+    public Mango(DataSourceFactory dataSourceFactory, DataCache defaultDataCache) {
+        this.dataSourceFactory = dataSourceFactory;
         this.defaultDataCache = defaultDataCache;
     }
 
@@ -38,26 +37,36 @@ public class Mango {
         if (dataCache == null) {
             dataCache = defaultDataCache;
         }
-        return Reflection.newProxy(daoClass, new MangoInvocationHandler(dataSource, dataCache));
+        return Reflection.newProxy(daoClass, new MangoInvocationHandler(daoClass, dataSourceFactory, dataCache));
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
-        private DataSource dataSource;
+        private final DataSourceFactory dataSourceFactory;
         private final DataCache dataCache;
+        private final DbDescriptor dbDescriptor;
 
-        private MangoInvocationHandler(DataSource dataSource, DataCache dataCache) {
-            this.dataSource = dataSource;
+        private MangoInvocationHandler(Class<?> daoClass, DataSourceFactory dataSourceFactory, DataCache dataCache) {
+            this.dataSourceFactory = dataSourceFactory;
             this.dataCache = dataCache;
+            String dataSourceName = "";
+            String table = "";
+            DB dbAnno = daoClass.getAnnotation(DB.class);
+            if (dbAnno != null) {
+                dataSourceName = dbAnno.dataSource();
+                table = dbAnno.table();
+            }
+            dbDescriptor = new DbDescriptor(dataSourceName, table);
         }
 
-        LoadingCache<Method, Operator> cache = CacheBuilder.newBuilder()
+        private final LoadingCache<Method, Operator> cache = CacheBuilder.newBuilder()
                 .build(
                         new CacheLoader<Method, Operator>() {
                             public Operator load(Method method) throws Exception {
                                 Operator operator = OperatorFactory.getOperator(method);
-                                operator.setDataSource(dataSource);
+                                operator.setDataSourceFactory(dataSourceFactory);
                                 operator.setDataCache(dataCache);
+                                operator.setDbDescriptor(dbDescriptor);
                                 return operator;
                             }
                         });

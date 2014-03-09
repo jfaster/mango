@@ -41,7 +41,7 @@ public class MangoTest {
         String password = Config.getPassword();
         ds = new DriverManagerDataSource(driverClassName, url, username, password);
 
-        dao = new Mango(ds, null).create(UserDao.class);
+        dao = new Mango(new SimpleDataSourceFactory(ds), null).create(UserDao.class);
 
         initUsers();
         createTable();

@@ -24,15 +24,29 @@ public abstract class AbstractOperator implements Operator {
     protected DataCache dataCache;
     protected CacheDescriptor cacheDescriptor;
 
-    protected AbstractOperator() {
+    private DataSourceFactory dataSourceFactory;
+    private DbDescriptor dbDescriptor;
+    private SQLType sqlType;
+
+    protected AbstractOperator(Method method, SQLType sqlType) {
+        this.jdbcTemplate = new JdbcTemplate();
+        this.sqlType = sqlType;
+        buildCacheDescriptor(method);
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    @Override
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
     }
 
+    @Override
     public void setDataCache(DataCache dataCache) {
         this.dataCache = dataCache;
+    }
+
+    @Override
+    public void setDbDescriptor(DbDescriptor dbDescriptor) {
+        this.dbDescriptor = dbDescriptor;
     }
 
     protected String getSingleKey(RuntimeContext context) {
@@ -52,7 +66,11 @@ public abstract class AbstractOperator implements Operator {
         return new TypeContextImpl(parameterTypeMap);
     }
 
-    protected void buildCacheDescriptor(Method method) {
+    protected DataSource getDataSource() {
+        return dataSourceFactory.getDataSource(dbDescriptor.getDataSourceName(), sqlType);
+    }
+
+    private void buildCacheDescriptor(Method method) {
         Class<?> daoClass = method.getDeclaringClass();
         Cache cacheAnno = daoClass.getAnnotation(Cache.class);
         cacheDescriptor = new CacheDescriptor();

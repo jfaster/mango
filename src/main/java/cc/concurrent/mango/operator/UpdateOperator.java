@@ -11,6 +11,7 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -26,12 +27,12 @@ public class UpdateOperator extends AbstractOperator {
     private boolean returnGeneratedId;
 
     private UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        this.rootNode = rootNode;
-        buildCacheDescriptor(method);
-        init(method, sqlType);
+        super(method, sqlType);
+        init(rootNode, method, sqlType);
     }
 
-    void init(Method method, SQLType sqlType) {
+    void init(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        this.rootNode = rootNode;
         ReturnGeneratedId returnGeneratedIdAnno = method.getAnnotation(ReturnGeneratedId.class);
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
@@ -63,7 +64,7 @@ public class UpdateOperator extends AbstractOperator {
         if (logger.isDebugEnabled()) {
             logger.debug("{} #args={}", sql, args);
         }
-        int r = jdbcTemplate.update(sql, args, returnGeneratedId);
+        int r = jdbcTemplate.update(getDataSource(), sql, args, returnGeneratedId);
         if (logger.isDebugEnabled()) {
             logger.debug("{} #result={}", sql, r);
         }

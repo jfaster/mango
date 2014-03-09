@@ -44,11 +44,11 @@ public class OperatorFactory {
         SQLType sqlType = getSQLType(sql);
 
         if (sqlType == SQLType.SELECT) {
-            return QueryOperator.create(rootNode, method);
+            return QueryOperator.create(rootNode, method, sqlType);
         } else if (int.class.equals(method.getReturnType())) {
             return UpdateOperator.create(rootNode, method, sqlType);
         } else if (int[].class.equals(method.getReturnType())) {
-            return BatchUpdateOperator.create(rootNode, method);
+            return BatchUpdateOperator.create(rootNode, method, sqlType);
         } else {
             throw new IncorrectReturnTypeException("return type expected int or int[] but " + method.getReturnType());
         }

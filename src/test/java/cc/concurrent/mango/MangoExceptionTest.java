@@ -28,7 +28,7 @@ public class MangoExceptionTest {
         String username = Config.getUsername();
         String password = Config.getPassword();
         ds = new DriverManagerDataSource(driverClassName, url, username, password);
-        dao = new Mango(ds, null).create(ExceptionDao.class);
+        dao = new Mango(new SimpleDataSourceFactory(ds), null).create(ExceptionDao.class);
     }
 
 

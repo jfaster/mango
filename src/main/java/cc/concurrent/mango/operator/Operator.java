@@ -2,10 +2,9 @@ package cc.concurrent.mango.operator;
 
 
 import cc.concurrent.mango.DataCache;
-import cc.concurrent.mango.runtime.TypeContext;
+import cc.concurrent.mango.DataSourceFactory;
+import cc.concurrent.mango.DbDescriptor;
 
-import javax.sql.DataSource;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -13,9 +12,11 @@ import java.lang.reflect.Type;
  */
 public interface Operator {
 
-    public void setDataSource(DataSource dataSource);
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory);
 
     public void setDataCache(DataCache dataCache);
+
+    public void setDbDescriptor(DbDescriptor dbDescriptor);
 
     public void checkType(Type[] methodArgTypes);
 
