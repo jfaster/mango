@@ -8,6 +8,7 @@ import cc.concurrent.mango.runtime.RuntimeContextImpl;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.TypeContextImpl;
 import cc.concurrent.mango.util.reflect.Reflection;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import javax.sql.DataSource;
@@ -25,15 +26,18 @@ public abstract class AbstractOperator implements Operator {
     protected DataCache dataCache;
     protected CacheDescriptor cacheDescriptor;
 
-    private DataSourceFactory dataSourceFactory;
     private DbDescriptor dbDescriptor;
+    private DataSourceFactory dataSourceFactory;
     private SQLType sqlType;
     private String[] aliases;
+
+    private final static String TABLE = "table";
 
     protected AbstractOperator(Method method, SQLType sqlType) {
         this.jdbcTemplate = new JdbcTemplate();
         this.sqlType = sqlType;
         buildAliases(method);
+        buildDbDescriptor(method);
         buildCacheDescriptor(method);
     }
 
@@ -47,11 +51,6 @@ public abstract class AbstractOperator implements Operator {
         this.dataCache = dataCache;
     }
 
-    @Override
-    public void setDbDescriptor(DbDescriptor dbDescriptor) {
-        this.dbDescriptor = dbDescriptor;
-    }
-
     protected String getSingleKey(RuntimeContext context) {
         return getKey(cacheDescriptor.getPrefix(), context.getPropertyValue(cacheDescriptor.getParameterName(),
                 cacheDescriptor.getPropertyPath()));
@@ -63,6 +62,10 @@ public abstract class AbstractOperator implements Operator {
 
     protected TypeContext getTypeContext(Type[] methodArgTypes) {
         Map<String, Type> parameterTypeMap = Maps.newHashMap();
+        String table = dbDescriptor.getTable();
+        if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
+            parameterTypeMap.put(TABLE, String.class);
+        }
         for (int i = 0; i < methodArgTypes.length; i++) {
             parameterTypeMap.put(getParameterNameByIndex(i), methodArgTypes[i]);
         }
@@ -71,6 +74,10 @@ public abstract class AbstractOperator implements Operator {
 
     protected RuntimeContext getRuntimeContext(Object[] methodArgs) {
         Map<String, Object> parameters = Maps.newHashMap();
+        String table = dbDescriptor.getTable();
+        if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
+            parameters.put(TABLE, table);
+        }
         for (int i = 0; i < methodArgs.length; i++) {
             parameters.put(getParameterNameByIndex(i), methodArgs[i]);
         }
@@ -80,6 +87,17 @@ public abstract class AbstractOperator implements Operator {
 
     protected DataSource getDataSource() {
         return dataSourceFactory.getDataSource(dbDescriptor.getDataSourceName(), sqlType);
+    }
+
+    private void buildDbDescriptor(Method method) {
+        String dataSourceName = "";
+        String table = "";
+        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+        if (dbAnno != null) {
+            dataSourceName = dbAnno.dataSource();
+            table = dbAnno.table();
+        }
+        dbDescriptor = new DbDescriptor(dataSourceName, table);
     }
 
     private void buildCacheDescriptor(Method method) {

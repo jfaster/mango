@@ -37,26 +37,17 @@ public class Mango {
         if (dataCache == null) {
             dataCache = defaultDataCache;
         }
-        return Reflection.newProxy(daoClass, new MangoInvocationHandler(daoClass, dataSourceFactory, dataCache));
+        return Reflection.newProxy(daoClass, new MangoInvocationHandler(dataSourceFactory, dataCache));
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
         private final DataSourceFactory dataSourceFactory;
         private final DataCache dataCache;
-        private final DbDescriptor dbDescriptor;
 
-        private MangoInvocationHandler(Class<?> daoClass, DataSourceFactory dataSourceFactory, DataCache dataCache) {
+        private MangoInvocationHandler(DataSourceFactory dataSourceFactory, DataCache dataCache) {
             this.dataSourceFactory = dataSourceFactory;
             this.dataCache = dataCache;
-            String dataSourceName = "";
-            String table = "";
-            DB dbAnno = daoClass.getAnnotation(DB.class);
-            if (dbAnno != null) {
-                dataSourceName = dbAnno.dataSource();
-                table = dbAnno.table();
-            }
-            dbDescriptor = new DbDescriptor(dataSourceName, table);
         }
 
         private final LoadingCache<Method, Operator> cache = CacheBuilder.newBuilder()
@@ -66,7 +57,6 @@ public class Mango {
                                 Operator operator = OperatorFactory.getOperator(method);
                                 operator.setDataSourceFactory(dataSourceFactory);
                                 operator.setDataCache(dataCache);
-                                operator.setDbDescriptor(dbDescriptor);
                                 return operator;
                             }
                         });
