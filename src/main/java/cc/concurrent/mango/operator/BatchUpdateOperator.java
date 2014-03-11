@@ -5,8 +5,7 @@ import cc.concurrent.mango.exception.NullParameterException;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.RuntimeContextImpl;
-import cc.concurrent.mango.runtime.TypeContextImpl;
+import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
@@ -14,15 +13,12 @@ import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -62,9 +58,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         if (!typeToken.isIterable()) {
             throw new RuntimeException(""); // TODO
         }
-        Map<String, Type> parameterTypeMap = Maps.newHashMap();
-        parameterTypeMap.put(String.valueOf(1), mappedClass);
-        TypeContextImpl context = new TypeContextImpl(parameterTypeMap);
+        TypeContext context = getTypeContext(new Type[] {mappedClass});
         rootNode.checkType(context);
     }
 
@@ -84,9 +78,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         List<Object[]> batchArgs = Lists.newArrayList();
         String sql = null;
         for (Object obj : iterables) {
-            Map<String, Object> parameters = Maps.newHashMap();
-            parameters.put("1", obj);
-            RuntimeContext context = new RuntimeContextImpl(parameters);
+            RuntimeContext context = getRuntimeContext(new Object[] {obj});
             if (isUseCache) {
                 keys.add(getSingleKey(context));
             }

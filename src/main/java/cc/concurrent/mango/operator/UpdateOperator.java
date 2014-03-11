@@ -3,18 +3,14 @@ package cc.concurrent.mango.operator;
 import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.RuntimeContextImpl;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Map;
 
 /**
  * @author ash
@@ -53,11 +49,7 @@ public class UpdateOperator extends AbstractOperator {
 
     @Override
     public Object execute(Object[] methodArgs) {
-        Map<String, Object> parameters = Maps.newHashMap();
-        for (int i = 0; i < methodArgs.length; i++) {
-            parameters.put(String.valueOf(i + 1), methodArgs[i]);
-        }
-        RuntimeContext context = new RuntimeContextImpl(parameters);
+        RuntimeContext context = getRuntimeContext(methodArgs);
         ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();

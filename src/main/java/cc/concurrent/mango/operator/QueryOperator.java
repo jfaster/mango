@@ -6,7 +6,6 @@ import cc.concurrent.mango.jdbc.RowMapper;
 import cc.concurrent.mango.jdbc.SingleColumnRowMapper;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.RuntimeContextImpl;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
@@ -17,7 +16,6 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanWrapper;
 import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.lang.reflect.Array;
@@ -88,11 +86,7 @@ public class QueryOperator extends AbstractOperator {
 
     @Override
     public Object execute(Object[] methodArgs) {
-        Map<String, Object> parameters = Maps.newHashMap();
-        for (int i = 0; i < methodArgs.length; i++) {
-            parameters.put(String.valueOf(i + 1), methodArgs[i]);
-        }
-        RuntimeContext context = new RuntimeContextImpl(parameters);
+        RuntimeContext context = getRuntimeContext(methodArgs);
         if (cacheDescriptor.isUseCache()) { // 先使用缓存，再使用db
             return executeFromCache(context);
         } else { // 直接使用db

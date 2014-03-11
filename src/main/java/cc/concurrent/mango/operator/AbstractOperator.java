@@ -4,6 +4,7 @@ import cc.concurrent.mango.*;
 import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
 import cc.concurrent.mango.jdbc.JdbcTemplate;
 import cc.concurrent.mango.runtime.RuntimeContext;
+import cc.concurrent.mango.runtime.RuntimeContextImpl;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.TypeContextImpl;
 import cc.concurrent.mango.util.reflect.Reflection;
@@ -27,10 +28,12 @@ public abstract class AbstractOperator implements Operator {
     private DataSourceFactory dataSourceFactory;
     private DbDescriptor dbDescriptor;
     private SQLType sqlType;
+    private String[] aliases;
 
     protected AbstractOperator(Method method, SQLType sqlType) {
         this.jdbcTemplate = new JdbcTemplate();
         this.sqlType = sqlType;
+        buildAliases(method);
         buildCacheDescriptor(method);
     }
 
@@ -61,10 +64,19 @@ public abstract class AbstractOperator implements Operator {
     protected TypeContext getTypeContext(Type[] methodArgTypes) {
         Map<String, Type> parameterTypeMap = Maps.newHashMap();
         for (int i = 0; i < methodArgTypes.length; i++) {
-            parameterTypeMap.put(String.valueOf(i + 1), methodArgTypes[i]);
+            parameterTypeMap.put(getParameterNameByIndex(i), methodArgTypes[i]);
         }
         return new TypeContextImpl(parameterTypeMap);
     }
+
+    protected RuntimeContext getRuntimeContext(Object[] methodArgs) {
+        Map<String, Object> parameters = Maps.newHashMap();
+        for (int i = 0; i < methodArgs.length; i++) {
+            parameters.put(getParameterNameByIndex(i), methodArgs[i]);
+        }
+        return new RuntimeContextImpl(parameters);
+    }
+
 
     protected DataSource getDataSource() {
         return dataSourceFactory.getDataSource(dbDescriptor.getDataSourceName(), sqlType);
@@ -87,7 +99,7 @@ public abstract class AbstractOperator implements Operator {
                     Annotation[] pas = pass[i];
                     for (Annotation pa : pas) {
                         if (CacheBy.class.equals(pa.annotationType())) {
-                            cacheDescriptor.setParameterName(String.valueOf(i + 1));
+                            cacheDescriptor.setParameterName(getParameterNameByIndex(i));
                             cacheDescriptor.setPropertyPath(((CacheBy) pa).value());
                             num++;
                         }
@@ -99,5 +111,24 @@ public abstract class AbstractOperator implements Operator {
             }
         }
     }
+
+    private void buildAliases(Method method) {
+        Annotation[][] pass = method.getParameterAnnotations();
+        aliases = new String[pass.length];
+        for (int i = 0; i < pass.length; i++) {
+            Annotation[] pas = pass[i];
+            for (Annotation pa : pas) {
+                if (Alias.class.equals(pa.annotationType())) {
+                    aliases[i] = ((Alias) pa).value();
+                }
+            }
+        }
+    }
+
+    private String getParameterNameByIndex(int index) {
+        String alias = aliases[index];
+        return alias != null ? alias : String.valueOf(index + 1);
+    }
+
 
 }
