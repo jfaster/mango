@@ -9,16 +9,9 @@ import javax.sql.DataSource;
  */
 public class SimpleDataSourceFactory implements DataSourceFactory {
 
-    private DataSource dataSource;
-
-    public SimpleDataSourceFactory() {
-    }
+    private final DataSource dataSource;
 
     public SimpleDataSourceFactory(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
