@@ -23,7 +23,7 @@ public class TypeUtil {
             nestedPath.append(propertyName);
             Class<?> clazz = getClassFromType(type);
             if (clazz != null) {
-                Method method = MethodCache.getReadMethod(clazz, propertyName);
+                Method method = BeanInfoCache.getReadMethod(clazz, propertyName);
                 if (method != null) {
                     type = method.getGenericReturnType();
                     propertyPath = propertyPath.substring(pos + 1);
@@ -37,7 +37,7 @@ public class TypeUtil {
 
         Class<?> clazz = getClassFromType(type);
         if (clazz != null) {
-            Method method = MethodCache.getReadMethod((Class<?>) type, propertyPath);
+            Method method = BeanInfoCache.getReadMethod((Class<?>) type, propertyPath);
             if (method != null) {
                 type = method.getGenericReturnType();
                 return type;

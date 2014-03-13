@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Alias {
+public @interface Rename {
 
     String value();
 

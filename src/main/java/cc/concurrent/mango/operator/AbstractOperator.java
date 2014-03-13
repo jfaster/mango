@@ -136,8 +136,8 @@ public abstract class AbstractOperator implements Operator {
         for (int i = 0; i < pass.length; i++) {
             Annotation[] pas = pass[i];
             for (Annotation pa : pas) {
-                if (Alias.class.equals(pa.annotationType())) {
-                    aliases[i] = ((Alias) pa).value();
+                if (Rename.class.equals(pa.annotationType())) {
+                    aliases[i] = ((Rename) pa).value();
                 }
             }
         }

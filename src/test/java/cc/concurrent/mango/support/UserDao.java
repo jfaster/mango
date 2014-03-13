@@ -1,6 +1,6 @@
 package cc.concurrent.mango.support;
 
-import cc.concurrent.mango.Alias;
+import cc.concurrent.mango.Rename;
 import cc.concurrent.mango.DB;
 import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.SQL;
@@ -82,7 +82,7 @@ public interface UserDao {
     public int insertUser(User user);
 
     @SQL("update ${:table} set name=:u.name, age=:u.age, gender=:u.gender, money=:u.money, update_time=:u.updateTime where id=:u.id")
-    public int updateUser(@Alias("u") User user);
+    public int updateUser(@Rename("u") User user);
 
     @SQL("delete from user where id=:1")
     public int deleteUser(int id);

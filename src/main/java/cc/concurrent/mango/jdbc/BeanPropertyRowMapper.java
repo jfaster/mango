@@ -2,6 +2,7 @@ package cc.concurrent.mango.jdbc;
 
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
+import cc.concurrent.mango.util.reflect.BeanInfoCache;
 import cc.concurrent.mango.util.reflect.BeanWrapper;
 import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
 import cc.concurrent.mango.util.reflect.Reflection;
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +36,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     protected void initialize(Class<T> mappedClass) {
         this.mappedClass = mappedClass;
         this.mappedFields = new HashMap<String, PropertyDescriptor>();
-        PropertyDescriptor[] pds = Reflection.getPropertyDescriptors(mappedClass);
+        List<PropertyDescriptor> pds = BeanInfoCache.getPropertyDescriptors(mappedClass);
         for (PropertyDescriptor pd : pds) {
             if (pd.getWriteMethod() != null) {
                 this.mappedFields.put(pd.getName().toLowerCase(), pd);
