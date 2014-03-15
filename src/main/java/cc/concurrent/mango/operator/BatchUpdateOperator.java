@@ -97,7 +97,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         }
         int[] ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
         if (isUseCache) {
-            dataCache.delete(keys);
+            cacheHandler.delete(keys);
         }
         return ints;
     }

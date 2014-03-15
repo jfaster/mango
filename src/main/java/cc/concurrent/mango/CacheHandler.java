@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * @author ash
  */
-public interface DataCache {
+public interface CacheHandler {
 
     public Object get(String key);
 

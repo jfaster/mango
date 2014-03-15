@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class MangoCacheTest {
 
     private static ManDao dao;
-    private static DataCache dataCache;
+    private static CacheHandler cacheHandler;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -40,8 +40,8 @@ public class MangoCacheTest {
         String password = Config.getPassword();
         DriverManagerDataSource ds = new DriverManagerDataSource(driverClassName, url, username, password);
         createTable(ds);
-        dataCache = new DataCacheImpl();
-        dao = new Mango(new SimpleDataSourceFactory(ds), dataCache).create(ManDao.class);
+        cacheHandler = new CacheHandlerImpl();
+        dao = new Mango(new SimpleDataSourceFactory(ds), cacheHandler).create(ManDao.class);
     }
 
     // TODO 便利的debug log
@@ -51,19 +51,19 @@ public class MangoCacheTest {
         int id = dao.insert(man);
         String key = getKey(id);
         man.setId(id);
-        assertThat(dataCache.get(key), nullValue());
+        assertThat(cacheHandler.get(key), nullValue());
         assertThat(dao.select(id), equalTo(man));
-        assertThat((Man) dataCache.get(key), equalTo(man));
+        assertThat((Man) cacheHandler.get(key), equalTo(man));
         assertThat(dao.select(id), equalTo(man));
 
         man.setName("lulu");
         dao.update(man);
-        assertThat(dataCache.get(key), nullValue());
+        assertThat(cacheHandler.get(key), nullValue());
         assertThat(dao.select(id), equalTo(man));
-        assertThat((Man) dataCache.get(key), equalTo(man));
+        assertThat((Man) cacheHandler.get(key), equalTo(man));
 
         dao.delete(id);
-        assertThat(dataCache.get(key), nullValue());
+        assertThat(cacheHandler.get(key), nullValue());
         assertThat(dao.select(id), nullValue());
     }
 
@@ -86,7 +86,7 @@ public class MangoCacheTest {
         for (int i = 0; i < ids.size(); i++) {
             Integer id = ids.get(i);
             Man man = mans.get(i);
-            assertThat((Man) dataCache.get(getKey(id)), equalTo(man));
+            assertThat((Man) cacheHandler.get(getKey(id)), equalTo(man));
         }
         assertThat(Sets.newTreeSet(dao.selectList(ids, name)), equalTo(manSet));
     }
@@ -126,7 +126,7 @@ public class MangoCacheTest {
     }
 
 
-    private static class DataCacheImpl implements DataCache {
+    private static class CacheHandlerImpl implements CacheHandler {
 
         private Map<String, Object> cache = new HashMap<String, Object>();
 

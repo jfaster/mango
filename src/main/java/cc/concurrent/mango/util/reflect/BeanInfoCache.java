@@ -1,8 +1,8 @@
 package cc.concurrent.mango.util.reflect;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import cc.concurrent.mango.util.concurrent.CacheLoader;
+import cc.concurrent.mango.util.concurrent.DoubleCheckCache;
+import cc.concurrent.mango.util.concurrent.LoadingCache;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -26,15 +26,12 @@ public class BeanInfoCache {
         return cache.getUnchecked(clazz).getPropertyDescriptors();
     }
 
-
-    private static LoadingCache<Class<?>, BeanInfo> cache = CacheBuilder.newBuilder()
-            .build(
-                    new CacheLoader<Class<?>, BeanInfo>() {
-                        public BeanInfo load(Class<?> clazz) throws Exception {
-                            return new BeanInfo(clazz);
-                        }
-                    });
-
+    private final static LoadingCache<Class<?>, BeanInfo> cache = new DoubleCheckCache<Class<?>, BeanInfo>(
+            new CacheLoader<Class<?>, BeanInfo>() {
+                public BeanInfo load(Class<?> clazz) throws Exception {
+                    return new BeanInfo(clazz);
+                }
+            });
 
     private static class BeanInfo {
 

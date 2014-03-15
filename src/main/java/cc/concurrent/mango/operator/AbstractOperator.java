@@ -23,7 +23,7 @@ import java.util.Map;
 public abstract class AbstractOperator implements Operator {
 
     protected JdbcTemplate jdbcTemplate;
-    protected DataCache dataCache;
+    protected CacheHandler cacheHandler;
     protected CacheDescriptor cacheDescriptor;
 
     private DbDescriptor dbDescriptor;
@@ -47,8 +47,8 @@ public abstract class AbstractOperator implements Operator {
     }
 
     @Override
-    public void setDataCache(DataCache dataCache) {
-        this.dataCache = dataCache;
+    public void setCacheHandler(CacheHandler cacheHandler) {
+        this.cacheHandler = cacheHandler;
     }
 
     protected String getSingleKey(RuntimeContext context) {

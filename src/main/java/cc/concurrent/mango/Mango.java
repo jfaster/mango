@@ -3,11 +3,11 @@ package cc.concurrent.mango;
 import cc.concurrent.mango.operator.Operator;
 import cc.concurrent.mango.operator.OperatorFactory;
 import cc.concurrent.mango.util.ToStringHelper;
+import cc.concurrent.mango.util.concurrent.CacheLoader;
+import cc.concurrent.mango.util.concurrent.DoubleCheckCache;
+import cc.concurrent.mango.util.concurrent.LoadingCache;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.reflect.AbstractInvocationHandler;
 import com.google.common.reflect.Reflection;
 
@@ -22,44 +22,43 @@ public class Mango {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
     private final DataSourceFactory dataSourceFactory;
-    private final DataCache defaultDataCache;
+    private final CacheHandler defaultCacheHandler;
 
-    public Mango(DataSourceFactory dataSourceFactory, DataCache defaultDataCache) {
+    public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
-        this.defaultDataCache = defaultDataCache;
+        this.defaultCacheHandler = defaultCacheHandler;
     }
 
     public <T> T create(Class<T> daoClass) {
         return create(daoClass, null);
     }
 
-    public <T> T create(Class<T> daoClass, DataCache dataCache) {
-        if (dataCache == null) {
-            dataCache = defaultDataCache;
+    public <T> T create(Class<T> daoClass, CacheHandler cacheHandler) {
+        if (cacheHandler == null) {
+            cacheHandler = defaultCacheHandler;
         }
-        return Reflection.newProxy(daoClass, new MangoInvocationHandler(dataSourceFactory, dataCache));
+        return Reflection.newProxy(daoClass, new MangoInvocationHandler(dataSourceFactory, cacheHandler));
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
         private final DataSourceFactory dataSourceFactory;
-        private final DataCache dataCache;
+        private final CacheHandler cacheHandler;
 
-        private MangoInvocationHandler(DataSourceFactory dataSourceFactory, DataCache dataCache) {
+        private MangoInvocationHandler(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler) {
             this.dataSourceFactory = dataSourceFactory;
-            this.dataCache = dataCache;
+            this.cacheHandler = cacheHandler;
         }
 
-        private final LoadingCache<Method, Operator> cache = CacheBuilder.newBuilder()
-                .build(
-                        new CacheLoader<Method, Operator>() {
-                            public Operator load(Method method) throws Exception {
-                                Operator operator = OperatorFactory.getOperator(method);
-                                operator.setDataSourceFactory(dataSourceFactory);
-                                operator.setDataCache(dataCache);
-                                return operator;
-                            }
-                        });
+        private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
+                new CacheLoader<Method, Operator>() {
+                    public Operator load(Method method) throws Exception {
+                        Operator operator = OperatorFactory.getOperator(method);
+                        operator.setDataSourceFactory(dataSourceFactory);
+                        operator.setCacheHandler(cacheHandler);
+                        return operator;
+                    }
+                });
 
         @Override
         protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {

@@ -61,7 +61,7 @@ public class UpdateOperator extends AbstractOperator {
             logger.debug("{} #result={}", sql, r);
         }
         if (cacheDescriptor.isUseCache()) {
-            dataCache.delete(Sets.newHashSet(getSingleKey(context)));
+            cacheHandler.delete(Sets.newHashSet(getSingleKey(context)));
             if (logger.isDebugEnabled()) {
                 logger.debug("cache delete #key={}", getSingleKey(context));
             }
