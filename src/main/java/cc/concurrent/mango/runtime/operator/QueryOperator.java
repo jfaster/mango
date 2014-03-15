@@ -1,4 +1,4 @@
-package cc.concurrent.mango.operator;
+package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
 import cc.concurrent.mango.jdbc.JdbcUtils;

@@ -1,4 +1,4 @@
-package cc.concurrent.mango.operator;
+package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.runtime.ParsedSql;

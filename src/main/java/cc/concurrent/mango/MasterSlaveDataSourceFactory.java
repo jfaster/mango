@@ -1,6 +1,6 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.operator.SQLType;
+import cc.concurrent.mango.runtime.operator.SQLType;
 
 import javax.sql.DataSource;
 import java.util.List;

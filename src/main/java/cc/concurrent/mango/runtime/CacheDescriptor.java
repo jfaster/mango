@@ -1,4 +1,6 @@
-package cc.concurrent.mango;
+package cc.concurrent.mango.runtime;
+
+import cc.concurrent.mango.CacheExpire;
 
 /**
  * @author ash

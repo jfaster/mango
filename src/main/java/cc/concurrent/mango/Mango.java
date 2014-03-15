@@ -1,7 +1,7 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.operator.Operator;
-import cc.concurrent.mango.operator.OperatorFactory;
+import cc.concurrent.mango.runtime.operator.Operator;
+import cc.concurrent.mango.runtime.operator.OperatorFactory;
 import cc.concurrent.mango.util.ToStringHelper;
 import cc.concurrent.mango.util.concurrent.CacheLoader;
 import cc.concurrent.mango.util.concurrent.DoubleCheckCache;
