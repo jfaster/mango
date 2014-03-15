@@ -6,7 +6,7 @@ import cc.concurrent.mango.exception.structure.IncorrectSqlException;
 import cc.concurrent.mango.exception.structure.NoSqlAnnotationException;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.runtime.parser.Parser;
-import com.google.common.base.Strings;
+import cc.concurrent.mango.util.Strings;
 
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;

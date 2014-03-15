@@ -4,8 +4,6 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 
-import static com.google.common.base.Preconditions.*;
-
 /**
  * 将collection和数组的迭代结合在一起
  *
@@ -19,7 +17,9 @@ public class Iterables implements Iterable {
     private Object object = null;
 
     public Iterables(Object object) {
-        checkNotNull(object);
+        if (object == null) {
+            throw new RuntimeException("");
+        }
         if (Collection.class.isAssignableFrom(object.getClass())) { // 集合
             this.collection = (Collection<?>) object;
         } else if (object.getClass().isArray()) { // 数组

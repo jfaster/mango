@@ -152,8 +152,13 @@ public class MangoCacheTest {
         @Override
         public void delete(Set<String> keys) {
             for (String key : keys) {
-                cache.remove(key);
+                delete(key);
             }
+        }
+
+        @Override
+        public void delete(String key) {
+            cache.remove(key);
         }
     }
 

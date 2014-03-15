@@ -9,8 +9,6 @@ import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkState;
-
 /**
  * 可迭代参数
  *
@@ -35,7 +33,9 @@ public class ASTIterableParameter extends ValuableParameter {
     public void setParameter(String parameter) {
         Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
         Matcher m = p.matcher(parameter);
-        checkState(m.matches());
+        if (!m.matches()) {
+            throw new RuntimeException(""); // TODO
+        }
         parameterName = m.group(1);
         propertyPath = parameter.substring(m.end(1));
         if (!propertyPath.isEmpty()) {

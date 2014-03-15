@@ -1,9 +1,8 @@
 package cc.concurrent.mango.jdbc;
 
-import com.google.common.collect.Sets;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,7 +18,7 @@ public class SetResultSetExtractor<T> implements ResultSetExtractor<Set<T>> {
 
     @Override
     public Set<T> extractData(ResultSet rs) throws SQLException {
-        Set<T> results = Sets.newHashSet();
+        Set<T> results = new HashSet<T>();
         int rowNum = 0;
         while (rs.next()) {
             results.add(rowMapper.mapRow(rs, rowNum++));

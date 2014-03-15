@@ -7,14 +7,14 @@ import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.RuntimeContextImpl;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.TypeContextImpl;
+import cc.concurrent.mango.util.Strings;
 import cc.concurrent.mango.util.reflect.Reflection;
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -61,7 +61,7 @@ public abstract class AbstractOperator implements Operator {
     }
 
     protected TypeContext getTypeContext(Type[] methodArgTypes) {
-        Map<String, Type> parameterTypeMap = Maps.newHashMap();
+        Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
         String table = dbDescriptor.getTable();
         if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
             parameterTypeMap.put(TABLE, String.class);
@@ -73,7 +73,7 @@ public abstract class AbstractOperator implements Operator {
     }
 
     protected RuntimeContext getRuntimeContext(Object[] methodArgs) {
-        Map<String, Object> parameters = Maps.newHashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         String table = dbDescriptor.getTable();
         if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
             parameters.put(TABLE, table);

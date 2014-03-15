@@ -3,10 +3,10 @@ package cc.concurrent.mango.jdbc;
 import cc.concurrent.mango.exception.CannotGetJdbcConnectionException;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import com.google.common.collect.Sets;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -149,7 +149,7 @@ public class JdbcUtils {
         }
     }
 
-    private final static Set<Class<?>> singleColumClassSet = Sets.newHashSet();
+    private final static Set<Class<?>> singleColumClassSet = new HashSet<Class<?>>();
     static {
         // 字符串
         singleColumClassSet.add(String.class);

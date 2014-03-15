@@ -1,12 +1,12 @@
 package cc.concurrent.mango.jdbc;
 
+import cc.concurrent.mango.util.Strings;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanInfoCache;
 import cc.concurrent.mango.util.reflect.BeanWrapper;
 import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
 import cc.concurrent.mango.util.reflect.Reflection;
-import com.google.common.base.Strings;
 
 import java.beans.PropertyDescriptor;
 import java.sql.ResultSet;

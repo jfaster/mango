@@ -1,10 +1,9 @@
 package cc.concurrent.mango.jdbc;
 
-import com.google.common.collect.Lists;
-
 import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ public class ArrayResultSetExtractor<T> implements ResultSetExtractor<Object> {
 
     @Override
     public Object extractData(ResultSet rs) throws SQLException {
-        List<T> lists = Lists.newArrayList();
+        List<T> lists = new ArrayList<T>();
         int rowNum = 0;
         while (rs.next()) {
             lists.add(rowMapper.mapRow(rs, rowNum++));

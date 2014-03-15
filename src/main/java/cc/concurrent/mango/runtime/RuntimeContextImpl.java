@@ -1,13 +1,12 @@
 package cc.concurrent.mango.runtime;
 
+import cc.concurrent.mango.util.Strings;
 import cc.concurrent.mango.util.reflect.BeanWrapper;
 import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author ash
@@ -19,7 +18,7 @@ public class RuntimeContextImpl implements RuntimeContext {
 
     public RuntimeContextImpl(Map<String, Object> parameterMap) {
         this.parameterMap = parameterMap;
-        this.cache = Maps.newHashMap();
+        this.cache = new HashMap<String, Object>();
     }
 
     @Override
@@ -28,7 +27,9 @@ public class RuntimeContextImpl implements RuntimeContext {
         if (Strings.isNullOrEmpty(propertyName)) {
             return bean;
         }
-        checkNotNull(bean);
+        if (bean == null) {
+            throw new RuntimeException(""); // TODO
+        }
         String key = getCacheKey(beanName, propertyName);
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);

@@ -5,8 +5,8 @@ import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.util.Iterables;
-import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +44,7 @@ public class ASTRootNode extends SimpleNode {
      * @return
      */
     public List<ASTIterableParameter> getASTIterableParameters() {
-        List<ASTIterableParameter> aips = Lists.newArrayList();
+        List<ASTIterableParameter> aips = new ArrayList<ASTIterableParameter>();
         for (int i = 0; i < jjtGetNumChildren(); i++) {
             Node node = jjtGetChild(i);
             if (node instanceof ASTIterableParameter) {
@@ -62,7 +62,7 @@ public class ASTRootNode extends SimpleNode {
      */
     public ParsedSql buildSqlAndArgs(RuntimeContext context) {
         StringBuffer sql = new StringBuffer();
-        List<Object> args = Lists.newArrayList();
+        List<Object> args = new ArrayList<Object>();
         for (int i = 0; i < jjtGetNumChildren(); i++) {
             Node node = jjtGetChild(i);
             if (node instanceof ASTText) {

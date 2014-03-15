@@ -2,9 +2,9 @@ package cc.concurrent.mango.runtime;
 
 import cc.concurrent.mango.exception.NotReadableParameterException;
 import cc.concurrent.mango.util.reflect.TypeUtil;
-import com.google.common.collect.Maps;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,7 +17,7 @@ public class TypeContextImpl implements TypeContext {
 
     public TypeContextImpl(Map<String, Type> parameterTypeMap) {
         this.parameterTypeMap = parameterTypeMap;
-        this.cache = Maps.newHashMap();
+        this.cache = new HashMap<String, Type>();
     }
 
     @Override

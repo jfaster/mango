@@ -7,7 +7,6 @@ import java.sql.*;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author ash
@@ -45,7 +44,9 @@ public class JdbcTemplate {
             }
             // 生成自增id
             rs = ps.getGeneratedKeys();
-            checkState(rs.next(), "getGeneratedKeys error");
+            if (!rs.next()) {
+                throw new RuntimeException("getGeneratedKeys error"); // TODO
+            }
             return rs.getInt(1);
         } catch (SQLException e) {
             throw new DataAccessException(e);

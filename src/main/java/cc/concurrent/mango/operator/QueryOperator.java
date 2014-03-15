@@ -15,15 +15,11 @@ import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanWrapper;
 import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 处理所有的查询操作
@@ -98,7 +94,7 @@ public class QueryOperator extends AbstractOperator {
         Object obj = context.getPropertyValue(cacheDescriptor.getParameterName(), cacheDescriptor.getPropertyPath());
         Iterables iterables = new Iterables(obj);
         if (iterables.isIterable()) { // 多个key
-            Set<String> keys = Sets.newHashSet();
+            Set<String> keys = new HashSet<String>();
             Class<?> keyObjClass = null;
             for (Object keyObj : iterables) {
                 String key = getKey(cacheDescriptor.getPrefix(), keyObj);
@@ -119,9 +115,9 @@ public class QueryOperator extends AbstractOperator {
         boolean isDebugEnabled = logger.isDebugEnabled();
 
         Map<String, Object> map = cacheHandler.getBulk(keys);
-        List<T> hitValues = Lists.newArrayList();
-        List<U> hitKeyObjs = Lists.newArrayList(); // 用于debug
-        Set<U> missKeyObjs = Sets.newHashSet();
+        List<T> hitValues = new ArrayList<T>();
+        List<U> hitKeyObjs = new ArrayList<U>(); // 用于debug
+        Set<U> missKeyObjs = new HashSet<U>();
         for (Object keyObj : iterables) {
             String key = getKey(cacheDescriptor.getPrefix(), keyObj);
             Object value = map != null ? map.get(key) : null;
@@ -140,9 +136,9 @@ public class QueryOperator extends AbstractOperator {
         }
         if (missKeyObjs.isEmpty()) { // 所有的key全部命中
             if (isForList) {
-                return Lists.newArrayList(hitValues);
-            } else if (isForSet) {
                 return hitValues;
+            } else if (isForSet) {
+                return new HashSet<T>(hitValues); // TODO 添加测试用例
             } else if (isForArray) {
                 Object array = Array.newInstance(valueClass, hitValues.size());
                 int i = 0;

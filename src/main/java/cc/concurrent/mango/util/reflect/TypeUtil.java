@@ -1,7 +1,7 @@
 package cc.concurrent.mango.util.reflect;
 
 import cc.concurrent.mango.exception.NotReadablePropertyException;
-import com.google.common.base.Strings;
+import cc.concurrent.mango.util.Strings;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;

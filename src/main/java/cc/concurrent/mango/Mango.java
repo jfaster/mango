@@ -8,8 +8,8 @@ import cc.concurrent.mango.util.concurrent.DoubleCheckCache;
 import cc.concurrent.mango.util.concurrent.LoadingCache;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import com.google.common.reflect.AbstractInvocationHandler;
-import com.google.common.reflect.Reflection;
+import cc.concurrent.mango.util.reflect.AbstractInvocationHandler;
+import cc.concurrent.mango.util.reflect.Reflection;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

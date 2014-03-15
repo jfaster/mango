@@ -11,15 +11,10 @@ import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ash
@@ -73,9 +68,9 @@ public class BatchUpdateOperator extends AbstractOperator {
             throw new EmptyParameterException("batchUpdate's parameter can't be empty");
         }
 
-        Set<String> keys = Sets.newHashSet();
+        Set<String> keys = new HashSet<String>();
         boolean isUseCache = cacheDescriptor.isUseCache();
-        List<Object[]> batchArgs = Lists.newArrayList();
+        List<Object[]> batchArgs = new ArrayList<Object[]>();
         String sql = null;
         for (Object obj : iterables) {
             RuntimeContext context = getRuntimeContext(new Object[] {obj});
@@ -89,11 +84,11 @@ public class BatchUpdateOperator extends AbstractOperator {
             batchArgs.add(parsedSql.getArgs());
         }
         if (logger.isDebugEnabled()) {
-            List<String> str = Lists.newArrayList();
+            List<String> str = new ArrayList<String>();
             for (Object[] args : batchArgs) {
                 str.add(Arrays.toString(args));
             }
-            logger.debug(Objects.toStringHelper("BatchUpdateOperator").add("sql", sql).add("batchArgs", str).toString());
+            logger.debug("{} #args={}", sql, batchArgs);
         }
         int[] ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
         if (isUseCache) {

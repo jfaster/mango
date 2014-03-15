@@ -7,7 +7,6 @@ import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import com.google.common.collect.Sets;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -61,7 +60,7 @@ public class UpdateOperator extends AbstractOperator {
             logger.debug("{} #result={}", sql, r);
         }
         if (cacheDescriptor.isUseCache()) {
-            cacheHandler.delete(Sets.newHashSet(getSingleKey(context)));
+            cacheHandler.delete(getSingleKey(context));
             if (logger.isDebugEnabled()) {
                 logger.debug("cache delete #key={}", getSingleKey(context));
             }

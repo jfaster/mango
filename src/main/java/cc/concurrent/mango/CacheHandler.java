@@ -16,4 +16,6 @@ public interface CacheHandler {
 
     public void delete(Set<String> keys);
 
+    public void delete(String key);
+
 }
