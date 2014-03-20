@@ -1,9 +1,9 @@
 package cc.concurrent.mango.runtime;
 
 import cc.concurrent.mango.util.Strings;
-import cc.concurrent.mango.util.reflect.BeanWrapper;
-import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
+import cc.concurrent.mango.util.reflect.BeanUtil;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,20 +22,16 @@ public class RuntimeContextImpl implements RuntimeContext {
     }
 
     @Override
-    public Object getPropertyValue(String beanName, String propertyName) {
-        Object bean = parameterMap.get(beanName);
-        if (Strings.isNullOrEmpty(propertyName)) {
-            return bean;
-        }
-        if (bean == null) {
-            throw new RuntimeException(""); // TODO
-        }
-        String key = getCacheKey(beanName, propertyName);
+    @Nullable
+    public Object getPropertyValue(String parameterName, String propertyPath) {
+        String key = getCacheKey(parameterName, propertyPath);
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);
         }
-        BeanWrapper bw = new BeanWrapperImpl(bean);
-        Object value = bw.getPropertyValue(propertyName);
+        Object object = parameterMap.get(parameterName);
+        Object value = !propertyPath.isEmpty() ?
+                BeanUtil.getPropertyValue(object, propertyPath, parameterName) :
+                object;
         cache.put(key, value);
         return value;
     }

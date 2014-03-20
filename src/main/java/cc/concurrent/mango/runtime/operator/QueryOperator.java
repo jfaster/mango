@@ -13,8 +13,7 @@ import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import cc.concurrent.mango.util.reflect.BeanWrapper;
-import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
+import cc.concurrent.mango.util.reflect.BeanUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -32,6 +31,7 @@ public class QueryOperator extends AbstractOperator {
 
     private ASTRootNode rootNode;
     private RowMapper<?> rowMapper;
+    private Class<?> mappedClass;
     private boolean isForList;
     private boolean isForSet;
     private boolean isForArray;
@@ -47,7 +47,8 @@ public class QueryOperator extends AbstractOperator {
         isForList = typeToken.isList();
         isForSet = typeToken.isSet();
         isForArray = typeToken.isArray();
-        rowMapper = getRowMapper(typeToken.getMappedClass());
+        mappedClass = typeToken.getMappedClass();
+        rowMapper = getRowMapper(mappedClass);
         checkType(method.getGenericParameterTypes());
     }
 
@@ -190,8 +191,7 @@ public class QueryOperator extends AbstractOperator {
             }
             if (cacheDescriptor.isUseCache()) {
                 for (T t : list) {
-                    BeanWrapper beanWrapper = new BeanWrapperImpl(t);
-                    Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
+                    Object keyObj = BeanUtil.getPropertyValue(t, cacheDescriptor.getPropertyName(), mappedClass);
                     String key = getKey(cacheDescriptor.getPrefix(), keyObj);
                     cacheHandler.set(key, t, cacheDescriptor.getExpires());
                 }
@@ -209,8 +209,7 @@ public class QueryOperator extends AbstractOperator {
             }
             if (cacheDescriptor.isUseCache()) {
                 for (T t : set) {
-                    BeanWrapper beanWrapper = new BeanWrapperImpl(t);
-                    Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
+                    Object keyObj = BeanUtil.getPropertyValue(t, cacheDescriptor.getPropertyName(), mappedClass);
                     String key = getKey(cacheDescriptor.getPrefix(), keyObj);
                     cacheHandler.set(key, t, cacheDescriptor.getExpires());
                 }
@@ -230,8 +229,7 @@ public class QueryOperator extends AbstractOperator {
                 int size = Array.getLength(array);
                 for (int i = 0; i < size; i++) {
                     Object o = Array.get(array, i);
-                    BeanWrapper beanWrapper = new BeanWrapperImpl(o);
-                    Object keyObj = beanWrapper.getPropertyValue(cacheDescriptor.getPropertyName());
+                    Object keyObj = BeanUtil.getPropertyValue(o, cacheDescriptor.getPropertyName(), mappedClass);
                     String key = getKey(cacheDescriptor.getPrefix(), keyObj);
                     cacheHandler.set(key, o, cacheDescriptor.getExpires());
                 }

@@ -4,8 +4,7 @@ import cc.concurrent.mango.util.Strings;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanInfoCache;
-import cc.concurrent.mango.util.reflect.BeanWrapper;
-import cc.concurrent.mango.util.reflect.BeanWrapperImpl;
+import cc.concurrent.mango.util.reflect.BeanUtil;
 import cc.concurrent.mango.util.reflect.Reflection;
 
 import java.beans.PropertyDescriptor;
@@ -68,7 +67,6 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     public T mapRow(ResultSet rs, int rowNumber) throws SQLException {
         T mappedObject = Reflection.instantiate(this.mappedClass);
-        BeanWrapper bw = new BeanWrapperImpl(mappedObject);
 
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();
@@ -81,7 +79,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
                 if (logger.isDebugEnabled() && rowNumber == 0) {
                     logger.debug("Mapping column '" + column + "' to property '" + pd.getName() + "' of type " + pd.getPropertyType());
                 }
-                bw.setPropertyValue(pd.getName(), value);
+                BeanUtil.setPropertyValue(mappedObject, pd.getName(), value);
             }
         }
         return mappedObject;

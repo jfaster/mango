@@ -42,18 +42,13 @@
     </developers>
 
     <dependencies>
-        <!-- google基本工具 -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>15.0</version>
-            <scope>test</scope>
-        </dependency>
 
+        <!-- findbug相关 -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>3.2.5.RELEASE</version>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>2.0.1</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- 可选的log工具 -->
@@ -99,6 +94,12 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.29</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
