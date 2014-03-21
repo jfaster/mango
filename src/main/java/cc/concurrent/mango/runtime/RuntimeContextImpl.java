@@ -1,6 +1,5 @@
 package cc.concurrent.mango.runtime;
 
-import cc.concurrent.mango.util.Strings;
 import cc.concurrent.mango.util.reflect.BeanUtil;
 
 import javax.annotation.Nullable;
@@ -37,17 +36,13 @@ public class RuntimeContextImpl implements RuntimeContext {
     }
 
     @Override
-    public void setPropertyValue(String beanName, String propertyName, Object value) {
-        if (Strings.isNullOrEmpty(propertyName)) {
-            parameterMap.put(beanName, value);
-        } else {
-            String key = getCacheKey(beanName, propertyName);
-            cache.put(key, value);
-        }
+    public void setPropertyValue(String parameterName, String propertyPath, Object value) {
+        String key = getCacheKey(parameterName, propertyPath);
+        cache.put(key, value);
     }
 
-    private String getCacheKey(String beanName, String propertyName) {
-        return beanName + "." + propertyName;
+    private String getCacheKey(String beanName, String propertyPath) {
+        return propertyPath.isEmpty() ? beanName : beanName + "." + propertyPath;
     }
 
 }

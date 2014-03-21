@@ -1,7 +1,6 @@
 package cc.concurrent.mango.util.reflect;
 
 import cc.concurrent.mango.exception.NotReadablePropertyException;
-import cc.concurrent.mango.util.Strings;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -13,9 +12,6 @@ import java.lang.reflect.Type;
 public class TypeUtil {
 
     public static Type getPropertyType(Type type, String parameterName, String propertyPath) {
-        if (Strings.isNullOrEmpty(propertyPath)) { // 如果propertyPath为空，直接返回
-            return type;
-        }
         int pos = propertyPath.indexOf('.');
         StringBuffer nestedPath = new StringBuffer(propertyPath.length());
         while (pos > -1) {

@@ -22,22 +22,24 @@ public class TypeContextImpl implements TypeContext {
 
     @Override
     public Type getPropertyType(String parameterName, String propertyPath) {
+        String key = getCacheKey(parameterName, propertyPath);
+        Type cachedType = cache.get(key);
+        if (cachedType != null) { // 缓存命中，直接返回
+            return cachedType;
+        }
         Type parameterType = parameterTypeMap.get(parameterName);
         if (parameterType == null ) {
             throw new NotReadableParameterException("parameter ':" + parameterName + "' is not readable");
         }
-        String key = getCacheKey(parameterName, propertyPath);
-        Type type = cache.get(key);
-        if (type != null) {
-            return type;
-        }
-        type = TypeUtil.getPropertyType(parameterType, parameterName, propertyPath);
+        Type type = !propertyPath.isEmpty() ?
+                TypeUtil.getPropertyType(parameterType, parameterName, propertyPath) :
+                parameterType;
         cache.put(key, type);
         return type;
     }
 
-    private String getCacheKey(String beanName, String propertyName) {
-        return beanName + "." + propertyName;
+    private String getCacheKey(String parameterName, String propertyPath) {
+        return propertyPath.isEmpty() ? parameterName : parameterName + "." + propertyPath;
     }
 
 }
