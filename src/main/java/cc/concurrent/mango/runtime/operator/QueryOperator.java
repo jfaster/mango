@@ -59,7 +59,7 @@ public class QueryOperator extends AbstractOperator {
     @Override
     public void checkType(Type[] methodArgTypes) {
         // 检测节点type
-        TypeContext context = getTypeContext(methodArgTypes);
+        TypeContext context = buildTypeContext(methodArgTypes);
         rootNode.checkType(context);
 
         List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
@@ -83,7 +83,7 @@ public class QueryOperator extends AbstractOperator {
 
     @Override
     public Object execute(Object[] methodArgs) {
-        RuntimeContext context = getRuntimeContext(methodArgs);
+        RuntimeContext context = buildRuntimeContext(methodArgs);
         if (cacheDescriptor.isUseCache()) { // 先使用缓存，再使用db
             return executeFromCache(context);
         } else { // 直接使用db
@@ -92,13 +92,13 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private Object executeFromCache(RuntimeContext context) {
-        Object obj = context.getPropertyValue(cacheDescriptor.getParameterName(), cacheDescriptor.getPropertyPath());
+        Object obj = getCacheKeyObj(context);
         Iterables iterables = new Iterables(obj);
         if (iterables.isIterable()) { // 多个key
             Set<String> keys = new HashSet<String>();
             Class<?> keyObjClass = null;
             for (Object keyObj : iterables) {
-                String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+                String key = getKey(keyObj);
                 keys.add(key);
                 if (keyObjClass == null) {
                     keyObjClass = keyObj.getClass();
@@ -106,7 +106,7 @@ public class QueryOperator extends AbstractOperator {
             }
             return multipleKeysCache(context, iterables, keys, rowMapper.getMappedClass(), keyObjClass);
         } else { // 单个key
-            String key = cacheDescriptor.getPrefix() + obj;
+            String key = getKey(obj);
             return singleKeyCache(context, key);
         }
     }
@@ -120,7 +120,7 @@ public class QueryOperator extends AbstractOperator {
         List<U> hitKeyObjs = new ArrayList<U>(); // 用于debug
         Set<U> missKeyObjs = new HashSet<U>();
         for (Object keyObj : iterables) {
-            String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+            String key = getKey(keyObj);
             Object value = map != null ? map.get(key) : null;
             if (value == null) {
                 missKeyObjs.add(keyObjClass.cast(keyObj));
@@ -192,7 +192,7 @@ public class QueryOperator extends AbstractOperator {
             if (cacheDescriptor.isUseCache()) {
                 for (T t : list) {
                     Object keyObj = BeanUtil.getPropertyValue(t, cacheDescriptor.getPropertyName(), mappedClass);
-                    String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+                    String key = getKey(keyObj);
                     cacheHandler.set(key, t, cacheDescriptor.getExpires());
                 }
             }
@@ -210,7 +210,7 @@ public class QueryOperator extends AbstractOperator {
             if (cacheDescriptor.isUseCache()) {
                 for (T t : set) {
                     Object keyObj = BeanUtil.getPropertyValue(t, cacheDescriptor.getPropertyName(), mappedClass);
-                    String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+                    String key = getKey(keyObj);
                     cacheHandler.set(key, t, cacheDescriptor.getExpires());
                 }
             }
@@ -230,7 +230,7 @@ public class QueryOperator extends AbstractOperator {
                 for (int i = 0; i < size; i++) {
                     Object o = Array.get(array, i);
                     Object keyObj = BeanUtil.getPropertyValue(o, cacheDescriptor.getPropertyName(), mappedClass);
-                    String key = getKey(cacheDescriptor.getPrefix(), keyObj);
+                    String key = getKey(keyObj);
                     cacheHandler.set(key, o, cacheDescriptor.getExpires());
                 }
             }

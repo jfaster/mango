@@ -7,17 +7,17 @@ import cc.concurrent.mango.CacheExpire;
  */
 public class CacheDescriptor {
 
-    private boolean useCache;
+    private boolean useCache; // 是否使用缓存
 
-    private String prefix;
+    private String prefix; // 缓存key前缀
 
-    private CacheExpire expire;
+    private CacheExpire expire; // 缓存过期控制
 
-    private int num;
+    private int num; // expire的数量
 
-    private String parameterName;
+    private String parameterName; // 缓存参数名
 
-    private String propertyPath;
+    private String propertyPath; // 缓存参数属性路径
 
     private String propertyName; // "a in (:1)"中的a
 

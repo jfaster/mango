@@ -53,7 +53,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         if (!typeToken.isIterable()) {
             throw new RuntimeException(""); // TODO
         }
-        TypeContext context = getTypeContext(new Type[] {mappedClass});
+        TypeContext context = buildTypeContext(new Type[]{mappedClass});
         rootNode.checkType(context);
     }
 
@@ -73,7 +73,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         List<Object[]> batchArgs = new ArrayList<Object[]>();
         String sql = null;
         for (Object obj : iterables) {
-            RuntimeContext context = getRuntimeContext(new Object[] {obj});
+            RuntimeContext context = buildRuntimeContext(new Object[]{obj});
             if (isUseCache) {
                 keys.add(getSingleKey(context));
             }

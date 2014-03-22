@@ -42,13 +42,13 @@ public class UpdateOperator extends AbstractOperator {
     @Override
     public void checkType(Type[] methodArgTypes) {
         // 检测节点type
-        TypeContext context = getTypeContext(methodArgTypes);
+        TypeContext context = buildTypeContext(methodArgTypes);
         rootNode.checkType(context);
     }
 
     @Override
     public Object execute(Object[] methodArgs) {
-        RuntimeContext context = getRuntimeContext(methodArgs);
+        RuntimeContext context = buildRuntimeContext(methodArgs);
         ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();

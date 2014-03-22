@@ -48,16 +48,19 @@ public abstract class AbstractOperator implements Operator {
         this.cacheHandler = cacheHandler;
     }
 
+    protected Object getCacheKeyObj(RuntimeContext context) {
+        return context.getPropertyValue(cacheDescriptor.getParameterName(), cacheDescriptor.getPropertyPath());
+    }
+
     protected String getSingleKey(RuntimeContext context) {
-        return getKey(cacheDescriptor.getPrefix(), context.getPropertyValue(cacheDescriptor.getParameterName(),
-                cacheDescriptor.getPropertyPath()));
+        return getKey(getCacheKeyObj(context));
     }
 
-    protected String getKey(String prefix, Object keyObj) {
-        return prefix + keyObj;
+    protected String getKey(Object keyObj) {
+        return cacheDescriptor.getPrefix() + keyObj;
     }
 
-    protected TypeContext getTypeContext(Type[] methodArgTypes) {
+    protected TypeContext buildTypeContext(Type[] methodArgTypes) {
         Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
         String table = dbDescriptor.getTable();
         if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
@@ -69,7 +72,7 @@ public abstract class AbstractOperator implements Operator {
         return new TypeContextImpl(parameterTypeMap);
     }
 
-    protected RuntimeContext getRuntimeContext(Object[] methodArgs) {
+    protected RuntimeContext buildRuntimeContext(Object[] methodArgs) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         String table = dbDescriptor.getTable();
         if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
@@ -80,7 +83,6 @@ public abstract class AbstractOperator implements Operator {
         }
         return new RuntimeContextImpl(parameters);
     }
-
 
     protected DataSource getDataSource() {
         return dataSourceFactory.getDataSource(dbDescriptor.getDataSourceName(), sqlType);
