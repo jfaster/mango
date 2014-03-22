@@ -19,8 +19,6 @@ public class CacheDescriptor {
 
     private String propertyPath; // 缓存参数属性路径
 
-    private String propertyName; // "a in (:1)"中的a
-
     public boolean isUseCache() {
         return useCache;
     }
@@ -63,14 +61,6 @@ public class CacheDescriptor {
 
     public void setPropertyPath(String propertyPath) {
         this.propertyPath = propertyPath;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
     }
 
 }

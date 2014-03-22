@@ -25,7 +25,7 @@ import java.util.*;
  *
  * @author ash
  */
-public class QueryOperator extends AbstractOperator {
+public class QueryOperator extends CacheableOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(QueryOperator.class);
 
@@ -35,6 +35,8 @@ public class QueryOperator extends AbstractOperator {
     private boolean isForList;
     private boolean isForSet;
     private boolean isForArray;
+    private String interableProperty; // "a in (:1)"中的a
+
 
     private QueryOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         super(method, sqlType);
@@ -69,11 +71,11 @@ public class QueryOperator extends AbstractOperator {
             throw new RuntimeException(""); // TODO
         }
 
-        if (cacheDescriptor.isUseCache()) { // 使用cache
+        if (isUseCache()) { // 使用cache
             if (aips.size() == 1) { // 在sql中有一个in语句
                 String propertyName = aips.get(0).getPropertyName();
                 // TODO mappedClass中必须有properName
-                cacheDescriptor.setPropertyName(propertyName);
+                interableProperty = propertyName;
             } else if (aips.size() != 0) {
                 // TODO
                 throw new RuntimeException("");
@@ -84,7 +86,7 @@ public class QueryOperator extends AbstractOperator {
     @Override
     public Object execute(Object[] methodArgs) {
         RuntimeContext context = buildRuntimeContext(methodArgs);
-        if (cacheDescriptor.isUseCache()) { // 先使用缓存，再使用db
+        if (isUseCache()) { // 先使用缓存，再使用db
             return executeFromCache(context);
         } else { // 直接使用db
             return executeFromDb(context, rowMapper, null);
@@ -115,7 +117,7 @@ public class QueryOperator extends AbstractOperator {
                                             Class<T> valueClass, Class<U> keyObjClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
 
-        Map<String, Object> map = cacheHandler.getBulk(keys);
+        Map<String, Object> map = getBulkFromCache(keys);
         List<T> hitValues = new ArrayList<T>();
         List<U> hitKeyObjs = new ArrayList<U>(); // 用于debug
         Set<U> missKeyObjs = new HashSet<U>();
@@ -151,19 +153,19 @@ public class QueryOperator extends AbstractOperator {
                 // TODO exception
             }
         }
-        context.setPropertyValue(cacheDescriptor.getParameterName(), cacheDescriptor.getPropertyPath(), missKeyObjs);
+        context.setPropertyValue(getCacheParameterName(), getCachePropertyPath(), missKeyObjs);
         return executeFromDb(context, rowMapper, hitValues);
     }
 
     private Object singleKeyCache(RuntimeContext context, String key) {
-        Object value = cacheHandler.get(key);
+        Object value = getFromCache(key);
         if (value == null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("cache miss #key＝{}", key);
             }
             value = executeFromDb(context, rowMapper, null);
             if (value != null) {
-                cacheHandler.set(key, value, cacheDescriptor.getExpires());
+                setToCache(key, value);
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache set #key={} #value={}", key, value);
                 }
@@ -189,11 +191,11 @@ public class QueryOperator extends AbstractOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, list);
             }
-            if (cacheDescriptor.isUseCache()) {
+            if (isUseCache()) {
                 for (T t : list) {
-                    Object keyObj = BeanUtil.getPropertyValue(t, cacheDescriptor.getPropertyName(), mappedClass);
+                    Object keyObj = BeanUtil.getPropertyValue(t, interableProperty, mappedClass);
                     String key = getKey(keyObj);
-                    cacheHandler.set(key, t, cacheDescriptor.getExpires());
+                    setToCache(key, t);
                 }
             }
             if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
@@ -207,11 +209,11 @@ public class QueryOperator extends AbstractOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, set);
             }
-            if (cacheDescriptor.isUseCache()) {
+            if (isUseCache()) {
                 for (T t : set) {
-                    Object keyObj = BeanUtil.getPropertyValue(t, cacheDescriptor.getPropertyName(), mappedClass);
+                    Object keyObj = BeanUtil.getPropertyValue(t, interableProperty, mappedClass);
                     String key = getKey(keyObj);
-                    cacheHandler.set(key, t, cacheDescriptor.getExpires());
+                    setToCache(key, t);
                 }
             }
             if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
@@ -225,13 +227,13 @@ public class QueryOperator extends AbstractOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, array);
             }
-            if (cacheDescriptor.isUseCache()) {
+            if (isUseCache()) {
                 int size = Array.getLength(array);
                 for (int i = 0; i < size; i++) {
                     Object o = Array.get(array, i);
-                    Object keyObj = BeanUtil.getPropertyValue(o, cacheDescriptor.getPropertyName(), mappedClass);
+                    Object keyObj = BeanUtil.getPropertyValue(o, interableProperty, mappedClass);
                     String key = getKey(keyObj);
-                    cacheHandler.set(key, o, cacheDescriptor.getExpires());
+                    setToCache(key, o);
                 }
             }
             if (hitValues == null || hitValues.isEmpty()) {

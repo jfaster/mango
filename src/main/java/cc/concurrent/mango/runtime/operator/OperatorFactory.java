@@ -31,7 +31,7 @@ public class OperatorFactory {
      * @return
      * @throws Exception
      */
-    public static Operator getOperator(Method method) throws Exception {
+    public static CacheableOperator getOperator(Method method) throws Exception {
         SQL sqlAnno = method.getAnnotation(SQL.class);
         if (sqlAnno == null) {
             throw new NoSqlAnnotationException("expected cc.concurrent.mango.SQL annotation on method");

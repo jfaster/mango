@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public class UpdateOperator extends AbstractOperator {
+public class UpdateOperator extends CacheableOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
 
@@ -59,8 +59,8 @@ public class UpdateOperator extends AbstractOperator {
         if (logger.isDebugEnabled()) {
             logger.debug("{} #result={}", sql, r);
         }
-        if (cacheDescriptor.isUseCache()) {
-            cacheHandler.delete(getSingleKey(context));
+        if (isUseCache()) {
+            deleteFromCache(getSingleKey(context));
             if (logger.isDebugEnabled()) {
                 logger.debug("cache delete #key={}", getSingleKey(context));
             }

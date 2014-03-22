@@ -1,5 +1,6 @@
 package cc.concurrent.mango;
 
+import cc.concurrent.mango.runtime.operator.CacheableOperator;
 import cc.concurrent.mango.runtime.operator.Operator;
 import cc.concurrent.mango.runtime.operator.OperatorFactory;
 import cc.concurrent.mango.util.ToStringHelper;
@@ -52,8 +53,8 @@ public class Mango {
 
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
                 new CacheLoader<Method, Operator>() {
-                    public Operator load(Method method) throws Exception {
-                        Operator operator = OperatorFactory.getOperator(method);
+                    public CacheableOperator load(Method method) throws Exception {
+                        CacheableOperator operator = OperatorFactory.getOperator(method);
                         operator.setDataSourceFactory(dataSourceFactory);
                         operator.setCacheHandler(cacheHandler);
                         return operator;

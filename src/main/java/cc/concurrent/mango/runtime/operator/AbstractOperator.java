@@ -1,11 +1,11 @@
 package cc.concurrent.mango.runtime.operator;
 
-import cc.concurrent.mango.*;
-import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
+import cc.concurrent.mango.DB;
+import cc.concurrent.mango.DataSourceFactory;
+import cc.concurrent.mango.Rename;
 import cc.concurrent.mango.jdbc.JdbcTemplate;
 import cc.concurrent.mango.runtime.*;
 import cc.concurrent.mango.util.Strings;
-import cc.concurrent.mango.util.reflect.Reflection;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
@@ -20,8 +20,6 @@ import java.util.Map;
 public abstract class AbstractOperator implements Operator {
 
     protected JdbcTemplate jdbcTemplate;
-    protected CacheHandler cacheHandler;
-    protected CacheDescriptor cacheDescriptor;
 
     private DbDescriptor dbDescriptor;
     private DataSourceFactory dataSourceFactory;
@@ -35,29 +33,11 @@ public abstract class AbstractOperator implements Operator {
         this.sqlType = sqlType;
         buildAliases(method);
         buildDbDescriptor(method);
-        buildCacheDescriptor(method);
     }
 
     @Override
     public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
         this.dataSourceFactory = dataSourceFactory;
-    }
-
-    @Override
-    public void setCacheHandler(CacheHandler cacheHandler) {
-        this.cacheHandler = cacheHandler;
-    }
-
-    protected Object getCacheKeyObj(RuntimeContext context) {
-        return context.getPropertyValue(cacheDescriptor.getParameterName(), cacheDescriptor.getPropertyPath());
-    }
-
-    protected String getSingleKey(RuntimeContext context) {
-        return getKey(getCacheKeyObj(context));
-    }
-
-    protected String getKey(Object keyObj) {
-        return cacheDescriptor.getPrefix() + keyObj;
     }
 
     protected TypeContext buildTypeContext(Type[] methodArgTypes) {
@@ -88,45 +68,9 @@ public abstract class AbstractOperator implements Operator {
         return dataSourceFactory.getDataSource(dbDescriptor.getDataSourceName(), sqlType);
     }
 
-    private void buildDbDescriptor(Method method) {
-        String dataSourceName = "";
-        String table = "";
-        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
-        if (dbAnno != null) {
-            dataSourceName = dbAnno.dataSource();
-            table = dbAnno.table();
-        }
-        dbDescriptor = new DbDescriptor(dataSourceName, table);
-    }
-
-    private void buildCacheDescriptor(Method method) {
-        Class<?> daoClass = method.getDeclaringClass();
-        Cache cacheAnno = daoClass.getAnnotation(Cache.class);
-        cacheDescriptor = new CacheDescriptor();
-        if (cacheAnno != null) { // dao类使用cache
-            CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
-            if (cacheIgnoredAnno == null) { // method不禁用cache
-                cacheDescriptor.setUseCache(true);
-                cacheDescriptor.setPrefix(cacheAnno.prefix());
-                cacheDescriptor.setExpire(Reflection.instantiate(cacheAnno.expire()));
-                cacheDescriptor.setNum(cacheAnno.num());
-                Annotation[][] pass = method.getParameterAnnotations();
-                int num = 0;
-                for (int i = 0; i < pass.length; i++) {
-                    Annotation[] pas = pass[i];
-                    for (Annotation pa : pas) {
-                        if (CacheBy.class.equals(pa.annotationType())) {
-                            cacheDescriptor.setParameterName(getParameterNameByIndex(i));
-                            cacheDescriptor.setPropertyPath(((CacheBy) pa).value());
-                            num++;
-                        }
-                    }
-                }
-                if (num != 1) { //TODO 合适得异常处理
-                    throw new CacheByAnnotationException("need 1 but " + num);
-                }
-            }
-        }
+    protected String getParameterNameByIndex(int index) {
+        String alias = aliases[index];
+        return alias != null ? alias : String.valueOf(index + 1);
     }
 
     private void buildAliases(Method method) {
@@ -142,10 +86,15 @@ public abstract class AbstractOperator implements Operator {
         }
     }
 
-    private String getParameterNameByIndex(int index) {
-        String alias = aliases[index];
-        return alias != null ? alias : String.valueOf(index + 1);
+    private void buildDbDescriptor(Method method) {
+        String dataSourceName = "";
+        String table = "";
+        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+        if (dbAnno != null) {
+            dataSourceName = dbAnno.dataSource();
+            table = dbAnno.table();
+        }
+        dbDescriptor = new DbDescriptor(dataSourceName, table);
     }
-
 
 }

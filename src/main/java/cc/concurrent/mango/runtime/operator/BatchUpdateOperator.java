@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * @author ash
  */
-public class BatchUpdateOperator extends AbstractOperator {
+public class BatchUpdateOperator extends CacheableOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
 
@@ -69,12 +69,11 @@ public class BatchUpdateOperator extends AbstractOperator {
         }
 
         Set<String> keys = new HashSet<String>();
-        boolean isUseCache = cacheDescriptor.isUseCache();
         List<Object[]> batchArgs = new ArrayList<Object[]>();
         String sql = null;
         for (Object obj : iterables) {
             RuntimeContext context = buildRuntimeContext(new Object[]{obj});
-            if (isUseCache) {
+            if (isUseCache()) {
                 keys.add(getSingleKey(context));
             }
             ParsedSql parsedSql= rootNode.buildSqlAndArgs(context);
@@ -91,8 +90,8 @@ public class BatchUpdateOperator extends AbstractOperator {
             logger.debug("{} #args={}", sql, batchArgs);
         }
         int[] ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
-        if (isUseCache) {
-            cacheHandler.delete(keys);
+        if (isUseCache()) {
+            deleteFromCache(keys);
         }
         return ints;
     }
