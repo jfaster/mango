@@ -62,7 +62,7 @@ public class ASTVariable extends PrimaryExpression {
 
     @Override
     public Object value(RuntimeContext context) {
-        return context.getPropertyValue(beanName, propertyPath);
+        return context.getNullablePropertyValue(beanName, propertyPath);
     }
 
     @Override

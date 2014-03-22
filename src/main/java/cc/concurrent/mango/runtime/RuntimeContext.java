@@ -5,8 +5,10 @@ package cc.concurrent.mango.runtime;
  */
 public interface RuntimeContext {
 
-    public Object getPropertyValue(String beanName, String propertyName);
+    public Object getPropertyValue(String parameterName, String propertyPath);
 
-    public void setPropertyValue(String beanName, String propertyName, Object value);
+    public Object getNullablePropertyValue(String parameterName, String propertyPath);
+
+    public void setPropertyValue(String parameterName, String propertyPath, Object value);
 
 }

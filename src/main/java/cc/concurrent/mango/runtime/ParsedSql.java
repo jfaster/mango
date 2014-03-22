@@ -5,9 +5,9 @@ package cc.concurrent.mango.runtime;
  */
 public class ParsedSql {
 
-    private final String sql;
+    private String sql;
 
-    private final Object[] args;
+    private Object[] args;
 
     public ParsedSql(String sql, Object[] args) {
         this.sql = sql;

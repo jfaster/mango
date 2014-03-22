@@ -21,15 +21,30 @@ public class RuntimeContextImpl implements RuntimeContext {
     }
 
     @Override
-    @Nullable
     public Object getPropertyValue(String parameterName, String propertyPath) {
+        String key = getCacheKey(parameterName, propertyPath);
+        Object cachedValue = cache.get(key);
+        if (cachedValue != null) { // 非null缓存命中，直接返回
+            return cachedValue;
+        }
+        Object object = parameterMap.get(parameterName);
+        Object value = !propertyPath.isEmpty() ?
+                BeanUtil.getPropertyValue(object, propertyPath, parameterName) :
+                object;
+        cache.put(key, value);
+        return value;
+    }
+
+    @Override
+    @Nullable
+    public Object getNullablePropertyValue(String parameterName, String propertyPath) {
         String key = getCacheKey(parameterName, propertyPath);
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);
         }
         Object object = parameterMap.get(parameterName);
         Object value = !propertyPath.isEmpty() ?
-                BeanUtil.getPropertyValue(object, propertyPath, parameterName) :
+                BeanUtil.getNullablePropertyValue(object, propertyPath, parameterName) :
                 object;
         cache.put(key, value);
         return value;

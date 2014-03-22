@@ -21,7 +21,7 @@ public abstract class ValuableParameter extends ValuableNode {
 
     @Override
     public Object value(RuntimeContext context) {
-        return context.getPropertyValue(parameterName, propertyPath);
+        return context.getNullablePropertyValue(parameterName, propertyPath);
     }
 
     @Override

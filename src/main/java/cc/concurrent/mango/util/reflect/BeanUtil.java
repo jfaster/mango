@@ -50,14 +50,23 @@ public class BeanUtil {
         }
     }
 
-    @Nullable
     public static Object getPropertyValue(@Nullable Object object, String propertyPath, Object useForException) {
+        Object value = getNullablePropertyValue(object, propertyPath, useForException);
+        if (value == null) {
+            throw new NullPointerException(getErrorMessage(propertyPath, useForException));
+        }
+        return value;
+    }
+
+    @Nullable
+    public static Object getNullablePropertyValue(@Nullable Object object, String propertyPath, Object useForException) {
         try {
+            Object value = object;
             int pos = propertyPath.indexOf('.');
             StringBuffer nestedPath = new StringBuffer(propertyPath.length());
             int t = 0;
             while (pos > -1) {
-                if (object == null) {
+                if (value == null) {
                     throw new NullPointerException(getErrorMessage(nestedPath.toString(), useForException));
                 }
                 String propertyName = propertyPath.substring(0, pos);
@@ -65,19 +74,19 @@ public class BeanUtil {
                     nestedPath.append(".");
                 }
                 nestedPath.append(propertyName);
-                Method method = BeanInfoCache.getReadMethod(object.getClass(), propertyName);
-                object = method.invoke(object, (Object[]) null);
+                Method method = BeanInfoCache.getReadMethod(value.getClass(), propertyName);
+                value = method.invoke(value, (Object[]) null);
                 propertyPath = propertyPath.substring(pos + 1);
                 pos = propertyPath.indexOf('.');
                 t++;
             }
-            if (object == null) {
+            if (value == null) {
                 throw new NullPointerException(getErrorMessage(nestedPath.toString(), useForException));
             }
-            PropertyDescriptor pd = new PropertyDescriptor(propertyPath, object.getClass());
+            PropertyDescriptor pd = new PropertyDescriptor(propertyPath, value.getClass());
             Method method = pd.getReadMethod();
-            object = method.invoke(object, (Object[]) null);
-            return object;
+            value = method.invoke(value, (Object[]) null);
+            return value;
         } catch (IntrospectionException e) {
             throw new UncheckedException(e.getCause());
         } catch (InvocationTargetException e) {
