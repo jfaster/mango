@@ -1,7 +1,5 @@
 package cc.concurrent.mango.runtime.operator;
 
-import cc.concurrent.mango.exception.EmptyParameterException;
-import cc.concurrent.mango.exception.NullParameterException;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
@@ -32,16 +30,8 @@ public class BatchUpdateOperator extends CacheableOperator {
 
     public void init(ASTRootNode rootNode, Method method) {
         this.rootNode = rootNode;
-        checkType(method.getGenericParameterTypes());
-    }
 
-    public static BatchUpdateOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        return new BatchUpdateOperator(rootNode, method, sqlType);
-    }
-
-    @Override
-    public void checkType(Type[] methodArgTypes) {
-        Type type = methodArgTypes[0];
+        Type type = method.getGenericParameterTypes()[0];
         TypeToken typeToken = new TypeToken(type);
         Class<?> mappedClass = typeToken.getMappedClass();
         if (mappedClass == null) {
@@ -57,15 +47,19 @@ public class BatchUpdateOperator extends CacheableOperator {
         rootNode.checkType(context);
     }
 
+    public static BatchUpdateOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        return new BatchUpdateOperator(rootNode, method, sqlType);
+    }
+
     @Override
     public Object execute(Object[] methodArgs) {
         Object methodArg = methodArgs[0];
         if (methodArg == null) {
-            throw new NullParameterException("batchUpdate's parameter can't be null");
+            throw new NullPointerException("batchUpdate's parameter can't be null");
         }
         Iterables iterables = new Iterables(methodArg);
         if (iterables.isEmpty()) {
-            throw new EmptyParameterException("batchUpdate's parameter can't be empty");
+            throw new IllegalArgumentException("batchUpdate's parameter can't be empty");
         }
 
         Set<String> keys = new HashSet<String>();

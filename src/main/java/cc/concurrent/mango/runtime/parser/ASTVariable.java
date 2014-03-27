@@ -1,6 +1,6 @@
 package cc.concurrent.mango.runtime.parser;
 
-import cc.concurrent.mango.exception.IncorrectVariableTypeException;
+import cc.concurrent.mango.exception.IncorrectParameterTypeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 
@@ -49,12 +49,12 @@ public class ASTVariable extends PrimaryExpression {
         } while (!(node instanceof ASTExpression) && (node instanceof ASTAddExpression));
         if (node instanceof ASTExpression) { // 到达根节点都是加法
             if (!Integer.class.equals(type) && !int.class.equals(type) && !String.class.equals(type)) {
-                throw new IncorrectVariableTypeException("invalid type of " + fullName + ", " +
+                throw new IncorrectParameterTypeException("invalid type of " + fullName + ", " +
                         "need int or java.lang.Integer or java.lang.String but " + type);
             }
         } else { // 到达根节点的途中遇到了非加法
             if (!Integer.class.equals(type) && !int.class.equals(type)) {
-                throw new IncorrectVariableTypeException("invalid type of " + fullName + ", " +
+                throw new IncorrectParameterTypeException("invalid type of " + fullName + ", " +
                         "need int or java.lang.Integer but " + type);
             }
         }

@@ -12,8 +12,6 @@ public interface Operator {
 
     public void setDataSourceFactory(DataSourceFactory dataSourceFactory);
 
-    public void checkType(Type[] methodArgTypes);
-
     public Object execute(Object[] methodArgs);
 
 }

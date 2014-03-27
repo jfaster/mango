@@ -1,8 +1,8 @@
 package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.SQL;
-import cc.concurrent.mango.exception.structure.IncorrectReturnTypeException;
-import cc.concurrent.mango.exception.structure.IncorrectSqlException;
+import cc.concurrent.mango.exception.IncorrectReturnTypeException;
+import cc.concurrent.mango.exception.IncorrectSqlException;
 import cc.concurrent.mango.exception.structure.NoSqlAnnotationException;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.runtime.parser.Parser;

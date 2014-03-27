@@ -17,9 +17,6 @@ public class Iterables implements Iterable {
     private Object object = null;
 
     public Iterables(Object object) {
-        if (object == null) {
-            throw new RuntimeException("");
-        }
         if (Collection.class.isAssignableFrom(object.getClass())) { // 集合
             this.collection = (Collection<?>) object;
         } else if (object.getClass().isArray()) { // 数组

@@ -1,5 +1,8 @@
 package cc.concurrent.mango.runtime.operator;
 
+import cc.concurrent.mango.exception.IncorrectReturnTypeException;
+import cc.concurrent.mango.exception.IncorrectSqlException;
+import cc.concurrent.mango.exception.NotReadablePropertyException;
 import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.jdbc.RowMapper;
@@ -13,11 +16,11 @@ import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
+import cc.concurrent.mango.util.reflect.BeanInfoCache;
 import cc.concurrent.mango.util.reflect.BeanUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -51,37 +54,35 @@ public class QueryOperator extends CacheableOperator {
         isForArray = typeToken.isArray();
         mappedClass = typeToken.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
-        checkType(method.getGenericParameterTypes());
+
+        // 检测节点type
+        TypeContext context = buildTypeContext(method.getGenericParameterTypes());
+        rootNode.checkType(context);
+
+        List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
+        if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) { // sql中使用了in查询但返回结果不是可迭代类型
+            throw new IncorrectReturnTypeException("if sql has in clause, return type expected iterable but "
+                    + method.getGenericReturnType());
+        }
+        if (isUseCache()) { // 使用cache
+            if (aips.size() == 1) { // 在sql中有一个in语句
+                interableProperty = aips.get(0).getPropertyName();
+                Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
+                if (readMethod == null) {
+                    throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
+                            + interableProperty + " of " + mappedClass + " expected readable but not");
+                }
+            } else if (aips.size() != 0) {
+                throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but "
+                        + aips.size());
+            }
+        }
     }
 
     public static QueryOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
         return new QueryOperator(rootNode, method, sqlType);
     }
 
-    @Override
-    public void checkType(Type[] methodArgTypes) {
-        // 检测节点type
-        TypeContext context = buildTypeContext(methodArgTypes);
-        rootNode.checkType(context);
-
-        List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
-
-        // 检测返回type
-        if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) { // sql中使用了in查询但返回结果不是可迭代类型
-            throw new RuntimeException(""); // TODO
-        }
-
-        if (isUseCache()) { // 使用cache
-            if (aips.size() == 1) { // 在sql中有一个in语句
-                String propertyName = aips.get(0).getPropertyName();
-                // TODO mappedClass中必须有properName
-                interableProperty = propertyName;
-            } else if (aips.size() != 0) {
-                // TODO
-                throw new RuntimeException("");
-            }
-        }
-    }
 
     @Override
     public Object execute(Object[] methodArgs) {
