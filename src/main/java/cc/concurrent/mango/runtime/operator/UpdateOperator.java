@@ -37,15 +37,14 @@ public class UpdateOperator extends CacheableOperator {
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
 
-        // 检测节点type
         TypeContext context = buildTypeContext(method.getGenericParameterTypes());
-        rootNode.checkType(context);
+        rootNode.checkType(context); // sql中的参数和方法上的参数匹配
 
-        List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
         if (isUseCache()) { // 使用cache
-            if (aips.size() > 1) { // 在sql中有多个in语句
-                throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but "
-                        + aips.size());
+            List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
+            if (aips.size() > 1) {
+                throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but " +
+                        aips.size()); // sql中不能有多个in语句
             }
         }
     }

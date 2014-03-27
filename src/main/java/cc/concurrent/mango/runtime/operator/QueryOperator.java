@@ -55,26 +55,26 @@ public class QueryOperator extends CacheableOperator {
         mappedClass = typeToken.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
 
-        // 检测节点type
         TypeContext context = buildTypeContext(method.getGenericParameterTypes());
-        rootNode.checkType(context);
+        rootNode.checkType(context); // sql中的参数和方法上的参数匹配
 
         List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
-        if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) { // sql中使用了in查询但返回结果不是可迭代类型
+        if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) {
             throw new IncorrectReturnTypeException("if sql has in clause, return type expected iterable but "
-                    + method.getGenericReturnType());
+                    + method.getGenericReturnType()); // sql中使用了in查询，返回参数必须可迭代
         }
-        if (isUseCache()) { // 使用cache
-            if (aips.size() == 1) { // 在sql中有一个in语句
+        if (isUseCache()) {
+            if (aips.size() == 1) {
                 interableProperty = aips.get(0).getPropertyName();
                 Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
                 if (readMethod == null) {
+                    // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
                     throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
                             + interableProperty + " of " + mappedClass + " expected readable but not");
                 }
             } else if (aips.size() != 0) {
                 throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but "
-                        + aips.size());
+                        + aips.size()); // 如果使用cache，sql中的in语句不能超过1
             }
         }
     }
