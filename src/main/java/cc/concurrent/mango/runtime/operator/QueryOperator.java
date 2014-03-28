@@ -56,7 +56,8 @@ public class QueryOperator extends CacheableOperator {
         rowMapper = getRowMapper(mappedClass);
 
         TypeContext context = buildTypeContext(method.getGenericParameterTypes());
-        rootNode.checkType(context); // sql中的参数和方法上的参数匹配
+        rootNode.checkType(context); // 检测sql中的参数是否和方法上的参数匹配
+        checkCacheType(context); // 如果使用cache，检测cache参数
 
         List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
         if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) {

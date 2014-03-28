@@ -4,13 +4,18 @@ import cc.concurrent.mango.Cache;
 import cc.concurrent.mango.CacheBy;
 import cc.concurrent.mango.CacheHandler;
 import cc.concurrent.mango.CacheIgnored;
+import cc.concurrent.mango.exception.IncorrectParameterTypeException;
 import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
+import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.CacheDescriptor;
 import cc.concurrent.mango.runtime.RuntimeContext;
+import cc.concurrent.mango.runtime.TypeContext;
+import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.reflect.Reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +35,20 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     @Override
     public void setCacheHandler(CacheHandler cacheHandler) {
         this.cacheHandler = cacheHandler;
+    }
+
+    protected void checkCacheType(TypeContext context) {
+        if (isUseCache()) {
+            String parameterName = cacheDescriptor.getParameterName();
+            String propertyPath = cacheDescriptor.getPropertyPath();
+            Type type = context.getPropertyType(parameterName, propertyPath);
+            TypeToken typeToken = new TypeToken(type);
+            Class<?> mappedClass = typeToken.getMappedClass();
+            if (mappedClass == null || typeToken.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
+                throw new IncorrectParameterTypeException("invalid type of " + getFullName(parameterName, propertyPath) +
+                        ", need a single column class but " + type);
+            }
+        }
     }
 
     protected boolean isUseCache() {
@@ -104,6 +123,10 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
                 }
             }
         }
+    }
+
+    private String getFullName(String parameterName, String propertyPath) {
+        return !propertyPath.isEmpty() ? parameterName + "." + propertyPath : propertyPath;
     }
 
 }

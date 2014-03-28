@@ -47,11 +47,12 @@ public class BatchUpdateOperator extends CacheableOperator {
         }
 
         TypeContext context = buildTypeContext(new Type[]{mappedClass});
-        rootNode.checkType(context); // sql中的参数和方法上的参数匹配
+        rootNode.checkType(context); // 检测sql中的参数是否和方法上的参数匹配
+        checkCacheType(context); // 如果使用cache，检测cache参数
 
         List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
         if (aips.size() > 0) {
-            throw new IncorrectSqlException("if use batch update, sql's in clause expected 0 but " +
+            throw new IncorrectSqlException("if use batch update, sql's in clause number expected 0 but " +
                     aips.size()); // sql中不能有in语句
         }
     }
