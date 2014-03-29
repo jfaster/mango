@@ -1,9 +1,9 @@
-package cc.concurrent.mango.exception.reflect;
+package cc.concurrent.mango.exception;
 
 /**
  * @author ash
  */
-public class BeanInstantiationException extends BeansException {
+public class BeanInstantiationException extends RuntimeException {
 
     private Class beanClass;
 
