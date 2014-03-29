@@ -12,6 +12,7 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.AbstractInvocationHandler;
 import cc.concurrent.mango.util.reflect.Reflection;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
@@ -34,7 +35,10 @@ public class Mango {
         return create(daoClass, null);
     }
 
-    public <T> T create(Class<T> daoClass, CacheHandler cacheHandler) {
+    public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler) {
+        if (daoClass == null) {
+            throw new NullPointerException("dao class can't be null");
+        }
         if (cacheHandler == null) {
             cacheHandler = defaultCacheHandler;
         }

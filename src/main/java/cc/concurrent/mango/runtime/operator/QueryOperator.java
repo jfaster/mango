@@ -3,6 +3,7 @@ package cc.concurrent.mango.runtime.operator;
 import cc.concurrent.mango.exception.IncorrectReturnTypeException;
 import cc.concurrent.mango.exception.IncorrectSqlException;
 import cc.concurrent.mango.exception.NotReadablePropertyException;
+import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.jdbc.RowMapper;
@@ -152,7 +153,7 @@ public class QueryOperator extends CacheableOperator {
                 }
                 return array;
             } else {
-                // TODO exception
+                throw new UnreachableCodeException();
             }
         }
         context.setPropertyValue(getCacheParameterName(), getCachePropertyPath(), missKeyObjs);

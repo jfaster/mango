@@ -4,8 +4,8 @@ import cc.concurrent.mango.Cache;
 import cc.concurrent.mango.CacheBy;
 import cc.concurrent.mango.CacheHandler;
 import cc.concurrent.mango.CacheIgnored;
+import cc.concurrent.mango.exception.IncorrectAnnotationException;
 import cc.concurrent.mango.exception.IncorrectParameterTypeException;
-import cc.concurrent.mango.exception.structure.CacheByAnnotationException;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.CacheDescriptor;
 import cc.concurrent.mango.runtime.RuntimeContext;
@@ -118,8 +118,9 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
                         }
                     }
                 }
-                if (num != 1) { //TODO 合适得异常处理
-                    throw new CacheByAnnotationException("need 1 but " + num);
+                if (num != 1) {
+                    throw new IncorrectAnnotationException("if use cache, each method " +
+                            "expected one and only one cc.concurrent.mango.CacheBy annotation but found " + num);
                 }
             }
         }

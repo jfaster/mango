@@ -45,7 +45,7 @@ public class JdbcTemplate {
             // 生成自增id
             rs = ps.getGeneratedKeys();
             if (!rs.next()) {
-                throw new RuntimeException("getGeneratedKeys error"); // TODO
+                throw new DataAccessException("getGeneratedKeys error");
             }
             return rs.getInt(1);
         } catch (SQLException e) {

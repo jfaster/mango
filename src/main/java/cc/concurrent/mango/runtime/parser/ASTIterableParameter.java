@@ -1,6 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.exception.IncorrectParameterTypeException;
+import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.util.TypeToken;
@@ -34,7 +35,7 @@ public class ASTIterableParameter extends ValuableParameter {
         Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
         Matcher m = p.matcher(parameter);
         if (!m.matches()) {
-            throw new RuntimeException(""); // TODO
+            throw new UnreachableCodeException();
         }
         parameterName = m.group(1);
         propertyPath = parameter.substring(m.end(1));

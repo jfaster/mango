@@ -1,6 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
 
+import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
@@ -90,7 +91,7 @@ public class ASTRootNode extends SimpleNode {
             } else if (node instanceof ASTExpression) {
                 sql.append(((ASTExpression) node).value(context));
             } else {
-                // TODO 合适的Exception
+                throw new UnreachableCodeException();
             }
             if (i < jjtGetNumChildren() - 1) {
                 sql.append(" "); // 节点之间添加空格

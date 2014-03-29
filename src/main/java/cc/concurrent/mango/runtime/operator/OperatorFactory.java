@@ -1,9 +1,9 @@
 package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.SQL;
+import cc.concurrent.mango.exception.IncorrectAnnotationException;
 import cc.concurrent.mango.exception.IncorrectReturnTypeException;
 import cc.concurrent.mango.exception.IncorrectSqlException;
-import cc.concurrent.mango.exception.structure.NoSqlAnnotationException;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.runtime.parser.Parser;
 import cc.concurrent.mango.util.Strings;
@@ -34,7 +34,8 @@ public class OperatorFactory {
     public static CacheableOperator getOperator(Method method) throws Exception {
         SQL sqlAnno = method.getAnnotation(SQL.class);
         if (sqlAnno == null) {
-            throw new NoSqlAnnotationException("expected cc.concurrent.mango.SQL annotation on method");
+            throw new IncorrectAnnotationException("each method expected one cc.concurrent.mango.SQL annotation " +
+                    "but not found");
         }
         String sql = sqlAnno.value();
         if (Strings.isNullOrEmpty(sql)) {

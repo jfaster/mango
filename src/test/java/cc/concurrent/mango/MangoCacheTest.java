@@ -44,7 +44,6 @@ public class MangoCacheTest {
         dao = new Mango(new SimpleDataSourceFactory(ds), cacheHandler).create(ManDao.class);
     }
 
-    // TODO 便利的debug log
     @Test
     public void testSingleKey() throws Exception {
         Man man = new Man("ash", 26, true, 10086, new Date());

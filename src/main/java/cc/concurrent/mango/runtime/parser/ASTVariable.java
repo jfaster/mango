@@ -1,6 +1,7 @@
 package cc.concurrent.mango.runtime.parser;
 
 import cc.concurrent.mango.exception.IncorrectParameterTypeException;
+import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 
@@ -30,7 +31,7 @@ public class ASTVariable extends PrimaryExpression {
         Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
         Matcher m = p.matcher(parameter);
         if (!m.matches()) {
-            throw new RuntimeException(""); // TODO
+            throw new UnreachableCodeException();
         }
         beanName = m.group(1);
         propertyPath = parameter.substring(m.end(1));

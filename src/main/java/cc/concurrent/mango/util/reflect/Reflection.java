@@ -26,9 +26,9 @@ public class Reflection {
 
     public static <T> T newProxy(
             Class<T> interfaceType, InvocationHandler handler) {
-        // TODO 参数检测
-        //checkNotNull(handler);
-        //checkArgument(interfaceType.isInterface(), "%s is not an interface", interfaceType);
+        if (!interfaceType.isInterface()) {
+            throw new IllegalArgumentException("expected an interface to proxy, but " + interfaceType);
+        }
         Object object = Proxy.newProxyInstance(
                 interfaceType.getClassLoader(),
                 new Class<?>[]{interfaceType},
