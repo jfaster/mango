@@ -7,6 +7,6 @@ import java.lang.reflect.Type;
  */
 public interface TypeContext {
 
-    public Type getPropertyType(String beanName, String propertyName);
+    public Type getPropertyType(String parameterName, String propertyPath);
 
 }

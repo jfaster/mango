@@ -56,8 +56,8 @@ public class RuntimeContextImpl implements RuntimeContext {
         cache.put(key, value);
     }
 
-    private String getCacheKey(String beanName, String propertyPath) {
-        return propertyPath.isEmpty() ? beanName : beanName + "." + propertyPath;
+    private String getCacheKey(String parameterName, String propertyPath) {
+        return propertyPath.isEmpty() ? parameterName : parameterName + "." + propertyPath;
     }
 
 }

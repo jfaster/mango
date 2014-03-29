@@ -116,7 +116,7 @@ void IterableParameter() :
     Token t;
 }
 {
-    t=<TEXT> {jjtThis.setPropertyName(t.image);} <IN_START> t=<ITERABLE_PARAMETER> {jjtThis.setParameter(t.image);} <IN_END>
+    t=<TEXT> {jjtThis.setInterableProperty(t.image);} <IN_START> t=<ITERABLE_PARAMETER> {jjtThis.setParameter(t.image);} <IN_END>
 }
 
 void Text() :

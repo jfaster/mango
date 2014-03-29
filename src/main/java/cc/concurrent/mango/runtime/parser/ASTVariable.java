@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class ASTVariable extends PrimaryExpression {
 
-    private String beanName;
+    private String parameterName;
     private String propertyPath; // 为""的时候表示没有属性
     private String fullName;
 
@@ -33,7 +33,7 @@ public class ASTVariable extends PrimaryExpression {
         if (!m.matches()) {
             throw new UnreachableCodeException();
         }
-        beanName = m.group(1);
+        parameterName = m.group(1);
         propertyPath = parameter.substring(m.end(1));
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
@@ -43,7 +43,7 @@ public class ASTVariable extends PrimaryExpression {
 
     @Override
     void checkType(TypeContext context) {
-        Type type = context.getPropertyType(beanName, propertyPath);
+        Type type = context.getPropertyType(parameterName, propertyPath);
         Node node = this;
         do {
             node = node.jjtGetParent();
@@ -63,7 +63,7 @@ public class ASTVariable extends PrimaryExpression {
 
     @Override
     public Object value(RuntimeContext context) {
-        return context.getNullablePropertyValue(beanName, propertyPath);
+        return context.getNullablePropertyValue(parameterName, propertyPath);
     }
 
     @Override

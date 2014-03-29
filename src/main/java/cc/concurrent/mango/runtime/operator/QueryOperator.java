@@ -67,7 +67,7 @@ public class QueryOperator extends CacheableOperator {
         }
         if (isUseCache()) {
             if (aips.size() == 1) {
-                interableProperty = aips.get(0).getPropertyName();
+                interableProperty = aips.get(0).getInterableProperty();
                 Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
                 if (readMethod == null) {
                     // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性

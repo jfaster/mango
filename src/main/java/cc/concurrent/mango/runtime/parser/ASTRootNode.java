@@ -75,7 +75,7 @@ public class ASTRootNode extends SimpleNode {
                 sql.append("?");
             } else if (node instanceof ASTIterableParameter) {
                 ASTIterableParameter aip = (ASTIterableParameter) node;
-                sql.append(aip.getPropertyName()).append(" in (");
+                sql.append(aip.getInterableProperty()).append(" in (");
                 Object objs = aip.value(context);
                 int t = 0;
                 for (Object obj : new Iterables(objs)) {

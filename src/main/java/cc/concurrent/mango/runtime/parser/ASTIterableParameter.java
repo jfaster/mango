@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public class ASTIterableParameter extends ValuableParameter {
 
-    private String propertyName; // "a in (:1)"中的a
+    private String interableProperty; // "a in (:1)"中的a
 
     public ASTIterableParameter(int i) {
         super(i);
@@ -27,8 +27,8 @@ public class ASTIterableParameter extends ValuableParameter {
         super(p, i);
     }
 
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setInterableProperty(String interableProperty) {
+        this.interableProperty = interableProperty;
     }
 
     public void setParameter(String parameter) {
@@ -45,8 +45,8 @@ public class ASTIterableParameter extends ValuableParameter {
         fullName = parameter;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public String getInterableProperty() {
+        return interableProperty;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ASTIterableParameter extends ValuableParameter {
 
     @Override
     public String toString() {
-        return propertyName + " in (" + fullName + ")";
+        return interableProperty + " in (" + fullName + ")";
     }
 
 }
