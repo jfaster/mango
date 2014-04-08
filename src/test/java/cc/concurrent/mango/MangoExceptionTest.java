@@ -5,6 +5,7 @@ import cc.concurrent.mango.support.User;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.logging.Slf4JLoggerFactory;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -14,6 +15,7 @@ import javax.sql.DataSource;
  *
  * @author ash
  */
+@Ignore
 public class MangoExceptionTest {
 
     private static DataSource ds;

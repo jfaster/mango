@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 mango.concurrent.cc
+ *
+ * The Netty Project licenses this file to you under the Apache License,
+ * version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
 package cc.concurrent.mango;
 
 import cc.concurrent.mango.runtime.operator.CacheableOperator;
@@ -13,6 +29,7 @@ import cc.concurrent.mango.util.reflect.AbstractInvocationHandler;
 import cc.concurrent.mango.util.reflect.Reflection;
 
 import javax.annotation.Nullable;
+import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
@@ -25,6 +42,14 @@ public class Mango {
 
     private final DataSourceFactory dataSourceFactory;
     private final CacheHandler defaultCacheHandler;
+
+    public Mango(DataSource dataSource) {
+        this(new SimpleDataSourceFactory(dataSource));
+    }
+
+    public Mango(DataSourceFactory dataSourceFactory) {
+        this(dataSourceFactory, null);
+    }
 
     public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
@@ -50,7 +75,7 @@ public class Mango {
         private final DataSourceFactory dataSourceFactory;
         private final CacheHandler cacheHandler;
 
-        private MangoInvocationHandler(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler) {
+        private MangoInvocationHandler(DataSourceFactory dataSourceFactory, @Nullable CacheHandler cacheHandler) {
             this.dataSourceFactory = dataSourceFactory;
             this.cacheHandler = cacheHandler;
         }
