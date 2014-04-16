@@ -52,7 +52,7 @@ public class IncorrectAnnotationExceptionTest {
     public void test3() {
         thrown.expect(IncorrectAnnotationException.class);
         thrown.expectMessage("if use cache, each method expected one and only one " +
-                "cc.concurrent.mango.CacheBy annotation but found 0");
+                "cc.concurrent.mango.CacheBy annotation on parameter but found 0");
         Dao3 dao = mango.create(Dao3.class);
         dao.add();
     }
@@ -61,7 +61,7 @@ public class IncorrectAnnotationExceptionTest {
     public void test4() {
         thrown.expect(IncorrectAnnotationException.class);
         thrown.expectMessage("if use cache, each method expected one and only one " +
-                "cc.concurrent.mango.CacheBy annotation but found 2");
+                "cc.concurrent.mango.CacheBy annotation on parameter but found 2");
         Dao3 dao = mango.create(Dao3.class);
         dao.add2(1, 2);
     }

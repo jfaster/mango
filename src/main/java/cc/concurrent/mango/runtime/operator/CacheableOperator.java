@@ -137,7 +137,8 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
                 }
                 if (num != 1) {
                     throw new IncorrectAnnotationException("if use cache, each method " +
-                            "expected one and only one cc.concurrent.mango.CacheBy annotation but found " + num);
+                            "expected one and only one cc.concurrent.mango.CacheBy annotation on parameter " +
+                            "but found " + num);
                 }
             }
         }
