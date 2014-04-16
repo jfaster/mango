@@ -17,6 +17,8 @@
 package cc.concurrent.mango.exception;
 
 /**
+ * 数据库访问异常
+ *
  * @author ash
  */
 public class DataAccessException extends RuntimeException {

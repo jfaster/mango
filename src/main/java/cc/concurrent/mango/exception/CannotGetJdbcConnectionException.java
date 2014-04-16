@@ -17,6 +17,8 @@
 package cc.concurrent.mango.exception;
 
 /**
+ * 不能获得jdbc连接异常
+ *
  * @author ash
  */
 public class CannotGetJdbcConnectionException extends DataAccessException {

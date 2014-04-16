@@ -17,6 +17,8 @@
 package cc.concurrent.mango.exception;
 
 /**
+ * 运行时实例化类异常
+ *
  * @author ash
  */
 public class BeanInstantiationException extends RuntimeException {

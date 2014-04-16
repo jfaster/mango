@@ -16,6 +16,7 @@
 
 package cc.concurrent.mango;
 
+import cc.concurrent.mango.exception.IncorrectAnnotationException;
 import cc.concurrent.mango.runtime.operator.CacheableOperator;
 import cc.concurrent.mango.runtime.operator.Operator;
 import cc.concurrent.mango.runtime.operator.OperatorFactory;
@@ -62,7 +63,12 @@ public class Mango {
 
     public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler) {
         if (daoClass == null) {
-            throw new NullPointerException("dao class can't be null");
+            throw new NullPointerException("dao interface can't be null");
+        }
+        DB dbAnno = daoClass.getAnnotation(DB.class);
+        if (dbAnno == null) {
+            throw new IncorrectAnnotationException("dao interface expected one cc.concurrent.mango.DB " +
+                    "annotation but not found");
         }
         if (cacheHandler == null) {
             cacheHandler = defaultCacheHandler;

@@ -4,6 +4,8 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import javax.sql.DataSource;
+
 /**
  * @author ash
  */
@@ -24,19 +26,25 @@ public class Config {
         return DIR;
     }
 
-    public static String getDriverClassName() {
+    public static DataSource getDataSource() {
+        return new DriverManagerDataSource(Config.getDriverClassName(), Config.getUrl(),
+                Config.getUsername(), Config.getPassword());
+    }
+
+
+    private static String getDriverClassName() {
         return CONFIG.getString("jdbc.driver");
     }
 
-    public static String getUrl() {
+    private static String getUrl() {
         return CONFIG.getString("jdbc.url");
     }
 
-    public static String getUsername() {
+    private static String getUsername() {
         return CONFIG.getString("jdbc.username");
     }
 
-    public static String getPassword() {
+    private static String getPassword() {
         return CONFIG.getString("jdbc.password");
     }
 

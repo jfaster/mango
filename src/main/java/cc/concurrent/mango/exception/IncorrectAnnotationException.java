@@ -17,7 +17,7 @@
 package cc.concurrent.mango.exception;
 
 /**
- * CacheBy注解异常
+ * 错误的使用注解异常
  *
  * @author ash
  */

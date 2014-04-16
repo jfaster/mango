@@ -30,11 +30,7 @@ public class MangoByteTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-        String driverClassName = Config.getDriverClassName();
-        String url = Config.getUrl();
-        String username = Config.getUsername();
-        String password = Config.getPassword();
-        DriverManagerDataSource ds = new DriverManagerDataSource(driverClassName, url, username, password);
+        DataSource ds = Config.getDataSource();
         createTable(ds);
         dao = new Mango(new SimpleDataSourceFactory(ds), null).create(ByteInfoDao.class);
     }
@@ -54,6 +50,7 @@ public class MangoByteTest {
 
     /**
      * 创建表
+     *
      * @throws java.sql.SQLException
      */
     private static void createTable(DataSource ds) throws SQLException {
@@ -69,6 +66,7 @@ public class MangoByteTest {
 
     /**
      * 从文本文件中获得建表语句
+     *
      * @param name
      * @return
      */

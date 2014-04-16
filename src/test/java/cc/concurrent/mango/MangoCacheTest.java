@@ -34,11 +34,7 @@ public class MangoCacheTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-        String driverClassName = Config.getDriverClassName();
-        String url = Config.getUrl();
-        String username = Config.getUsername();
-        String password = Config.getPassword();
-        DriverManagerDataSource ds = new DriverManagerDataSource(driverClassName, url, username, password);
+        DataSource ds = Config.getDataSource();
         createTable(ds);
         cacheHandler = new CacheHandlerImpl();
         dao = new Mango(new SimpleDataSourceFactory(ds), cacheHandler).create(ManDao.class);

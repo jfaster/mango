@@ -35,11 +35,7 @@ public class MangoTest {
     public static void beforeClass() throws Exception {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-        String driverClassName = Config.getDriverClassName();
-        String url = Config.getUrl();
-        String username = Config.getUsername();
-        String password = Config.getPassword();
-        ds = new DriverManagerDataSource(driverClassName, url, username, password);
+        ds = Config.getDataSource();
 
         dao = new Mango(new SimpleDataSourceFactory(ds), null).create(UserDao.class);
 
