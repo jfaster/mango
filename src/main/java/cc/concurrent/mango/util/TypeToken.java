@@ -27,6 +27,7 @@ import java.util.Set;
 public class TypeToken {
 
     private Class<?> mappedClass = null;
+    private Type mappedType = null; // 抛出异常时需要用到
     private boolean isList;
     private boolean isSet;
     private boolean isArray;
@@ -45,12 +46,14 @@ public class TypeToken {
                     if (typeArgument instanceof Class) {
                         mappedClass = (Class<?>) typeArgument;
                     }
+                    mappedType = typeArgument;
                 } else if (Set.class.equals(rawClass)) {
                     isSet = true;
                     Type typeArgument = parameterizedType.getActualTypeArguments()[0];
                     if (typeArgument instanceof Class) {
                         mappedClass = (Class<?>) typeArgument;
                     }
+                    mappedType = typeArgument;
                 }
             }
         } else if (type instanceof Class) { // 没有参数化
@@ -58,6 +61,7 @@ public class TypeToken {
             if (clazz.isArray()) { // 数组
                 isArray = true;
                 mappedClass = clazz.getComponentType();
+                mappedType = mappedClass;
             } else { // 普通类
                 mappedClass = clazz;
             }
@@ -88,6 +92,9 @@ public class TypeToken {
         return mappedClass;
     }
 
+    public Type getMappedType() {
+        return mappedType;
+    }
 }
 
 

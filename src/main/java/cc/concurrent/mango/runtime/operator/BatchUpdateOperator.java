@@ -58,7 +58,7 @@ public class BatchUpdateOperator extends CacheableOperator {
         TypeToken typeToken = new TypeToken(type);
         Class<?> mappedClass = typeToken.getMappedClass();
         if (mappedClass == null || !typeToken.isIterable()) {
-            throw new IncorrectParameterTypeException("parameter of batch update expected Array or " +
+            throw new IncorrectParameterTypeException("parameter of batch update expected array or " +
                     "subclass of java.util.Collection but " + type); // 批量更新的参数必须可迭代
         }
 

@@ -67,12 +67,12 @@ public class ASTVariable extends PrimaryExpression {
         if (node instanceof ASTExpression) { // 到达根节点都是加法
             if (!Integer.class.equals(type) && !int.class.equals(type) && !String.class.equals(type)) {
                 throw new IncorrectParameterTypeException("invalid type of " + fullName + ", " +
-                        "need int or java.lang.Integer or java.lang.String but " + type);
+                        "expected int or java.lang.Integer or java.lang.String but " + type);
             }
         } else { // 到达根节点的途中遇到了非加法
             if (!Integer.class.equals(type) && !int.class.equals(type)) {
                 throw new IncorrectParameterTypeException("invalid type of " + fullName + ", " +
-                        "need int or java.lang.Integer but " + type);
+                        "expected int or java.lang.Integer but " + type);
             }
         }
     }

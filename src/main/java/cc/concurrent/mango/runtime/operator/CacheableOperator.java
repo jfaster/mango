@@ -51,6 +51,9 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
 
     @Override
     public void setCacheHandler(@Nullable CacheHandler cacheHandler) {
+        if (isUseCache() && cacheHandler == null) {
+            throw new NullPointerException("if use cache, please provide an implementation of CacheHandler");
+        }
         this.cacheHandler = cacheHandler;
     }
 
@@ -62,8 +65,16 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
             TypeToken typeToken = new TypeToken(type);
             Class<?> mappedClass = typeToken.getMappedClass();
             if (mappedClass == null || !JdbcUtils.isSingleColumnClass(mappedClass)) {
-                throw new IncorrectParameterTypeException("invalid type of " + getFullName(parameterName, propertyPath) +
-                        ", need a single column class but " + type);
+                String fullName = getFullName(parameterName, propertyPath);
+                if (typeToken.isIterable()) {
+                    String s = typeToken.isArray() ? "component" : "actual";
+                    throw new IncorrectParameterTypeException("invalid " + s + " type of " + fullName + ", " +
+                            s + " type of " + fullName + " expected a class can be identified by jdbc " +
+                            "but " + typeToken.getMappedType());
+                } else {
+                    throw new IncorrectParameterTypeException("invalid type of " + fullName +
+                            ", expected a class can be identified by jdbc but " + type);
+                }
             }
         }
     }
@@ -145,7 +156,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     }
 
     private String getFullName(String parameterName, String propertyPath) {
-        return !propertyPath.isEmpty() ? parameterName + "." + propertyPath : propertyPath;
+        return ":" + (!propertyPath.isEmpty() ? parameterName + "." + propertyPath : propertyPath);
     }
 
 }

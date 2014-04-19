@@ -150,8 +150,8 @@ void AdditiveExpression() #void : // 标记为void不生成节点
 {
     MultiplicativeExpression()
     (
-            <PLUS>  MultiplicativeExpression() #AddNode(2)
-        |   <MINUS> MultiplicativeExpression() #SubtractNode(2)
+            <PLUS>  MultiplicativeExpression() #AddExpression(2)
+        |   <MINUS> MultiplicativeExpression() #SubtractExpression(2)
     )*
 }
 
@@ -160,9 +160,9 @@ void MultiplicativeExpression() #void : // 标记为void不生成节点
 {
     PrimaryExpression()
     (
-            <MULTIPLY>  PrimaryExpression() #MulNode(2)
-        |   <DIVIDE>  PrimaryExpression() #DivNode(2)
-        |   <MODULUS>  PrimaryExpression() #ModNode(2)
+            <MULTIPLY>  PrimaryExpression() #MulExpression(2)
+        |   <DIVIDE>  PrimaryExpression() #DivExpression(2)
+        |   <MODULUS>  PrimaryExpression() #ModExpression(2)
     )*
 }
 

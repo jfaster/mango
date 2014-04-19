@@ -64,7 +64,7 @@ public class ASTNonIterableParameter extends ValuableParameter {
         Class<?> mappedClass = typeToken.getMappedClass();
         if (mappedClass == null || typeToken.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
             throw new IncorrectParameterTypeException("invalid type of " + fullName + ", " +
-                    "need a single column class but " + type);
+                    "expected a class can be identified by jdbc but " + type);
         }
     }
 
