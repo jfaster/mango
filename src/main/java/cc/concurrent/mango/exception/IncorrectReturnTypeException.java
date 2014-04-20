@@ -17,6 +17,8 @@
 package cc.concurrent.mango.exception;
 
 /**
+ * 错误的返回类型异常
+ *
  * @author ash
  */
 public class IncorrectReturnTypeException extends RuntimeException {
@@ -24,4 +26,5 @@ public class IncorrectReturnTypeException extends RuntimeException {
     public IncorrectReturnTypeException(String message) {
         super(message);
     }
+
 }

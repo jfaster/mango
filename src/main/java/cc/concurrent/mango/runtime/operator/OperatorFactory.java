@@ -67,7 +67,10 @@ public class OperatorFactory {
         } else if (int[].class.equals(method.getReturnType())) {
             return BatchUpdateOperator.create(rootNode, method, sqlType);
         } else {
-            throw new IncorrectReturnTypeException("return type expected int or int[] but " + method.getReturnType());
+            throw new IncorrectReturnTypeException("if sql don't start with select, " +
+                    "update return type expected int, " +
+                    "batch update return type expected int[], " +
+                    "but " + method.getReturnType());
         }
     }
 

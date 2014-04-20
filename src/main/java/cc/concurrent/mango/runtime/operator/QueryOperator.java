@@ -78,8 +78,9 @@ public class QueryOperator extends CacheableOperator {
 
         List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
         if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) {
-            throw new IncorrectReturnTypeException("if sql has in clause, return type expected iterable but "
-                    + method.getGenericReturnType()); // sql中使用了in查询，返回参数必须可迭代
+            throw new IncorrectReturnTypeException("if sql has in clause, return type " +
+                    "expected array or implementations of java.util.List or implementations of java.util.Set " +
+                    "but " + method.getGenericReturnType()); // sql中使用了in查询，返回参数必须可迭代
         }
         if (isUseCache()) {
             if (aips.size() == 1) {
