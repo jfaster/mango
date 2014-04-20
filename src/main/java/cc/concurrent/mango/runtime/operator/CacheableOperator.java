@@ -21,18 +21,17 @@ import cc.concurrent.mango.CacheBy;
 import cc.concurrent.mango.CacheHandler;
 import cc.concurrent.mango.CacheIgnored;
 import cc.concurrent.mango.exception.IncorrectAnnotationException;
-import cc.concurrent.mango.exception.IncorrectParameterTypeException;
-import cc.concurrent.mango.jdbc.JdbcUtils;
+import cc.concurrent.mango.exception.IncorrectCacheByException;
 import cc.concurrent.mango.runtime.CacheDescriptor;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.TypeContext;
-import cc.concurrent.mango.util.TypeToken;
+import cc.concurrent.mango.runtime.parser.ASTRootNode;
+import cc.concurrent.mango.runtime.parser.ValuableParameter;
 import cc.concurrent.mango.util.reflect.Reflection;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,25 +56,19 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
         this.cacheHandler = cacheHandler;
     }
 
-    protected void checkCacheType(TypeContext context) {
+    protected void checkCacheBy(ASTRootNode rootNode) {
         if (isUseCache()) {
             String parameterName = cacheDescriptor.getParameterName();
             String propertyPath = cacheDescriptor.getPropertyPath();
-            Type type = context.getPropertyType(parameterName, propertyPath);
-            TypeToken typeToken = new TypeToken(type);
-            Class<?> mappedClass = typeToken.getMappedClass();
-            if (mappedClass == null || !JdbcUtils.isSingleColumnClass(mappedClass)) {
-                String fullName = getFullName(parameterName, propertyPath);
-                if (typeToken.isIterable()) {
-                    String s = typeToken.isArray() ? "component" : "actual";
-                    throw new IncorrectParameterTypeException("invalid " + s + " type of " + fullName + ", " +
-                            s + " type of " + fullName + " expected a class can be identified by jdbc " +
-                            "but " + typeToken.getMappedType());
-                } else {
-                    throw new IncorrectParameterTypeException("invalid type of " + fullName +
-                            ", expected a class can be identified by jdbc but " + type);
+            List<ValuableParameter> vps = rootNode.getValueValuableParameters();
+            for (ValuableParameter vp : vps) {
+                if (vp.getParameterName().equals(parameterName) &&
+                        vp.getPropertyPath().equals(propertyPath)) {
+                    return;
                 }
             }
+            String fullName = getFullName(parameterName, propertyPath);
+            throw new IncorrectCacheByException("CacheBy " + fullName + " can't match any db parameter");
         }
     }
 
@@ -156,7 +149,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     }
 
     private String getFullName(String parameterName, String propertyPath) {
-        return ":" + (!propertyPath.isEmpty() ? parameterName + "." + propertyPath : propertyPath);
+        return ":" + (!propertyPath.isEmpty() ? parameterName + "." + propertyPath : parameterName);
     }
 
 }

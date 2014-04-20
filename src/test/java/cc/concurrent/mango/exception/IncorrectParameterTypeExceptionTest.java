@@ -99,27 +99,6 @@ public class IncorrectParameterTypeExceptionTest {
         dao.get4(new Object());
     }
 
-    @Test
-    public void test9() {
-        thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("invalid type of :1.obj, " +
-                "expected a class can be identified by jdbc " +
-                "but class java.lang.Object");
-        Dao9 dao = mango.create(Dao9.class);
-        dao.get(new Model());
-    }
-
-    @Test
-    public void test10() {
-        thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("invalid actual type of :1.objs, actual type of :1.objs " +
-                "expected a class can be identified by jdbc " +
-                "but class java.lang.Object");
-        Dao9 dao = mango.create(Dao9.class);
-        dao.get2(new Model());
-    }
-
-
     @DB
     static interface Dao {
         @SQL("insert into ${1 + :1} ...")
@@ -145,31 +124,6 @@ public class IncorrectParameterTypeExceptionTest {
 
         @SQL("select ... where a=:1")
         public int get4(Object obj);
-    }
-
-    @DB
-    @Cache(prefix = "dao9_", expire = Day.class)
-    static interface Dao9 {
-        @SQL("select ... where a=:1.uid")
-        public int get(@CacheBy("obj") Model model);
-
-        @SQL("select ... where a=:1.uid")
-        public int get2(@CacheBy("objs") Model model);
-    }
-
-    static class Model {
-        Object obj = null;
-        int uid;
-        List<Object> objs;
-        public Object getObj() {
-            return obj;
-        }
-        public int getUid() {
-            return uid;
-        }
-        public List<Object> getObjs() {
-            return objs;
-        }
     }
 
 }

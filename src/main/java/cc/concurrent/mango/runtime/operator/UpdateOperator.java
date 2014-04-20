@@ -55,7 +55,7 @@ public class UpdateOperator extends CacheableOperator {
 
         TypeContext context = buildTypeContext(method.getGenericParameterTypes());
         rootNode.checkType(context); // 检测sql中的参数是否和方法上的参数匹配
-        checkCacheType(context); // 如果使用cache，检测cache参数
+        checkCacheBy(rootNode); // 如果使用cache，检测cache参数
 
         if (isUseCache()) { // 使用cache
             List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();

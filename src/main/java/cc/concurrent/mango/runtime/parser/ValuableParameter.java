@@ -50,4 +50,11 @@ public abstract class ValuableParameter extends ValuableNode {
         return jjtGetLastToken();
     }
 
+    public String getParameterName() {
+        return parameterName;
+    }
+
+    public String getPropertyPath() {
+        return propertyPath;
+    }
 }

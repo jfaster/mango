@@ -72,6 +72,22 @@ public class ASTRootNode extends SimpleNode {
     }
 
     /**
+     * 获得可迭代参数节点与不可迭代参数节点
+     *
+     * @return
+     */
+    public List<ValuableParameter> getValueValuableParameters() {
+        List<ValuableParameter> vps = new ArrayList<ValuableParameter>();
+        for (int i = 0; i < jjtGetNumChildren(); i++) {
+            Node node = jjtGetChild(i);
+            if (node instanceof ValuableParameter) {
+                vps.add((ValuableParameter) node);
+            }
+        }
+        return vps;
+    }
+
+    /**
      * 构建sql与参数
      *
      * @param context
