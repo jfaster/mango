@@ -44,33 +44,25 @@ public class IncorrectParameterTypeExceptionTest {
     @Test
     public void test3() {
         thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("batch update expected one and only one parameter but 2");
-        Dao dao = mango.create(Dao.class);
-        dao.batchAdd(new ArrayList<Integer>(), 1);
-    }
-
-    @Test
-    public void test4() {
-        thrown.expect(IncorrectParameterTypeException.class);
         thrown.expectMessage("parameter of batch update " +
-                "expected array or subclass of java.util.Collection " +
+                "expected array or implementations of java.util.List or implementations of java.util.Set " +
                 "but class java.lang.Integer");
         Dao dao = mango.create(Dao.class);
         dao.batchAdd2(1);
     }
 
     @Test
-    public void test5() {
+    public void test4() {
         thrown.expect(IncorrectParameterTypeException.class);
         thrown.expectMessage("invalid type of :1, " +
-                "expected array or subclass of java.util.Collection " +
+                "expected array or implementations of java.util.List or implementations of java.util.Set " +
                 "but int");
         Dao dao = mango.create(Dao.class);
         dao.get(1);
     }
 
     @Test
-    public void test6() {
+    public void test5() {
         thrown.expect(IncorrectParameterTypeException.class);
         thrown.expectMessage("invalid actual type of :1, actual type of :1 " +
                 "expected a class can be identified by jdbc " +
@@ -80,7 +72,7 @@ public class IncorrectParameterTypeExceptionTest {
     }
 
     @Test
-    public void test7() {
+    public void test6() {
         thrown.expect(IncorrectParameterTypeException.class);
         thrown.expectMessage("invalid component type of :1, component type of :1 " +
                 "expected a class can be identified by jdbc " +
@@ -90,7 +82,7 @@ public class IncorrectParameterTypeExceptionTest {
     }
 
     @Test
-    public void test8() {
+    public void test7() {
         thrown.expect(IncorrectParameterTypeException.class);
         thrown.expectMessage("invalid type of :1, " +
                 "expected a class can be identified by jdbc " +
@@ -106,9 +98,6 @@ public class IncorrectParameterTypeExceptionTest {
 
         @SQL("insert into ${1 + :1 * 10} ...")
         public int add2(String str);
-
-        @SQL("insert into ...")
-        public int[] batchAdd(List<Integer> list, int a);
 
         @SQL("insert into ...")
         public int[] batchAdd2(Integer a);

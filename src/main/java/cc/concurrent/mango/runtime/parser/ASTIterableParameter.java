@@ -72,7 +72,8 @@ public class ASTIterableParameter extends ValuableParameter {
         Class<?> mappedClass = typeToken.getMappedClass();
         if (!typeToken.isIterable()) { // 不是集合或数组抛出异常
             throw new IncorrectParameterTypeException("invalid type of " + fullName + ", " +
-                    "expected array or subclass of java.util.Collection but " + type);
+                    "expected array or implementations of java.util.List or implementations of java.util.Set " +
+                    "but " + type);
         }
         if (mappedClass == null || !JdbcUtils.isSingleColumnClass(mappedClass)) {
             String s = typeToken.isArray() ? "component" : "actual";

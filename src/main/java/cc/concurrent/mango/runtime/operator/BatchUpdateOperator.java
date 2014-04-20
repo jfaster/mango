@@ -16,6 +16,7 @@
 
 package cc.concurrent.mango.runtime.operator;
 
+import cc.concurrent.mango.exception.IncorrectParameterCountException;
 import cc.concurrent.mango.exception.IncorrectParameterTypeException;
 import cc.concurrent.mango.exception.IncorrectSqlException;
 import cc.concurrent.mango.runtime.ParsedSql;
@@ -50,7 +51,7 @@ public class BatchUpdateOperator extends CacheableOperator {
         this.rootNode = rootNode;
 
         if (method.getGenericParameterTypes().length != 1) {
-            throw new IncorrectParameterTypeException("batch update expected one and only one parameter but " +
+            throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
                     method.getGenericParameterTypes().length); // 批量更新只能有一个参数
         }
 
@@ -58,8 +59,9 @@ public class BatchUpdateOperator extends CacheableOperator {
         TypeToken typeToken = new TypeToken(type);
         Class<?> mappedClass = typeToken.getMappedClass();
         if (mappedClass == null || !typeToken.isIterable()) {
-            throw new IncorrectParameterTypeException("parameter of batch update expected array or " +
-                    "subclass of java.util.Collection but " + type); // 批量更新的参数必须可迭代
+            throw new IncorrectParameterTypeException("parameter of batch update " +
+                    "expected array or implementations of java.util.List or implementations of java.util.Set " +
+                    "but " + type); // 批量更新的参数必须可迭代
         }
 
         TypeContext context = buildTypeContext(new Type[]{mappedClass});
