@@ -24,15 +24,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * 测试{@link IncorrectParameterCountException}
+ * 测试{@link NotReadableParameterException}
  *
  * @author ash
  */
-public class IncorrectParameterCountExceptionTest {
+public class NotReadableParameterExceptionTest {
 
     private final static Mango mango = new Mango(Config.getDataSource());
 
@@ -41,17 +38,27 @@ public class IncorrectParameterCountExceptionTest {
 
     @Test
     public void test() {
-        thrown.expect(IncorrectParameterCountException.class);
-        thrown.expectMessage("batch update expected one and only one parameter but 2");
+        thrown.expect(NotReadableParameterException.class);
+        thrown.expectMessage("parameter ':1' is not readable");
         Dao dao = mango.create(Dao.class);
-        dao.batchAdd(new ArrayList<Integer>(), 1);
+        dao.add();
+    }
+
+    @Test
+    public void test2() {
+        thrown.expect(NotReadableParameterException.class);
+        thrown.expectMessage("parameter ':1' is not readable");
+        Dao dao = mango.create(Dao.class);
+        dao.gets();
     }
 
     @DB
     static interface Dao {
-        @SQL("insert into ...")
-        public int[] batchAdd(List<Integer> list, int a);
-    }
+        @SQL("insert into ... :1 ...")
+        public int add();
 
+        @SQL("select ... where id in (:1)")
+        public int[] gets();
+    }
 
 }
