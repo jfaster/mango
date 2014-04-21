@@ -41,7 +41,7 @@ public class SingleColumnRowMapper<T> implements RowMapper<T> {
         ResultSetMetaData rsmd = rs.getMetaData();
         int nrOfColumns = rsmd.getColumnCount();
         if (nrOfColumns != 1) {
-            throw new IncorrectResultSetColumnCountException(1, nrOfColumns);
+            throw new IncorrectResultSetColumnCountException("incorrect column count, expected 1 but " + nrOfColumns);
         }
 
         Object result = getColumnValue(rs, 1, this.mappedClass);
