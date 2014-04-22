@@ -66,7 +66,7 @@ public class JdbcTemplate {
             }
             return rs.getInt(1);
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
@@ -82,7 +82,7 @@ public class JdbcTemplate {
             setBatchValues(ps, batchArgs);
             return ps.executeBatch();
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeConnection(conn);
@@ -99,7 +99,7 @@ public class JdbcTemplate {
             rs = ps.executeQuery();
             return rse.extractData(rs);
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);

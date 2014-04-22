@@ -7,8 +7,8 @@ package cc.concurrent.mango.exception;
  */
 public class UncheckedSQLException extends DataAccessException {
 
-    public UncheckedSQLException(Throwable cause) {
-        super(cause);
+    public UncheckedSQLException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }
