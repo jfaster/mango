@@ -21,7 +21,7 @@ package cc.concurrent.mango.exception;
  *
  * @author ash
  */
-public class DataAccessException extends RuntimeException {
+public abstract class DataAccessException extends RuntimeException {
 
     public DataAccessException(Throwable cause) {
         super(cause);

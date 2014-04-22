@@ -1,4 +1,4 @@
-package cc.concurrent.mango;
+package cc.concurrent.mango.util;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -88,8 +88,8 @@ public class ScriptRunner {
      *
      * @param conn   - the connection to use for the script
      * @param reader - the source of the script
-     * @throws SQLException if any SQL errors occur
-     * @throws IOException  if there is an error reading from the Reader
+     * @throws java.sql.SQLException if any SQL errors occur
+     * @throws java.io.IOException  if there is an error reading from the Reader
      */
     private void runScript(Connection conn, Reader reader) throws IOException,
             SQLException {

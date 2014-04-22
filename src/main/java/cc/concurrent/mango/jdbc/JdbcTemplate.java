@@ -16,7 +16,8 @@
 
 package cc.concurrent.mango.jdbc;
 
-import cc.concurrent.mango.exception.DataAccessException;
+import cc.concurrent.mango.exception.GeneratedKeysException;
+import cc.concurrent.mango.exception.UncheckedSQLException;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -61,11 +62,11 @@ public class JdbcTemplate {
             // 生成自增id
             rs = ps.getGeneratedKeys();
             if (!rs.next()) {
-                throw new DataAccessException("getGeneratedKeys error");
+                throw new GeneratedKeysException("please check whether the table has auto increment key");
             }
             return rs.getInt(1);
         } catch (SQLException e) {
-            throw new DataAccessException(e);
+            throw new UncheckedSQLException(e);
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
@@ -81,7 +82,7 @@ public class JdbcTemplate {
             setBatchValues(ps, batchArgs);
             return ps.executeBatch();
         } catch (SQLException e) {
-            throw new DataAccessException(e);
+            throw new UncheckedSQLException(e);
         } finally {
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeConnection(conn);
@@ -98,7 +99,7 @@ public class JdbcTemplate {
             rs = ps.executeQuery();
             return rse.extractData(rs);
         } catch (SQLException e) {
-            throw new DataAccessException(e);
+            throw new UncheckedSQLException(e);
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);

@@ -28,7 +28,7 @@ public abstract class AbstractLoadingCache<K, V> implements LoadingCache<K, V> {
         try {
             return get(key);
         } catch (Exception e) {
-            throw new UncheckedException(e.getCause());
+            throw new UncheckedException(e.getMessage(), e.getCause());
         }
     }
 

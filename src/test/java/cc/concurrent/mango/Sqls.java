@@ -1,5 +1,7 @@
 package cc.concurrent.mango;
 
+import cc.concurrent.mango.util.ScriptRunner;
+
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,7 +11,9 @@ import java.sql.SQLException;
  */
 public enum Sqls {
 
-    USER("user.sql");
+    USER("user.sql"),
+    PERSON("person.sql"),
+    ;
 
     private String name;
 

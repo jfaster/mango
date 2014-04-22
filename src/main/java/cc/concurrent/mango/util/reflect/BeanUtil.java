@@ -19,8 +19,6 @@ package cc.concurrent.mango.util.reflect;
 import cc.concurrent.mango.exception.UncheckedException;
 
 import javax.annotation.Nullable;
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -44,8 +42,7 @@ public class BeanUtil {
                     nestedPath.append(".");
                 }
                 nestedPath.append(propertyName);
-                PropertyDescriptor pd = new PropertyDescriptor(propertyName, object.getClass());
-                Method method = pd.getReadMethod();
+                Method method = BeanInfoCache.getReadMethod(object.getClass(), propertyName);
                 object = method.invoke(object, (Object[]) null);
                 propertyPath = propertyPath.substring(pos + 1);
                 pos = propertyPath.indexOf('.');
@@ -54,15 +51,12 @@ public class BeanUtil {
             if (object == null) {
                 throw new NullPointerException(getErrorMessage(nestedPath.toString(), rootClass));
             }
-            PropertyDescriptor pd = new PropertyDescriptor(propertyPath, object.getClass());
-            Method method = pd.getWriteMethod();
+            Method method = BeanInfoCache.getReadMethod(object.getClass(), propertyPath);
             method.invoke(object, value);
-        } catch (IntrospectionException e) {
-            throw new UncheckedException(e.getCause());
         } catch (InvocationTargetException e) {
-            throw new UncheckedException(e.getCause());
+            throw new UncheckedException(e.getMessage(), e.getCause());
         } catch (IllegalAccessException e) {
-            throw new UncheckedException(e.getCause());
+            throw new UncheckedException(e.getMessage(), e.getCause());
         }
     }
 
@@ -99,16 +93,13 @@ public class BeanUtil {
             if (value == null) {
                 throw new NullPointerException(getErrorMessage(nestedPath.toString(), useForException));
             }
-            PropertyDescriptor pd = new PropertyDescriptor(propertyPath, value.getClass());
-            Method method = pd.getReadMethod();
+            Method method = BeanInfoCache.getReadMethod(value.getClass(), propertyPath);
             value = method.invoke(value, (Object[]) null);
             return value;
-        } catch (IntrospectionException e) {
-            throw new UncheckedException(e.getCause());
         } catch (InvocationTargetException e) {
-            throw new UncheckedException(e.getCause());
+            throw new UncheckedException(e.getMessage(), e.getCause());
         } catch (IllegalAccessException e) {
-            throw new UncheckedException(e.getCause());
+            throw new UncheckedException(e.getMessage(), e.getCause());
         }
     }
 
