@@ -109,7 +109,11 @@ public class BatchUpdateOperator extends CacheableOperator {
             for (Object[] args : batchArgs) {
                 str.add(Arrays.toString(args));
             }
-            logger.debug("{} #args={}", sql, batchArgs);
+            List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
+            for (Object[] batchArg : batchArgs) {
+                debugBatchArgs.add(Arrays.asList(batchArg));
+            }
+            logger.debug("{} #args={}", sql, debugBatchArgs);
         }
         int[] ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
         if (isUseCache()) {

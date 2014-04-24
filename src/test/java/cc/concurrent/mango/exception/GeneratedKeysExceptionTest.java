@@ -34,13 +34,13 @@ public class GeneratedKeysExceptionTest {
     public void test() {
         thrown.expect(GeneratedKeysException.class);
         thrown.expectMessage("please check whether the table has auto increment key");
-        Dao dao = mango.create(Dao.class);
+        PsersonDao dao = mango.create(PsersonDao.class);
         Person p = new Person(1, "ash");
         dao.add(p);
     }
 
     @DB
-    static interface Dao {
+    static interface PsersonDao {
 
         @ReturnGeneratedId
         @SQL("insert into person(id, name) values(:1.id, :1.name)")

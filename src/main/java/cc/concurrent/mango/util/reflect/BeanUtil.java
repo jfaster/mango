@@ -42,7 +42,7 @@ public class BeanUtil {
                     nestedPath.append(".");
                 }
                 nestedPath.append(propertyName);
-                Method method = BeanInfoCache.getReadMethod(object.getClass(), propertyName);
+                Method method = BeanInfoCache.getWriteMethod(object.getClass(), propertyName);
                 object = method.invoke(object, (Object[]) null);
                 propertyPath = propertyPath.substring(pos + 1);
                 pos = propertyPath.indexOf('.');
@@ -51,7 +51,7 @@ public class BeanUtil {
             if (object == null) {
                 throw new NullPointerException(getErrorMessage(nestedPath.toString(), rootClass));
             }
-            Method method = BeanInfoCache.getReadMethod(object.getClass(), propertyPath);
+            Method method = BeanInfoCache.getWriteMethod(object.getClass(), propertyPath);
             method.invoke(object, value);
         } catch (InvocationTargetException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());

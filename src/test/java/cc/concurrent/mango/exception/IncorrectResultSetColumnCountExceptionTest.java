@@ -17,7 +17,6 @@
 package cc.concurrent.mango.exception;
 
 import cc.concurrent.mango.*;
-import cc.concurrent.mango.support.User;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,7 +24,6 @@ import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.Date;
 
 /**
  * 测试{@link IncorrectResultSetColumnCountException}
@@ -43,7 +41,7 @@ public class IncorrectResultSetColumnCountExceptionTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Sqls.USER.run(conn);
+        Sqls.PERSON.run(conn);
         conn.close();
     }
 
@@ -51,21 +49,40 @@ public class IncorrectResultSetColumnCountExceptionTest {
     public void test() {
         thrown.expect(IncorrectResultSetColumnCountException.class);
         thrown.expectMessage("incorrect column count, expected 1 but 2");
-        UserDao dao = mango.create(UserDao.class);
-        int id = dao.insert(new User("ash", 10, true, 10086L, new Date()));
+        PersonDao dao = mango.create(PersonDao.class);
+        int id = 1;
+        dao.add(new Person(id, "ash"));
         dao.get(id);
     }
 
     @DB
-    static interface UserDao {
+    static interface PersonDao {
 
-        @ReturnGeneratedId
-        @SQL("insert into user(name, age, gender, money, update_time) " +
-                "values(:u.name, :u.age, :u.gender, :u.money, :u.updateTime)")
-        public int insert(@Rename("u") User user);
+        @SQL("insert into person(id, name) values(:1.id, :1.name)")
+        public int add(Person p);
 
-        @SQL("select id, name from user where id=:1")
-        public int get(int uid);
+        @SQL("select id, name from person where id=:1")
+        public int get(int id);
+    }
+
+
+    public static class Person {
+        int id;
+        String name;
+
+        public Person(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
 
 }

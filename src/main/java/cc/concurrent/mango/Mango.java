@@ -52,6 +52,10 @@ public class Mango {
         this(dataSourceFactory, null);
     }
 
+    public Mango(DataSource dataSource, CacheHandler defaultCacheHandler) {
+        this(new SimpleDataSourceFactory(dataSource), defaultCacheHandler);
+    }
+
     public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
         this.defaultCacheHandler = defaultCacheHandler;

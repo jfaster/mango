@@ -32,13 +32,13 @@ public class UncheckedSQLExceptionTest {
     @Test
     public void test() {
         thrown.expect(UncheckedSQLException.class);
-        Dao dao = mango.create(Dao.class);
+        PersonDao dao = mango.create(PersonDao.class);
         Person p = new Person(1, "ash");
         dao.add(p);
     }
 
     @DB
-    static interface Dao {
+    static interface PersonDao {
 
         @SQL("insert intoo person(id, name) values(:1.id, :1.name)")
         public int add(Person p);
