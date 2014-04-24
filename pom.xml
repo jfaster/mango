@@ -11,7 +11,7 @@
     <groupId>cc.concurrent</groupId>
     <artifactId>mango</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
 
     <name>mango</name>
     <url>https://github.com/javacc/mango/</url>
