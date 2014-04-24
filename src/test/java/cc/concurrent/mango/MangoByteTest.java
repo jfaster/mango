@@ -1,19 +1,11 @@
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.support.ByteInfoDao;
-import cc.concurrent.mango.util.logging.InternalLoggerFactory;
-import cc.concurrent.mango.util.logging.Slf4JLoggerFactory;
-import com.google.common.base.Splitter;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,16 +17,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class MangoByteTest {
 
-    private static ByteInfoDao dao;
+    private final static DataSource ds = Config.getDataSource();
+    private final static Mango mango = new Mango(ds);
+    private final static ByteInfoDao dao = mango.create(ByteInfoDao.class);
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-        DataSource ds = Config.getDataSource();
-        createTable(ds);
-        dao = new Mango(new SimpleDataSourceFactory(ds), null).create(ByteInfoDao.class);
+    @Before
+    public void before() throws Exception {
+        Connection conn = ds.getConnection();
+        Sqls.BYTE_INFO.run(conn);
+        conn.close();
     }
-
 
     @Test
     public void testByteInfo() {
@@ -48,36 +40,19 @@ public class MangoByteTest {
         }
     }
 
-    /**
-     * 创建表
-     *
-     * @throws java.sql.SQLException
-     */
-    private static void createTable(DataSource ds) throws SQLException {
-        Connection conn = ds.getConnection();
-        Statement stat = conn.createStatement();
-        String sqls = fileToString("/" + Config.getDir() + "/byte_info.sql");
-        for (String sql : Splitter.on("####").trimResults().split(sqls)) {
-            stat.execute(sql);
-        }
-        stat.close();
-        conn.close();
-    }
+    @DB
+    interface ByteInfoDao {
 
-    /**
-     * 从文本文件中获得建表语句
-     *
-     * @param name
-     * @return
-     */
-    private static String fileToString(String name) {
-        InputStream is = MangoTest.class.getResourceAsStream(name);
-        Scanner s = new Scanner(is);
-        StringBuffer sb = new StringBuffer();
-        while (s.hasNextLine()) {
-            sb.append(s.nextLine()).append(System.getProperty("line.separator"));
-        }
-        return sb.toString();
+        @ReturnGeneratedId
+        @SQL("insert into byte_info(array_byte, single_byte) values(:1, :2)")
+        public int insert(byte[] arrayByte, byte singleByte);
+
+        @SQL("select array_byte from byte_info where id=:1")
+        public byte[] getArrayByte(int id);
+
+        @SQL("select single_byte from byte_info where single_byte=:1")
+        public Byte[] getByteSingles(int singByte);
+
     }
 
 }

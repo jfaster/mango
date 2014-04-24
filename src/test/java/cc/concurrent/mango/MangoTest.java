@@ -2,9 +2,7 @@ package cc.concurrent.mango;
 
 import com.google.common.primitives.Ints;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

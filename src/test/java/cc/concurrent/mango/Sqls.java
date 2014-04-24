@@ -13,6 +13,7 @@ public enum Sqls {
 
     USER("user.sql"),
     PERSON("person.sql"),
+    BYTE_INFO("byte_info.sql"),
     ;
 
     private String name;

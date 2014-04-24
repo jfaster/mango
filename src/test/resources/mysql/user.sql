@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS user
-####
+DROP TABLE IF EXISTS user;
+
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(25) DEFAULT NULL,
@@ -8,4 +8,4 @@ CREATE TABLE `user` (
   `money` bigint(21) DEFAULT NULL,
   `update_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
