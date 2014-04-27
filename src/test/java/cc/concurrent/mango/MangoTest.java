@@ -52,56 +52,56 @@ public class MangoTest {
     public void testQueryInteger() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectInteger(id), equalTo(id));
+        assertThat(dao.getIntegerId(id), equalTo(id));
     }
 
     @Test
     public void testQueryInt() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectInt(id), equalTo(id));
+        assertThat(dao.getIntId(id), equalTo(id));
     }
 
     @Test
     public void testQueryString() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectString(id), equalTo(user.getName()));
+        assertThat(dao.getName(id), equalTo(user.getName()));
     }
 
     @Test
     public void testQueryBooleanObj() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectBooleanObj(id), equalTo(user.isGender()));
+        assertThat(dao.getBoolObjGender(id), equalTo(user.isGender()));
     }
 
     @Test
     public void testQueryBoolean() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectBoolean(id), equalTo(user.isGender()));
+        assertThat(dao.getBoolGender(id), equalTo(user.isGender()));
     }
 
     @Test
     public void testQueryLongObj() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectLongObj(id), equalTo(user.getMoney()));
+        assertThat(dao.getLongObjMoney(id), equalTo(user.getMoney()));
     }
 
     @Test
     public void testQueryLong() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectLong(id), equalTo(user.getMoney()));
+        assertThat(dao.getLongMoney(id), equalTo(user.getMoney()));
     }
 
     @Test
     public void testQueryDate() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
-        assertThat(dao.selectDate(id).getTime(), equalTo(user.getUpdateTime().getTime()));
+        assertThat(dao.getDate(id).getTime(), equalTo(user.getUpdateTime().getTime()));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class MangoTest {
         User user = createRandomUser();
         int id = dao.insertUser(user);
         user.setId(id);
-        assertThat(dao.selectUser(id), equalTo(user));
+        assertThat(dao.getUser(id), equalTo(user));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class MangoTest {
             int id = dao.insertUser(user);
             user.setId(id);
         }
-        List<User> actual = dao.selectUserList();
+        List<User> actual = dao.getUserList();
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, contains(users.toArray()));
     }
@@ -131,7 +131,7 @@ public class MangoTest {
             int id = dao.insertUser(user);
             user.setId(id);
         }
-        Set<User> actual = dao.selectUserSet();
+        Set<User> actual = dao.getUserSet();
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
@@ -143,7 +143,7 @@ public class MangoTest {
             int id = dao.insertUser(user);
             user.setId(id);
         }
-        List<User> actual = Arrays.asList(dao.selectUserArray());
+        List<User> actual = Arrays.asList(dao.getUserArray());
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, contains(users.toArray()));
     }
@@ -155,7 +155,7 @@ public class MangoTest {
             int id = dao.insertUser(user);
             ids.add(id);
         }
-        List<Integer> actual = Arrays.asList(dao.selectIntegerArray());
+        List<Integer> actual = Arrays.asList(dao.getIntegerArray());
         assertThat(actual, hasSize(ids.size()));
         assertThat(actual, contains(ids.toArray()));
     }
@@ -167,7 +167,7 @@ public class MangoTest {
             int id = dao.insertUser(user);
             ids.add(id);
         }
-        List<Integer> actual = Ints.asList(dao.selectIntArray());
+        List<Integer> actual = Ints.asList(dao.getIntArray());
         assertThat(actual, hasSize(ids.size()));
         assertThat(actual, contains(ids.toArray()));
     }
@@ -181,7 +181,7 @@ public class MangoTest {
             ids.add(id);
             user.setId(id);
         }
-        List<User> actual = dao.selectUserInList(ids);
+        List<User> actual = dao.getUsersInList(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
@@ -195,7 +195,7 @@ public class MangoTest {
             ids.add(id);
             user.setId(id);
         }
-        List<User> actual = dao.selectUserInSet(ids);
+        List<User> actual = dao.getUsersInSet(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
@@ -210,7 +210,7 @@ public class MangoTest {
             ids[i] = id;
             user.setId(id);
         }
-        List<User> actual = dao.selectUserInIntegerArray(ids);
+        List<User> actual = dao.getUsersInIntegerArray(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
@@ -225,17 +225,10 @@ public class MangoTest {
             ids[i] = id;
             user.setId(id);
         }
-        List<User> actual = dao.selectUserInIntArray(ids);
+        List<User> actual = dao.getUsersInIntArray(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testQueryIntegerNull() throws Exception {
-//        int id = Integer.MAX_VALUE;
-//        dao.selectInt(id);
-//    }
-//
 
 
 /********************************测试更新开始***************************************/
@@ -245,7 +238,7 @@ public class MangoTest {
         User user = createRandomUser();
         int id = dao.insertUser(user.getName(), user.getAge(), user.isGender(), user.getMoney(), user.getUpdateTime());
         user.setId(id);
-        assertThat(dao.selectUser(id), equalTo(user));
+        assertThat(dao.getUser(id), equalTo(user));
     }
 
 
@@ -254,17 +247,17 @@ public class MangoTest {
         User user = createRandomUser();
         int id = dao.insertUser(user);
         user.setId(id);
-        User user2 = dao.selectUser(id);
+        User user2 = dao.getUser(id);
         assertThat(user2, equalTo(user));
         User user3 = createRandomUser();
         user3.setId(id);
         int r = dao.updateUser(user3);
         assertThat(r, equalTo(1));
-        User user4 = dao.selectUser(id);
+        User user4 = dao.getUser(id);
         assertThat(user4, equalTo(user3));
         r = dao.deleteUser(id);
         assertThat(r, equalTo(1));
-        User user5 = dao.selectUser(id);
+        User user5 = dao.getUser(id);
         assertThat(user5, equalTo(null));
     }
 
@@ -275,14 +268,14 @@ public class MangoTest {
         user.setUpdateTime(null);
         int id = dao.insertUser(user);
         user.setId(id);
-        User user2 = dao.selectUser(id);
+        User user2 = dao.getUser(id);
         assertThat(user2, equalTo(user));
-        String r = dao.selectString(id);
+        String r = dao.getName(id);
         assertThat(r, equalTo(null));
         user.setMoney(null);
         int r2 = dao.updateUser(user);
         assertThat(r2, equalTo(1));
-        Long r3 = dao.selectLongObj(id);
+        Long r3 = dao.getLongObjMoney(id);
         assertThat(r3, equalTo(null));
     }
 
@@ -298,7 +291,7 @@ public class MangoTest {
         int[] r = dao.batchInsertUserList(users);
         assertThat(r.length, equalTo(users.size()));
         assertThat(Ints.asList(r), everyItem(equalTo(1)));
-        List<User> actual = dao.selectUserByAge(age);
+        List<User> actual = dao.getUsersByAge(age);
         assertThat(actual, hasSize(users.size()));
         for (int i = 0; i < users.size(); i++) {
             actual.get(i).setId(0);
@@ -316,7 +309,7 @@ public class MangoTest {
         int[] r = dao.batchInsertUserSet(users);
         assertThat(r.length, equalTo(users.size()));
         assertThat(Ints.asList(r), everyItem(equalTo(1)));
-        List<User> actual = dao.selectUserByAge(age);
+        List<User> actual = dao.getUsersByAge(age);
         assertThat(actual, hasSize(users.size()));
         for (int i = 0; i < users.size(); i++) {
             actual.get(i).setId(0);
@@ -334,7 +327,7 @@ public class MangoTest {
         int[] r = dao.batchInsertUserArray(users);
         assertThat(r.length, equalTo(users.length));
         assertThat(Ints.asList(r), everyItem(equalTo(1)));
-        List<User> actual = dao.selectUserByAge(age);
+        List<User> actual = dao.getUsersByAge(age);
         assertThat(actual, hasSize(users.length));
         for (int i = 0; i < users.length; i++) {
             actual.get(i).setId(0);
@@ -377,64 +370,64 @@ public class MangoTest {
     static interface UserDao {
 
         @SQL("select id from user where id = :1")
-        public Integer selectInteger(int id);
+        public Integer getIntegerId(int id);
 
         @SQL("select id from user where id = :1")
-        public int selectInt(int id);
+        public int getIntId(int id);
 
         @SQL("select name from user where id = :1")
-        public String selectString(int id);
+        public String getName(int id);
 
         @SQL("select gender from user where id = :1")
-        public Boolean selectBooleanObj(int id);
+        public Boolean getBoolObjGender(int id);
 
         @SQL("select gender from user where id = :1")
-        public boolean selectBoolean(int id);
+        public boolean getBoolGender(int id);
 
         @SQL("select money from user where id = :1")
-        public Long selectLongObj(int id);
+        public Long getLongObjMoney(int id);
 
         @SQL("select money from user where id = :1")
-        public long selectLong(int id);
+        public long getLongMoney(int id);
 
         @SQL("select update_time from user where id = :1")
-        public Date selectDate(int id);
+        public Date getDate(int id);
 
         @SQL("select id, name, age, gender, money, update_time from user where id = :1")
-        public User selectUser(int id);
+        public User getUser(int id);
 
         @SQL("select id, name, age, gender, money, update_time from user order by id")
-        public List<User> selectUserList();
+        public List<User> getUserList();
 
         @SQL("select id, name, age, gender, money, update_time from user order by id")
-        public Set<User> selectUserSet();
+        public Set<User> getUserSet();
 
         @SQL("select id, name, age, gender, money, update_time from user order by id")
-        public User[] selectUserArray();
+        public User[] getUserArray();
 
         @SQL("select id from user order by id")
-        public Integer[] selectIntegerArray();
+        public Integer[] getIntegerArray();
 
         @SQL("select id from user order by id")
-        public int[] selectIntArray();
+        public int[] getIntArray();
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
-        public List<User> selectUserInList(List<Integer> ids);
+        public List<User> getUsersInList(List<Integer> ids);
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
-        public List<User> selectUserInSet(Set<Integer> ids);
+        public List<User> getUsersInSet(Set<Integer> ids);
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
-        public List<User> selectUserInIntegerArray(Integer[] ids);
+        public List<User> getUsersInIntegerArray(Integer[] ids);
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
-        public List<User> selectUserInIntArray(int[] ids);
+        public List<User> getUsersInIntArray(int[] ids);
 
         @SQL("select id, name, age, gender, money, update_time from user where age=:1 order by id")
-        public List<User> selectUserByAge(int age);
+        public List<User> getUsersByAge(int age);
 
         @SQL("select max(id) from user")
-        public int selectMaxInt();
+        public int getMaxInt();
 
         /***********************************************************************/
 
@@ -443,7 +436,8 @@ public class MangoTest {
         public int insertUser(String name, int age, boolean gender, long money, Date updateTime);
 
         @ReturnGeneratedId
-        @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
+        @SQL("insert into user(name, age, gender, money, update_time) " +
+                "values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
         public int insertUser(User user);
 
         @SQL("update ${:table} set name=:u.name, age=:u.age, gender=:u.gender, money=:u.money, update_time=:u.updateTime where id=:u.id")
@@ -457,7 +451,8 @@ public class MangoTest {
 
         /***********************************************************************/
 
-        @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
+        @SQL("insert into user(name, age, gender, money, update_time) " +
+                "values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
         public int[] batchInsertUserList(List<User> userList);
 
         @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
