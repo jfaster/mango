@@ -241,6 +241,15 @@ public class MangoTest {
 /********************************测试更新开始***************************************/
 
     @Test
+    public void testInsert() throws Exception {
+        User user = createRandomUser();
+        int id = dao.insertUser(user.getName(), user.getAge(), user.isGender(), user.getMoney(), user.getUpdateTime());
+        user.setId(id);
+        assertThat(dao.selectUser(id), equalTo(user));
+    }
+
+
+    @Test
     public void testUpdate() throws Exception {
         User user = createRandomUser();
         int id = dao.insertUser(user);
@@ -428,6 +437,10 @@ public class MangoTest {
         public int selectMaxInt();
 
         /***********************************************************************/
+
+        @ReturnGeneratedId
+        @SQL("insert into user(name, age, gender, money, update_time) values(:1, :2, :3, :4, :5)")
+        public int insertUser(String name, int age, boolean gender, long money, Date updateTime);
 
         @ReturnGeneratedId
         @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
