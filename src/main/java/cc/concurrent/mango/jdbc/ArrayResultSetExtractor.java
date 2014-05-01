@@ -16,7 +16,8 @@
 
 package cc.concurrent.mango.jdbc;
 
-import java.lang.reflect.Array;
+import cc.concurrent.mango.util.ArrayUtil;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,19 +34,14 @@ public class ArrayResultSetExtractor<T> implements ResultSetExtractor<Object> {
         this.rowMapper = rowMapper;
     }
 
-
     @Override
     public Object extractData(ResultSet rs) throws SQLException {
-        List<T> lists = new ArrayList<T>();
+        List<T> list = new ArrayList<T>();
         int rowNum = 0;
         while (rs.next()) {
-            lists.add(rowMapper.mapRow(rs, rowNum++));
+            list.add(rowMapper.mapRow(rs, rowNum++));
         }
-        Object array = Array.newInstance(rowMapper.getMappedClass(), lists.size());
-        for (int i = 0; i < lists.size(); i++) {
-            Array.set(array, i, lists.get(i));
-        }
-        return array;
+        return ArrayUtil.toArray(list, rowMapper.getMappedClass());
     }
 
 }

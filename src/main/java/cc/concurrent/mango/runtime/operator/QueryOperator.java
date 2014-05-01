@@ -29,6 +29,7 @@ import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
+import cc.concurrent.mango.util.ArrayUtil;
 import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.logging.InternalLogger;
@@ -36,7 +37,6 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanInfoCache;
 import cc.concurrent.mango.util.reflect.BeanUtil;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -109,7 +109,7 @@ public class QueryOperator extends CacheableOperator {
         if (isUseCache()) { // 先使用缓存，再使用db
             return executeFromCache(context);
         } else { // 直接使用db
-            return executeFromDb(context, rowMapper, null);
+            return executeFromDb(context, rowMapper);
         }
     }
 
@@ -133,48 +133,45 @@ public class QueryOperator extends CacheableOperator {
         }
     }
 
-    private <T, U> Object multipleKeysCache(RuntimeContext context, Iterables iterables, Set<String> keys,
+    private <T, U> Object multipleKeysCache(RuntimeContext context, Iterables keyObjIterables, Set<String> keys,
                                             Class<T> valueClass, Class<U> keyObjClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
 
         Map<String, Object> map = getBulkFromCache(keys);
-        List<T> hitValues = new ArrayList<T>();
+        int initialCapacity = Math.max(1, map != null ? map.size() : 0);
+        AddableObject<T> addableObj = new AddableObject<T>(initialCapacity, valueClass);
         List<U> hitKeyObjs = new ArrayList<U>(); // 用于debug
         Set<U> missKeyObjs = new HashSet<U>();
-        for (Object keyObj : iterables) {
+        for (Object keyObj : keyObjIterables) {
             String key = getKey(keyObj);
             Object value = map != null ? map.get(key) : null;
             if (value == null) {
                 missKeyObjs.add(keyObjClass.cast(keyObj));
             } else {
-                hitValues.add(valueClass.cast(value));
+                addableObj.add(valueClass.cast(value));
                 if (isDebugEnabled) {
                     hitKeyObjs.add(keyObjClass.cast(keyObj));
                 }
             }
         }
         if (isDebugEnabled) {
-            logger.debug("cache hit #keys={} #values={}", hitKeyObjs, hitValues);
+            logger.debug("cache hit #keys={} #values={}", hitKeyObjs, addableObj);
             logger.debug("cache miss #keys={}", missKeyObjs);
         }
-        if (missKeyObjs.isEmpty()) { // 所有的key全部命中
-            if (isForList) {
-                return hitValues;
-            } else if (isForSet) {
-                return new HashSet<T>(hitValues); // TODO 添加测试用例
-            } else if (isForArray) {
-                Object array = Array.newInstance(valueClass, hitValues.size());
-                int i = 0;
-                for (T hitValue : hitValues) {
-                    Array.set(array, i++, hitValue);
-                }
-                return array;
-            } else {
-                throw new UnreachableCodeException();
+        if (!missKeyObjs.isEmpty()) { // 有key没有命中
+            context.setPropertyValue(getCacheParameterName(), getCachePropertyPath(), missKeyObjs);
+            Object dbValues = executeFromDb(context, rowMapper);
+            for (Object dbValue : new Iterables(dbValues)) {
+                // db数据添加入结果
+                addableObj.add(valueClass.cast(dbValue));
+
+                // 添加入缓存
+                Object keyObj = BeanUtil.getPropertyValue(dbValue, interableProperty, mappedClass);
+                String key = getKey(keyObj);
+                setToCache(key, dbValue);
             }
         }
-        context.setPropertyValue(getCacheParameterName(), getCachePropertyPath(), missKeyObjs);
-        return executeFromDb(context, rowMapper, hitValues);
+        return addableObj.getReturn();
     }
 
     private Object singleKeyCache(RuntimeContext context, String key) {
@@ -183,7 +180,7 @@ public class QueryOperator extends CacheableOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("cache miss #key＝{}", key);
             }
-            value = executeFromDb(context, rowMapper, null);
+            value = executeFromDb(context, rowMapper);
             if (value != null) {
                 setToCache(key, value);
                 if (logger.isDebugEnabled()) {
@@ -198,30 +195,17 @@ public class QueryOperator extends CacheableOperator {
         return value;
     }
 
-    private <T> Object executeFromDb(RuntimeContext context, RowMapper<T> rowMapper, List<?> hitValues) {
+    private <T> Object executeFromDb(RuntimeContext context, RowMapper<T> rowMapper) {
         ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
         if (logger.isDebugEnabled()) {
             logger.debug("{} #args={}", sql, args);
         }
-        Class<T> valueClass = rowMapper.getMappedClass();
         if (isForList) {
             List<T> list = jdbcTemplate.queryForList(getDataSource(), sql, args, rowMapper);
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, list);
-            }
-            if (isUseCache()) {
-                for (T t : list) {
-                    Object keyObj = BeanUtil.getPropertyValue(t, interableProperty, mappedClass);
-                    String key = getKey(keyObj);
-                    setToCache(key, t);
-                }
-            }
-            if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
-                for (Object hitValue : hitValues) {
-                    list.add(valueClass.cast(hitValue));
-                }
             }
             return list;
         } else if (isForSet) {
@@ -229,49 +213,13 @@ public class QueryOperator extends CacheableOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, set);
             }
-            if (isUseCache()) {
-                for (T t : set) {
-                    Object keyObj = BeanUtil.getPropertyValue(t, interableProperty, mappedClass);
-                    String key = getKey(keyObj);
-                    setToCache(key, t);
-                }
-            }
-            if (hitValues != null && !hitValues.isEmpty()) { // 拼装cache与db的结果
-                for (Object hitValue : hitValues) {
-                    set.add(valueClass.cast(hitValue));
-                }
-            }
             return set;
         } else if (isForArray) {
             Object array = jdbcTemplate.queryForArray(getDataSource(), sql, args, rowMapper);
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", sql, array);
             }
-            if (isUseCache()) {
-                int size = Array.getLength(array);
-                for (int i = 0; i < size; i++) {
-                    Object o = Array.get(array, i);
-                    Object keyObj = BeanUtil.getPropertyValue(o, interableProperty, mappedClass);
-                    String key = getKey(keyObj);
-                    setToCache(key, o);
-                }
-            }
-            if (hitValues == null || hitValues.isEmpty()) {
-                return array;
-            }
-
-            // 拼装cache与db的结果
-            int cacheSize = hitValues.size();
-            int dbSize = Array.getLength(array);
-            int size = cacheSize + dbSize;
-            Object r = Array.newInstance(valueClass, size);
-            int i = 0;
-            for (Object hitValue : hitValues) {
-                Object value = i <  cacheSize ? hitValue : Array.get(array, i - cacheSize);
-                Array.set(r, i, value);
-                i++;
-            }
-            return r;
+            return array;
         } else {
             Object r = jdbcTemplate.queryForObject(getDataSource(), sql, args, rowMapper);
             if (logger.isDebugEnabled()) {
@@ -285,6 +233,47 @@ public class QueryOperator extends CacheableOperator {
         return JdbcUtils.isSingleColumnClass(clazz) ?
                 new SingleColumnRowMapper<T>(clazz) :
                 new BeanPropertyRowMapper<T>(clazz);
+    }
+
+    private class AddableObject<T> {
+
+        List<T> hitValueList = null;
+        Set<T> hitValueSet = null;
+        Class<T> valueClass;
+
+        private AddableObject(int initialCapacity, Class<T> valueClass) {
+            if (isForSet) {
+                hitValueSet = new HashSet<T>(initialCapacity * 2);
+            } else { // 返回List或数组都先使用List
+                hitValueList = new ArrayList<T>(initialCapacity);
+            }
+            this.valueClass = valueClass;
+        }
+
+        public void add(T v) {
+            if (hitValueList != null) {
+                hitValueList.add(v);
+            } else {
+                hitValueSet.add(v);
+            }
+        }
+
+        public Object getReturn() {
+            if (isForList) {
+                return hitValueList;
+            } else if (isForSet) {
+                return hitValueSet;
+            } else if (isForArray) {
+                return ArrayUtil.toArray(hitValueList, valueClass);
+            } else {
+                throw new UnreachableCodeException();
+            }
+        }
+
+        @Override
+        public String toString() {
+            return hitValueList != null ? hitValueList.toString() : hitValueSet.toString();
+        }
     }
 
 }

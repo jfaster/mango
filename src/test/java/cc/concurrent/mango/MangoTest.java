@@ -17,6 +17,7 @@
 package cc.concurrent.mango;
 
 import com.google.common.primitives.Ints;
+import com.google.common.base.Objects;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -492,18 +493,18 @@ public class MangoTest {
             final User other = (User) obj;
             Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
             Long otherUpdateTime = other.updateTime != null ? other.updateTime.getTime() : null;
-            return com.google.common.base.Objects.equal(this.id, other.id)
-                    && com.google.common.base.Objects.equal(this.name, other.name)
-                    && com.google.common.base.Objects.equal(this.age, other.age)
-                    && com.google.common.base.Objects.equal(this.gender, other.gender)
-                    && com.google.common.base.Objects.equal(this.money, other.money)
-                    && com.google.common.base.Objects.equal(thisUpdateTime, otherUpdateTime);
+            return Objects.equal(this.id, other.id)
+                    && Objects.equal(this.name, other.name)
+                    && Objects.equal(this.age, other.age)
+                    && Objects.equal(this.gender, other.gender)
+                    && Objects.equal(this.money, other.money)
+                    && Objects.equal(thisUpdateTime, otherUpdateTime);
         }
 
         @Override
         public String toString() {
             Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
-            return com.google.common.base.Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
+            return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
                     add("gender", gender).add("money", money).add("updateTime", thisUpdateTime).toString();
         }
 

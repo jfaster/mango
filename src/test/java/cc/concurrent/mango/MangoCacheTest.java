@@ -16,6 +16,7 @@
 
 package cc.concurrent.mango;
 
+import com.google.common.base.Objects;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,8 +27,7 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 /**
  * 测试cache
@@ -44,6 +44,7 @@ public class MangoCacheTest {
     public void before() throws Exception {
         Connection conn = ds.getConnection();
         Sqls.USER.run(conn);
+        Sqls.MSG.run(conn);
         conn.close();
     }
 
@@ -54,7 +55,7 @@ public class MangoCacheTest {
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         User user = createRandomUser();
         int id = dao.insert(user);
-        String key = getKey(id);
+        String key = getUserKey(id);
         user.setId(id);
         assertThat(cacheHandler.get(key), nullValue());
         assertThat(dao.select(id), equalTo(user));
@@ -73,37 +74,137 @@ public class MangoCacheTest {
     }
 
     @Test
-    public void testMultiKeys() throws Exception {
+    public void testMultiKeysReturnList() throws Exception {
         CacheHandler cacheHandler = new CacheHandlerImpl();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
-        String name = "ash";
         for (User user : users) {
-            user.setName(name);
             int id = dao.insert(user);
             user.setId(id);
             ids.add(id);
         }
-        List<User> actual = dao.selectList(ids, name);
+        List<User> actual = dao.getUserList(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
         for (int i = 0; i < ids.size(); i++) {
             Integer id = ids.get(i);
             User user = users.get(i);
-            assertThat((User) cacheHandler.get(getKey(id)), equalTo(user));
+            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
         }
-        actual = dao.selectList(ids, name);
+        actual = dao.getUserList(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
-        cacheHandler.delete(getKey(users.get(0).getId()));
-        actual = dao.selectList(ids, name);
+        cacheHandler.delete(getUserKey(users.get(0).getId()));
+        actual = dao.getUserList(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
 
-    private String getKey(int id) {
+    @Test
+    public void testMultiKeysReturnSet() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        UserDao dao = mango.create(UserDao.class, cacheHandler);
+        List<User> users = createRandomUsers(5);
+        List<Integer> ids = new ArrayList<Integer>();
+        for (User user : users) {
+            int id = dao.insert(user);
+            user.setId(id);
+            ids.add(id);
+        }
+        Set<User> actual = dao.getUserSet(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+        for (int i = 0; i < ids.size(); i++) {
+            Integer id = ids.get(i);
+            User user = users.get(i);
+            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+        }
+        actual = dao.getUserSet(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+        cacheHandler.delete(getUserKey(users.get(0).getId()));
+        actual = dao.getUserSet(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
+    public void testMultiKeysReturnArray() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        UserDao dao = mango.create(UserDao.class, cacheHandler);
+        List<User> users = createRandomUsers(5);
+        List<Integer> ids = new ArrayList<Integer>();
+        for (User user : users) {
+            int id = dao.insert(user);
+            user.setId(id);
+            ids.add(id);
+        }
+        List<User> actual = Arrays.asList(dao.getUserArray(ids));
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+        for (int i = 0; i < ids.size(); i++) {
+            Integer id = ids.get(i);
+            User user = users.get(i);
+            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+        }
+        actual = Arrays.asList(dao.getUserArray(ids));
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+        cacheHandler.delete(getUserKey(users.get(0).getId()));
+        actual = Arrays.asList(dao.getUserArray(ids));
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
+    public void testSingleKeyReturnList() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        List<Msg> msgs = new ArrayList<Msg>();
+        MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+        int uid = 100;
+        String key = getMsgKey(uid);
+
+        for (int i = 0; i < 3; i++) {
+            Msg msg = createRandomMsg(uid);
+            msgs.add(msg);
+            msg.setId(dao.insert(msg));
+            assertThat(cacheHandler.get(key), nullValue());
+            List<Msg> actual = dao.getMsgs(uid);
+            assertThat(actual, hasSize(msgs.size()));
+            assertThat(actual, contains(msgs.toArray()));
+            @SuppressWarnings("unchecked")
+            List<Msg> cacheActual = (List<Msg>) cacheHandler.get(key);
+            assertThat(cacheActual, hasSize(msgs.size()));
+            assertThat(cacheActual, contains(msgs.toArray()));
+        }
+
+        List<Msg> actual = dao.getMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+
+        Msg msg = msgs.get(0);
+        msg.setContent("ash");
+        dao.update(msg);
+        assertThat(cacheHandler.get(key), nullValue());
+
+        actual = dao.getMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+
+        msg = msgs.remove(0);
+        dao.delete(msg.getUid(), msg.getId());
+        actual = dao.getMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+    }
+
+    private String getUserKey(int id) {
         return "user_" + id;
+    }
+
+    private String getMsgKey(int uid) {
+        return "msg_" + uid;
     }
 
     private User createRandomUser() {
@@ -123,6 +224,14 @@ public class MangoCacheTest {
             users.add(createRandomUser());
         }
         return users;
+    }
+
+    private Msg createRandomMsg(int uid) {
+        String content = getRandomString(20);
+        Msg msg = new Msg();
+        msg.setUid(uid);
+        msg.setContent(content);
+        return msg;
     }
 
     private static String getRandomString(int maxLength) {
@@ -192,8 +301,18 @@ public class MangoCacheTest {
         @SQL("select id, name, age, gender, money, update_time from user where id=:1")
         public User select(@CacheBy() int id);
 
-        @SQL("select id, name, age, gender, money, update_time from user where id in (:1) and name=:2")
-        public List<User> selectList(@CacheBy() List<Integer> ids, String name);
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public List<User> getUserList(@CacheBy() List<Integer> ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public Set<User> getUserSet(@CacheBy() List<Integer> ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public User[] getUserArray(@CacheBy() List<Integer> ids);
+
+
+        @SQL("select id, name, age, gender, money, update_time from user where age=:1")
+        public List<User> getUserListByAge(@CacheBy int age);
 
     }
 
@@ -226,18 +345,18 @@ public class MangoCacheTest {
             final User other = (User) obj;
             Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
             Long otherUpdateTime = other.updateTime != null ? other.updateTime.getTime() : null;
-            return com.google.common.base.Objects.equal(this.id, other.id)
-                    && com.google.common.base.Objects.equal(this.name, other.name)
-                    && com.google.common.base.Objects.equal(this.age, other.age)
-                    && com.google.common.base.Objects.equal(this.gender, other.gender)
-                    && com.google.common.base.Objects.equal(this.money, other.money)
-                    && com.google.common.base.Objects.equal(thisUpdateTime, otherUpdateTime);
+            return Objects.equal(this.id, other.id)
+                    && Objects.equal(this.name, other.name)
+                    && Objects.equal(this.age, other.age)
+                    && Objects.equal(this.gender, other.gender)
+                    && Objects.equal(this.money, other.money)
+                    && Objects.equal(thisUpdateTime, otherUpdateTime);
         }
 
         @Override
         public String toString() {
             Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
-            return com.google.common.base.Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
+            return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
                     add("gender", gender).add("money", money).add("updateTime", thisUpdateTime).toString();
         }
 
@@ -287,6 +406,72 @@ public class MangoCacheTest {
 
         public void setUpdateTime(Date updateTime) {
             this.updateTime = updateTime;
+        }
+    }
+
+    @DB
+    @Cache(prefix = "msg_", expire = Day.class)
+    interface MsgDao {
+
+        @ReturnGeneratedId
+        @SQL("insert into msg(uid, content) values(:m.uid, :m.content)")
+        public int insert(@CacheBy("uid") @Rename("m") Msg msg);
+
+        @SQL("delete from msg where uid=:1 and id=:2")
+        public int delete(@CacheBy int uid, int id);
+
+        @SQL("update msg set content=:1.content where id=:1.id and uid=:1.uid")
+        public int update(@CacheBy("uid") Msg msg);
+
+        @SQL("select id, uid, content from msg where uid=:1 order by id")
+        public List<Msg> getMsgs(@CacheBy int uid);
+
+    }
+
+    public static class Msg {
+        private int id;
+        private int uid;
+        private String content;
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            final Msg other = (Msg) obj;
+            return Objects.equal(this.id, other.id)
+                    && Objects.equal(this.uid, other.uid)
+                    && Objects.equal(this.content, other.content);
+        }
+
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this).add("id", id).add("uid", uid).add("content", content).toString();
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getUid() {
+            return uid;
+        }
+
+        public void setUid(int uid) {
+            this.uid = uid;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
         }
     }
 

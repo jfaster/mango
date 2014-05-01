@@ -14,35 +14,22 @@
  * under the License.
  */
 
-package cc.concurrent.mango;
+package cc.concurrent.mango.util;
 
-import cc.concurrent.mango.util.ScriptRunner;
-
-import java.io.*;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.lang.reflect.Array;
+import java.util.List;
 
 /**
  * @author ash
  */
-public enum Sqls {
+public class ArrayUtil {
 
-    USER("user.sql"),
-    PERSON("person.sql"),
-    BYTE_INFO("byte_info.sql"),
-    MSG("msg.sql"),
-    ;
-
-    private String name;
-
-    private Sqls(String name) {
-        this.name = name;
-    }
-
-    public void run(Connection conn) throws IOException, SQLException {
-        ScriptRunner sr = new ScriptRunner(conn, false, true);
-        InputStream is = MangoTest.class.getResourceAsStream("/" + Config.getDir() + "/" + name);
-        sr.runScript(new InputStreamReader(is));
+    public static <T> Object toArray(List<T> list, Class<T> clazz) {
+        Object array = Array.newInstance(clazz, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            Array.set(array, i, list.get(i));
+        }
+        return array;
     }
 
 }
