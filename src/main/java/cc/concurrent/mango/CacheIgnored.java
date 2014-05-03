@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.lang.annotation.*;
 
 /**
+ * 用于修饰DAO中的方法，标识该方法不使用cache。
+ *
  * @author ash
  */
 @Target({ElementType.METHOD})

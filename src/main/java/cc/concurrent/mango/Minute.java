@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 缓存失效时间单位为分
+ *
  * @author ash
  */
 public class Minute implements CacheExpire {

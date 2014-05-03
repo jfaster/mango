@@ -17,6 +17,8 @@
 package cc.concurrent.mango;
 
 /**
+ * 缓存失效时间单位为秒
+ *
  * @author ash
  */
 public class Second implements CacheExpire {

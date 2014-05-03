@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.lang.annotation.*;
 
 /**
+ * 参数重命名
+ *
  * @author ash
  */
 @Target({ElementType.PARAMETER})

@@ -21,6 +21,8 @@ import cc.concurrent.mango.runtime.operator.SQLType;
 import javax.sql.DataSource;
 
 /**
+ * 简单的单一数据源工厂
+ *
  * @author ash
  */
 public class SimpleDataSourceFactory implements DataSourceFactory {

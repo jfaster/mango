@@ -26,6 +26,8 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
+ * 用于测试的数据库连接池，每次getConnection()都会返回一个新的连接
+ *
  * @author ash
  */
 public class DriverManagerDataSource implements DataSource {

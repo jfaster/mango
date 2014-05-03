@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.lang.annotation.*;
 
 /**
+ * 修饰DAO接口中的方法，指明要执行的SQL语句
+ *
  * @author ash
  */
 @Target({ElementType.METHOD})
@@ -26,6 +28,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface SQL {
 
+    /**
+     * 指明要执行的SQL语句
+     *
+     * @return
+     */
     String value();
 
 }

@@ -22,6 +22,11 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 /**
+ * 多数据源工厂
+ * <p>
+ * 该工厂不能独立使用，需要和{@link SimpleDataSourceFactory}或{@link MasterSlaveDataSourceFactory}一起使用。
+ * </p>
+ *
  * @author ash
  */
 public class MultipleDataSourceFactory implements DataSourceFactory {

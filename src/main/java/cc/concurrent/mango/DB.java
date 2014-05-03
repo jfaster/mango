@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.lang.annotation.*;
 
 /**
+ * 修饰DAO接口，只有使用此注解修饰的DAO接口，才能被mango识别
+ *
  * @author ash
  */
 @Target({ElementType.TYPE})
@@ -26,8 +28,18 @@ import java.lang.annotation.*;
 @Documented
 public @interface DB {
 
+    /**
+     * 使用数据源，只有在使用{@link MultipleDataSourceFactory}时，dataSource的值才有意义。
+     *
+     * @return
+     */
     String dataSource() default "";
 
+    /**
+     * 全局表名，在{@link SQL}的字符串参数，可以通过${:table}的方式引用此全局表名。
+     *
+     * @return
+     */
     String table() default "";
 
 }

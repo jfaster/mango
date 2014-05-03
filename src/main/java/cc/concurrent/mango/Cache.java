@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.lang.annotation.*;
 
 /**
+ * 指明该DAO需要集成cache
+ *
  * @author ash
  */
 @Target({ElementType.TYPE})
@@ -26,10 +28,25 @@ import java.lang.annotation.*;
 @Documented
 public @interface Cache {
 
+    /**
+     * 缓存key前缀
+     *
+     * @return
+     */
     String prefix();
 
+    /**
+     * 缓存过期时间单位
+     *
+     * @return
+     */
     Class<? extends CacheExpire> expire();
 
+    /**
+     * 缓存过期时间数量
+     *
+     * @return
+     */
     int num() default 1;
 
 }

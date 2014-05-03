@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 缓存失效时间单位为天
+ *
  * @author ash
  */
 public class Day implements CacheExpire {

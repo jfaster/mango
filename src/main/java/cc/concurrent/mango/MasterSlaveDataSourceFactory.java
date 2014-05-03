@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * 主从分离数据源工厂
+ *
  * @author ash
  */
 public class MasterSlaveDataSourceFactory implements DataSourceFactory {

@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 缓存失效时间单位为小时
+ *
  * @author ash
  */
 public class Hour implements CacheExpire {

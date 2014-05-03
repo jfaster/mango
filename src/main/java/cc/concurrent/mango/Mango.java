@@ -35,6 +35,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
+ * mango框架DAO工厂
+ *
  * @author ash
  */
 public class Mango {

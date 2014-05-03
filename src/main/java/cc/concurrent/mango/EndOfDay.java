@@ -19,6 +19,8 @@ package cc.concurrent.mango;
 import java.util.Calendar;
 
 /**
+ * 缓存失效时间单位为今天结束
+ *
  * @author ash
  */
 public class EndOfDay implements CacheExpire {

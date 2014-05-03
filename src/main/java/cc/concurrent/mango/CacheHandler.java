@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 抽象的缓存操作接口，您可以使用memcache或redis等第三方缓存实现该接口。
+ *
  * @author ash
  */
 public interface CacheHandler {
