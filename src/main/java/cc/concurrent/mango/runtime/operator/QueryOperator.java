@@ -158,6 +158,8 @@ public class QueryOperator extends CacheableOperator {
             logger.debug("cache hit #keys={} #values={}", hitKeyObjs, addableObj);
             logger.debug("cache miss #keys={}", missKeyObjs);
         }
+        statsCounter.recordHits(hitKeyObjs.size());
+        statsCounter.recordMisses(missKeyObjs.size());
         if (!missKeyObjs.isEmpty()) { // 有key没有命中
             context.setPropertyValue(getCacheParameterName(), getCachePropertyPath(), missKeyObjs);
             Object dbValues = executeFromDb(context, rowMapper);
@@ -180,6 +182,7 @@ public class QueryOperator extends CacheableOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("cache miss #key＝{}", key);
             }
+            statsCounter.recordHits(1);
             value = executeFromDb(context, rowMapper);
             if (value != null) {
                 setToCache(key, value);
@@ -191,6 +194,7 @@ public class QueryOperator extends CacheableOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("cache hit #key={} #value={}", key, value);
             }
+            statsCounter.recordMisses(1);
         }
         return value;
     }
@@ -202,31 +206,30 @@ public class QueryOperator extends CacheableOperator {
         if (logger.isDebugEnabled()) {
             logger.debug("{} #args={}", sql, args);
         }
-        if (isForList) {
-            List<T> list = jdbcTemplate.queryForList(getDataSource(), sql, args, rowMapper);
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} #result={}", sql, list);
+        Object r = null;
+        long now = System.nanoTime();
+        try {
+            if (isForList) {
+                r = jdbcTemplate.queryForList(getDataSource(), sql, args, rowMapper);
+            } else if (isForSet) {
+                r = jdbcTemplate.queryForSet(getDataSource(), sql, args, rowMapper);
+            } else if (isForArray) {
+                r= jdbcTemplate.queryForArray(getDataSource(), sql, args, rowMapper);
+            } else {
+                r = jdbcTemplate.queryForObject(getDataSource(), sql, args, rowMapper);
             }
-            return list;
-        } else if (isForSet) {
-            Set<T> set = jdbcTemplate.queryForSet(getDataSource(), sql, args, rowMapper);
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} #result={}", sql, set);
+        } finally {
+            long cost = System.nanoTime() - now;
+            if (r != null) {
+                statsCounter.recordExecuteSuccess(cost);
+            } else {
+                statsCounter.recordExecuteException(cost);
             }
-            return set;
-        } else if (isForArray) {
-            Object array = jdbcTemplate.queryForArray(getDataSource(), sql, args, rowMapper);
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} #result={}", sql, array);
-            }
-            return array;
-        } else {
-            Object r = jdbcTemplate.queryForObject(getDataSource(), sql, args, rowMapper);
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} #result={}", sql, r);
-            }
-            return r;
         }
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} #result={}", sql, r);
+        }
+        return r;
     }
 
     private static <T> RowMapper<T> getRowMapper(Class<T> clazz) {

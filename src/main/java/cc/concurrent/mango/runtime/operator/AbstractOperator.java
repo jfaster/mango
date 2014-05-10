@@ -35,6 +35,8 @@ import java.util.Map;
  */
 public abstract class AbstractOperator implements Operator {
 
+    public final StatsCounter statsCounter = new SimpleStatsCounter(); // 统计信息
+
     protected JdbcTemplate jdbcTemplate;
 
     private DbDescriptor dbDescriptor;

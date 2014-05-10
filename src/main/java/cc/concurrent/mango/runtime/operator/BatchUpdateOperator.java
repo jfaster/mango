@@ -90,8 +90,8 @@ public class BatchUpdateOperator extends CacheableOperator {
             throw new IllegalArgumentException("batchUpdate's parameter can't be empty");
         }
 
-        Set<String> keys = new HashSet<String>();
-        List<Object[]> batchArgs = new ArrayList<Object[]>();
+        Set<String> keys = new HashSet<String>(iterables.size() * 2);
+        List<Object[]> batchArgs = new ArrayList<Object[]>(iterables.size());
         String sql = null;
         for (Object obj : iterables) {
             RuntimeContext context = buildRuntimeContext(new Object[]{obj});
@@ -104,6 +104,15 @@ public class BatchUpdateOperator extends CacheableOperator {
             }
             batchArgs.add(parsedSql.getArgs());
         }
+        int[] ints = executeDb(sql, batchArgs);
+        if (isUseCache()) {
+            statsCounter.recordEviction(keys.size());
+            deleteFromCache(keys);
+        }
+        return ints;
+    }
+
+    private int[] executeDb(String sql, List<Object[]> batchArgs) {
         if (logger.isDebugEnabled()) {
             List<String> str = new ArrayList<String>();
             for (Object[] args : batchArgs) {
@@ -115,9 +124,20 @@ public class BatchUpdateOperator extends CacheableOperator {
             }
             logger.debug("{} #args={}", sql, debugBatchArgs);
         }
-        int[] ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
-        if (isUseCache()) {
-            deleteFromCache(keys);
+        int[] ints = null;
+        long now = System.nanoTime();
+        try {
+            ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
+        } finally {
+            long cost = System.nanoTime() - now;
+            if (ints != null) {
+                statsCounter.recordExecuteSuccess(cost);
+            } else {
+                statsCounter.recordExecuteException(cost);
+            }
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} #result={}", sql, ints);
         }
         return ints;
     }

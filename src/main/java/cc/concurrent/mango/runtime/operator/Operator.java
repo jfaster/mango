@@ -19,8 +19,6 @@ package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.DataSourceFactory;
 
-import java.lang.reflect.Type;
-
 /**
  * @author ash
  */

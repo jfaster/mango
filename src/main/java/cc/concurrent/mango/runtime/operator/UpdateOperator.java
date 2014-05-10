@@ -76,13 +76,7 @@ public class UpdateOperator extends CacheableOperator {
         ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} #args={}", sql, args);
-        }
-        int r = jdbcTemplate.update(getDataSource(), sql, args, returnGeneratedId);
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} #result={}", sql, r);
-        }
+        int r = executeDb(sql, args);
         if (isUseCache()) {
             Object obj = getCacheKeyObj(context);
             Iterables iterables = new Iterables(obj);
@@ -92,14 +86,38 @@ public class UpdateOperator extends CacheableOperator {
                     String key = getKey(keyObj);
                     keys.add(key);
                 }
+                statsCounter.recordEviction(keys.size());
                 deleteFromCache(keys);
             } else { // 单个key，例如：update table set name="ash" where id ＝ 1;
                 String key = getKey(obj);
+                statsCounter.recordEviction(1);
                 deleteFromCache(key);
             }
             if (logger.isDebugEnabled()) {
                 logger.debug("cache delete #key={}", getSingleKey(context));
             }
+        }
+        return r;
+    }
+
+    private int executeDb(String sql, Object[] args) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} #args={}", sql, args);
+        }
+        int r = -1;
+        long now = System.nanoTime();
+        try {
+            r = jdbcTemplate.update(getDataSource(), sql, args, returnGeneratedId);
+        } finally {
+            long cost = System.nanoTime() - now;
+            if (r > -1) {
+                statsCounter.recordExecuteSuccess(cost);
+            } else {
+                statsCounter.recordExecuteException(cost);
+            }
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("{} #result={}", sql, r);
         }
         return r;
     }

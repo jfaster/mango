@@ -92,7 +92,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
         return cacheHandler.get(key);
     }
 
-    public Map<String, Object> getBulkFromCache(Set<String> keys) {
+    protected Map<String, Object> getBulkFromCache(Set<String> keys) {
         return cacheHandler.getBulk(keys);
     }
 

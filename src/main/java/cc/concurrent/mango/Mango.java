@@ -20,6 +20,7 @@ import cc.concurrent.mango.exception.IncorrectAnnotationException;
 import cc.concurrent.mango.runtime.operator.CacheableOperator;
 import cc.concurrent.mango.runtime.operator.Operator;
 import cc.concurrent.mango.runtime.operator.OperatorFactory;
+import cc.concurrent.mango.runtime.operator.StatsCounter;
 import cc.concurrent.mango.util.ToStringHelper;
 import cc.concurrent.mango.util.concurrent.CacheLoader;
 import cc.concurrent.mango.util.concurrent.DoubleCheckCache;
@@ -33,6 +34,7 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * mango框架DAO工厂
@@ -45,6 +47,7 @@ public class Mango {
 
     private final DataSourceFactory dataSourceFactory;
     private final CacheHandler defaultCacheHandler;
+    private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
 
     public Mango(DataSource dataSource) {
         this(new SimpleDataSourceFactory(dataSource));
@@ -61,6 +64,7 @@ public class Mango {
     public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
         this.defaultCacheHandler = defaultCacheHandler;
+        this.statsCounterMap = new ConcurrentHashMap<Method, StatsCounter>();
     }
 
     public <T> T create(Class<T> daoClass) {
@@ -79,17 +83,22 @@ public class Mango {
         if (cacheHandler == null) {
             cacheHandler = defaultCacheHandler;
         }
-        return Reflection.newProxy(daoClass, new MangoInvocationHandler(dataSourceFactory, cacheHandler));
+        return Reflection.newProxy(daoClass,
+                new MangoInvocationHandler(dataSourceFactory, cacheHandler, statsCounterMap));
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
         private final DataSourceFactory dataSourceFactory;
         private final CacheHandler cacheHandler;
+        private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
 
-        private MangoInvocationHandler(DataSourceFactory dataSourceFactory, @Nullable CacheHandler cacheHandler) {
+        private MangoInvocationHandler(DataSourceFactory dataSourceFactory,
+                                       @Nullable CacheHandler cacheHandler,
+                                       ConcurrentHashMap<Method, StatsCounter> statsCounterMap) {
             this.dataSourceFactory = dataSourceFactory;
             this.cacheHandler = cacheHandler;
+            this.statsCounterMap = statsCounterMap;
         }
 
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
@@ -98,6 +107,7 @@ public class Mango {
                         CacheableOperator operator = OperatorFactory.getOperator(method);
                         operator.setDataSourceFactory(dataSourceFactory);
                         operator.setCacheHandler(cacheHandler);
+                        statsCounterMap.put(method, operator.statsCounter); // 方便对外输出统计信息
                         return operator;
                     }
                 });
