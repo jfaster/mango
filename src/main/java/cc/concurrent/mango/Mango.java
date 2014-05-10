@@ -34,6 +34,9 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -67,10 +70,16 @@ public class Mango {
         this.statsCounterMap = new ConcurrentHashMap<Method, StatsCounter>();
     }
 
+    /**
+     * 创建代理DAO类
+     */
     public <T> T create(Class<T> daoClass) {
         return create(daoClass, null);
     }
 
+    /**
+     * 创建代理DAO类，并对该类使用特定的{@link CacheHandler}
+     */
     public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler) {
         if (daoClass == null) {
             throw new NullPointerException("dao interface can't be null");
@@ -85,6 +94,18 @@ public class Mango {
         }
         return Reflection.newProxy(daoClass,
                 new MangoInvocationHandler(dataSourceFactory, cacheHandler, statsCounterMap));
+    }
+
+    /**
+     * 返回各个方法对应的状态
+     */
+    public Map<Method, MethodStats> getStatsMap() {
+        Set<Map.Entry<Method, StatsCounter>> entrySet = statsCounterMap.entrySet();
+        Map<Method, MethodStats> map = new HashMap<Method, MethodStats>();
+        for (Map.Entry<Method,StatsCounter> entry : entrySet) {
+            map.put(entry.getKey(), entry.getValue().snapshot());
+        }
+        return map;
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {

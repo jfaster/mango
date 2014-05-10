@@ -16,6 +16,7 @@
 
 package cc.concurrent.mango.runtime.operator;
 
+import cc.concurrent.mango.MethodStats;
 import cc.concurrent.mango.util.concurrent.atomic.LongAddable;
 import cc.concurrent.mango.util.concurrent.atomic.LongAddables;
 
@@ -35,34 +36,50 @@ public class SimpleStatsCounter implements StatsCounter {
 
     @Override
     public void recordHits(int count) {
-        hitCount.add(count);
+        if (count > 0) {
+            hitCount.add(count);
+        }
     }
 
     @Override
     public void recordMisses(int count) {
-        missCount.add(count);
+        if (count > 0) {
+            missCount.add(count);
+        }
     }
 
     @Override
     public void recordExecuteSuccess(long executeTime) {
-        executeSuccessCount.increment();
-        totalExecuteTime.add(executeTime);
+        if (executeTime > 0) {
+            executeSuccessCount.increment();
+            totalExecuteTime.add(executeTime);
+        }
     }
 
     @Override
     public void recordExecuteException(long executeTime) {
-        executeExceptionCount.increment();
-        totalExecuteTime.add(executeTime);
+        if (executeTime > 0) {
+            executeExceptionCount.increment();
+            totalExecuteTime.add(executeTime);
+        }
     }
 
     @Override
     public void recordEviction(int count) {
-        evictionCount.add(count);
+        if (count > 0) {
+            evictionCount.add(count);
+        }
     }
 
     @Override
-    public void snapshot() {
-        return;
+    public MethodStats snapshot() {
+        return new MethodStats(
+                hitCount.sum(),
+                missCount.sum(),
+                executeSuccessCount.sum(),
+                executeExceptionCount.sum(),
+                totalExecuteTime.sum(),
+                evictionCount.sum());
     }
 
 }

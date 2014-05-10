@@ -16,6 +16,8 @@
 
 package cc.concurrent.mango.runtime.operator;
 
+import cc.concurrent.mango.MethodStats;
+
 /**
  * @author ash
  */
@@ -31,6 +33,6 @@ public interface StatsCounter {
 
     public void recordEviction(int count);
 
-    public void snapshot();
+    public MethodStats snapshot();
 
 }
