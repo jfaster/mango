@@ -22,13 +22,11 @@ import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
-import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -75,23 +73,15 @@ public class UpdateOperator extends CacheableOperator {
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();
         int r = executeDb(sql, args);
-        if (isUseCache()) {
-            Object obj = getKeySuffixObj(context);
-            Iterables iterables = new Iterables(obj);
-            if (iterables.isIterable()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
-                Set<String> keys = new HashSet<String>(iterables.size() * 2);
-                for (Object keySuffix : iterables) {
-                    String key = getKey(keySuffix);
-                    keys.add(key);
-                }
-                statsCounter.recordEviction(keys.size());
+        if (isUseCache()) { // 如果使用cache，更新后需要从cache中删除对应的key或keys
+            if (isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
+                Set<String> keys = getCacheKeys(context);
                 deleteFromCache(keys);
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache delete #keys={}", keys);
                 }
             } else { // 单个key，例如：update table set name='ash' where id ＝ 1;
-                String key = getKey(obj);
-                statsCounter.recordEviction(1);
+                String key = getCacheKey(context);
                 deleteFromCache(key);
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache delete #key={}", key);

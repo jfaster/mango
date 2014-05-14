@@ -22,6 +22,7 @@ import cc.concurrent.mango.exception.IncorrectCacheByException;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.runtime.parser.ValuableParameter;
+import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
 import cc.concurrent.mango.util.reflect.Reflection;
 
@@ -29,6 +30,7 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +55,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     /**
      * 缓存key前缀
      */
-    private String keyPrefix; // 缓存key前缀
+    private String prefix; // 缓存key前缀
 
     /**
      * 缓存过期控制
@@ -68,17 +70,22 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     /**
      * 缓存后缀参数名
      */
-    private String keySuffixParameterName;
+    private String suffixParameterName;
 
     /**
      * 缓存后缀属性路径
      */
-    private String keySuffixPropertyPath;
+    private String suffixPropertyPath;
 
     /**
      * 是否使用多key缓存
      */
     private boolean useMultipleKeys;
+
+    /**
+     * 缓存后缀Class
+     */
+    private Class<?> suffixClass;
 
     protected CacheableOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         super(rootNode, method, sqlType);
@@ -98,47 +105,78 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
         return useCache;
     }
 
+    protected boolean isUseMultipleKeys() {
+        return useMultipleKeys;
+    }
+
     protected void setToCache(String key, Object value) {
         cacheHandler.set(key, value, cacheExpire.getExpireTime() * expireNum);
     }
 
     protected void deleteFromCache(String key) {
         cacheHandler.delete(key);
+        statsCounter.recordEviction(1);
     }
 
     protected void deleteFromCache(Set<String> keys) {
-        cacheHandler.delete(keys);
+        if (keys.size() > 0) {
+            cacheHandler.delete(keys);
+            statsCounter.recordEviction(keys.size());
+        }
     }
 
     protected Object getFromCache(String key) {
-        return cacheHandler.get(key);
+        Object value = cacheHandler.get(key);
+        if (value != null) {
+            statsCounter.recordHits(1);
+        } else {
+            statsCounter.recordMisses(1);
+        }
+        return value;
     }
 
     protected Map<String, Object> getBulkFromCache(Set<String> keys) {
-        return cacheHandler.getBulk(keys);
+        Map<String, Object> values = cacheHandler.getBulk(keys);
+        int hitCount = values.size();
+        int missCount = keys.size() - hitCount;
+        if (hitCount > 0) {
+           statsCounter.recordHits(hitCount);
+        }
+        if (missCount > 0) {
+            statsCounter.recordMisses(missCount);
+        }
+        return values;
     }
 
-    protected Object getKeySuffixObj(RuntimeContext context) {
-        return context.getPropertyValue(keySuffixParameterName, keySuffixPropertyPath);
+    protected Class<?> getSuffixClass() {
+        return suffixClass;
     }
 
-    protected String getKey(RuntimeContext context) {
-        return getKey(getKeySuffixObj(context));
+    protected String getCacheKey(RuntimeContext context) {
+        return getCacheKey(getSuffixObj(context));
     }
 
-    protected String getKey(Object keySuffix) {
-        return keyPrefix + keySuffix;
+    protected String getCacheKey(Object suffix) {
+        return prefix + suffix;
     }
 
-    protected String getKeySuffixParameterName() {
-        return keySuffixParameterName;
+    protected Set<String> getCacheKeys(RuntimeContext context) {
+        Iterables iterables = new Iterables(getSuffixObj(context));
+        Set<String> keys = new HashSet<String>(iterables.size() * 2);
+        for (Object suffix : iterables) {
+            String key = getCacheKey(suffix);
+            keys.add(key);
+        }
+        return keys;
     }
 
-    protected String getKeySuffixPropertyPath() {
-        return keySuffixPropertyPath;
+    protected Object getSuffixObj(RuntimeContext context) {
+        return context.getPropertyValue(suffixParameterName, suffixPropertyPath);
     }
 
-
+    protected void setSuffixObj(RuntimeContext context, Object obj) {
+        context.setPropertyValue(suffixParameterName, suffixPropertyPath, obj);
+    }
 
     private void init() {
         Class<?> daoClass = method.getDeclaringClass();
@@ -147,7 +185,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
             CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
             if (cacheIgnoredAnno == null) { // method不禁用cache
                 useCache = true;
-                keyPrefix = cacheAnno.prefix();
+                prefix = cacheAnno.prefix();
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
 
@@ -157,8 +195,8 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
                     Annotation[] pas = pass[i];
                     for (Annotation pa : pas) {
                         if (CacheBy.class.equals(pa.annotationType())) {
-                            keySuffixParameterName = getParameterNameByIndex(i);
-                            keySuffixPropertyPath = ((CacheBy) pa).value();
+                            suffixParameterName = getParameterNameByIndex(i);
+                            suffixPropertyPath = ((CacheBy) pa).value();
                             num++;
                         }
                     }
@@ -171,9 +209,10 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
 
                 checkCacheBy();
 
-                Type suffixType = getTypeContext().getPropertyType(keySuffixParameterName, keySuffixPropertyPath);
+                Type suffixType = getTypeContext().getPropertyType(suffixParameterName, suffixPropertyPath);
                 TypeToken typeToken = new TypeToken(suffixType);
                 useMultipleKeys = typeToken.isIterable();
+                suffixClass = typeToken.getMappedClass();
             }
         }
     }
@@ -184,12 +223,12 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     private void checkCacheBy() {
         List<ValuableParameter> vps = rootNode.getValueValuableParameters();
         for (ValuableParameter vp : vps) {
-            if (vp.getParameterName().equals(keySuffixParameterName) &&
-                    vp.getPropertyPath().equals(keySuffixPropertyPath)) {
+            if (vp.getParameterName().equals(suffixParameterName) &&
+                    vp.getPropertyPath().equals(suffixPropertyPath)) {
                 return;
             }
         }
-        String fullName = getFullName(keySuffixParameterName, keySuffixPropertyPath);
+        String fullName = getFullName(suffixParameterName, suffixPropertyPath);
         throw new IncorrectCacheByException("CacheBy " + fullName + " can't match any db parameter");
     }
 

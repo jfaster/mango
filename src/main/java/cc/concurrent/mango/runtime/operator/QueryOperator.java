@@ -108,83 +108,61 @@ public class QueryOperator extends CacheableOperator {
     public Object execute(Object[] methodArgs) {
         RuntimeContext context = buildRuntimeContext(methodArgs);
         if (isUseCache()) { // 先使用缓存，再使用db
-            return executeFromCache(context);
+            return isUseMultipleKeys() ?
+                    multipleKeysCache(context, rowMapper.getMappedClass(), getSuffixClass()) :
+                    singleKeyCache(context);
         } else { // 直接使用db
-            return executeFromDb(context, rowMapper);
+            return executeFromDb(context);
         }
     }
 
-    private Object executeFromCache(RuntimeContext context) {
-        Object obj = getKeySuffixObj(context);
-        Iterables iterables = new Iterables(obj);
-        if (iterables.isIterable()) { // 多个key
-            Set<String> keys = new HashSet<String>(iterables.size() * 2);
-            Class<?> keyObjClass = null;
-            for (Object keySuffix : iterables) {
-                String key = getKey(keySuffix);
-                keys.add(key);
-                if (keyObjClass == null) {
-                    keyObjClass = keySuffix.getClass();
-                }
-            }
-            return multipleKeysCache(context, iterables, keys, rowMapper.getMappedClass(), keyObjClass);
-        } else { // 单个key
-            String key = getKey(obj);
-            return singleKeyCache(context, key);
-        }
-    }
-
-    private <T, U> Object multipleKeysCache(RuntimeContext context, Iterables keyObjIterables, Set<String> keys,
-                                            Class<T> valueClass, Class<U> keyObjClass) {
+    private <T, U> Object multipleKeysCache(RuntimeContext context, Class<T> mappedClass, Class<U> suffixClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
-
+        Set<String> keys = getCacheKeys(context);
         Map<String, Object> map = getBulkFromCache(keys);
         int initialCapacity = Math.max(1, map != null ? map.size() : 0);
-        AddableObject<T> addableObj = new AddableObject<T>(initialCapacity, valueClass);
-        List<U> hitKeyObjs = new ArrayList<U>(); // 用于debug
-        Set<U> missKeyObjs = new HashSet<U>();
-        for (Object keyObj : keyObjIterables) {
-            String key = getKey(keyObj);
+        AddableObject<T> addableObj = new AddableObject<T>(initialCapacity, mappedClass);
+        List<U> hitSuffix = new ArrayList<U>(); // 用于debug
+        Set<U> missSuffix = new HashSet<U>();
+        for (Object suffix : new Iterables(getSuffixObj(context))) {
+            String key = getCacheKey(suffix);
             Object value = map != null ? map.get(key) : null;
             if (value == null) {
-                missKeyObjs.add(keyObjClass.cast(keyObj));
+                missSuffix.add(suffixClass.cast(suffix));
             } else {
-                addableObj.add(valueClass.cast(value));
+                addableObj.add(mappedClass.cast(value));
                 if (isDebugEnabled) {
-                    hitKeyObjs.add(keyObjClass.cast(keyObj));
+                    hitSuffix.add(suffixClass.cast(suffix));
                 }
             }
         }
         if (isDebugEnabled) {
-            logger.debug("cache hit #keys={} #values={}", hitKeyObjs, addableObj);
-            logger.debug("cache miss #keys={}", missKeyObjs);
+            logger.debug("cache hit #keys={} #values={}", hitSuffix, addableObj);
+            logger.debug("cache miss #keys={}", missSuffix);
         }
-        statsCounter.recordHits(hitKeyObjs.size());
-        statsCounter.recordMisses(missKeyObjs.size());
-        if (!missKeyObjs.isEmpty()) { // 有key没有命中
-            context.setPropertyValue(getKeySuffixParameterName(), getKeySuffixPropertyPath(), missKeyObjs);
-            Object dbValues = executeFromDb(context, rowMapper);
+        if (!missSuffix.isEmpty()) { // 有key没有命中
+            setSuffixObj(context, missSuffix);
+            Object dbValues = executeFromDb(context);
             for (Object dbValue : new Iterables(dbValues)) {
                 // db数据添加入结果
-                addableObj.add(valueClass.cast(dbValue));
-
+                addableObj.add(mappedClass.cast(dbValue));
                 // 添加入缓存
-                Object keyObj = BeanUtil.getPropertyValue(dbValue, interableProperty, mappedClass);
-                String key = getKey(keyObj);
+                Object suffix = BeanUtil.getPropertyValue(dbValue, interableProperty, this.mappedClass);
+                String key = getCacheKey(suffix);
                 setToCache(key, dbValue);
             }
         }
         return addableObj.getReturn();
     }
 
-    private Object singleKeyCache(RuntimeContext context, String key) {
+    private Object singleKeyCache(RuntimeContext context) {
+        String key = getCacheKey(context);
         Object value = getFromCache(key);
         if (value == null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("cache miss #key＝{}", key);
             }
-            statsCounter.recordHits(1);
-            value = executeFromDb(context, rowMapper);
+            value = executeFromDb(context);
             if (value != null) {
                 setToCache(key, value);
                 if (logger.isDebugEnabled()) {
@@ -195,12 +173,11 @@ public class QueryOperator extends CacheableOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("cache hit #key={} #value={}", key, value);
             }
-            statsCounter.recordMisses(1);
         }
         return value;
     }
 
-    private <T> Object executeFromDb(RuntimeContext context, RowMapper<T> rowMapper) {
+    private Object executeFromDb(RuntimeContext context) {
         ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
         String sql = parsedSql.getSql();
         Object[] args = parsedSql.getArgs();

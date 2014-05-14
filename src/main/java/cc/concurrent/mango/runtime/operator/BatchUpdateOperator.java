@@ -89,7 +89,7 @@ public class BatchUpdateOperator extends CacheableOperator {
         for (Object obj : iterables) {
             RuntimeContext context = buildRuntimeContext(new Object[]{obj});
             if (keys != null) { // 表示使用cache
-                keys.add(getKey(context));
+                keys.add(getCacheKey(context));
             }
             ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
             if (sql == null) {
@@ -100,7 +100,6 @@ public class BatchUpdateOperator extends CacheableOperator {
         int[] ints = executeDb(sql, batchArgs);
         if (keys != null) { // 表示使用cache
             deleteFromCache(keys);
-            statsCounter.recordEviction(keys.size());
         }
         return ints;
     }
