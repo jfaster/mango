@@ -20,7 +20,6 @@ import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.exception.IncorrectSqlException;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
@@ -28,6 +27,7 @@ import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,35 +39,33 @@ public class UpdateOperator extends CacheableOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(UpdateOperator.class);
 
-    private ASTRootNode rootNode;
     private boolean returnGeneratedId;
 
-    private UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        super(method, sqlType);
-        init(rootNode, method, sqlType);
+    public UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        super(rootNode, method, sqlType);
+        init();
     }
 
-    void init(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        this.rootNode = rootNode;
+    void init() {
         ReturnGeneratedId returnGeneratedIdAnno = method.getAnnotation(ReturnGeneratedId.class);
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
+    }
 
-        TypeContext context = buildTypeContext(method.getGenericParameterTypes());
-        rootNode.checkType(context); // 检测sql中的参数是否和方法上的参数匹配
-        checkCacheBy(rootNode); // 如果使用cache，检测cache参数
+    @Override
+    Type[] getMethodArgTypes(Method method) {
+        return method.getGenericParameterTypes();
+    }
 
-        if (isUseCache()) { // 使用cache
+    @Override
+    protected void cacheInitPostProcessor() {
+        if (isUseCache()) {
             List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
             if (aips.size() > 1) {
                 throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but " +
                         aips.size()); // sql中不能有多个in语句
             }
         }
-    }
-
-    public static UpdateOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        return new UpdateOperator(rootNode, method, sqlType);
     }
 
     @Override
@@ -78,23 +76,26 @@ public class UpdateOperator extends CacheableOperator {
         Object[] args = parsedSql.getArgs();
         int r = executeDb(sql, args);
         if (isUseCache()) {
-            Object obj = getCacheKeyObj(context);
+            Object obj = getKeySuffixObj(context);
             Iterables iterables = new Iterables(obj);
-            if (iterables.isIterable()) { // 多个key，例如：update table set name="ash" where id in (1, 2, 3);
-                Set<String> keys = new HashSet<String>();
-                for (Object keyObj : iterables) {
-                    String key = getKey(keyObj);
+            if (iterables.isIterable()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
+                Set<String> keys = new HashSet<String>(iterables.size() * 2);
+                for (Object keySuffix : iterables) {
+                    String key = getKey(keySuffix);
                     keys.add(key);
                 }
                 statsCounter.recordEviction(keys.size());
                 deleteFromCache(keys);
-            } else { // 单个key，例如：update table set name="ash" where id ＝ 1;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("cache delete #keys={}", keys);
+                }
+            } else { // 单个key，例如：update table set name='ash' where id ＝ 1;
                 String key = getKey(obj);
                 statsCounter.recordEviction(1);
                 deleteFromCache(key);
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("cache delete #key={}", getSingleKey(context));
+                if (logger.isDebugEnabled()) {
+                    logger.debug("cache delete #key={}", key);
+                }
             }
         }
         return r;

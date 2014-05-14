@@ -26,7 +26,6 @@ import cc.concurrent.mango.jdbc.RowMapper;
 import cc.concurrent.mango.jdbc.SingleColumnRowMapper;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.ArrayUtil;
@@ -38,6 +37,7 @@ import cc.concurrent.mango.util.reflect.BeanInfoCache;
 import cc.concurrent.mango.util.reflect.BeanUtil;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -49,7 +49,6 @@ public class QueryOperator extends CacheableOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(QueryOperator.class);
 
-    private ASTRootNode rootNode;
     private RowMapper<?> rowMapper;
     private Class<?> mappedClass;
     private boolean isForList;
@@ -57,24 +56,18 @@ public class QueryOperator extends CacheableOperator {
     private boolean isForArray;
     private String interableProperty; // "a in (:1)"中的a
 
-
-    private QueryOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        super(method, sqlType);
+    public QueryOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        super(rootNode, method, sqlType);
         init(rootNode, method);
     }
 
     private void init(ASTRootNode rootNode, Method method) {
-        this.rootNode = rootNode;
         TypeToken typeToken = new TypeToken(method.getGenericReturnType());
         isForList = typeToken.isList();
         isForSet = typeToken.isSet();
         isForArray = typeToken.isArray();
         mappedClass = typeToken.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
-
-        TypeContext context = buildTypeContext(method.getGenericParameterTypes());
-        rootNode.checkType(context); // 检测sql中的参数是否和方法上的参数匹配
-        checkCacheBy(rootNode); // 如果使用cache，检测cache参数
 
         List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
         if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) {
@@ -91,17 +84,25 @@ public class QueryOperator extends CacheableOperator {
                     throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
                             + interableProperty + " of " + mappedClass + " expected readable but not");
                 }
-            } else if (aips.size() != 0) {
-                throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but "
-                        + aips.size()); // 如果使用cache，sql中的in语句不能超过1
             }
         }
     }
 
-    public static QueryOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        return new QueryOperator(rootNode, method, sqlType);
+    @Override
+    Type[] getMethodArgTypes(Method method) {
+        return method.getGenericParameterTypes();
     }
 
+    @Override
+    protected void cacheInitPostProcessor() {
+        if (isUseCache()) {
+            List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
+            if (aips.size() > 1) {
+                throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but " +
+                        aips.size()); // sql中不能有多个in语句
+            }
+        }
+    }
 
     @Override
     public Object execute(Object[] methodArgs) {
@@ -114,16 +115,16 @@ public class QueryOperator extends CacheableOperator {
     }
 
     private Object executeFromCache(RuntimeContext context) {
-        Object obj = getCacheKeyObj(context);
+        Object obj = getKeySuffixObj(context);
         Iterables iterables = new Iterables(obj);
         if (iterables.isIterable()) { // 多个key
-            Set<String> keys = new HashSet<String>();
+            Set<String> keys = new HashSet<String>(iterables.size() * 2);
             Class<?> keyObjClass = null;
-            for (Object keyObj : iterables) {
-                String key = getKey(keyObj);
+            for (Object keySuffix : iterables) {
+                String key = getKey(keySuffix);
                 keys.add(key);
                 if (keyObjClass == null) {
-                    keyObjClass = keyObj.getClass();
+                    keyObjClass = keySuffix.getClass();
                 }
             }
             return multipleKeysCache(context, iterables, keys, rowMapper.getMappedClass(), keyObjClass);
@@ -161,7 +162,7 @@ public class QueryOperator extends CacheableOperator {
         statsCounter.recordHits(hitKeyObjs.size());
         statsCounter.recordMisses(missKeyObjs.size());
         if (!missKeyObjs.isEmpty()) { // 有key没有命中
-            context.setPropertyValue(getCacheParameterName(), getCachePropertyPath(), missKeyObjs);
+            context.setPropertyValue(getKeySuffixParameterName(), getKeySuffixPropertyPath(), missKeyObjs);
             Object dbValues = executeFromDb(context, rowMapper);
             for (Object dbValue : new Iterables(dbValues)) {
                 // db数据添加入结果

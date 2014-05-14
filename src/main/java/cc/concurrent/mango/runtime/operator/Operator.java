@@ -20,6 +20,8 @@ package cc.concurrent.mango.runtime.operator;
 import cc.concurrent.mango.DataSourceFactory;
 
 /**
+ * db操作接口
+ *
  * @author ash
  */
 public interface Operator {

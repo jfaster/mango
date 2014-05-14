@@ -61,11 +61,11 @@ public class OperatorFactory {
         SQLType sqlType = getSQLType(sql);
 
         if (sqlType == SQLType.SELECT) {
-            return QueryOperator.create(rootNode, method, sqlType);
+            return new QueryOperator(rootNode, method, sqlType);
         } else if (int.class.equals(method.getReturnType())) {
-            return UpdateOperator.create(rootNode, method, sqlType);
+            return new UpdateOperator(rootNode, method, sqlType);
         } else if (int[].class.equals(method.getReturnType())) {
-            return BatchUpdateOperator.create(rootNode, method, sqlType);
+            return new BatchUpdateOperator(rootNode, method, sqlType);
         } else {
             throw new IncorrectReturnTypeException("if sql don't start with select, " +
                     "update return type expected int, " +

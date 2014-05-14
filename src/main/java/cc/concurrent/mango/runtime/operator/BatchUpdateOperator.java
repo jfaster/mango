@@ -21,7 +21,6 @@ import cc.concurrent.mango.exception.IncorrectParameterTypeException;
 import cc.concurrent.mango.exception.IncorrectSqlException;
 import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
@@ -40,21 +39,16 @@ public class BatchUpdateOperator extends CacheableOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
 
-    private ASTRootNode rootNode;
-
-    private BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        super(method, sqlType);
-        init(rootNode, method);
+    public BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        super(rootNode, method, sqlType);
     }
 
-    public void init(ASTRootNode rootNode, Method method) {
-        this.rootNode = rootNode;
-
+    @Override
+    Type[] getMethodArgTypes(Method method) {
         if (method.getGenericParameterTypes().length != 1) {
             throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
                     method.getGenericParameterTypes().length); // 批量更新只能有一个参数
         }
-
         Type type = method.getGenericParameterTypes()[0];
         TypeToken typeToken = new TypeToken(type);
         Class<?> mappedClass = typeToken.getMappedClass();
@@ -63,20 +57,16 @@ public class BatchUpdateOperator extends CacheableOperator {
                     "expected array or implementations of java.util.List or implementations of java.util.Set " +
                     "but " + type); // 批量更新的参数必须可迭代
         }
+        return new Type[]{mappedClass};
+    }
 
-        TypeContext context = buildTypeContext(new Type[]{mappedClass});
-        rootNode.checkType(context); // 检测sql中的参数是否和方法上的参数匹配
-        checkCacheBy(rootNode); // 如果使用cache，检测cache参数
-
+    @Override
+    protected void dbInitPostProcessor() {
         List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
         if (aips.size() > 0) {
             throw new IncorrectSqlException("if use batch update, sql's in clause number expected 0 but " +
                     aips.size()); // sql中不能有in语句
         }
-    }
-
-    public static BatchUpdateOperator create(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        return new BatchUpdateOperator(rootNode, method, sqlType);
     }
 
     @Override
@@ -90,24 +80,27 @@ public class BatchUpdateOperator extends CacheableOperator {
             throw new IllegalArgumentException("batchUpdate's parameter can't be empty");
         }
 
-        Set<String> keys = new HashSet<String>(iterables.size() * 2);
+        Set<String> keys = null;
+        if (isUseCache()) {
+            keys = new HashSet<String>(iterables.size() * 2);
+        }
         List<Object[]> batchArgs = new ArrayList<Object[]>(iterables.size());
         String sql = null;
         for (Object obj : iterables) {
             RuntimeContext context = buildRuntimeContext(new Object[]{obj});
-            if (isUseCache()) {
-                keys.add(getSingleKey(context));
+            if (keys != null) { // 表示使用cache
+                keys.add(getKey(context));
             }
-            ParsedSql parsedSql= rootNode.buildSqlAndArgs(context);
+            ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
             if (sql == null) {
                 sql = parsedSql.getSql();
             }
             batchArgs.add(parsedSql.getArgs());
         }
         int[] ints = executeDb(sql, batchArgs);
-        if (isUseCache()) {
-            statsCounter.recordEviction(keys.size());
+        if (keys != null) { // 表示使用cache
             deleteFromCache(keys);
+            statsCounter.recordEviction(keys.size());
         }
         return ints;
     }

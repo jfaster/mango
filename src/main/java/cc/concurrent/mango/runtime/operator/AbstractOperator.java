@@ -21,6 +21,7 @@ import cc.concurrent.mango.DataSourceFactory;
 import cc.concurrent.mango.Rename;
 import cc.concurrent.mango.jdbc.JdbcTemplate;
 import cc.concurrent.mango.runtime.*;
+import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Strings;
 
 import javax.sql.DataSource;
@@ -31,26 +32,70 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 抽象db操作
+ *
  * @author ash
  */
 public abstract class AbstractOperator implements Operator {
 
-    public final StatsCounter statsCounter = new SimpleStatsCounter(); // 统计信息
+    /**
+     * 统计信息
+     */
+    public final StatsCounter statsCounter = new SimpleStatsCounter();
 
-    protected JdbcTemplate jdbcTemplate;
+    /**
+     * 用于对db进行操作
+     */
+    protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
-    private DbDescriptor dbDescriptor;
+    /**
+     * 数据源工厂，通过{@link this#setDataSourceFactory(cc.concurrent.mango.DataSourceFactory)}初始化
+     */
     private DataSourceFactory dataSourceFactory;
-    private SQLType sqlType;
+
+    /**
+     * 数据源名称
+     */
+    private String dataSourceName;
+
+    /**
+     * 全局表名称
+     */
+    private String tableName;
+
+    /**
+     * 根节点信息
+     */
+    protected ASTRootNode rootNode;
+
+    /**
+     * 方法信息
+     */
+    protected Method method;
+
+    /**
+     * sql类型，对应着增删改查
+     */
+    protected SQLType sqlType;
+
+    /**
+     * 类型上下文
+     */
+    private TypeContext typeContext;
+
+    /**
+     * 变量别名
+     */
     private String[] aliases;
 
     private final static String TABLE = "table";
 
-    protected AbstractOperator(Method method, SQLType sqlType) {
-        this.jdbcTemplate = new JdbcTemplate();
+    protected AbstractOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
+        this.rootNode = rootNode;
+        this.method = method;
         this.sqlType = sqlType;
-        buildAliases(method);
-        buildDbDescriptor(method);
+        init();
+        dbInitPostProcessor();
     }
 
     @Override
@@ -58,23 +103,10 @@ public abstract class AbstractOperator implements Operator {
         this.dataSourceFactory = dataSourceFactory;
     }
 
-    protected TypeContext buildTypeContext(Type[] methodArgTypes) {
-        Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
-        String table = dbDescriptor.getTable();
-        if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
-            parameterTypeMap.put(TABLE, String.class);
-        }
-        for (int i = 0; i < methodArgTypes.length; i++) {
-            parameterTypeMap.put(getParameterNameByIndex(i), methodArgTypes[i]);
-        }
-        return new TypeContextImpl(parameterTypeMap);
-    }
-
     protected RuntimeContext buildRuntimeContext(Object[] methodArgs) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        String table = dbDescriptor.getTable();
-        if (!Strings.isNullOrEmpty(table)) { // 在@DB中设置过全局表名
-            parameters.put(TABLE, table);
+        if (!Strings.isNullOrEmpty(tableName)) { // 在@DB中设置过全局表名
+            parameters.put(TABLE, tableName);
         }
         for (int i = 0; i < methodArgs.length; i++) {
             parameters.put(getParameterNameByIndex(i), methodArgs[i]);
@@ -83,7 +115,7 @@ public abstract class AbstractOperator implements Operator {
     }
 
     protected DataSource getDataSource() {
-        return dataSourceFactory.getDataSource(dbDescriptor.getDataSourceName(), sqlType);
+        return dataSourceFactory.getDataSource(dataSourceName, sqlType);
     }
 
     protected String getParameterNameByIndex(int index) {
@@ -91,7 +123,12 @@ public abstract class AbstractOperator implements Operator {
         return alias != null ? alias : String.valueOf(index + 1);
     }
 
-    private void buildAliases(Method method) {
+    protected TypeContext getTypeContext() {
+        return typeContext;
+    }
+
+    private void init() {
+        // 构建别名
         Annotation[][] pass = method.getParameterAnnotations();
         aliases = new String[pass.length];
         for (int i = 0; i < pass.length; i++) {
@@ -102,17 +139,36 @@ public abstract class AbstractOperator implements Operator {
                 }
             }
         }
-    }
 
-    private void buildDbDescriptor(Method method) {
-        String dataSourceName = "";
-        String table = "";
+        // 数据源与表信息
         DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
         if (dbAnno != null) {
             dataSourceName = dbAnno.dataSource();
-            table = dbAnno.table();
+            tableName = dbAnno.table();
         }
-        dbDescriptor = new DbDescriptor(dataSourceName, table);
+
+        // 类型上下文
+        typeContext = buildTypeContext(method);
+
+        // 检测sql中的参数是否和方法上的参数匹配
+        rootNode.checkType(typeContext);
     }
+
+    private TypeContext buildTypeContext(Method method) {
+        Type[] methodArgTypes = getMethodArgTypes(method);
+        Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
+        if (!Strings.isNullOrEmpty(tableName)) { // 在@DB中设置过全局表名
+            parameterTypeMap.put(TABLE, String.class);
+        }
+        for (int i = 0; i < methodArgTypes.length; i++) {
+            parameterTypeMap.put(getParameterNameByIndex(i), methodArgTypes[i]);
+        }
+        return new TypeContextImpl(parameterTypeMap);
+    }
+
+    protected void dbInitPostProcessor() {
+    }
+
+    abstract Type[] getMethodArgTypes(Method method);
 
 }
