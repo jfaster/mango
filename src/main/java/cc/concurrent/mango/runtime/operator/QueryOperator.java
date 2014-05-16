@@ -24,7 +24,6 @@ import cc.concurrent.mango.jdbc.BeanPropertyRowMapper;
 import cc.concurrent.mango.jdbc.JdbcUtils;
 import cc.concurrent.mango.jdbc.RowMapper;
 import cc.concurrent.mango.jdbc.SingleColumnRowMapper;
-import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
@@ -50,7 +49,6 @@ public class QueryOperator extends CacheableOperator {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(QueryOperator.class);
 
     private RowMapper<?> rowMapper;
-    private Class<?> mappedClass;
     private boolean isForList;
     private boolean isForSet;
     private boolean isForArray;
@@ -66,18 +64,18 @@ public class QueryOperator extends CacheableOperator {
         isForList = typeToken.isList();
         isForSet = typeToken.isSet();
         isForArray = typeToken.isArray();
-        mappedClass = typeToken.getMappedClass();
+        Class<?> mappedClass = typeToken.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
 
-        List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
-        if (!aips.isEmpty() && !isForList && !isForSet && !isForArray) {
+        List<ASTIterableParameter> ips = rootNode.getIterableParameters();
+        if (!ips.isEmpty() && !isForList && !isForSet && !isForArray) {
             throw new IncorrectReturnTypeException("if sql has in clause, return type " +
                     "expected array or implementations of java.util.List or implementations of java.util.Set " +
                     "but " + method.getGenericReturnType()); // sql中使用了in查询，返回参数必须可迭代
         }
         if (isUseCache()) {
-            if (aips.size() == 1) {
-                interableProperty = aips.get(0).getInterableProperty();
+            if (ips.size() == 1) {
+                interableProperty = ips.get(0).getInterableProperty();
                 Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
                 if (readMethod == null) {
                     // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
@@ -96,10 +94,10 @@ public class QueryOperator extends CacheableOperator {
     @Override
     protected void cacheInitPostProcessor() {
         if (isUseCache()) {
-            List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
-            if (aips.size() > 1) {
+            List<ASTIterableParameter> ips = rootNode.getIterableParameters();
+            if (ips.size() > 1) {
                 throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but " +
-                        aips.size()); // sql中不能有多个in语句
+                        ips.size()); // sql中不能有多个in语句
             }
         }
     }
@@ -119,14 +117,14 @@ public class QueryOperator extends CacheableOperator {
     private <T, U> Object multipleKeysCache(RuntimeContext context, Class<T> mappedClass, Class<U> suffixClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
         Set<String> keys = getCacheKeys(context);
-        Map<String, Object> map = getBulkFromCache(keys);
-        int initialCapacity = Math.max(1, map != null ? map.size() : 0);
-        AddableObject<T> addableObj = new AddableObject<T>(initialCapacity, mappedClass);
-        List<U> hitSuffix = new ArrayList<U>(); // 用于debug
-        Set<U> missSuffix = new HashSet<U>();
+        Map<String, Object> cacheResults = getBulkFromCache(keys);
+        AddableObject<T> addableObj = new AddableObject<T>(keys.size(), mappedClass);
+        int hitCapacity = cacheResults != null ? cacheResults.size() : 0;
+        List<U> hitSuffix = new ArrayList<U>(hitCapacity); // 用于debug
+        Set<U> missSuffix = new HashSet<U>((keys.size() - hitCapacity) * 2);
         for (Object suffix : new Iterables(getSuffixObj(context))) {
             String key = getCacheKey(suffix);
-            Object value = map != null ? map.get(key) : null;
+            Object value = cacheResults != null ? cacheResults.get(key) : null;
             if (value == null) {
                 missSuffix.add(suffixClass.cast(suffix));
             } else {
@@ -147,7 +145,7 @@ public class QueryOperator extends CacheableOperator {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
                 // 添加入缓存
-                Object suffix = BeanUtil.getPropertyValue(dbValue, interableProperty, this.mappedClass);
+                Object suffix = BeanUtil.getPropertyValue(dbValue, interableProperty, mappedClass);
                 String key = getCacheKey(suffix);
                 setToCache(key, dbValue);
             }
@@ -178,9 +176,8 @@ public class QueryOperator extends CacheableOperator {
     }
 
     private Object executeFromDb(RuntimeContext context) {
-        ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
-        String sql = parsedSql.getSql();
-        Object[] args = parsedSql.getArgs();
+        String sql = rootNode.getSql(context);
+        Object[] args = rootNode.getArgs(context);
         if (logger.isDebugEnabled()) {
             logger.debug("{} #args={}", sql, args);
         }

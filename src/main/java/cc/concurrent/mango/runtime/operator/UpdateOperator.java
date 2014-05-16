@@ -18,7 +18,6 @@ package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.exception.IncorrectSqlException;
-import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
@@ -58,10 +57,10 @@ public class UpdateOperator extends CacheableOperator {
     @Override
     protected void cacheInitPostProcessor() {
         if (isUseCache()) {
-            List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
-            if (aips.size() > 1) {
+            List<ASTIterableParameter> ips = rootNode.getIterableParameters();
+            if (ips.size() > 1) {
                 throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but " +
-                        aips.size()); // sql中不能有多个in语句
+                        ips.size()); // sql中不能有多个in语句
             }
         }
     }
@@ -69,9 +68,8 @@ public class UpdateOperator extends CacheableOperator {
     @Override
     public Object execute(Object[] methodArgs) {
         RuntimeContext context = buildRuntimeContext(methodArgs);
-        ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
-        String sql = parsedSql.getSql();
-        Object[] args = parsedSql.getArgs();
+        String sql = rootNode.getSql(context);
+        Object[] args = rootNode.getArgs(context);
         int r = executeDb(sql, args);
         if (isUseCache()) { // 如果使用cache，更新后需要从cache中删除对应的key或keys
             if (isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);

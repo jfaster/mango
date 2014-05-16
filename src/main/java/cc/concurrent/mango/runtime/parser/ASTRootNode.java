@@ -18,12 +18,11 @@ package cc.concurrent.mango.runtime.parser;
 
 
 import cc.concurrent.mango.exception.UnreachableCodeException;
-import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.util.Iterables;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,7 +30,32 @@ import java.util.List;
  *
  * @author ash
  */
-public class ASTRootNode extends SimpleNode {
+public class ASTRootNode extends AbstractNode {
+
+    /**
+     * 头节点
+     */
+    private AbstractNode head;
+
+    /**
+     * 给{@link java.sql.PreparedStatement}使用的sql
+     */
+    private String sql;
+
+    /**
+     * 可遍历的参数
+     */
+    private List<ASTIterableParameter> iterableParameters = new LinkedList<ASTIterableParameter>();
+
+    /**
+     * 可得到值的参数
+     */
+    private List<ValuableParameter> valuableParameters = new LinkedList<ValuableParameter>();
+
+    /**
+     * 会影响sql的节点
+     */
+    private List<ValuableNode> impactSqlNodes = new LinkedList<ValuableNode>();
 
     public ASTRootNode(int i) {
         super(i);
@@ -42,16 +66,26 @@ public class ASTRootNode extends SimpleNode {
     }
 
     /**
+     * 预处理
+     */
+    public ASTRootNode preprocessing() {
+        init();
+        tryBuildSql();
+        return this;
+    }
+
+    /**
      * 检测节点类型
      *
      * @param context
      */
     public void checkType(TypeContext context) {
-        for (int i = 0; i < jjtGetNumChildren(); i++) {
-            Node node = jjtGetChild(i);
+        AbstractNode node = head;
+        while (node != null) {
             if (node instanceof ValuableNode) {
                 ((ValuableNode) node).checkType(context);
             }
+            node = node.next;
         }
     }
 
@@ -60,15 +94,8 @@ public class ASTRootNode extends SimpleNode {
      *
      * @return
      */
-    public List<ASTIterableParameter> getASTIterableParameters() {
-        List<ASTIterableParameter> aips = new ArrayList<ASTIterableParameter>();
-        for (int i = 0; i < jjtGetNumChildren(); i++) {
-            Node node = jjtGetChild(i);
-            if (node instanceof ASTIterableParameter) {
-                aips.add((ASTIterableParameter) node);
-            }
-        }
-        return aips;
+    public List<ASTIterableParameter> getIterableParameters() {
+        return iterableParameters;
     }
 
     /**
@@ -76,60 +103,140 @@ public class ASTRootNode extends SimpleNode {
      *
      * @return
      */
-    public List<ValuableParameter> getValueValuableParameters() {
-        List<ValuableParameter> vps = new ArrayList<ValuableParameter>();
-        for (int i = 0; i < jjtGetNumChildren(); i++) {
-            Node node = jjtGetChild(i);
-            if (node instanceof ValuableParameter) {
-                vps.add((ValuableParameter) node);
-            }
-        }
-        return vps;
+    public List<ValuableParameter> getValuableParameters() {
+        return valuableParameters;
     }
 
     /**
-     * 构建sql与参数
+     * 获得运行时sql
      *
      * @param context
      * @return
      */
-    public ParsedSql buildSqlAndArgs(RuntimeContext context) {
+    public String getSql(RuntimeContext context) {
+        if (sql != null) {
+            return sql;
+        }
         StringBuffer sql = new StringBuffer();
-        List<Object> args = new ArrayList<Object>();
-        for (int i = 0; i < jjtGetNumChildren(); i++) {
-            Node node = jjtGetChild(i);
-            if (node instanceof ASTText) {
-                ASTText text = (ASTText) node;
-                sql.append(text.getText());
+        AbstractNode node = head;
+        while (node != null) {
+            if (node instanceof ASTString) {
+                ASTString str = (ASTString) node;
+                sql.append(str.getGroupValue());
             } else if (node instanceof ASTNonIterableParameter) {
-                ASTNonIterableParameter anip = (ASTNonIterableParameter) node;
-                args.add(anip.value(context));
                 sql.append("?");
             } else if (node instanceof ASTIterableParameter) {
                 ASTIterableParameter aip = (ASTIterableParameter) node;
                 sql.append(aip.getInterableProperty()).append(" in (");
-                Object objs = aip.value(context);
-                int t = 0;
-                for (Object obj : new Iterables(objs)) {
-                    args.add(obj);
-                    if (t == 0) {
-                        sql.append("?");
-                    } else {
-                        sql.append(",?");
+                Iterables iterables = new Iterables(aip.value(context));
+                int size = iterables.size();
+                StringBuffer sb = new StringBuffer();
+                sb.append("?");
+                if (size > 1) {
+                    for (int i = 1; i < size; i++) {
+                        sb.append(",?");
                     }
-                    t++;
                 }
-                sql.append(")");
+                sql.append(sb).append(")");
             } else if (node instanceof ASTExpression) {
                 sql.append(((ASTExpression) node).value(context));
             } else {
                 throw new UnreachableCodeException();
             }
-            if (i < jjtGetNumChildren() - 1) {
-                sql.append(" "); // 节点之间添加空格
+            node = node.next;
+        }
+        return sql.toString();
+    }
+
+    /**
+     * 构建运行时参数列表
+     *
+     * @param context
+     * @return
+     */
+    public Object[] getArgs(RuntimeContext context) {
+        List<Object> args = new LinkedList<Object>();
+        for (ValuableParameter node : valuableParameters) {
+            if (node instanceof ASTNonIterableParameter) {
+                ASTNonIterableParameter anip = (ASTNonIterableParameter) node;
+                args.add(anip.value(context));
+            } else if (node instanceof ASTIterableParameter) {
+                ASTIterableParameter aip = (ASTIterableParameter) node;
+                Object objs = aip.value(context);
+                for (Object obj : new Iterables(objs)) {
+                    args.add(obj);
+                }
             }
         }
-        return new ParsedSql(sql.toString(), args.toArray());
+        return args.toArray();
+    }
+
+    /**
+     * 初始化
+     */
+    private void init() {
+        int num = jjtGetNumChildren();
+        int i = 0;
+        AbstractNode prev = null;
+        while (i < num) {
+            AbstractNode node = (AbstractNode) jjtGetChild(i);
+            if (prev == null) {
+                head = node;
+            } else {
+                prev.next = node;
+            }
+            prev = node;
+            appendNode(node);
+            if (node instanceof ASTString) {
+                StringBuffer sb = new StringBuffer();
+                while (node instanceof ASTString) {
+                    ASTString str = (ASTString) node;
+                    sb.append(str.getValue());
+                    i++;
+                    if (i == num) {
+                        break;
+                    }
+                    node = (AbstractNode) jjtGetChild(i);
+                }
+                ((ASTString) prev).setGroupValue(sb.toString());
+            } else {
+                i++;
+            }
+        }
+    }
+
+    private void appendNode(AbstractNode node) {
+        if (node instanceof ASTIterableParameter) {
+            iterableParameters.add((ASTIterableParameter) node);
+        }
+        if (node instanceof ValuableParameter) {
+            valuableParameters.add((ValuableParameter) node);
+        }
+        if (node instanceof ASTIterableParameter || node instanceof ASTExpression) {
+            impactSqlNodes.add((ValuableNode) node);
+        }
+    }
+
+    /**
+     * 尝试构建sql
+     */
+    private void tryBuildSql() {
+        if (impactSqlNodes.size() == 0) {
+            StringBuffer sb = new StringBuffer();
+            AbstractNode node = head;
+            while (node != null) {
+                if (node instanceof ASTString) {
+                    ASTString str = (ASTString) node;
+                    sb.append(str.getGroupValue());
+                } else if (node instanceof ASTNonIterableParameter) {
+                    sb.append("?");
+                } else {
+                    throw new UnreachableCodeException();
+                }
+                node = node.next;
+            }
+            sql = sb.toString();
+        }
     }
 
 }

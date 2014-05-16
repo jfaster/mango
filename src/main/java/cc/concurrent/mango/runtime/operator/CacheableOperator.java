@@ -136,16 +136,19 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     }
 
     protected Map<String, Object> getBulkFromCache(Set<String> keys) {
-        Map<String, Object> values = cacheHandler.getBulk(keys);
-        int hitCount = values.size();
-        int missCount = keys.size() - hitCount;
-        if (hitCount > 0) {
-           statsCounter.recordHits(hitCount);
+        if (keys.size() > 0) {
+            Map<String, Object> values = cacheHandler.getBulk(keys);
+            int hitCount = values.size();
+            int missCount = keys.size() - hitCount;
+            if (hitCount > 0) {
+               statsCounter.recordHits(hitCount);
+            }
+            if (missCount > 0) {
+                statsCounter.recordMisses(missCount);
+            }
+            return values;
         }
-        if (missCount > 0) {
-            statsCounter.recordMisses(missCount);
-        }
-        return values;
+        return null;
     }
 
     protected Class<?> getSuffixClass() {
@@ -221,7 +224,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
      * 检测{@link CacheBy}定位到的参数db中是否有用到，如果db中没有用到，则抛出{@link IncorrectCacheByException}
      */
     private void checkCacheBy() {
-        List<ValuableParameter> vps = rootNode.getValueValuableParameters();
+        List<ValuableParameter> vps = rootNode.getValuableParameters();
         for (ValuableParameter vp : vps) {
             if (vp.getParameterName().equals(suffixParameterName) &&
                     vp.getPropertyPath().equals(suffixPropertyPath)) {

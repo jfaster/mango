@@ -19,14 +19,15 @@ package cc.concurrent.mango.runtime.parser;
 /**
  * @author ash
  */
-public class ASTText extends ASTString {
+public abstract class AbstractNode extends SimpleNode {
 
-    public ASTText(int i) {
+    protected AbstractNode next;
+
+    public AbstractNode(int i) {
         super(i);
     }
 
-    public ASTText(Parser p, int i) {
+    public AbstractNode(Parser p, int i) {
         super(p, i);
     }
-
 }

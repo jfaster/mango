@@ -33,10 +33,6 @@ public class Parser {
 }
 PARSER_END(Parser)
 
-SKIP :
-{
-        " "
-}
 
 TOKEN:
 {
@@ -49,7 +45,9 @@ TOKEN:
 
 TOKEN:
 {
-        <NON_ITERABLE_PARAMETER: <PARAMETER> >
+
+        <BLANK: (" ")+ >
+    |   <NON_ITERABLE_PARAMETER: <PARAMETER> >
     |   <IN_START: "in" (" ")* "(" > {SwitchTo(I);}
     |   <EXPR_START: "${" > {SwitchTo(G);}
     |   <TEXT: (~[":", "$", " "])+ >
@@ -94,10 +92,28 @@ ASTRootNode parse()  #RootNode :
 {
 }
 {
-    (LOOKAHEAD(3) IterableParameter() | Text() | NonIterableParameter() | DirectiveExpression())+ <EOF>
+    (LOOKAHEAD(4) IterableParameter() | Text() | Blank() | NonIterableParameter() | DirectiveExpression())+ <EOF>
     {
         return jjtThis;
     }
+}
+
+void IterableParameter() :
+{
+    Token t;
+}
+{
+    t=<TEXT>
+    {
+        jjtThis.setInterableProperty(t.image);
+    }
+    <BLANK>
+    <IN_START>
+    t=<ITERABLE_PARAMETER>
+    {
+        jjtThis.setParameter(t.image);
+    }
+    <IN_END>
 }
 
 void NonIterableParameter() :
@@ -111,14 +127,6 @@ void NonIterableParameter() :
     }
 }
 
-void IterableParameter() :
-{
-    Token t;
-}
-{
-    t=<TEXT> {jjtThis.setInterableProperty(t.image);} <IN_START> t=<ITERABLE_PARAMETER> {jjtThis.setParameter(t.image);} <IN_END>
-}
-
 void Text() :
 {
     Token t;
@@ -126,7 +134,18 @@ void Text() :
 {
     t=<TEXT>
     {
-        jjtThis.setText(t.image);
+        jjtThis.setValue(t.image);
+    }
+}
+
+void Blank() :
+{
+    Token t;
+}
+{
+    t=<BLANK>
+    {
+        jjtThis.setValue(t.image);
     }
 }
 

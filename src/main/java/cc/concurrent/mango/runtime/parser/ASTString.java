@@ -19,14 +19,33 @@ package cc.concurrent.mango.runtime.parser;
 /**
  * @author ash
  */
-public class ASTText extends ASTString {
+public class ASTString extends AbstractNode {
 
-    public ASTText(int i) {
+    private String value;
+
+    private String groupValue;
+
+    public ASTString(int i) {
         super(i);
     }
 
-    public ASTText(Parser p, int i) {
+    public ASTString(Parser p, int i) {
         super(p, i);
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getGroupValue() {
+        return groupValue;
+    }
+
+    public void setGroupValue(String groupValue) {
+        this.groupValue = groupValue;
+    }
 }

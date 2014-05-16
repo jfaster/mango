@@ -14,27 +14,19 @@
  * under the License.
  */
 
-package cc.concurrent.mango.runtime;
+package cc.concurrent.mango.runtime.parser;
 
 /**
  * @author ash
  */
-public class ParsedSql {
+public class ASTBlank extends ASTString {
 
-    private String sql;
-
-    private Object[] args;
-
-    public ParsedSql(String sql, Object[] args) {
-        this.sql = sql;
-        this.args = args;
+    public ASTBlank(int i) {
+        super(i);
     }
 
-    public String getSql() {
-        return sql;
+    public ASTBlank(Parser p, int i) {
+        super(p, i);
     }
 
-    public Object[] getArgs() {
-        return args;
-    }
 }

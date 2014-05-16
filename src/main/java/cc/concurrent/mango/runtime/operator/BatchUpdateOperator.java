@@ -19,7 +19,6 @@ package cc.concurrent.mango.runtime.operator;
 import cc.concurrent.mango.exception.IncorrectParameterCountException;
 import cc.concurrent.mango.exception.IncorrectParameterTypeException;
 import cc.concurrent.mango.exception.IncorrectSqlException;
-import cc.concurrent.mango.runtime.ParsedSql;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
@@ -62,10 +61,10 @@ public class BatchUpdateOperator extends CacheableOperator {
 
     @Override
     protected void dbInitPostProcessor() {
-        List<ASTIterableParameter> aips = rootNode.getASTIterableParameters();
-        if (aips.size() > 0) {
+        List<ASTIterableParameter> ips = rootNode.getIterableParameters();
+        if (ips.size() > 0) {
             throw new IncorrectSqlException("if use batch update, sql's in clause number expected 0 but " +
-                    aips.size()); // sql中不能有in语句
+                    ips.size()); // sql中不能有in语句
         }
     }
 
@@ -91,11 +90,10 @@ public class BatchUpdateOperator extends CacheableOperator {
             if (keys != null) { // 表示使用cache
                 keys.add(getCacheKey(context));
             }
-            ParsedSql parsedSql = rootNode.buildSqlAndArgs(context);
             if (sql == null) {
-                sql = parsedSql.getSql();
+                sql = rootNode.getSql(context);
             }
-            batchArgs.add(parsedSql.getArgs());
+            batchArgs.add(rootNode.getArgs(context));
         }
         int[] ints = executeDb(sql, batchArgs);
         if (keys != null) { // 表示使用cache

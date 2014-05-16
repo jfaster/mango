@@ -22,7 +22,7 @@ import cc.concurrent.mango.runtime.TypeContext;
 /**
  * @author ash
  */
-public abstract class ValuableNode extends SimpleNode {
+public abstract class ValuableNode extends AbstractNode {
 
     public ValuableNode(int i) {
         super(i);

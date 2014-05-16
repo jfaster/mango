@@ -57,7 +57,7 @@ public class OperatorFactory {
         if (Strings.isNullOrEmpty(sql)) {
             throw new IncorrectSqlException("sql is null or empty");
         }
-        ASTRootNode rootNode = new Parser(sql).parse();
+        ASTRootNode rootNode = new Parser(sql).parse().preprocessing();
         SQLType sqlType = getSQLType(sql);
 
         if (sqlType == SQLType.SELECT) {
