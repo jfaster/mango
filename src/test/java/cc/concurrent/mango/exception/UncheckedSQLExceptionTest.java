@@ -17,6 +17,8 @@
 package cc.concurrent.mango.exception;
 
 import cc.concurrent.mango.*;
+import cc.concurrent.mango.model4table.Person;
+import cc.concurrent.mango.model4table.Tables;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +43,7 @@ public class UncheckedSQLExceptionTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Sqls.PERSON.run(conn);
+        Tables.PERSON.load(conn);
         conn.close();
     }
 
@@ -58,26 +60,6 @@ public class UncheckedSQLExceptionTest {
 
         @SQL("insert intoo person(id, name) values(:1.id, :1.name)")
         public int add(Person p);
-    }
-
-
-    public static class Person {
-        int id;
-        String name;
-
-        public Person(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
     }
 
 }

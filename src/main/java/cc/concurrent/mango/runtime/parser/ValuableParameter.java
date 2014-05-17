@@ -57,4 +57,8 @@ public abstract class ValuableParameter extends ValuableNode {
     public String getPropertyPath() {
         return propertyPath;
     }
+
+    public String getFullName() {
+        return fullName;
+    }
 }

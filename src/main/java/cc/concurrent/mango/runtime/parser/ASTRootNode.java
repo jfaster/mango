@@ -128,8 +128,15 @@ public class ASTRootNode extends AbstractNode {
             } else if (node instanceof ASTIterableParameter) {
                 ASTIterableParameter aip = (ASTIterableParameter) node;
                 sql.append(aip.getInterableProperty()).append(" in (");
-                Iterables iterables = new Iterables(aip.value(context));
+                Object objs = aip.value(context);
+                if (objs == null) {
+                    throw new NullPointerException("value of " + aip.getFullName() + " can't be null");
+                }
+                Iterables iterables = new Iterables(objs);
                 int size = iterables.size();
+                if (size == 0) {
+                    throw new IllegalArgumentException("value of " + aip.getFullName() + " can't be empty");
+                }
                 StringBuffer sb = new StringBuffer();
                 sb.append("?");
                 if (size > 1) {
@@ -163,7 +170,15 @@ public class ASTRootNode extends AbstractNode {
             } else if (node instanceof ASTIterableParameter) {
                 ASTIterableParameter aip = (ASTIterableParameter) node;
                 Object objs = aip.value(context);
-                for (Object obj : new Iterables(objs)) {
+                if (objs == null) {
+                    throw new NullPointerException(aip.getFullName() + " can't be null");
+                }
+                Iterables iterables = new Iterables(objs);
+                int size = iterables.size();
+                if (size == 0) {
+                    throw new IllegalArgumentException(aip.getFullName() + " can't be empty");
+                }
+                for (Object obj : iterables) {
                     args.add(obj);
                 }
             }

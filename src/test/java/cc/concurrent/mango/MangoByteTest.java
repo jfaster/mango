@@ -16,6 +16,7 @@
 
 package cc.concurrent.mango;
 
+import cc.concurrent.mango.model4table.Tables;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class MangoByteTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Sqls.BYTE_INFO.run(conn);
+        Tables.BYTE_INFO.load(conn);
         conn.close();
     }
 

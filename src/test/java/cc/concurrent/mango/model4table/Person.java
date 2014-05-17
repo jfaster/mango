@@ -14,35 +14,27 @@
  * under the License.
  */
 
-package cc.concurrent.mango;
-
-import cc.concurrent.mango.util.ScriptRunner;
-
-import java.io.*;
-import java.sql.Connection;
-import java.sql.SQLException;
+package cc.concurrent.mango.model4table;
 
 /**
  * @author ash
  */
-public enum Sqls {
+public class Person {
 
-    USER("user.sql"),
-    PERSON("person.sql"),
-    BYTE_INFO("byte_info.sql"),
-    MSG("msg.sql"),
-    ;
+    int id;
+    String name;
 
-    private String name;
-
-    private Sqls(String name) {
+    public Person(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public void run(Connection conn) throws IOException, SQLException {
-        ScriptRunner sr = new ScriptRunner(conn, false, true);
-        InputStream is = MangoTest.class.getResourceAsStream("/" + Config.getDir() + "/" + name);
-        sr.runScript(new InputStreamReader(is));
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

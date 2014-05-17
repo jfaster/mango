@@ -17,6 +17,8 @@
 package cc.concurrent.mango.exception;
 
 import cc.concurrent.mango.*;
+import cc.concurrent.mango.model4table.Person;
+import cc.concurrent.mango.model4table.Tables;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +43,7 @@ public class IncorrectResultSetColumnCountExceptionTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Sqls.PERSON.run(conn);
+        Tables.PERSON.load(conn);
         conn.close();
     }
 
@@ -63,26 +65,6 @@ public class IncorrectResultSetColumnCountExceptionTest {
 
         @SQL("select id, name from person where id=:1")
         public int get(int id);
-    }
-
-
-    public static class Person {
-        int id;
-        String name;
-
-        public Person(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
     }
 
 }
