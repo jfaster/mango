@@ -28,7 +28,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 
 /**
- * 测试{@link GeneratedKeysException}
+ * 测试{@link ReturnGeneratedKeyException}
  *
  * @author ash
  */
@@ -50,7 +50,7 @@ public class GeneratedKeysExceptionTest {
 
     @Test
     public void test() {
-        thrown.expect(GeneratedKeysException.class);
+        thrown.expect(ReturnGeneratedKeyException.class);
         thrown.expectMessage("please check whether the table has auto increment key");
         PsersonDao dao = mango.create(PsersonDao.class);
         Person p = new Person(1, "ash");

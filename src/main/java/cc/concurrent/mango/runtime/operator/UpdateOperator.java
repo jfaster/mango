@@ -18,6 +18,8 @@ package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.ReturnGeneratedId;
 import cc.concurrent.mango.exception.IncorrectSqlException;
+import cc.concurrent.mango.exception.UnreachableCodeException;
+import cc.concurrent.mango.jdbc.GeneratedKeyHolder;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
@@ -38,6 +40,8 @@ public class UpdateOperator extends CacheableOperator {
 
     private boolean returnGeneratedId;
 
+    private Class<? extends Number> returnType;
+
     public UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         super(rootNode, method, sqlType);
         init();
@@ -47,6 +51,13 @@ public class UpdateOperator extends CacheableOperator {
         ReturnGeneratedId returnGeneratedIdAnno = method.getAnnotation(ReturnGeneratedId.class);
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
+        if (int.class.equals(method.getReturnType())) {
+            returnType = int.class;
+        } else if (long.class.equals(method.getReturnType())) {
+            returnType = long.class;
+        } else {
+            throw new UnreachableCodeException();
+        }
     }
 
     @Override
@@ -70,7 +81,7 @@ public class UpdateOperator extends CacheableOperator {
         RuntimeContext context = buildRuntimeContext(methodArgs);
         String sql = rootNode.getSql(context);
         Object[] args = rootNode.getArgs(context);
-        int r = executeDb(sql, args);
+        Number r = executeDb(sql, args);
         if (isUseCache()) { // 如果使用cache，更新后需要从cache中删除对应的key或keys
             if (isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
                 Set<String> keys = getCacheKeys(context);
@@ -89,17 +100,23 @@ public class UpdateOperator extends CacheableOperator {
         return r;
     }
 
-    private int executeDb(String sql, Object[] args) {
+    private Number executeDb(String sql, Object[] args) {
         if (logger.isDebugEnabled()) {
             logger.debug("{} #args={}", sql, args);
         }
-        int r = -1;
+        Number r = null;
         long now = System.nanoTime();
         try {
-            r = jdbcTemplate.update(getDataSource(), sql, args, returnGeneratedId);
+            if (returnGeneratedId) {
+                GeneratedKeyHolder holder = new GeneratedKeyHolder(returnType);
+                jdbcTemplate.update(getDataSource(), sql, args, holder);
+                r = holder.getKey();
+            } else {
+                r = jdbcTemplate.update(getDataSource(), sql, args);
+            }
         } finally {
             long cost = System.nanoTime() - now;
-            if (r > -1) {
+            if (r != null) {
                 statsCounter.recordExecuteSuccess(cost);
             } else {
                 statsCounter.recordExecuteException(cost);

@@ -5,9 +5,9 @@ package cc.concurrent.mango.exception;
  *
  * @author ash
  */
-public class GeneratedKeysException extends DataAccessException {
+public class ReturnGeneratedKeyException extends DataAccessException {
 
-    public GeneratedKeysException(String message) {
+    public ReturnGeneratedKeyException(String message) {
         super(message);
     }
 

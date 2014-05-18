@@ -60,11 +60,12 @@ public class OperatorFactory {
         ASTRootNode rootNode = new Parser(sql).parse().preprocessing();
         SQLType sqlType = getSQLType(sql);
 
-        if (sqlType == SQLType.SELECT) {
+        Class<?> returnType = method.getReturnType();
+        if (sqlType == SQLType.SELECT) { // 查
             return new QueryOperator(rootNode, method, sqlType);
-        } else if (int.class.equals(method.getReturnType())) {
+        } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
             return new UpdateOperator(rootNode, method, sqlType);
-        } else if (int[].class.equals(method.getReturnType())) {
+        } else if (int[].class.equals(returnType)) { // 批量更新
             return new BatchUpdateOperator(rootNode, method, sqlType);
         } else {
             throw new IncorrectReturnTypeException("if sql don't start with select, " +

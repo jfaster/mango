@@ -17,6 +17,7 @@
 package cc.concurrent.mango.jdbc;
 
 import cc.concurrent.mango.exception.CannotGetJdbcConnectionException;
+import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 
@@ -146,7 +147,7 @@ public class JdbcUtils {
         } else if (java.sql.Clob.class.equals(requiredType)) {
             value = rs.getClob(index);
         } else {
-            // TODO Exception
+            throw new UnreachableCodeException();
         }
 
         // Perform was-null check if demanded (for results that the
