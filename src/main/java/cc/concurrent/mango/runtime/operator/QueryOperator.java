@@ -178,9 +178,6 @@ public class QueryOperator extends CacheableOperator {
     private Object executeFromDb(RuntimeContext context) {
         String sql = rootNode.getSql(context);
         Object[] args = rootNode.getArgs(context);
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} #args={}", sql, args);
-        }
         Object r = null;
         long now = System.nanoTime();
         try {
@@ -200,9 +197,6 @@ public class QueryOperator extends CacheableOperator {
             } else {
                 statsCounter.recordExecuteException(cost);
             }
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} #result={}", sql, r);
         }
         return r;
     }

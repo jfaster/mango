@@ -18,9 +18,13 @@ package cc.concurrent.mango.jdbc;
 
 import cc.concurrent.mango.exception.ReturnGeneratedKeyException;
 import cc.concurrent.mango.exception.UncheckedSQLException;
+import cc.concurrent.mango.util.logging.InternalLogger;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +33,8 @@ import java.util.Set;
  * @author ash
  */
 public class JdbcTemplate {
+
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(JdbcTemplate.class);
 
     public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
@@ -54,13 +60,14 @@ public class JdbcTemplate {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Integer r = null;
         try {
             boolean needGenerateKey = holder != null;
             ps = needGenerateKey ?
                     conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : // 生成自增key
                     conn.prepareStatement(sql); // 不生成自增key
             setValues(ps, args);
-            int r = ps.executeUpdate();
+            r = ps.executeUpdate();
             if (needGenerateKey) { // 生成自增key
                 rs = ps.getGeneratedKeys();
                 if (!rs.next()) {
@@ -76,39 +83,109 @@ public class JdbcTemplate {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeConnection(conn);
+
+            if (logger.isDebugEnabled()) {
+                if (r != null) { // 执行成功
+                    logger.debug("{} #args={} #result={}", sql, args, r);
+                } else {
+                    logger.debug("[error] {} #args={}", sql, args);
+                }
+            }
         }
     }
 
     public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
+        int[] r = null;
         try {
             ps = conn.prepareStatement(sql);
             setBatchValues(ps, batchArgs);
-            return ps.executeBatch();
+            r = ps.executeBatch();
+            return r;
         } catch (SQLException e) {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeConnection(conn);
+
+            if (logger.isDebugEnabled()) {
+                List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
+                for (Object[] batchArg : batchArgs) {
+                    debugBatchArgs.add(Arrays.asList(batchArg));
+                }
+                if (r != null) { // 执行成功
+                    logger.debug("{} #args={} #result={}", sql, debugBatchArgs, r);
+                } else {
+                    logger.debug("[error] {} #args={}", sql, debugBatchArgs);
+                }
+            }
         }
+    }
+
+    public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs) {
+        int size = Math.min(sqls.size(), batchArgs.size());
+        int[] r = new int[size];
+        boolean[] success = new boolean[size];
+        Connection conn = JdbcUtils.getConnection(ds);
+        try {
+            for (int i = 0; i < size; i++) {
+                String sql = sqls.get(i);
+                Object[] args = batchArgs.get(i);
+                PreparedStatement ps = null;
+                try {
+                    ps = conn.prepareStatement(sql);
+                    setValues(ps, args);
+                    r[i] = ps.executeUpdate();
+                    success[i] = true;
+                } catch (SQLException e) {
+                    throw new UncheckedSQLException(e.getMessage(), e);
+                } finally {
+                    JdbcUtils.closeStatement(ps);
+
+                    if (logger.isDebugEnabled()) {
+                        if (success[i]) {
+                            logger.debug("{} #args={} #result={}", sql, args, r[i]);
+                        } else {
+                            logger.debug("[error] {} #args={}", sql, args);
+                        }
+                    }
+                }
+            }
+        } finally {
+            JdbcUtils.closeConnection(conn);
+        }
+        return r;
     }
 
     private <T> T executeQuery(DataSource ds, String sql, Object[] args, ResultSetExtractor<T> rse) {
         Connection conn = JdbcUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
+
+        T r = null;
+        boolean success = false;
         try {
             ps = conn.prepareStatement(sql);
             setValues(ps, args);
             rs = ps.executeQuery();
-            return rse.extractData(rs);
+            r = rse.extractData(rs);
+            success = true;
+            return r;
         } catch (SQLException e) {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeConnection(conn);
+
+            if (logger.isDebugEnabled()) {
+                if (success) { // 执行成功
+                    logger.debug("{} #args={} #result={}", sql, args, r);
+                } else {
+                    logger.debug("[error] {} #args={}", sql, args);
+                }
+            }
         }
     }
 

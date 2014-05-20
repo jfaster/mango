@@ -101,9 +101,6 @@ public class UpdateOperator extends CacheableOperator {
     }
 
     private Number executeDb(String sql, Object[] args) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} #args={}", sql, args);
-        }
         Number r = null;
         long now = System.nanoTime();
         try {
@@ -121,9 +118,6 @@ public class UpdateOperator extends CacheableOperator {
             } else {
                 statsCounter.recordExecuteException(cost);
             }
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} #result={}", sql, r);
         }
         return r;
     }

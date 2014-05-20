@@ -24,19 +24,18 @@ import cc.concurrent.mango.runtime.parser.ASTIterableParameter;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
-import cc.concurrent.mango.util.logging.InternalLogger;
-import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author ash
  */
 public class BatchUpdateOperator extends CacheableOperator {
-
-    private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
 
     public BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         super(rootNode, method, sqlType);
@@ -84,40 +83,29 @@ public class BatchUpdateOperator extends CacheableOperator {
             keys = new HashSet<String>(iterables.size() * 2);
         }
         List<Object[]> batchArgs = new ArrayList<Object[]>(iterables.size());
-        String sql = null;
+        List<String> sqls = new ArrayList<String>(iterables.size());
         for (Object obj : iterables) {
             RuntimeContext context = buildRuntimeContext(new Object[]{obj});
             if (keys != null) { // 表示使用cache
                 keys.add(getCacheKey(context));
             }
-            if (sql == null) {
-                sql = rootNode.getSql(context);
-            }
             batchArgs.add(rootNode.getArgs(context));
+            sqls.add(rootNode.getSql(context));
         }
-        int[] ints = executeDb(sql, batchArgs);
+        int[] ints = executeDb(sqls, batchArgs);
         if (keys != null) { // 表示使用cache
             deleteFromCache(keys);
         }
         return ints;
     }
 
-    private int[] executeDb(String sql, List<Object[]> batchArgs) {
-        if (logger.isDebugEnabled()) {
-            List<String> str = new ArrayList<String>();
-            for (Object[] args : batchArgs) {
-                str.add(Arrays.toString(args));
-            }
-            List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
-            for (Object[] batchArg : batchArgs) {
-                debugBatchArgs.add(Arrays.asList(batchArg));
-            }
-            logger.debug("{} #args={}", sql, debugBatchArgs);
-        }
+    private int[] executeDb(List<String> sqls, List<Object[]> batchArgs) {
         int[] ints = null;
         long now = System.nanoTime();
         try {
-            ints = jdbcTemplate.batchUpdate(getDataSource(), sql, batchArgs);
+            ints = isUniqueSql(sqls) ?
+                    jdbcTemplate.batchUpdate(getDataSource(), sqls.get(0), batchArgs) :
+                    jdbcTemplate.batchUpdate(getDataSource(), sqls, batchArgs);
         } finally {
             long cost = System.nanoTime() - now;
             if (ints != null) {
@@ -126,10 +114,19 @@ public class BatchUpdateOperator extends CacheableOperator {
                 statsCounter.recordExecuteException(cost);
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("{} #result={}", sql, ints);
-        }
         return ints;
+    }
+
+    private boolean isUniqueSql(List<String> sqls) {
+        String sql = sqls.get(0);
+        boolean r = true;
+        for (int i = 1; i < sqls.size(); i++) {
+            if (!sql.equals(sqls.get(i))) {
+                r = false;
+                break;
+            }
+        }
+        return r;
     }
 
 }
