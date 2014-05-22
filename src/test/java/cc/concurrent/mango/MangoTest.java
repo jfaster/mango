@@ -19,7 +19,6 @@ package cc.concurrent.mango;
 import cc.concurrent.mango.model4table.Tables;
 import cc.concurrent.mango.model4table.User;
 import com.google.common.primitives.Ints;
-import com.google.common.base.Objects;
 import org.junit.Before;
 import org.junit.Test;
 

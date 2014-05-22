@@ -33,6 +33,8 @@ public enum Tables {
     PERSON("person.sql"),
     BYTE_INFO("byte_info.sql"),
     MSG("msg.sql"),
+    SHARDING_MSG("sharding_msg.sql"),
+    LONG_ID_MSG("long_id_msg.sql"),
     ;
 
     private String name;
