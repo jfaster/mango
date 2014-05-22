@@ -42,11 +42,6 @@
     </developers>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>3.2.6.RELEASE</version>
-        </dependency>
         <!-- findbug相关 -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
