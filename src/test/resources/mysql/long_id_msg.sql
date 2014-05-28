@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS long_id_msg;
+
+CREATE TABLE `long_id_msg` (
+  `id` bigint(21) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL,
+  `content` varchar(25) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000000000000000 DEFAULT CHARSET=utf8;

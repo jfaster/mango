@@ -44,19 +44,23 @@ public class TypeUtil {
                     continue;
                 }
             }
-            throw new NotReadablePropertyException("property ':" + parameterName + "." + nestedPath + "' is not readable");
+            String fullName = ":" + parameterName + "." + nestedPath;
+            throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
+                    "the type of " + fullName + " is " + type + ", please check it's get method");
         }
 
         Class<?> clazz = getClassFromType(type);
         if (clazz != null) {
-            Method method = BeanInfoCache.getReadMethod((Class<?>) type, propertyPath);
+            Method method = BeanInfoCache.getReadMethod(clazz, propertyPath);
             if (method != null) {
                 type = method.getGenericReturnType();
                 return type;
             }
         }
         nestedPath.append(propertyPath);
-        throw new NotReadablePropertyException("property ':" + parameterName + "." + nestedPath + "' is not readable");
+        String fullName = ":" + parameterName + "." + nestedPath;
+        throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
+                "the type of " + fullName + " is " + type + ", please check it's get method");
     }
 
     private static Class<?> getClassFromType(Type type) {
