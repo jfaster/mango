@@ -17,6 +17,8 @@
 package cc.concurrent.mango.util.reflect;
 
 import cc.concurrent.mango.exception.NotReadablePropertyException;
+import cc.concurrent.mango.exception.UnreachableCodeException;
+import cc.concurrent.mango.util.Strings;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -28,11 +30,14 @@ import java.lang.reflect.Type;
 public class TypeUtil {
 
     public static Type getPropertyType(Type type, String parameterName, String propertyPath) {
+        if (Strings.isNullOrEmpty(propertyPath)) {
+            throw new UnreachableCodeException();
+        }
+
         int pos = propertyPath.indexOf('.');
-        StringBuffer nestedPath = new StringBuffer(propertyPath.length());
+        StringBuffer parentPath = new StringBuffer(propertyPath.length());
         while (pos > -1) {
             String propertyName = propertyPath.substring(0, pos);
-            nestedPath.append(propertyName);
             Class<?> clazz = getClassFromType(type);
             if (clazz != null) {
                 Method method = BeanInfoCache.getReadMethod(clazz, propertyName);
@@ -40,13 +45,16 @@ public class TypeUtil {
                     type = method.getGenericReturnType();
                     propertyPath = propertyPath.substring(pos + 1);
                     pos = propertyPath.indexOf('.');
-                    nestedPath.append(".");
+                    appendParentPath(parentPath, propertyName);
                     continue;
                 }
             }
-            String fullName = ":" + parameterName + "." + nestedPath;
+
+            String parentFullName = getFullName(parameterName, parentPath.toString());
+            appendParentPath(parentPath, propertyName);
+            String fullName = getFullName(parameterName, parentPath.toString());
             throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
-                    "the type of " + fullName + " is " + type + ", please check it's get method");
+                    "the type of " + parentFullName + " is " + type + ", please check it's get method");
         }
 
         Class<?> clazz = getClassFromType(type);
@@ -57,10 +65,11 @@ public class TypeUtil {
                 return type;
             }
         }
-        nestedPath.append(propertyPath);
-        String fullName = ":" + parameterName + "." + nestedPath;
+        String parentFullName = getFullName(parameterName, parentPath.toString());
+        appendParentPath(parentPath, propertyPath);
+        String fullName = getFullName(parameterName, parentPath.toString());
         throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
-                "the type of " + fullName + " is " + type + ", please check it's get method");
+                "the type of " + parentFullName + " is " + type + ", please check it's get method");
     }
 
     private static Class<?> getClassFromType(Type type) {
@@ -71,6 +80,18 @@ public class TypeUtil {
             clazz = (Class<?>) ((ParameterizedType) type).getRawType();
         }
         return clazz;
+    }
+
+    private static void appendParentPath(StringBuffer parentPath, String propertyName) {
+        if (parentPath.length() == 0) {
+            parentPath.append(propertyName);
+        } else {
+            parentPath.append(".").append(propertyName);
+        }
+    }
+
+    private static String getFullName(String parameterName, String propertyPath) {
+        return ":" + (!propertyPath.isEmpty() ? parameterName + "." + propertyPath : parameterName);
     }
 
 }

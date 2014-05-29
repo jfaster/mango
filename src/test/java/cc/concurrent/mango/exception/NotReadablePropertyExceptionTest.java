@@ -40,7 +40,7 @@ public class NotReadablePropertyExceptionTest {
     public void test() {
         thrown.expect(NotReadablePropertyException.class);
         thrown.expectMessage("property :1.b.d is not readable, " +
-                "the type of :1.b.d is class cc.concurrent.mango.exception.NotReadablePropertyExceptionTest$B, " +
+                "the type of :1.b is class cc.concurrent.mango.exception.NotReadablePropertyExceptionTest$B, " +
                 "please check it's get method");
         Dao dao = mango.create(Dao.class);
         dao.add(new A());
@@ -50,7 +50,7 @@ public class NotReadablePropertyExceptionTest {
     public void test2() {
         thrown.expect(NotReadablePropertyException.class);
         thrown.expectMessage("property :1.c is not readable, " +
-                "the type of :1.c is class cc.concurrent.mango.exception.NotReadablePropertyExceptionTest$A, " +
+                "the type of :1 is class cc.concurrent.mango.exception.NotReadablePropertyExceptionTest$A, " +
                 "please check it's get method");
         Dao dao = mango.create(Dao.class);
         dao.add2(new A());
