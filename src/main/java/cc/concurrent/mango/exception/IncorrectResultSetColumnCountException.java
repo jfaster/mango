@@ -17,6 +17,8 @@
 package cc.concurrent.mango.exception;
 
 /**
+ * 错误的返回结果数量异常
+ *
  * @author ash
  */
 public class IncorrectResultSetColumnCountException extends DataAccessException {

@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author ash
  */
-public class JdbExceptionTest {
+public class JdkExceptionTest {
 
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = new Mango(ds);

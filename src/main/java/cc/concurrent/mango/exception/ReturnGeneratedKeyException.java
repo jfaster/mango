@@ -1,7 +1,7 @@
 package cc.concurrent.mango.exception;
 
 /**
- * 获取自增id失败异常
+ * 获取自增key失败异常
  *
  * @author ash
  */

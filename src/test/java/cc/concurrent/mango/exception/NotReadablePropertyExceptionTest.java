@@ -68,10 +68,10 @@ public class NotReadablePropertyExceptionTest {
 
     @DB
     static interface Dao {
-        @SQL("insert into ... :1.b.d ...")
+        @SQL("insert into user(uid) values (:1.b.d)")
         public int add(A a);
 
-        @SQL("insert into ... :1.c.d ...")
+        @SQL("insert into user(uid) values (:1.c.d)")
         public int add2(A a);
     }
 

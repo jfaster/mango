@@ -39,7 +39,7 @@ public class NotReadableParameterExceptionTest {
     @Test
     public void test() {
         thrown.expect(NotReadableParameterException.class);
-        thrown.expectMessage("parameter ':1' is not readable");
+        thrown.expectMessage("parameter :1 is not readable");
         Dao dao = mango.create(Dao.class);
         dao.add();
     }
@@ -47,17 +47,17 @@ public class NotReadableParameterExceptionTest {
     @Test
     public void test2() {
         thrown.expect(NotReadableParameterException.class);
-        thrown.expectMessage("parameter ':1' is not readable");
+        thrown.expectMessage("parameter :1 is not readable");
         Dao dao = mango.create(Dao.class);
         dao.gets();
     }
 
     @DB
     static interface Dao {
-        @SQL("insert into ... :1 ...")
+        @SQL("insert into user(uid) values(:1)")
         public int add();
 
-        @SQL("select ... where id in (:1)")
+        @SQL("select uid from user where uid in (:1)")
         public int[] gets();
     }
 

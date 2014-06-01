@@ -45,7 +45,7 @@ public class TypeContextImpl implements TypeContext {
         }
         Type parameterType = parameterTypeMap.get(parameterName);
         if (parameterType == null ) {
-            throw new NotReadableParameterException("parameter ':" + parameterName + "' is not readable");
+            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
         }
         Type type = !propertyPath.isEmpty() ?
                 TypeUtil.getPropertyType(parameterType, parameterName, propertyPath) :
