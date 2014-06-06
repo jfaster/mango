@@ -158,4 +158,11 @@ public class MethodStats {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return String.format("{averageExecutePenalty=%s, executeSuccessCount=%s, executeExceptionCount=%s, " +
+                "totalExecuteTime=%s, hitCount=%s, missCount=%s, evictionCount=%s}",
+                averageExecutePenalty(), executeSuccessCount, executeExceptionCount,
+                totalExecuteTime, hitCount, missCount, evictionCount);
+    }
 }

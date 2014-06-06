@@ -178,7 +178,8 @@ public class QueryOperator extends CacheableOperator {
     private Object executeFromDb(RuntimeContext context) {
         String sql = rootNode.getSql(context);
         Object[] args = rootNode.getArgs(context);
-        Object r = null;
+        Object r;
+        boolean success = false;
         long now = System.nanoTime();
         try {
             if (isForList) {
@@ -190,9 +191,10 @@ public class QueryOperator extends CacheableOperator {
             } else {
                 r = jdbcTemplate.queryForObject(getDataSource(), sql, args, rowMapper);
             }
+            success = true;
         } finally {
             long cost = System.nanoTime() - now;
-            if (r != null) {
+            if (success) {
                 statsCounter.recordExecuteSuccess(cost);
             } else {
                 statsCounter.recordExecuteException(cost);

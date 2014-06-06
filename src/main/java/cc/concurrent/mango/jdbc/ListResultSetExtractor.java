@@ -19,6 +19,7 @@ package cc.concurrent.mango.jdbc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class ListResultSetExtractor<T> implements ResultSetExtractor<List<T>> {
 
     @Override
     public List<T> extractData(ResultSet rs) throws SQLException {
-        List<T> results = new ArrayList<T>();
+        List<T> results = new LinkedList<T>(); // 这里不能确定结果集的数量，所以用LinkedList
         int rowNum = 0;
         while (rs.next()) {
             results.add(rowMapper.mapRow(rs, rowNum++));
