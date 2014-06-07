@@ -17,10 +17,7 @@
 package cc.concurrent.mango;
 
 import cc.concurrent.mango.exception.IncorrectAnnotationException;
-import cc.concurrent.mango.runtime.operator.CacheableOperator;
-import cc.concurrent.mango.runtime.operator.Operator;
-import cc.concurrent.mango.runtime.operator.OperatorFactory;
-import cc.concurrent.mango.runtime.operator.StatsCounter;
+import cc.concurrent.mango.runtime.operator.*;
 import cc.concurrent.mango.util.ToStringHelper;
 import cc.concurrent.mango.util.concurrent.CacheLoader;
 import cc.concurrent.mango.util.concurrent.DoubleCheckCache;
@@ -38,7 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * mango框架DAO工厂
@@ -51,7 +47,7 @@ public class Mango {
 
     private final DataSourceFactory dataSourceFactory;
     private final CacheHandler defaultCacheHandler;
-    private final ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>> statsCounterMap;
+    private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
 
     public Mango(DataSource dataSource) {
         this(new SimpleDataSourceFactory(dataSource));
@@ -68,7 +64,7 @@ public class Mango {
     public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
         this.defaultCacheHandler = defaultCacheHandler;
-        this.statsCounterMap = new ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>>();
+        this.statsCounterMap = new ConcurrentHashMap<Method, StatsCounter>();
     }
 
     /**
@@ -101,16 +97,10 @@ public class Mango {
      * 返回各个方法对应的状态
      */
     public Map<Method, MethodStats> getStatsMap() {
-        Set<Map.Entry<Method, ConcurrentLinkedQueue<StatsCounter>>> entrySet = statsCounterMap.entrySet();
+        Set<Map.Entry<Method, StatsCounter>> entrySet = statsCounterMap.entrySet();
         Map<Method, MethodStats> map = new HashMap<Method, MethodStats>();
-        for (Map.Entry<Method, ConcurrentLinkedQueue<StatsCounter>> entry : entrySet) {
-            Method method = entry.getKey();
-            ConcurrentLinkedQueue<StatsCounter> queue = entry.getValue();
-            MethodStats stats = new MethodStats();
-            for (StatsCounter statsCounter : queue) {
-                stats = stats.plus(statsCounter.snapshot());
-            }
-            map.put(method, stats);
+        for (Map.Entry<Method, StatsCounter> entry : entrySet) {
+            map.put(entry.getKey(), entry.getValue().snapshot());
         }
         return map;
     }
@@ -119,11 +109,11 @@ public class Mango {
 
         private final DataSourceFactory dataSourceFactory;
         private final CacheHandler cacheHandler;
-        private final ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>> statsCounterMap;
+        private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
 
         private MangoInvocationHandler(DataSourceFactory dataSourceFactory,
                                        @Nullable CacheHandler cacheHandler,
-                                       ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>> statsCounterMap) {
+                                       ConcurrentHashMap<Method, StatsCounter> statsCounterMap) {
             this.dataSourceFactory = dataSourceFactory;
             this.cacheHandler = cacheHandler;
             this.statsCounterMap = statsCounterMap;
@@ -135,7 +125,7 @@ public class Mango {
                         CacheableOperator operator = OperatorFactory.getOperator(method);
                         operator.setDataSourceFactory(dataSourceFactory);
                         operator.setCacheHandler(cacheHandler);
-                        addStatusCounterToMap(method, operator.statsCounter);
+                        operator.setStatsCounter(getStatusCounter(method));
                         return operator;
                     }
                 });
@@ -153,16 +143,16 @@ public class Mango {
             return r;
         }
 
-        private void addStatusCounterToMap(Method method, StatsCounter statsCounter) {
-            ConcurrentLinkedQueue<StatsCounter> queue = statsCounterMap.get(method);
-            if (queue == null) {
-                queue = new ConcurrentLinkedQueue<StatsCounter>();
-                ConcurrentLinkedQueue<StatsCounter> old = statsCounterMap.putIfAbsent(method, queue);
+        private StatsCounter getStatusCounter(Method method) {
+            StatsCounter statsCounter = statsCounterMap.get(method);
+            if (statsCounter == null) {
+                statsCounter = new SimpleStatsCounter();
+                StatsCounter old = statsCounterMap.putIfAbsent(method, statsCounter);
                 if (old != null) { // 已经存在，就用老的，这样能保证单例
-                    queue = old;
+                    statsCounter = old;
                 }
             }
-            queue.add(statsCounter);
+            return statsCounter;
         }
 
     }

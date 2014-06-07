@@ -28,6 +28,8 @@ public interface Operator {
 
     public void setDataSourceFactory(DataSourceFactory dataSourceFactory);
 
+    public void setStatsCounter(StatsCounter statsCounter);
+
     public Object execute(Object[] methodArgs);
 
 }

@@ -39,11 +39,6 @@ import java.util.Map;
 public abstract class AbstractOperator implements Operator {
 
     /**
-     * 统计信息
-     */
-    public final StatsCounter statsCounter = new SimpleStatsCounter();
-
-    /**
      * 用于对db进行操作
      */
     protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
@@ -52,6 +47,11 @@ public abstract class AbstractOperator implements Operator {
      * 数据源工厂，通过{@link this#setDataSourceFactory(cc.concurrent.mango.DataSourceFactory)}初始化
      */
     private DataSourceFactory dataSourceFactory;
+
+    /**
+     * 统计信息，通过{@link this#setStatsCounter(StatsCounter)}初始化
+     */
+    protected StatsCounter statsCounter;
 
     /**
      * 数据源名称
@@ -101,6 +101,11 @@ public abstract class AbstractOperator implements Operator {
     @Override
     public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
         this.dataSourceFactory = dataSourceFactory;
+    }
+
+    @Override
+    public void setStatsCounter(StatsCounter statsCounter) {
+        this.statsCounter = statsCounter;
     }
 
     protected RuntimeContext buildRuntimeContext(Object[] methodArgs) {
