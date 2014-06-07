@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * mango框架DAO工厂
@@ -50,7 +51,7 @@ public class Mango {
 
     private final DataSourceFactory dataSourceFactory;
     private final CacheHandler defaultCacheHandler;
-    private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
+    private final ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>> statsCounterMap;
 
     public Mango(DataSource dataSource) {
         this(new SimpleDataSourceFactory(dataSource));
@@ -67,7 +68,7 @@ public class Mango {
     public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
         this.defaultCacheHandler = defaultCacheHandler;
-        this.statsCounterMap = new ConcurrentHashMap<Method, StatsCounter>();
+        this.statsCounterMap = new ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>>();
     }
 
     /**
@@ -100,10 +101,16 @@ public class Mango {
      * 返回各个方法对应的状态
      */
     public Map<Method, MethodStats> getStatsMap() {
-        Set<Map.Entry<Method, StatsCounter>> entrySet = statsCounterMap.entrySet();
+        Set<Map.Entry<Method, ConcurrentLinkedQueue<StatsCounter>>> entrySet = statsCounterMap.entrySet();
         Map<Method, MethodStats> map = new HashMap<Method, MethodStats>();
-        for (Map.Entry<Method,StatsCounter> entry : entrySet) {
-            map.put(entry.getKey(), entry.getValue().snapshot());
+        for (Map.Entry<Method, ConcurrentLinkedQueue<StatsCounter>> entry : entrySet) {
+            Method method = entry.getKey();
+            ConcurrentLinkedQueue<StatsCounter> queue = entry.getValue();
+            MethodStats stats = new MethodStats();
+            for (StatsCounter statsCounter : queue) {
+                stats = stats.plus(statsCounter.snapshot());
+            }
+            map.put(method, stats);
         }
         return map;
     }
@@ -112,11 +119,11 @@ public class Mango {
 
         private final DataSourceFactory dataSourceFactory;
         private final CacheHandler cacheHandler;
-        private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
+        private final ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>> statsCounterMap;
 
         private MangoInvocationHandler(DataSourceFactory dataSourceFactory,
                                        @Nullable CacheHandler cacheHandler,
-                                       ConcurrentHashMap<Method, StatsCounter> statsCounterMap) {
+                                       ConcurrentHashMap<Method, ConcurrentLinkedQueue<StatsCounter>> statsCounterMap) {
             this.dataSourceFactory = dataSourceFactory;
             this.cacheHandler = cacheHandler;
             this.statsCounterMap = statsCounterMap;
@@ -128,7 +135,7 @@ public class Mango {
                         CacheableOperator operator = OperatorFactory.getOperator(method);
                         operator.setDataSourceFactory(dataSourceFactory);
                         operator.setCacheHandler(cacheHandler);
-                        statsCounterMap.put(method, operator.statsCounter); // 方便对外输出统计信息
+                        addStatusCounterToMap(method, operator.statsCounter);
                         return operator;
                     }
                 });
@@ -144,6 +151,18 @@ public class Mango {
                 logger.debug("{} #result={}", ToStringHelper.toString(method), r);
             }
             return r;
+        }
+
+        private void addStatusCounterToMap(Method method, StatsCounter statsCounter) {
+            ConcurrentLinkedQueue<StatsCounter> queue = statsCounterMap.get(method);
+            if (queue == null) {
+                queue = new ConcurrentLinkedQueue<StatsCounter>();
+                ConcurrentLinkedQueue<StatsCounter> old = statsCounterMap.putIfAbsent(method, queue);
+                if (old != null) { // 已经存在，就用老的，这样能保证单例
+                    queue = old;
+                }
+            }
+            queue.add(statsCounter);
         }
 
     }

@@ -32,6 +32,15 @@ public class MethodStats {
     private final long totalExecuteTime;
     private final long evictionCount;
 
+    public MethodStats() {
+        hitCount = 0;
+        missCount = 0;
+        executeSuccessCount = 0;
+        executeExceptionCount = 0;
+        totalExecuteTime = 0;
+        evictionCount = 0;
+    }
+
     public MethodStats(long hitCount, long missCount, long executeSuccessCount, long executeExceptionCount,
                        long totalExecuteTime, long evictionCount) {
         this.hitCount = hitCount;
@@ -130,11 +139,11 @@ public class MethodStats {
     /**
      * 返回平均每次db执行时间，单位为纳秒
      */
-    public double averageExecutePenalty() {
+    public long averageExecutePenalty() {
         long totalExecuteCount = executeSuccessCount + executeExceptionCount;
         return (totalExecuteCount == 0)
-                ? 0.0
-                : (double) totalExecuteTime / totalExecuteCount;
+                ? 0
+                : totalExecuteTime / totalExecuteCount;
     }
 
     /**
@@ -143,6 +152,17 @@ public class MethodStats {
     public long evictionCount() {
         return evictionCount;
     }
+
+    public MethodStats plus(MethodStats other) {
+        return new MethodStats(
+                hitCount + other.hitCount,
+                missCount + other.missCount,
+                executeSuccessCount + other.executeSuccessCount,
+                executeExceptionCount + other.executeExceptionCount,
+                totalExecuteTime + other.totalExecuteTime,
+                evictionCount + other.evictionCount);
+    }
+
 
     @Override
     public boolean equals(@Nullable Object object) {
