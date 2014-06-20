@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
  */
 public class MethodStats {
 
+    private final long initCount;
+    private final long totalInitTime;
     private final long hitCount;
     private final long missCount;
     private final long executeSuccessCount;
@@ -33,6 +35,8 @@ public class MethodStats {
     private final long evictionCount;
 
     public MethodStats() {
+        initCount = 0;
+        totalInitTime = 0;
         hitCount = 0;
         missCount = 0;
         executeSuccessCount = 0;
@@ -41,14 +45,40 @@ public class MethodStats {
         evictionCount = 0;
     }
 
-    public MethodStats(long hitCount, long missCount, long executeSuccessCount, long executeExceptionCount,
+    public MethodStats(long initCount, long totalInitTime, long hitCount, long missCount,
+                       long executeSuccessCount, long executeExceptionCount,
                        long totalExecuteTime, long evictionCount) {
+        this.initCount = initCount;
+        this.totalInitTime = totalInitTime;
         this.hitCount = hitCount;
         this.missCount = missCount;
         this.executeSuccessCount = executeSuccessCount;
         this.executeExceptionCount = executeExceptionCount;
         this.totalExecuteTime = totalExecuteTime;
         this.evictionCount = evictionCount;
+    }
+
+    /**
+     * 返回平均初始化时间，单位为纳秒
+     */
+    public long averageInitPenalty() {
+        return (initCount == 0)
+                ? 0
+                : totalInitTime / initCount;
+    }
+
+    /**
+     * 初始化次数
+     */
+    public long initCount() {
+        return initCount;
+    }
+
+    /**
+     * 初始化总时间，单位为纳秒
+     */
+    public long totalInitTime() {
+        return totalInitTime;
     }
 
     /**
@@ -155,6 +185,8 @@ public class MethodStats {
 
     public MethodStats plus(MethodStats other) {
         return new MethodStats(
+                initCount + other.initCount,
+                totalInitTime + other.totalInitTime,
                 hitCount + other.hitCount,
                 missCount + other.missCount,
                 executeSuccessCount + other.executeSuccessCount,
@@ -181,8 +213,10 @@ public class MethodStats {
     @Override
     public String toString() {
         return String.format("{averageExecutePenalty=%s, executeSuccessCount=%s, executeExceptionCount=%s, " +
-                "totalExecuteTime=%s, hitCount=%s, missCount=%s, evictionCount=%s}",
+                "totalExecuteTime=%s, hitCount=%s, missCount=%s, evictionCount=%s, " +
+                "averageInitPenalty=%s, initCount=%s, totalInitTime=%s}",
                 averageExecutePenalty(), executeSuccessCount, executeExceptionCount,
-                totalExecuteTime, hitCount, missCount, evictionCount);
+                totalExecuteTime, hitCount, missCount, evictionCount,
+                averageInitPenalty(), initCount, totalInitTime);
     }
 }

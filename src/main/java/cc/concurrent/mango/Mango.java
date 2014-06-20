@@ -122,10 +122,13 @@ public class Mango {
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
                 new CacheLoader<Method, Operator>() {
                     public CacheableOperator load(Method method) throws Exception {
+                        StatsCounter statsCounter = getStatusCounter(method);
+                        long now = System.nanoTime();
                         CacheableOperator operator = OperatorFactory.getOperator(method);
+                        statsCounter.recordInit(System.nanoTime() - now);
                         operator.setDataSourceFactory(dataSourceFactory);
                         operator.setCacheHandler(cacheHandler);
-                        operator.setStatsCounter(getStatusCounter(method));
+                        operator.setStatsCounter(statsCounter);
                         return operator;
                     }
                 });

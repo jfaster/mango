@@ -23,6 +23,8 @@ import cc.concurrent.mango.MethodStats;
  */
 public interface StatsCounter {
 
+    public void recordInit(long initTime);
+
     public void recordHits(int count);
 
     public void recordMisses(int count);
