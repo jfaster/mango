@@ -42,6 +42,14 @@
     </developers>
 
     <dependencies>
+        <!-- spring插件 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>4.0.5.RELEASE</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- findbug相关 -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -99,6 +107,7 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.29</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
