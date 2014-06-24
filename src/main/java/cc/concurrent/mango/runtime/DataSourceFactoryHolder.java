@@ -14,22 +14,27 @@
  * under the License.
  */
 
-package cc.concurrent.mango.runtime.operator;
+package cc.concurrent.mango.runtime;
 
-
-import cc.concurrent.mango.runtime.DataSourceFactoryHolder;
+import cc.concurrent.mango.DataSourceFactory;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public class DataSourceFactoryHolder {
 
-    public void setDataSourceFactoryHolder(DataSourceFactoryHolder dataSourceFactoryHolder);
+    private volatile DataSourceFactory dataSourceFactory;
 
-    public void setStatsCounter(StatsCounter statsCounter);
+    public DataSourceFactoryHolder(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
+    }
 
-    public Object execute(Object[] methodArgs);
+    public DataSourceFactory get() {
+        return dataSourceFactory;
+    }
+
+    public void set(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
+    }
 
 }

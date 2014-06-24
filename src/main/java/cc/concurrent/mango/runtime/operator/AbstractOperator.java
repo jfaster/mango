@@ -46,7 +46,7 @@ public abstract class AbstractOperator implements Operator {
     /**
      * 数据源工厂，通过{@link this#setDataSourceFactory(cc.concurrent.mango.DataSourceFactory)}初始化
      */
-    private DataSourceFactory dataSourceFactory;
+    private DataSourceFactoryHolder dataSourceFactoryHolder;
 
     /**
      * 统计信息，通过{@link this#setStatsCounter(StatsCounter)}初始化
@@ -99,8 +99,8 @@ public abstract class AbstractOperator implements Operator {
     }
 
     @Override
-    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
+    public void setDataSourceFactoryHolder(DataSourceFactoryHolder dataSourceFactoryHolder) {
+        this.dataSourceFactoryHolder = dataSourceFactoryHolder;
     }
 
     @Override
@@ -120,6 +120,7 @@ public abstract class AbstractOperator implements Operator {
     }
 
     protected DataSource getDataSource() {
+        final DataSourceFactory dataSourceFactory = dataSourceFactoryHolder.get();
         return dataSourceFactory.getDataSource(dataSourceName, sqlType);
     }
 
