@@ -19,41 +19,22 @@ package cc.concurrent.mango;
 import java.lang.annotation.*;
 
 /**
- * 修饰DAO接口，只有使用此注解修饰的DAO接口，才能被mango识别
+ * 用此注解修饰的方法参数或参数中的某个属性将被作为参数传入
+ * {@link TablePartition#getPartitionedTable(String, Object)}中
  *
  * @author ash
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface DB {
+public @interface ShardBy {
 
     /**
-     * 使用数据源，只有在使用{@link MultipleDataSourceFactory}时，dataSource的值才有意义。
+     * 如果value等于""，直接取被修饰的参数<br>
+     * 如果value不等于""，取被修饰参数的value属性
      *
      * @return
      */
-    String dataSource() default "";
-
-    /**
-     * 全局表名，在{@link SQL}的字符串参数，可以通过${:table}的方式引用此全局表名。
-     *
-     * @return
-     */
-    String table() default "";
-
-    /**
-     * 分表
-     *
-     * @return
-     */
-    Class<? extends TablePartition> tablePartition() default IgnoreTablePartition.class;
-
-    /**
-     * 数据源路由
-     *
-     * @return
-     */
-    Class<? extends DataSourceRouter> dataSourceRouter() default IgnoreDataSourceRouter.class;
+    String value() default "";
 
 }
