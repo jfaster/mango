@@ -35,6 +35,7 @@ import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.BeanInfoCache;
 import cc.concurrent.mango.util.reflect.BeanUtil;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -176,6 +177,7 @@ public class QueryOperator extends CacheableOperator {
     }
 
     private Object executeFromDb(RuntimeContext context) {
+        DataSource ds = getDataSource(context);
         String sql = rootNode.getSql(context);
         Object[] args = rootNode.getArgs(context);
         Object r;
@@ -183,13 +185,13 @@ public class QueryOperator extends CacheableOperator {
         long now = System.nanoTime();
         try {
             if (isForList) {
-                r = jdbcTemplate.queryForList(getDataSource(), sql, args, rowMapper);
+                r = jdbcTemplate.queryForList(ds, sql, args, rowMapper);
             } else if (isForSet) {
-                r = jdbcTemplate.queryForSet(getDataSource(), sql, args, rowMapper);
+                r = jdbcTemplate.queryForSet(ds, sql, args, rowMapper);
             } else if (isForArray) {
-                r= jdbcTemplate.queryForArray(getDataSource(), sql, args, rowMapper);
+                r= jdbcTemplate.queryForArray(ds, sql, args, rowMapper);
             } else {
-                r = jdbcTemplate.queryForObject(getDataSource(), sql, args, rowMapper);
+                r = jdbcTemplate.queryForObject(ds, sql, args, rowMapper);
             }
             success = true;
         } finally {

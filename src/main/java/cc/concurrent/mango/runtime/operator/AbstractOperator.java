@@ -16,13 +16,13 @@
 
 package cc.concurrent.mango.runtime.operator;
 
-import cc.concurrent.mango.DB;
-import cc.concurrent.mango.DataSourceFactory;
-import cc.concurrent.mango.Rename;
+import cc.concurrent.mango.*;
 import cc.concurrent.mango.jdbc.JdbcTemplate;
 import cc.concurrent.mango.runtime.*;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Strings;
+import cc.concurrent.mango.util.TypeToken;
+import cc.concurrent.mango.util.reflect.Reflection;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
@@ -62,6 +62,27 @@ public abstract class AbstractOperator implements Operator {
      * 全局表名称
      */
     private String tableName;
+
+    /**
+     * 分表
+     */
+    private TablePartition tablePartition;
+
+    /**
+     * 数据源路由
+     */
+    private DataSourceRouter dataSourceRouter;
+
+    /**
+     * shardBy参数名
+     */
+    private String shardParameterName;
+
+    /**
+     * shardBy属性路径
+     */
+    private String shardPropertyPath;
+
 
     /**
      * 根节点信息
@@ -119,9 +140,27 @@ public abstract class AbstractOperator implements Operator {
         return new RuntimeContextImpl(parameters);
     }
 
-    protected DataSource getDataSource() {
+    protected DataSource getDataSource(RuntimeContext context) {
+        return getDataSource(getDataSourceName(context));
+    }
+
+    protected DataSource getDataSource(String dsn) {
         final DataSourceFactory dataSourceFactory = dataSourceFactoryHolder.get();
-        return dataSourceFactory.getDataSource(dataSourceName, sqlType);
+        DataSource ds = dataSourceFactory.getDataSource(dsn, sqlType);
+        if (ds == null) {
+            throw new RuntimeException(); // TODO
+        }
+        return ds;
+    }
+
+    protected String getDataSourceName(RuntimeContext context) {
+        String dsn = dataSourceRouter != null ?
+                dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardPropertyPath)) :
+                dataSourceName;
+        if (Strings.isNullOrEmpty(dsn)) {
+            throw new RuntimeException(); // TODO
+        }
+        return dsn;
     }
 
     protected String getParameterNameByIndex(int index) {
@@ -134,7 +173,47 @@ public abstract class AbstractOperator implements Operator {
     }
 
     private void init() {
-        // 构建别名
+        dbConfig();
+        alias();
+        shardBy();
+        buildTypeContext();
+        rootNode.checkType(typeContext); // 检测sql中的参数是否和方法上的参数匹配
+    }
+
+    /**
+     * 配置db信息
+     */
+    private void dbConfig() {
+        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+        if (dbAnno == null) {
+            throw new RuntimeException(); // TODO
+        }
+        dataSourceName = dbAnno.dataSource();
+        if (!Strings.isNullOrEmpty(dbAnno.table())) {
+            tableName = dbAnno.table();
+        }
+        Class<? extends TablePartition> tpc = dbAnno.tablePartition();
+        if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
+            tablePartition = Reflection.instantiate(tpc);
+        }
+        Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
+        if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
+            dataSourceRouter = Reflection.instantiate(dsrc);
+        }
+
+        if (tablePartition != null && tableName == null) { // 使用了分表但没有使用全局表名则抛出异常
+            throw new RuntimeException(); // TODO
+        }
+
+        if (dataSourceRouter != null && tablePartition == null) { // 使用了数据源路由但没有使用分表则抛出异常
+            throw new RuntimeException(); // TODO
+        }
+    }
+
+    /**
+     * 构建别名
+     */
+    private void alias() {
         Annotation[][] pass = method.getParameterAnnotations();
         aliases = new String[pass.length];
         for (int i = 0; i < pass.length; i++) {
@@ -145,22 +224,42 @@ public abstract class AbstractOperator implements Operator {
                 }
             }
         }
-
-        // 数据源与表信息
-        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
-        if (dbAnno != null) {
-            dataSourceName = dbAnno.dataSource();
-            tableName = dbAnno.table();
-        }
-
-        // 类型上下文
-        typeContext = buildTypeContext(method);
-
-        // 检测sql中的参数是否和方法上的参数匹配
-        rootNode.checkType(typeContext);
     }
 
-    private TypeContext buildTypeContext(Method method) {
+    /**
+     * 提取{@link ShardBy}参数
+     */
+    private void shardBy() {
+        Annotation[][] pass = method.getParameterAnnotations();
+        int num = 0;
+        for (int i = 0; i < pass.length; i++) {
+            Annotation[] pas = pass[i];
+            for (Annotation pa : pas) {
+                if (ShardBy.class.equals(pa.annotationType())) {
+                    shardParameterName = getParameterNameByIndex(i);
+                    shardPropertyPath = ((ShardBy) pa).value();
+                    num++;
+                }
+            }
+        }
+        if (tablePartition != null && num != 1) {
+            throw new RuntimeException(); // TODO
+        }
+
+        Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
+        TypeToken typeToken = new TypeToken(shardType);
+        if (typeToken.isIterable()) {
+            throw new RuntimeException(); //TODO
+        }
+    }
+
+    /**
+     * 构建类型上下文
+     *
+     * @param method
+     * @return
+     */
+    private void buildTypeContext() {
         Type[] methodArgTypes = getMethodArgTypes(method);
         Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
         if (!Strings.isNullOrEmpty(tableName)) { // 在@DB中设置过全局表名
@@ -169,7 +268,7 @@ public abstract class AbstractOperator implements Operator {
         for (int i = 0; i < methodArgTypes.length; i++) {
             parameterTypeMap.put(getParameterNameByIndex(i), methodArgTypes[i]);
         }
-        return new TypeContextImpl(parameterTypeMap);
+        typeContext = new TypeContextImpl(parameterTypeMap);
     }
 
     protected void dbInitPostProcessor() {

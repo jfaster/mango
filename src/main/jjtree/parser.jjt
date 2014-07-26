@@ -47,10 +47,11 @@ TOKEN:
 {
 
         <BLANK: (" ")+ >
+    |   <TABLE: "#table" >
     |   <NON_ITERABLE_PARAMETER: <PARAMETER> >
     |   <IN_START: "in" (" ")* "(" > {SwitchTo(I);}
     |   <EXPR_START: "${" > {SwitchTo(G);}
-    |   <TEXT: (~[":", "$", " "])+ >
+    |   <TEXT: (~[":", "$", "#", " "])+ >
 }
 
 <I>
@@ -97,6 +98,14 @@ ASTRootNode parse()  #RootNode :
         return jjtThis;
     }
 }
+
+void Table() :
+{
+}
+{
+    <TABLE>
+}
+
 
 void IterableParameter() :
 {

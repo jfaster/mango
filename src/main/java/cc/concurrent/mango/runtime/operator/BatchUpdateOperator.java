@@ -25,12 +25,10 @@ import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Iterables;
 import cc.concurrent.mango.util.TypeToken;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ash
@@ -82,30 +80,43 @@ public class BatchUpdateOperator extends CacheableOperator {
         if (isUseCache()) {
             keys = new HashSet<String>(iterables.size() * 2);
         }
-        List<Object[]> batchArgs = new ArrayList<Object[]>(iterables.size());
-        List<String> sqls = new ArrayList<String>(iterables.size());
+
+        Map<String, Group> gorupMap = new HashMap<String, Group>();
         for (Object obj : iterables) {
             RuntimeContext context = buildRuntimeContext(new Object[]{obj});
             if (keys != null) { // 表示使用cache
                 keys.add(getCacheKey(context));
             }
-            batchArgs.add(rootNode.getArgs(context));
-            sqls.add(rootNode.getSql(context));
+            String dataSourceName = getDataSourceName(context);
+
+            Group group = gorupMap.get(dataSourceName);
+            if (group == null) {
+                group = new Group();
+                gorupMap.put(dataSourceName, group);
+            }
+            String sql = rootNode.getSql(context);
+            Object[] args = rootNode.getArgs(context);
+            group.add(sql, args);
         }
-        int[] ints = executeDb(sqls, batchArgs);
+        int[] ints = executeDb(gorupMap);
         if (keys != null) { // 表示使用cache
             deleteFromCache(keys);
         }
         return ints;
     }
 
-    private int[] executeDb(List<String> sqls, List<Object[]> batchArgs) {
+    private int[] executeDb(Map<String, Group> gorupMap) {
         int[] ints = null;
         long now = System.nanoTime();
         try {
-            ints = isUniqueSql(sqls) ?
-                    jdbcTemplate.batchUpdate(getDataSource(), sqls.get(0), batchArgs) :
-                    jdbcTemplate.batchUpdate(getDataSource(), sqls, batchArgs);
+            for (Map.Entry<String, Group> entry : gorupMap.entrySet()) {
+                DataSource ds = getDataSource(entry.getKey());
+                List<String> sqls = entry.getValue().getSqls();
+                List<Object[]> batchArgs = entry.getValue().getBatchArgs();
+                ints = isUniqueSql(sqls) ?
+                        jdbcTemplate.batchUpdate(ds, sqls.get(0), batchArgs) :
+                        jdbcTemplate.batchUpdate(ds, sqls, batchArgs);
+            }
         } finally {
             long cost = System.nanoTime() - now;
             if (ints != null) {
@@ -128,5 +139,24 @@ public class BatchUpdateOperator extends CacheableOperator {
         }
         return r;
     }
+
+    private static class Group {
+        private List<String> sqls = new LinkedList<String>();
+        private List<Object[]> batchArgs = new LinkedList<Object[]>();
+
+        public void add(String sql, Object[] args) {
+            sqls.add(sql);
+            batchArgs.add(args);
+        }
+
+        public List<String> getSqls() {
+            return sqls;
+        }
+
+        public List<Object[]> getBatchArgs() {
+            return batchArgs;
+        }
+    }
+
 
 }

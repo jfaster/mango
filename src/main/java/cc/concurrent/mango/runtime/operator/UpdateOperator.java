@@ -26,6 +26,7 @@ import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.logging.InternalLogger;
 import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -79,9 +80,10 @@ public class UpdateOperator extends CacheableOperator {
     @Override
     public Object execute(Object[] methodArgs) {
         RuntimeContext context = buildRuntimeContext(methodArgs);
+        DataSource ds = getDataSource(context);
         String sql = rootNode.getSql(context);
         Object[] args = rootNode.getArgs(context);
-        Number r = executeDb(sql, args);
+        Number r = executeDb(ds, sql, args);
         if (isUseCache()) { // 如果使用cache，更新后需要从cache中删除对应的key或keys
             if (isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
                 Set<String> keys = getCacheKeys(context);
@@ -100,16 +102,16 @@ public class UpdateOperator extends CacheableOperator {
         return r;
     }
 
-    private Number executeDb(String sql, Object[] args) {
+    private Number executeDb(DataSource ds, String sql, Object[] args) {
         Number r = null;
         long now = System.nanoTime();
         try {
             if (returnGeneratedId) {
                 GeneratedKeyHolder holder = new GeneratedKeyHolder(returnType);
-                jdbcTemplate.update(getDataSource(), sql, args, holder);
+                jdbcTemplate.update(ds, sql, args, holder);
                 r = holder.getKey();
             } else {
-                r = jdbcTemplate.update(getDataSource(), sql, args);
+                r = jdbcTemplate.update(ds, sql, args);
             }
         } finally {
             long cost = System.nanoTime() - now;
