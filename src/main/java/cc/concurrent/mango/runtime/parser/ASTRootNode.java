@@ -17,11 +17,13 @@
 package cc.concurrent.mango.runtime.parser;
 
 
+import cc.concurrent.mango.TablePartition;
 import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
 import cc.concurrent.mango.util.Iterables;
 
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,17 +55,9 @@ public class ASTRootNode extends AbstractNode {
     private List<ValuableParameter> valuableParameters = new LinkedList<ValuableParameter>();
 
     /**
-     * 动态节点数量，{@link ASTIterableParameter}和{@link ASTExpression}
+     * table节点，最多只能有1个
      */
-    private int dynamicNodeNum = 0;
-
-
-
-
-    /**
-     * 会影响sql的节点
-     */
-    private List<ValuableNode> impactSqlNodes = new LinkedList<ValuableNode>();
+    private ASTTable tableNode;
 
     public ASTRootNode(int i) {
         super(i);
@@ -77,9 +71,63 @@ public class ASTRootNode extends AbstractNode {
      * 预处理
      */
     public ASTRootNode preprocessing() {
-        init();
-        tryBuildSql();
+        int num = jjtGetNumChildren();
+        int i = 0;
+        AbstractNode prev = null;
+        while (i < num) {
+            AbstractNode node = (AbstractNode) jjtGetChild(i);
+            if (prev == null) {
+                head = node;
+            } else {
+                prev.next = node;
+            }
+            prev = node;
+            handleNode(node);
+            if (node instanceof ASTString) {
+                StringBuffer sb = new StringBuffer();
+                while (node instanceof ASTString) {
+                    ASTString str = (ASTString) node;
+                    sb.append(str.getValue());
+                    i++;
+                    if (i == num) {
+                        break;
+                    }
+                    node = (AbstractNode) jjtGetChild(i);
+                }
+                ((ASTString) prev).setGroupValue(sb.toString());
+            } else {
+                i++;
+            }
+        }
         return this;
+    }
+
+    /**
+     * 初始化
+     */
+    public void init(@Nullable String table,
+                                @Nullable TablePartition tablePartition,
+                                @Nullable String shardParameterName,
+                                @Nullable String shardPropertyPath) {
+        if (tableNode != null && table == null) {
+            throw new RuntimeException(); // TODO
+        }
+        if (tableNode == null && table != null) {
+            throw new RuntimeException(); // TODO
+        }
+        if (tableNode != null) {
+            if ((tablePartition == null && shardParameterName == null && shardPropertyPath == null)
+                    || (tablePartition != null && shardParameterName != null && shardPropertyPath != null)) {
+                tableNode.setTable(table);
+                tableNode.setTablePartition(tablePartition);
+                tableNode.setShardParameterName(shardParameterName);
+                tableNode.setShardPpropertyPath(shardPropertyPath);
+            } else {
+                throw new UnreachableCodeException();
+            }
+        }
+
+        tryBuildSql();
     }
 
     /**
@@ -155,6 +203,13 @@ public class ASTRootNode extends AbstractNode {
                 sql.append(sb).append(")");
             } else if (node instanceof ASTExpression) {
                 sql.append(((ASTExpression) node).value(context));
+            } else if (node instanceof ASTTable) {
+                ASTTable t = (ASTTable) node;
+                if (t.needTablePartition()) {
+                    sql.append(t.getTable(context));
+                } else {
+                    sql.append(t.getTable());
+                }
             } else {
                 throw new UnreachableCodeException();
             }
@@ -194,49 +249,18 @@ public class ASTRootNode extends AbstractNode {
         return args.toArray();
     }
 
-    /**
-     * 初始化
-     */
-    private void init() {
-        int num = jjtGetNumChildren();
-        int i = 0;
-        AbstractNode prev = null;
-        while (i < num) {
-            AbstractNode node = (AbstractNode) jjtGetChild(i);
-            if (prev == null) {
-                head = node;
-            } else {
-                prev.next = node;
-            }
-            prev = node;
-            appendNode(node);
-            if (node instanceof ASTString) {
-                StringBuffer sb = new StringBuffer();
-                while (node instanceof ASTString) {
-                    ASTString str = (ASTString) node;
-                    sb.append(str.getValue());
-                    i++;
-                    if (i == num) {
-                        break;
-                    }
-                    node = (AbstractNode) jjtGetChild(i);
-                }
-                ((ASTString) prev).setGroupValue(sb.toString());
-            } else {
-                i++;
-            }
-        }
-    }
-
-    private void appendNode(AbstractNode node) {
+    private void handleNode(AbstractNode node) {
         if (node instanceof ASTIterableParameter) {
             iterableParameters.add((ASTIterableParameter) node);
         }
         if (node instanceof ValuableParameter) {
             valuableParameters.add((ValuableParameter) node);
         }
-        if (node instanceof ASTIterableParameter || node instanceof ASTExpression) {
-            impactSqlNodes.add((ValuableNode) node);
+        if (node instanceof ASTTable) {
+            if (tableNode != null) {
+                throw new RuntimeException(); // TODO
+            }
+            tableNode = (ASTTable) node;
         }
     }
 
@@ -244,20 +268,31 @@ public class ASTRootNode extends AbstractNode {
      * 尝试构建sql
      */
     private void tryBuildSql() {
-        if (impactSqlNodes.size() == 0) {
-            StringBuffer sb = new StringBuffer();
-            AbstractNode node = head;
-            while (node != null) {
-                if (node instanceof ASTString) {
-                    ASTString str = (ASTString) node;
-                    sb.append(str.getGroupValue());
-                } else if (node instanceof ASTNonIterableParameter) {
-                    sb.append("?");
+        StringBuffer sb = new StringBuffer();
+        AbstractNode node = head;
+        boolean fail = false;
+        while (node != null) {
+            if (node instanceof ASTString) {
+                ASTString str = (ASTString) node;
+                sb.append(str.getGroupValue());
+            } else if (node instanceof ASTNonIterableParameter) {
+                sb.append("?");
+            } else if (node instanceof ASTTable) {
+                ASTTable t = (ASTTable) node;
+                if (!t.needTablePartition()) {
+                    sb.append(t.getTable());
                 } else {
-                    throw new UnreachableCodeException();
+                    fail = true;
                 }
-                node = node.next;
+            } else {
+                fail = true;
             }
+            if (fail) {
+                break;
+            }
+            node = node.next;
+        }
+        if (!fail) {
             staticSql = sb.toString();
         }
     }

@@ -29,8 +29,4 @@ public abstract class ValuableExpression extends ValuableNode {
         super(p, i);
     }
 
-    @Override
-    boolean isDynamicNode() {
-        return true;
-    }
 }

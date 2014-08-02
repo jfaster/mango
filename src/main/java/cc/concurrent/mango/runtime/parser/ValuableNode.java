@@ -48,13 +48,6 @@ public abstract class ValuableNode extends AbstractNode {
     abstract void checkType(TypeContext context);
 
     /**
-     * 是否是动态节点。所谓动态节点是指：由该节点生成的sql片段需要由运行时参数确定
-     *
-     * @return
-     */
-    abstract boolean isDynamicNode();
-
-    /**
      * 获得语法块最开始的token
      *
      * @return

@@ -19,15 +19,13 @@ package cc.concurrent.mango.runtime.parser;
 import cc.concurrent.mango.TablePartition;
 import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
-import cc.concurrent.mango.runtime.TypeContext;
-import cc.concurrent.mango.util.TypeToken;
 
-import java.lang.reflect.Type;
+import javax.annotation.Nullable;
 
 /**
  * @author ash
  */
-public class ASTTable extends ValuableNode {
+public class ASTTable extends AbstractNode {
 
     private String table; // 原始表名称
 
@@ -43,62 +41,38 @@ public class ASTTable extends ValuableNode {
         super(p, i);
     }
 
-    String value() {
-        if (isDynamicNode()) {
+    String getTable() {
+        if (needTablePartition()) {
             throw new UnreachableCodeException();
         }
         return table;
     }
 
-    @Override
-    Object value(RuntimeContext context) {
-        if (!isDynamicNode()) {
+    String getTable(RuntimeContext context) {
+        if (!needTablePartition()) {
             throw new UnreachableCodeException();
         }
         Object shardParam = context.getPropertyValue(shardParameterName, shardPpropertyPath);
         return tablePartition.getPartitionedTable(table, shardParam);
     }
 
-    @Override
-    void checkType(TypeContext context) {
-        if (isDynamicNode()) {
-            Type type = context.getPropertyType(shardParameterName, shardPpropertyPath);
-            TypeToken typeToken = new TypeToken(type);
-            Class<?> mappedClass = typeToken.getMappedClass();
-            if (mappedClass == null || typeToken.isIterable()) {
-                throw new RuntimeException(); // TODO
-            }
-        }
-    }
-
-    @Override
-    boolean isDynamicNode() {
+    boolean needTablePartition() {
         return tablePartition != null && shardParameterName != null && shardPpropertyPath != null;
-    }
-
-    @Override
-    Token getFirstToken() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    Token getLastToken() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setTable(String table) {
         this.table = table;
     }
 
-    public void setShardParameterName(String shardParameterName) {
+    public void setShardParameterName(@Nullable String shardParameterName) {
         this.shardParameterName = shardParameterName;
     }
 
-    public void setShardPpropertyPath(String shardPpropertyPath) {
+    public void setShardPpropertyPath(@Nullable String shardPpropertyPath) {
         this.shardPpropertyPath = shardPpropertyPath;
     }
 
-    public void setTablePartition(TablePartition tablePartition) {
+    public void setTablePartition(@Nullable TablePartition tablePartition) {
         this.tablePartition = tablePartition;
     }
 }

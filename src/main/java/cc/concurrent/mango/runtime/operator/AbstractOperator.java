@@ -61,7 +61,7 @@ public abstract class AbstractOperator implements Operator {
     /**
      * 全局表名称
      */
-    private String tableName;
+    private String table;
 
     /**
      * 分表
@@ -171,9 +171,10 @@ public abstract class AbstractOperator implements Operator {
     }
 
     private void init() {
+        configDb();
         alias();
         shardBy();
-        configDb();
+
 
         rootNode.checkType(getTypeContext()); // 检测sql中的参数是否和方法上的参数匹配
     }
@@ -216,8 +217,9 @@ public abstract class AbstractOperator implements Operator {
 
         Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
         TypeToken typeToken = new TypeToken(shardType);
-        if (typeToken.isIterable()) {
-            throw new RuntimeException(); //TODO
+        Class<?> mappedClass = typeToken.getMappedClass();
+        if (mappedClass == null || typeToken.isIterable()) {
+            throw new RuntimeException(); // TODO
         }
     }
 
@@ -231,7 +233,7 @@ public abstract class AbstractOperator implements Operator {
         }
         dataSourceName = dbAnno.dataSource();
         if (!Strings.isNullOrEmpty(dbAnno.table())) {
-            tableName = dbAnno.table();
+            table = dbAnno.table();
         }
         Class<? extends TablePartition> tpc = dbAnno.tablePartition();
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
@@ -242,7 +244,7 @@ public abstract class AbstractOperator implements Operator {
             dataSourceRouter = Reflection.instantiate(dsrc);
         }
 
-        if (tablePartition != null && tableName == null) { // 使用了分表但没有使用全局表名则抛出异常
+        if (tablePartition != null && table == null) { // 使用了分表但没有使用全局表名则抛出异常
             throw new RuntimeException(); // TODO
         }
 
