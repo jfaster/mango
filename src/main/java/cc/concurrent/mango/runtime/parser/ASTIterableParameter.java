@@ -84,6 +84,11 @@ public class ASTIterableParameter extends ValuableParameter {
     }
 
     @Override
+    boolean isDynamicNode() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return interableProperty + " in (" + fullName + ")";
     }

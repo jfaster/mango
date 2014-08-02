@@ -28,10 +28,10 @@ public interface TablePartition {
      *
      * @param table
      *          取{@link DB#table()}中的值
-     * @param shardByParam
+     * @param shardParam
      *          取{@link ShardBy}修饰的参数
      * @return
      */
-    public String getPartitionedTable(String table, Object shardByParam);
+    public String getPartitionedTable(String table, Object shardParam);
 
 }

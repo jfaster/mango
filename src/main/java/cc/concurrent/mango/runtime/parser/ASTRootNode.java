@@ -38,9 +38,9 @@ public class ASTRootNode extends AbstractNode {
     private AbstractNode head;
 
     /**
-     * 给{@link java.sql.PreparedStatement}使用的sql
+     * 静态sql，不需要根据运行时参数动态生成。给{@link java.sql.PreparedStatement}使用
      */
-    private String sql;
+    private String staticSql;
 
     /**
      * 可遍历的参数
@@ -51,6 +51,14 @@ public class ASTRootNode extends AbstractNode {
      * 可得到值的参数
      */
     private List<ValuableParameter> valuableParameters = new LinkedList<ValuableParameter>();
+
+    /**
+     * 动态节点数量，{@link ASTIterableParameter}和{@link ASTExpression}
+     */
+    private int dynamicNodeNum = 0;
+
+
+
 
     /**
      * 会影响sql的节点
@@ -114,8 +122,8 @@ public class ASTRootNode extends AbstractNode {
      * @return
      */
     public String getSql(RuntimeContext context) {
-        if (sql != null) {
-            return sql;
+        if (staticSql != null) {
+            return staticSql;
         }
         StringBuffer sql = new StringBuffer();
         AbstractNode node = head;
@@ -250,7 +258,7 @@ public class ASTRootNode extends AbstractNode {
                 }
                 node = node.next;
             }
-            sql = sb.toString();
+            staticSql = sb.toString();
         }
     }
 

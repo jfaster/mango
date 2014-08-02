@@ -57,10 +57,10 @@ public class QueryOperator extends CacheableOperator {
 
     public QueryOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         super(rootNode, method, sqlType);
-        init(rootNode, method);
+        init();
     }
 
-    private void init(ASTRootNode rootNode, Method method) {
+    private void init() {
         TypeToken typeToken = new TypeToken(method.getGenericReturnType());
         isForList = typeToken.isList();
         isForSet = typeToken.isSet();

@@ -23,6 +23,6 @@ package cc.concurrent.mango;
  */
 public interface DataSourceRouter {
 
-    public String getDataSourceName(Object shardByParam);
+    public String getDataSourceName(Object shardParam);
 
 }

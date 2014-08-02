@@ -34,6 +34,7 @@ public abstract class ValuableNode extends AbstractNode {
 
     /**
      * 节点值
+     *
      * @param context
      * @return
      */
@@ -41,24 +42,35 @@ public abstract class ValuableNode extends AbstractNode {
 
     /**
      * 检测节点类型是否合法
+     *
      * @param context
      */
     abstract void checkType(TypeContext context);
 
     /**
+     * 是否是动态节点。所谓动态节点是指：由该节点生成的sql片段需要由运行时参数确定
+     *
+     * @return
+     */
+    abstract boolean isDynamicNode();
+
+    /**
      * 获得语法块最开始的token
+     *
      * @return
      */
     abstract Token getFirstToken();
 
     /**
      * 获得语法块最末位的token
+     *
      * @return
      */
     abstract Token getLastToken();
 
     /**
      * 语法块字符串
+     *
      * @return
      */
     protected String literal() {

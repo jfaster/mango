@@ -109,8 +109,6 @@ public abstract class AbstractOperator implements Operator {
      */
     private String[] aliases;
 
-    private final static String TABLE = "table";
-
     protected AbstractOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         this.rootNode = rootNode;
         this.method = method;
@@ -131,9 +129,6 @@ public abstract class AbstractOperator implements Operator {
 
     protected RuntimeContext buildRuntimeContext(Object[] methodArgs) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        if (!Strings.isNullOrEmpty(tableName)) { // 在@DB中设置过全局表名
-            parameters.put(TABLE, tableName);
-        }
         for (int i = 0; i < methodArgs.length; i++) {
             parameters.put(getParameterNameByIndex(i), methodArgs[i]);
         }
@@ -169,45 +164,18 @@ public abstract class AbstractOperator implements Operator {
     }
 
     protected TypeContext getTypeContext() {
+        if (typeContext == null) {
+            typeContext = doGetTypeContext();
+        }
         return typeContext;
     }
 
     private void init() {
-        dbConfig();
         alias();
         shardBy();
-        buildTypeContext();
-        rootNode.checkType(typeContext); // 检测sql中的参数是否和方法上的参数匹配
-    }
+        configDb();
 
-    /**
-     * 配置db信息
-     */
-    private void dbConfig() {
-        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
-        if (dbAnno == null) {
-            throw new RuntimeException(); // TODO
-        }
-        dataSourceName = dbAnno.dataSource();
-        if (!Strings.isNullOrEmpty(dbAnno.table())) {
-            tableName = dbAnno.table();
-        }
-        Class<? extends TablePartition> tpc = dbAnno.tablePartition();
-        if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
-            tablePartition = Reflection.instantiate(tpc);
-        }
-        Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
-        if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
-            dataSourceRouter = Reflection.instantiate(dsrc);
-        }
-
-        if (tablePartition != null && tableName == null) { // 使用了分表但没有使用全局表名则抛出异常
-            throw new RuntimeException(); // TODO
-        }
-
-        if (dataSourceRouter != null && tablePartition == null) { // 使用了数据源路由但没有使用分表则抛出异常
-            throw new RuntimeException(); // TODO
-        }
+        rootNode.checkType(getTypeContext()); // 检测sql中的参数是否和方法上的参数匹配
     }
 
     /**
@@ -254,21 +222,47 @@ public abstract class AbstractOperator implements Operator {
     }
 
     /**
+     * 配置db信息
+     */
+    private void configDb() {
+        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+        if (dbAnno == null) {
+            throw new RuntimeException(); // TODO
+        }
+        dataSourceName = dbAnno.dataSource();
+        if (!Strings.isNullOrEmpty(dbAnno.table())) {
+            tableName = dbAnno.table();
+        }
+        Class<? extends TablePartition> tpc = dbAnno.tablePartition();
+        if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
+            tablePartition = Reflection.instantiate(tpc);
+        }
+        Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
+        if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
+            dataSourceRouter = Reflection.instantiate(dsrc);
+        }
+
+        if (tablePartition != null && tableName == null) { // 使用了分表但没有使用全局表名则抛出异常
+            throw new RuntimeException(); // TODO
+        }
+
+        if (dataSourceRouter != null && tablePartition == null) { // 使用了数据源路由但没有使用分表则抛出异常
+            throw new RuntimeException(); // TODO
+        }
+    }
+
+    /**
      * 构建类型上下文
      *
-     * @param method
      * @return
      */
-    private void buildTypeContext() {
+    private TypeContext doGetTypeContext() {
         Type[] methodArgTypes = getMethodArgTypes(method);
         Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
-        if (!Strings.isNullOrEmpty(tableName)) { // 在@DB中设置过全局表名
-            parameterTypeMap.put(TABLE, String.class);
-        }
         for (int i = 0; i < methodArgTypes.length; i++) {
             parameterTypeMap.put(getParameterNameByIndex(i), methodArgTypes[i]);
         }
-        typeContext = new TypeContextImpl(parameterTypeMap);
+        return new TypeContextImpl(parameterTypeMap);
     }
 
     protected void dbInitPostProcessor() {

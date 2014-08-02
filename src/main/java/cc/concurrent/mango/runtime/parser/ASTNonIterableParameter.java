@@ -69,6 +69,11 @@ public class ASTNonIterableParameter extends ValuableParameter {
     }
 
     @Override
+    boolean isDynamicNode() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return fullName;
     }
