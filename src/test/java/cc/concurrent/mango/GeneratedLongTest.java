@@ -56,11 +56,11 @@ public class GeneratedLongTest {
         assertThat(id2, equalTo(id + 1));
     }
 
-    @DB(table = "long_id_msg")
+    @DB()
     interface MsgDao {
 
         @ReturnGeneratedId
-        @SQL("insert into ${:table}(uid, content) values(:1, :2)")
+        @SQL("insert into long_id_msg(uid, content) values(:1, :2)")
         long insert(int uid, String content);
 
     }

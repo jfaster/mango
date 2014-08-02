@@ -68,9 +68,9 @@ public class ASTRootNode extends AbstractNode {
     }
 
     /**
-     * 预处理
+     * 简化节点
      */
-    public ASTRootNode preprocessing() {
+    public ASTRootNode reduce() {
         int num = jjtGetNumChildren();
         int i = 0;
         AbstractNode prev = null;
@@ -161,6 +161,10 @@ public class ASTRootNode extends AbstractNode {
      */
     public List<ValuableParameter> getValuableParameters() {
         return valuableParameters;
+    }
+
+    public String getStaticSql() {
+        return staticSql;
     }
 
     /**

@@ -21,9 +21,13 @@ import cc.concurrent.mango.jdbc.JdbcTemplate;
 import cc.concurrent.mango.runtime.*;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
 import cc.concurrent.mango.util.Strings;
+import cc.concurrent.mango.util.ToStringHelper;
 import cc.concurrent.mango.util.TypeToken;
+import cc.concurrent.mango.util.logging.InternalLogger;
+import cc.concurrent.mango.util.logging.InternalLoggerFactory;
 import cc.concurrent.mango.util.reflect.Reflection;
 
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -37,6 +41,8 @@ import java.util.Map;
  * @author ash
  */
 public abstract class AbstractOperator implements Operator {
+
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(AbstractOperator.class);
 
     /**
      * 用于对db进行操作
@@ -148,13 +154,11 @@ public abstract class AbstractOperator implements Operator {
         return ds;
     }
 
+    @Nullable
     protected String getDataSourceName(RuntimeContext context) {
         String dsn = dataSourceRouter != null ?
                 dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardPropertyPath)) :
                 dataSourceName;
-        if (Strings.isNullOrEmpty(dsn)) {
-            throw new RuntimeException(); // TODO
-        }
         return dsn;
     }
 
@@ -174,8 +178,15 @@ public abstract class AbstractOperator implements Operator {
         configDb();
         alias();
         shardBy();
-
-
+        rootNode.init(table, tablePartition, shardParameterName, shardPropertyPath);
+        if (logger.isInfoEnabled()) {
+            String staticSql = rootNode.getStaticSql();
+            if (staticSql != null) {
+                logger.info("{} build a static sql \"{}\"", ToStringHelper.toString(method), staticSql);
+            } else {
+                logger.info("{} can't build static sql", ToStringHelper.toString(method));
+            }
+        }
         rootNode.checkType(getTypeContext()); // 检测sql中的参数是否和方法上的参数匹配
     }
 
@@ -214,12 +225,13 @@ public abstract class AbstractOperator implements Operator {
         if (tablePartition != null && num != 1) {
             throw new RuntimeException(); // TODO
         }
-
-        Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
-        TypeToken typeToken = new TypeToken(shardType);
-        Class<?> mappedClass = typeToken.getMappedClass();
-        if (mappedClass == null || typeToken.isIterable()) {
-            throw new RuntimeException(); // TODO
+        if (num == 1) {
+            Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
+            TypeToken typeToken = new TypeToken(shardType);
+            Class<?> mappedClass = typeToken.getMappedClass();
+            if (mappedClass == null || typeToken.isIterable()) {
+                throw new RuntimeException(); // TODO
+            }
         }
     }
 

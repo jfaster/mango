@@ -368,7 +368,7 @@ public class MangoTest {
         return sb.toString();
     }
 
-    @DB(table = "user")
+    @DB()
     static interface UserDao {
 
         @SQL("select id from user where id = :1")
@@ -442,7 +442,7 @@ public class MangoTest {
                 "values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
         public int insertUser(User user);
 
-        @SQL("update ${:table} set name=:u.name, age=:u.age, gender=:u.gender, money=:u.money, update_time=:u.updateTime where id=:u.id")
+        @SQL("update user set name=:u.name, age=:u.age, gender=:u.gender, money=:u.money, update_time=:u.updateTime where id=:u.id")
         public int updateUser(@Rename("u") User user);
 
         @SQL("delete from user where id=:1")

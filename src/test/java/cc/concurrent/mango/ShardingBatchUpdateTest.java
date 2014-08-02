@@ -96,13 +96,13 @@ public class ShardingBatchUpdateTest {
         }
     }
 
-    @DB(table = "msg_")
+    @DB()
     interface MsgDao {
 
-        @SQL("insert into ${:table+:m.uid%10}(uid, content) values(:m.uid, :m.content)")
+        @SQL("insert into msg_${:m.uid%10}(uid, content) values(:m.uid, :m.content)")
         public int[] batchInsert(@Rename("m") List<Msg> msgs);
 
-        @SQL("select id, uid, content from ${:table+:1%10} where uid=:1")
+        @SQL("select id, uid, content from msg_${:1%10} where uid=:1")
         public List<Msg> getMsgsByUid(int uid);
 
     }

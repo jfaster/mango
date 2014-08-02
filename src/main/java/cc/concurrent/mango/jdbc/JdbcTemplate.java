@@ -86,9 +86,9 @@ public class JdbcTemplate {
 
             if (logger.isDebugEnabled()) {
                 if (r != null) { // 执行成功
-                    logger.debug("{} #args={} #result={}", sql, args, r);
+                    logger.debug("\"{}\" #args={} #result={}", sql, args, r);
                 } else {
-                    logger.debug("[error] {} #args={}", sql, args);
+                    logger.debug("[error] \"{}\" #args={}", sql, args);
                 }
             }
         }
@@ -115,9 +115,9 @@ public class JdbcTemplate {
                     debugBatchArgs.add(Arrays.asList(batchArg));
                 }
                 if (r != null) { // 执行成功
-                    logger.debug("{} #args={} #result={}", sql, debugBatchArgs, r);
+                    logger.debug("\"{}\" #args={} #result={}", sql, debugBatchArgs, r);
                 } else {
-                    logger.debug("[error] {} #args={}", sql, debugBatchArgs);
+                    logger.debug("[error] \"{}\" #args={}", sql, debugBatchArgs);
                 }
             }
         }
@@ -145,9 +145,9 @@ public class JdbcTemplate {
 
                     if (logger.isDebugEnabled()) {
                         if (success[i]) {
-                            logger.debug("{} #args={} #result={}", sql, args, r[i]);
+                            logger.debug("\"{}\" #args={} #result={}", sql, args, r[i]);
                         } else {
-                            logger.debug("[error] {} #args={}", sql, args);
+                            logger.debug("[error] \"{}\" #args={}", sql, args);
                         }
                     }
                 }
@@ -181,9 +181,9 @@ public class JdbcTemplate {
 
             if (logger.isDebugEnabled()) {
                 if (success) { // 执行成功
-                    logger.debug("{} #args={} #result={}", sql, args, r);
+                    logger.debug("\"{}\" #args={} #result={}", sql, args, r);
                 } else {
-                    logger.debug("[error] {} #args={}", sql, args);
+                    logger.debug("[error] \"{}\" #args={}", sql, args);
                 }
             }
         }
