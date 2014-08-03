@@ -64,7 +64,7 @@ public class GlobalTableTest {
         // 插入后数据一致
         List<Msg> dbMsgs = dao.getMsgs(ids);
         assertThat(dbMsgs, hasSize(msgs.size()));
-        assertThat(dbMsgs, contains(msgs.toArray()));
+        assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
 
         // 更新后数据一致
         Msg msg = msgs.get(0);
@@ -74,7 +74,7 @@ public class GlobalTableTest {
         dao.update(msg);
         dbMsgs = dao.getMsgs(ids);
         assertThat(dbMsgs, hasSize(msgs.size()));
-        assertThat(dbMsgs, contains(msgs.toArray()));
+        assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
 
         // 删除后数据一致
         dao.deleteMsgs(ids);
