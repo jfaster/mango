@@ -14,9 +14,9 @@
  * under the License.
  */
 
-package cc.concurrent.mango.model4table;
+package cc.concurrent.mango.support;
 
-import cc.concurrent.mango.Config;
+import cc.concurrent.mango.support.Config;
 import cc.concurrent.mango.MangoTest;
 import cc.concurrent.mango.util.ScriptRunner;
 

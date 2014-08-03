@@ -16,12 +16,12 @@
 
 package cc.concurrent.mango.exception;
 
-import cc.concurrent.mango.Config;
+import cc.concurrent.mango.support.Config;
 import cc.concurrent.mango.DB;
 import cc.concurrent.mango.Mango;
 import cc.concurrent.mango.SQL;
-import cc.concurrent.mango.model4table.Msg;
-import cc.concurrent.mango.model4table.Tables;
+import cc.concurrent.mango.support.model4table.Msg;
+import cc.concurrent.mango.support.Tables;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

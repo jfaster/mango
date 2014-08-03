@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package cc.concurrent.mango.model4table;
+package cc.concurrent.mango.support.model4table;
 
 import com.google.common.base.Objects;
 

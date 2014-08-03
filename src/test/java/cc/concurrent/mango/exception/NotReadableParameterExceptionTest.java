@@ -16,7 +16,7 @@
 
 package cc.concurrent.mango.exception;
 
-import cc.concurrent.mango.Config;
+import cc.concurrent.mango.support.Config;
 import cc.concurrent.mango.DB;
 import cc.concurrent.mango.Mango;
 import cc.concurrent.mango.SQL;

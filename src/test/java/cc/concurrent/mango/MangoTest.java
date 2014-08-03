@@ -16,8 +16,10 @@
 
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.model4table.Tables;
-import cc.concurrent.mango.model4table.User;
+import cc.concurrent.mango.support.Randoms;
+import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.model4table.User;
+import cc.concurrent.mango.support.Config;
 import com.google.common.primitives.Ints;
 import org.junit.Before;
 import org.junit.Test;
@@ -339,7 +341,7 @@ public class MangoTest {
 
     private User createRandomUser() {
         Random r = new Random();
-        String name = getRandomString(20);
+        String name = Randoms.randomString(20);
         int age = r.nextInt(200);
         boolean gender = r.nextBoolean();
         long money = r.nextInt(1000000);
@@ -354,18 +356,6 @@ public class MangoTest {
             users.add(createRandomUser());
         }
         return users;
-    }
-
-    private static String getRandomString(int maxLength) {
-        Random r = new Random();
-        int length = r.nextInt(maxLength);
-        StringBuffer buffer = new StringBuffer("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-        StringBuffer sb = new StringBuffer();
-        int range = buffer.length();
-        for (int i = 0; i < length; i ++) {
-            sb.append(buffer.charAt(r.nextInt(range)));
-        }
-        return sb.toString();
     }
 
     @DB()

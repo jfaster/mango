@@ -17,6 +17,7 @@
 package cc.concurrent.mango.exception;
 
 import cc.concurrent.mango.*;
+import cc.concurrent.mango.support.Config;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

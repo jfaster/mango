@@ -14,16 +14,16 @@
  * under the License.
  */
 
-package cc.concurrent.mango.model4table;
+package cc.concurrent.mango.support.model4table;
 
 import com.google.common.base.Objects;
 
 /**
  * @author ash
  */
-public class Msg {
+public class LongIdMsg {
 
-    private int id;
+    private long id;
     private int uid;
     private String content;
 
@@ -33,7 +33,7 @@ public class Msg {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final Msg other = (Msg) obj;
+        final LongIdMsg other = (LongIdMsg) obj;
         return Objects.equal(this.id, other.id)
                 && Objects.equal(this.uid, other.uid)
                 && Objects.equal(this.content, other.content);
@@ -44,11 +44,11 @@ public class Msg {
         return Objects.toStringHelper(this).add("id", id).add("uid", uid).add("content", content).toString();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

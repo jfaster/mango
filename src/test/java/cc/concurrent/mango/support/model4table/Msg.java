@@ -14,16 +14,20 @@
  * under the License.
  */
 
-package cc.concurrent.mango.model4table;
+package cc.concurrent.mango.support.model4table;
 
+import cc.concurrent.mango.support.Randoms;
 import com.google.common.base.Objects;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class LongIdMsg {
+public class Msg {
 
-    private long id;
+    private int id; // 自增id
     private int uid;
     private String content;
 
@@ -33,7 +37,7 @@ public class LongIdMsg {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final LongIdMsg other = (LongIdMsg) obj;
+        final Msg other = (Msg) obj;
         return Objects.equal(this.id, other.id)
                 && Objects.equal(this.uid, other.uid)
                 && Objects.equal(this.content, other.content);
@@ -44,11 +48,26 @@ public class LongIdMsg {
         return Objects.toStringHelper(this).add("id", id).add("uid", uid).add("content", content).toString();
     }
 
-    public long getId() {
+    public static List<Msg> createRandomMsgs(int num) {
+        List<Msg> msgs = new ArrayList<Msg>();
+        for (int i = 0; i < num; i++) {
+            msgs.add(createRandomMsg());
+        }
+        return msgs;
+    }
+
+    public static Msg createRandomMsg() {
+        Msg msg = new Msg();
+        msg.setUid(Randoms.randomInt(10000));
+        msg.setContent(Randoms.randomString(20));
+        return msg;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

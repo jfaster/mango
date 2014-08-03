@@ -14,8 +14,9 @@
  * under the License.
  */
 
-package cc.concurrent.mango;
+package cc.concurrent.mango.support;
 
+import cc.concurrent.mango.DriverManagerDataSource;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;

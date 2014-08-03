@@ -16,7 +16,8 @@
 
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.model4table.Tables;
+import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.Config;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +34,6 @@ import static org.hamcrest.Matchers.greaterThan;
  * @author ash
  */
 public class GeneratedLongTest {
-
 
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = new Mango(ds);

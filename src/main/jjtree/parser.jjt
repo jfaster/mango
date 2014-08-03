@@ -93,7 +93,7 @@ ASTRootNode parse()  #RootNode :
 {
 }
 {
-    (LOOKAHEAD(4) IterableParameter() | Text() | Blank() | NonIterableParameter() | DirectiveExpression())+ <EOF>
+    (LOOKAHEAD(4) IterableParameter() | Table() | Text() | Blank() | NonIterableParameter() | DirectiveExpression())+ <EOF>
     {
         return jjtThis;
     }

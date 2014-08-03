@@ -17,8 +17,9 @@
 package cc.concurrent.mango.exception;
 
 import cc.concurrent.mango.*;
-import cc.concurrent.mango.model4table.Person;
-import cc.concurrent.mango.model4table.Tables;
+import cc.concurrent.mango.support.model4table.Person;
+import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.Config;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
