@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.*;
  *
  * @author ash
  */
-public class MangoTest {
+public class DbTest {
 
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = new Mango(ds);

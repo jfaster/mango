@@ -16,8 +16,7 @@
 
 package cc.concurrent.mango.support;
 
-import cc.concurrent.mango.support.Config;
-import cc.concurrent.mango.MangoTest;
+import cc.concurrent.mango.DbTest;
 import cc.concurrent.mango.util.ScriptRunner;
 
 import java.io.*;
@@ -45,7 +44,7 @@ public enum Tables {
 
     public void load(Connection conn) throws IOException, SQLException {
         ScriptRunner sr = new ScriptRunner(conn, false, true);
-        InputStream is = MangoTest.class.getResourceAsStream("/" + Config.getDir() + "/" + name);
+        InputStream is = DbTest.class.getResourceAsStream("/" + Config.getDir() + "/" + name);
         sr.runScript(new InputStreamReader(is));
     }
 

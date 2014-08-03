@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.*;
  *
  * @author ash
  */
-public class MangoCacheTest {
+public class CacheTest {
 
 
     private final static DataSource ds = Config.getDataSource();

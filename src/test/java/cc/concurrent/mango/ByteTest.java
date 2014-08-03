@@ -33,7 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author ash
  */
-public class MangoByteTest {
+public class ByteTest {
 
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = new Mango(ds);
