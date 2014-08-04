@@ -29,11 +29,15 @@ import javax.sql.DataSource;
 public class Config {
 
     private static String DIR = "hsqldb";
-    private static Configuration CONFIG;
+    private static Configuration[] CONFIGS;
 
     static {
         try {
-            CONFIG = new PropertiesConfiguration(DIR + "/database.properties");
+            CONFIGS = new Configuration[4];
+            CONFIGS[0] = new PropertiesConfiguration(DIR + "/database.properties");
+            CONFIGS[1] = new PropertiesConfiguration(DIR + "/database1.properties");
+            CONFIGS[2] = new PropertiesConfiguration(DIR + "/database2.properties");
+            CONFIGS[3] = new PropertiesConfiguration(DIR + "/database3.properties");
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
@@ -44,25 +48,28 @@ public class Config {
     }
 
     public static DataSource getDataSource() {
-        return new DriverManagerDataSource(Config.getDriverClassName(), Config.getUrl(),
-                Config.getUsername(), Config.getPassword());
+        return getDataSource(0);
+    }
+
+    public static DataSource getDataSource(int i) {
+        return new DriverManagerDataSource(getDriverClassName(i), getUrl(i), getUsername(i), getPassword(i));
     }
 
 
-    private static String getDriverClassName() {
-        return CONFIG.getString("jdbc.driver");
+    private static String getDriverClassName(int i) {
+        return CONFIGS[i].getString("jdbc.driver");
     }
 
-    private static String getUrl() {
-        return CONFIG.getString("jdbc.url");
+    private static String getUrl(int i) {
+        return CONFIGS[i].getString("jdbc.url");
     }
 
-    private static String getUsername() {
-        return CONFIG.getString("jdbc.username");
+    private static String getUsername(int i) {
+        return CONFIGS[i].getString("jdbc.username");
     }
 
-    private static String getPassword() {
-        return CONFIG.getString("jdbc.password");
+    private static String getPassword(int i) {
+        return CONFIGS[i].getString("jdbc.password");
     }
 
 }

@@ -33,6 +33,9 @@ public enum Tables {
     BYTE_INFO("byte_info.sql"),
     MSG("msg.sql"),
     MSG_PARTITION("msg_partition.sql"),
+    MSG_ROUTER1("msg_router1.sql"),
+    MSG_ROUTER2("msg_router2.sql"),
+    MSG_ROUTER3("msg_router3.sql"),
     LONG_ID_MSG("long_id_msg.sql"),
     ;
 
