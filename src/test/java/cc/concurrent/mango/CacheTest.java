@@ -17,8 +17,8 @@
 package cc.concurrent.mango;
 
 import cc.concurrent.mango.support.Randoms;
+import cc.concurrent.mango.support.Table;
 import cc.concurrent.mango.support.model4table.Msg;
-import cc.concurrent.mango.support.Tables;
 import cc.concurrent.mango.support.model4table.User;
 import cc.concurrent.mango.support.Config;
 import org.junit.Before;
@@ -47,8 +47,8 @@ public class CacheTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Tables.USER.load(conn);
-        Tables.MSG.load(conn);
+        Table.USER.load(conn);
+        Table.MSG.load(conn);
         conn.close();
     }
 

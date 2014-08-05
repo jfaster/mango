@@ -17,7 +17,7 @@
 package cc.concurrent.mango;
 
 import cc.concurrent.mango.support.Config;
-import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.Table;
 import cc.concurrent.mango.support.model4table.Msg;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class GlobalTableTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Tables.MSG.load(conn);
+        Table.MSG.load(conn);
         conn.close();
     }
 

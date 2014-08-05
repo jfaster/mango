@@ -20,8 +20,8 @@ import cc.concurrent.mango.support.Config;
 import cc.concurrent.mango.DB;
 import cc.concurrent.mango.Mango;
 import cc.concurrent.mango.SQL;
+import cc.concurrent.mango.support.Table;
 import cc.concurrent.mango.support.model4table.Msg;
-import cc.concurrent.mango.support.Tables;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class JdkExceptionTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Tables.MSG.load(conn);
+        Table.MSG.load(conn);
         conn.close();
     }
 

@@ -18,7 +18,7 @@ package cc.concurrent.mango;
 
 import cc.concurrent.mango.support.Config;
 import cc.concurrent.mango.support.Randoms;
-import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.Table;
 import cc.concurrent.mango.support.model4table.Msg;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -40,7 +40,6 @@ import static org.hamcrest.Matchers.*;
  */
 public class TablePartitionTest {
 
-
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = new Mango(ds);
     private final static MsgDao dao = mango.create(MsgDao.class);
@@ -48,13 +47,12 @@ public class TablePartitionTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Tables.MSG_PARTITION.load(conn);
+        Table.MSG_PARTITION.load(conn);
         conn.close();
     }
 
     @Test
     public void testRandomPartition() {
-        MsgDao dao = mango.create(MsgDao.class);
         int num = 10;
         List<Msg> msgs = Msg.createRandomMsgs(num);
         for (Msg msg : msgs) {
@@ -72,7 +70,6 @@ public class TablePartitionTest {
 
     @Test
     public void testOnePartition() {
-        MsgDao dao = mango.create(MsgDao.class);
         int num = 10;
         int uid = 100;
         List<Msg> msgs = new ArrayList<Msg>();

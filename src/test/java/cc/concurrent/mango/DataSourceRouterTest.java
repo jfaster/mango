@@ -16,10 +16,134 @@
 
 package cc.concurrent.mango;
 
+import cc.concurrent.mango.support.Config;
+import cc.concurrent.mango.support.Randoms;
+import cc.concurrent.mango.support.Table;
+import cc.concurrent.mango.support.model4table.Msg;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
+
 /**
  * 测试数据源路由
  *
  * @author ash
  */
 public class DataSourceRouterTest {
+
+    private static Mango mango;
+    private static String[] dsns = new String[] {"ds1", "ds2", "ds3"};
+
+    @Before
+    public void before() throws Exception {
+        Table[] tables = new Table[]{Table.MSG_ROUTER1, Table.MSG_ROUTER2, Table.MSG_ROUTER3};
+        Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
+        for (int i = 0; i < 3; i++) {
+            DataSource ds = Config.getDataSource(i + 1);
+            Connection conn = ds.getConnection();
+            tables[i].load(conn);
+            conn.close();
+            factories.put(dsns[i], new SimpleDataSourceFactory(ds));
+        }
+        DataSourceFactory dsf = new MultipleDataSourceFactory(factories);
+        mango = new Mango(dsf);
+    }
+
+    @Test
+    public void testRandomPartition() {
+        MsgDao dao = mango.create(MsgDao.class);
+        int num = 100;
+        List<Msg> msgs = Msg.createRandomMsgs(num);
+        for (Msg msg : msgs) {
+            int id = dao.insert(msg);
+            assertThat(id, greaterThan(0));
+            msg.setId(id);
+        }
+        check(msgs, dao);
+        for (Msg msg : msgs) {
+            msg.setContent(Randoms.randomString(20));
+        }
+        dao.batchUpdate(msgs);
+        check(msgs, dao);
+    }
+
+    @Test
+    public void testOnePartition() {
+        MsgDao dao = mango.create(MsgDao.class);
+        int num = 10;
+        int uid = 100;
+        List<Msg> msgs = new ArrayList<Msg>();
+        for (int i = 0; i < num; i++) {
+            Msg msg = new Msg();
+            msg.setUid(uid);
+            msg.setContent(Randoms.randomString(20));
+            msgs.add(msg);
+            int id = dao.insert(msg);
+            msg.setId(id);
+        }
+        check(msgs, dao);
+        for (Msg msg : msgs) {
+            msg.setContent(Randoms.randomString(20));
+        }
+        dao.batchUpdate(msgs);
+        check(msgs, dao);
+    }
+
+    private void check(List<Msg> msgs, MsgDao dao) {
+        List<Msg> dbMsgs = new ArrayList<Msg>();
+        Multiset<Integer> ms = HashMultiset.create();
+        for (Msg msg : msgs) {
+            ms.add(msg.getUid());
+        }
+        for (Multiset.Entry<Integer> entry : ms.entrySet()) {
+            dbMsgs.addAll(dao.getMsgs(entry.getElement()));
+        }
+        assertThat(dbMsgs, hasSize(msgs.size()));
+        assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
+    }
+
+
+    @DB(table = "msg", tablePartition = ModTenTablePartition.class, dataSourceRouter = DataSourceRouterImpl.class)
+    interface MsgDao {
+
+        @ReturnGeneratedId
+        @SQL("insert into #table(uid, content) values(:1.uid, :1.content)")
+        int insert(@ShardBy("uid") Msg msg);
+
+        @SQL("update #table set content=:1.content where id=:1.id and uid=:1.uid")
+        public int[] batchUpdate(@ShardBy("uid") List<Msg> msgs);
+
+        @SQL("select id, uid, content from #table where uid=:1")
+        public List<Msg> getMsgs(@ShardBy int uid);
+
+    }
+
+    public static class DataSourceRouterImpl implements DataSourceRouter {
+        @Override
+        public String getDataSourceName(Object shardParam) {
+            Integer uid = (Integer) shardParam;
+            int tail = uid % 10;
+            if (tail >= 0 && tail <= 2) {
+                return dsns[0];
+            } else if (tail >=3 && tail <= 5) {
+                return dsns[1];
+            } else {
+                return dsns[2];
+            }
+        }
+    }
+
 }

@@ -16,7 +16,7 @@
 
 package cc.concurrent.mango;
 
-import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.Table;
 import cc.concurrent.mango.support.Config;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class ByteTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Tables.BYTE_INFO.load(conn);
+        Table.BYTE_INFO.load(conn);
         conn.close();
     }
 

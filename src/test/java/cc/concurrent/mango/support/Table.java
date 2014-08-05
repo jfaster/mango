@@ -26,7 +26,7 @@ import java.sql.SQLException;
 /**
  * @author ash
  */
-public enum Tables {
+public enum Table {
 
     USER("user.sql"),
     PERSON("person.sql"),
@@ -41,7 +41,7 @@ public enum Tables {
 
     private String name;
 
-    private Tables(String name) {
+    private Table(String name) {
         this.name = name;
     }
 

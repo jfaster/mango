@@ -17,7 +17,7 @@
 package cc.concurrent.mango.exception;
 
 import cc.concurrent.mango.*;
-import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.Table;
 import cc.concurrent.mango.support.Config;
 import org.junit.Before;
 import org.junit.Rule;
@@ -41,7 +41,7 @@ public class ReturnGeneratedKeyExceptionTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Tables.PERSON.load(conn);
+        Table.PERSON.load(conn);
         conn.close();
     }
 

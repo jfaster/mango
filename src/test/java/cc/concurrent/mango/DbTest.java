@@ -17,7 +17,7 @@
 package cc.concurrent.mango;
 
 import cc.concurrent.mango.support.Randoms;
-import cc.concurrent.mango.support.Tables;
+import cc.concurrent.mango.support.Table;
 import cc.concurrent.mango.support.model4table.User;
 import cc.concurrent.mango.support.Config;
 import com.google.common.primitives.Ints;
@@ -46,7 +46,7 @@ public class DbTest {
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Tables.USER.load(conn);
+        Table.USER.load(conn);
         conn.close();
     }
 
