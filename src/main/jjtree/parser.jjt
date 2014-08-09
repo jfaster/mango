@@ -21,7 +21,7 @@ options
 }
 
 PARSER_BEGIN(Parser)
-package cc.concurrent.mango.runtime.parser;
+package org.jfaster.mango.runtime.parser;
 
 import java.io.StringReader;
 import java.io.Reader;
