@@ -31,7 +31,8 @@ public class ModHundredTablePartition implements TablePartition {
         } else if (shardParam instanceof Long) {
             tail = (int) (((Long) shardParam) % 100);
         } else {
-            throw new RuntimeException(); // TODO
+            throw new IllegalArgumentException("shard parameter need int or Integer or long or Long but "
+                    + shardParam.getClass());
         }
         return table + "_" + tail;
     }

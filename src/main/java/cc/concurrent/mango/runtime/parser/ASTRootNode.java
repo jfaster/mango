@@ -18,6 +18,8 @@ package cc.concurrent.mango.runtime.parser;
 
 
 import cc.concurrent.mango.TablePartition;
+import cc.concurrent.mango.exception.IncorrectDefinitionException;
+import cc.concurrent.mango.exception.IncorrectSqlException;
 import cc.concurrent.mango.exception.UnreachableCodeException;
 import cc.concurrent.mango.runtime.RuntimeContext;
 import cc.concurrent.mango.runtime.TypeContext;
@@ -110,10 +112,10 @@ public class ASTRootNode extends AbstractNode {
                                 @Nullable String shardParameterName,
                                 @Nullable String shardPropertyPath) {
         if (tableNode != null && table == null) {
-            throw new RuntimeException(); // TODO
+            throw new IncorrectDefinitionException("if sql contains #table, @DB.table must define");
         }
         if (tableNode == null && table != null) {
-            throw new RuntimeException(); // TODO
+            throw new IncorrectDefinitionException("if @DB.table is defined, sql must contain #table");
         }
         if (tableNode != null) {
             if ((tablePartition == null && shardParameterName == null && shardPropertyPath == null)
@@ -262,7 +264,7 @@ public class ASTRootNode extends AbstractNode {
         }
         if (node instanceof ASTTable) {
             if (tableNode != null) {
-                throw new RuntimeException(); // TODO
+                throw new IncorrectSqlException("too many #table in sql");
             }
             tableNode = (ASTTable) node;
         }

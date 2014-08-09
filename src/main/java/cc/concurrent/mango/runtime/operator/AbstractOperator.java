@@ -17,6 +17,9 @@
 package cc.concurrent.mango.runtime.operator;
 
 import cc.concurrent.mango.*;
+import cc.concurrent.mango.exception.IncorrectAnnotationException;
+import cc.concurrent.mango.exception.IncorrectDefinitionException;
+import cc.concurrent.mango.exception.IncorrectParameterTypeException;
 import cc.concurrent.mango.jdbc.JdbcTemplate;
 import cc.concurrent.mango.runtime.*;
 import cc.concurrent.mango.runtime.parser.ASTRootNode;
@@ -149,7 +152,7 @@ public abstract class AbstractOperator implements Operator {
         final DataSourceFactory dataSourceFactory = dataSourceFactoryHolder.get();
         DataSource ds = dataSourceFactory.getDataSource(dsn, sqlType);
         if (ds == null) {
-            throw new RuntimeException(); // TODO
+            throw new IncorrectDefinitionException("can't find datasource for name " + dsn);
         }
         return ds;
     }
@@ -223,14 +226,16 @@ public abstract class AbstractOperator implements Operator {
             }
         }
         if (tablePartition != null && num != 1) {
-            throw new RuntimeException(); // TODO
+            throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
+                    "need one and only one @ShardBy on method's parameter");
         }
         if (num == 1) {
             Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
             TypeToken typeToken = new TypeToken(shardType);
             Class<?> mappedClass = typeToken.getMappedClass();
             if (mappedClass == null || typeToken.isIterable()) {
-                throw new RuntimeException(); // TODO
+                throw new IncorrectParameterTypeException("the type of parameter Modified @ShardBy is error, " +
+                        "type is " + shardType);
             }
         }
     }
@@ -241,7 +246,7 @@ public abstract class AbstractOperator implements Operator {
     private void configDb() {
         DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
         if (dbAnno == null) {
-            throw new RuntimeException(); // TODO
+            throw new IncorrectAnnotationException("need @DB on dao interface");
         }
         dataSourceName = dbAnno.dataSource();
         if (!Strings.isNullOrEmpty(dbAnno.table())) {
@@ -257,11 +262,12 @@ public abstract class AbstractOperator implements Operator {
         }
 
         if (tablePartition != null && table == null) { // 使用了分表但没有使用全局表名则抛出异常
-            throw new RuntimeException(); // TODO
+            throw new IncorrectDefinitionException("if @DB.tablePartition is defined, @DB.table must be defined");
         }
 
         if (dataSourceRouter != null && tablePartition == null) { // 使用了数据源路由但没有使用分表则抛出异常
-            throw new RuntimeException(); // TODO
+            throw new IncorrectDefinitionException("if @DB.dataSourceRouter is defined, " +
+                    "@DB.tablePartition must be defined");
         }
     }
 

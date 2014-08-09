@@ -14,27 +14,17 @@
  * under the License.
  */
 
-package cc.concurrent.mango;
+package cc.concurrent.mango.exception;
 
 /**
- * 模十分表
+ * 不正确的定义异常
  *
  * @author ash
  */
-public class ModTenTablePartition implements TablePartition {
+public class IncorrectDefinitionException extends RuntimeException {
 
-    @Override
-    public String getPartitionedTable(String table, Object shardParam) {
-        int tail;
-        if (shardParam instanceof Integer) {
-            tail = ((Integer) shardParam) % 10;
-        } else if (shardParam instanceof Long) {
-            tail = (int) (((Long) shardParam) % 10);
-        } else {
-            throw new IllegalArgumentException("shard parameter need int or Integer or long or Long but "
-                    + shardParam.getClass());
-        }
-        return table + "_" + tail;
+    public IncorrectDefinitionException(String message) {
+        super(message);
     }
 
 }
