@@ -16,12 +16,10 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.CannotGetJdbcConnectionException;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,39 +31,6 @@ public class JdbcUtils {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(JdbcUtils.class);
 
-
-    /**
-     * 从数据源中获得一个连接
-     *
-     * @param ds
-     * @return
-     */
-    public static Connection getConnection(DataSource ds) {
-        try {
-            return ds.getConnection();
-        } catch (SQLException e) {
-            throw new CannotGetJdbcConnectionException("Could not get JDBC Connection", e);
-        }
-    }
-
-    /**
-     * 关闭连接
-     *
-     * @param conn
-     */
-    public static void closeConnection(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-                conn = null;
-            } catch (SQLException e) {
-                logger.error("Could not close JDBC Connection", e);
-            } catch (Throwable e) {
-                logger.error("Unexpected exception on closing JDBC Connection", e);
-            }
-        }
-    }
-
     /**
      * 关闭语句
      *
@@ -75,7 +40,6 @@ public class JdbcUtils {
         if (stmt != null) {
             try {
                 stmt.close();
-                stmt = null;
             } catch (SQLException e) {
                 logger.error("Could not close JDBC Statement", e);
             } catch (Throwable e) {
@@ -93,7 +57,6 @@ public class JdbcUtils {
         if (rs != null) {
             try {
                 rs.close();
-                rs = null;
             } catch (SQLException e) {
                 logger.error("Could not close JDBC ResultSet", e);
             } catch (Throwable e) {
@@ -104,7 +67,7 @@ public class JdbcUtils {
 
     public static Object getResultSetValue(ResultSet rs, int index, Class requiredType) throws SQLException {
 
-        Object value = null;
+        Object value;
         boolean wasNullCheck = false;
 
         // Explicitly extract typed value, as far as possible.

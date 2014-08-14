@@ -57,7 +57,7 @@ public class JdbcTemplate {
     }
 
     public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
-        Connection conn = JdbcUtils.getConnection(ds);
+        Connection conn = DataSourceUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
         Integer r = null;
@@ -82,7 +82,7 @@ public class JdbcTemplate {
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
-            JdbcUtils.closeConnection(conn);
+            DataSourceUtils.releaseConnection(conn, ds);
 
             if (logger.isDebugEnabled()) {
                 if (r != null) { // 执行成功
@@ -95,7 +95,7 @@ public class JdbcTemplate {
     }
 
     public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-        Connection conn = JdbcUtils.getConnection(ds);
+        Connection conn = DataSourceUtils.getConnection(ds);
         PreparedStatement ps = null;
         int[] r = null;
         try {
@@ -107,7 +107,7 @@ public class JdbcTemplate {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             JdbcUtils.closeStatement(ps);
-            JdbcUtils.closeConnection(conn);
+            DataSourceUtils.releaseConnection(conn, ds);
 
             if (logger.isDebugEnabled()) {
                 List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
@@ -127,7 +127,7 @@ public class JdbcTemplate {
         int size = Math.min(sqls.size(), batchArgs.size());
         int[] r = new int[size];
         boolean[] success = new boolean[size];
-        Connection conn = JdbcUtils.getConnection(ds);
+        Connection conn = DataSourceUtils.getConnection(ds);
         try {
             for (int i = 0; i < size; i++) {
                 String sql = sqls.get(i);
@@ -153,13 +153,13 @@ public class JdbcTemplate {
                 }
             }
         } finally {
-            JdbcUtils.closeConnection(conn);
+            DataSourceUtils.releaseConnection(conn, ds);
         }
         return r;
     }
 
     private <T> T executeQuery(DataSource ds, String sql, Object[] args, ResultSetExtractor<T> rse) {
-        Connection conn = JdbcUtils.getConnection(ds);
+        Connection conn = DataSourceUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -177,7 +177,7 @@ public class JdbcTemplate {
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
-            JdbcUtils.closeConnection(conn);
+            DataSourceUtils.releaseConnection(conn, ds);
 
             if (logger.isDebugEnabled()) {
                 if (success) { // 执行成功
