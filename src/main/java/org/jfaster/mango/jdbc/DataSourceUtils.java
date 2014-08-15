@@ -51,10 +51,24 @@ public class DataSourceUtils {
         }
     }
 
+    public static boolean resetConnectionAfterTransaction(Connection conn, Integer previousIsolationLevel) {
+        try {
+            conn.setAutoCommit(true);
+            if (previousIsolationLevel != null) {
+                conn.setTransactionIsolation(previousIsolationLevel);
+            }
+            return true;
+        } catch (Throwable e) {
+            logger.error("Could not reset JDBC Connection after transaction", e);
+            return false;
+        }
+    }
+
+
     private static Connection doGetConnection(DataSource ds) throws SQLException {
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
-        if (tc != null) { // 使用事务
-            if (tc.getDataSource() != ds) {
+        if (tc != null) { // 事务
+            if (tc.getDataSource() != ds) { // 在使用事务的过程中数据源不一致
                 throw new RuntimeException(); // TODO
             }
             Connection conn = tc.getConnection();
@@ -63,20 +77,27 @@ public class DataSourceUtils {
             }
         }
 
-        Connection conn = ds.getConnection();
+        Connection conn = ds.getConnection(); // throws SQLException
+        if (conn == null) {
+            throw new RuntimeException(); // TODO
+        }
 
-        if (tc != null) { // 使用事务
-            tc.set(ds, conn);
-            if (conn.getAutoCommit()) {
-                conn.setAutoCommit(false);
+        if (tc != null) { // 事务
+            tc.setConnection(conn);
+            tc.setDataSource(ds);
+
+            if (conn.getAutoCommit()) { // throws SQLException
+                conn.setAutoCommit(false); // throws SQLException
             }
-            conn.setTransactionIsolation(tc.getLevel().getLevel());
+
+            int previousLevel = conn.getTransactionIsolation(); // throws SQLException
+            if (previousLevel != tc.getLevel().getLevel()) {
+                conn.setTransactionIsolation(tc.getLevel().getLevel()); // throws SQLException
+                tc.setPreviousLevel(previousLevel);
+            }
         } else {
             if (!conn.getAutoCommit()) {
                 conn.setAutoCommit(true);
-            }
-            if (conn.getTransactionIsolation() != Connection.TRANSACTION_NONE) {
-                conn.setTransactionIsolation(Connection.TRANSACTION_NONE);
             }
         }
 

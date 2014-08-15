@@ -40,25 +40,30 @@ public class TransactionImpl implements Transaction {
         if (state != TransactionState.RUNNING) {
             throw new TransactionException("transaction has commit or rollback");
         }
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        if (tc == null) {
+            throw new TransactionException("no transaction context");
+        }
 
         Connection conn = transactionContext.getConnection();
 
-        if (conn == null) { // 开启了事务，但是没有dao操作，所以不用回收connection
-            state = TransactionState.COMMIT_SUCCESS;
+        if (conn == null) { // 开启了事务，但是没有获得conn
             TransactionSynchronizationManager.clear();
+            state = TransactionState.COMMIT_SUCCESS;
             return;
         }
 
         try {
             conn.commit();
-            state = TransactionState.COMMIT_SUCCESS;
-            TransactionSynchronizationManager.clear();
-            DataSourceUtils.releaseConnection(conn, transactionContext.getDataSource());
-        } catch (SQLException e) {
-            // commit出现异常，交由rollback回收connection
+        } catch (SQLException e) { // commit出现异常，交由rollback回收connection
             state = TransactionState.COMMIT_FAIL;
             new RuntimeException(); // TODO
         }
+
+        TransactionSynchronizationManager.clear();
+        DataSourceUtils.resetConnectionAfterTransaction(conn, tc.getPreviousLevel());
+        DataSourceUtils.releaseConnection(conn, transactionContext.getDataSource());
+        state = TransactionState.COMMIT_SUCCESS;
     }
 
     @Override
@@ -66,12 +71,16 @@ public class TransactionImpl implements Transaction {
         if (state != TransactionState.RUNNING && state != TransactionState.COMMIT_FAIL) {
             throw new TransactionException("transaction has rollback or commit");
         }
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        if (tc == null) {
+            throw new TransactionException("no transaction context");
+        }
 
         Connection conn = transactionContext.getConnection();
 
-        if (conn == null) { // 开启了事务，但是没有dao操作，所以不用回收connection
-            state = TransactionState.ROLLBACK_SUCCESS;
+        if (conn == null) { // 开启了事务，但是没有获得conn
             TransactionSynchronizationManager.clear();
+            state = TransactionState.ROLLBACK_SUCCESS;
             return;
         }
 
@@ -83,6 +92,7 @@ public class TransactionImpl implements Transaction {
             new RuntimeException(); // TODO
         } finally {
             TransactionSynchronizationManager.clear();
+            DataSourceUtils.resetConnectionAfterTransaction(conn, tc.getPreviousLevel());
             DataSourceUtils.releaseConnection(conn, transactionContext.getDataSource());
         }
     }

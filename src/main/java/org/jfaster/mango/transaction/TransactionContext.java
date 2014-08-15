@@ -27,14 +27,22 @@ public class TransactionContext {
     private TransactionIsolationLevel level;
     private DataSource dataSource;
     private Connection connection;
+    private Integer previousLevel; // nul表示level不用变
 
     public TransactionContext(TransactionIsolationLevel level) {
         this.level = level;
     }
 
-    public void set(DataSource dataSource, Connection connection) {
+    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public void setConnection(Connection connection) {
         this.connection = connection;
+    }
+
+    public void setPreviousLevel(Integer previousLevel) {
+        this.previousLevel = previousLevel;
     }
 
     public TransactionIsolationLevel getLevel() {
@@ -49,4 +57,7 @@ public class TransactionContext {
         return connection;
     }
 
+    public Integer getPreviousLevel() {
+        return previousLevel;
+    }
 }
