@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.support;
 
-import org.jfaster.mango.DriverManagerDataSource;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.sql.DataSource;
 
@@ -52,7 +52,19 @@ public class Config {
     }
 
     public static DataSource getDataSource(int i) {
-        return new DriverManagerDataSource(getDriverClassName(i), getUrl(i), getUsername(i), getPassword(i));
+        String driverClassName = getDriverClassName(i);
+        String url = getUrl(i);
+        String username = getUsername(i);
+        String password = getPassword(i);
+
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl(url);
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setInitialSize(1);
+        ds.setMaxActive(1);
+        ds.setDriverClassName(driverClassName);
+        return ds;
     }
 
 

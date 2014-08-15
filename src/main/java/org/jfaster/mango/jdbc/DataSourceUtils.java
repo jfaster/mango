@@ -68,7 +68,8 @@ public class DataSourceUtils {
     private static Connection doGetConnection(DataSource ds) throws SQLException {
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
         if (tc != null) { // 事务
-            if (tc.getDataSource() != ds) { // 在使用事务的过程中数据源不一致
+            if (tc.getDataSource() != null
+                    && tc.getDataSource() != ds) { // 在使用事务的过程中数据源不一致
                 throw new RuntimeException(); // TODO
             }
             Connection conn = tc.getConnection();

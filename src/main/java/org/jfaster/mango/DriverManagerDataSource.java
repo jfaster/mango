@@ -40,8 +40,7 @@ public class DriverManagerDataSource implements DataSource {
         String driverClassNameToUse = driverClassName.trim();
         try {
             Class.forName(driverClassNameToUse);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
         }
         this.url = url;
