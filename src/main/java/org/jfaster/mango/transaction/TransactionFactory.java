@@ -24,6 +24,10 @@ import org.jfaster.mango.exception.TransactionException;
 public abstract class TransactionFactory {
 
     public static Transaction newTransaction(TransactionIsolationLevel level) {
+        if (level == null) {
+            new RuntimeException(""); // TODO
+        }
+
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
         if (tc != null) {
             throw new TransactionException("already exists transaction");

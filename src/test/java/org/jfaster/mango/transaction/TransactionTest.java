@@ -16,21 +16,22 @@
 
 package org.jfaster.mango.transaction;
 
+import org.hamcrest.Matchers;
 import org.jfaster.mango.DB;
 import org.jfaster.mango.Mango;
-import org.jfaster.mango.ReturnGeneratedId;
 import org.jfaster.mango.SQL;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Table;
-import org.jfaster.mango.support.model4table.Msg;
+import org.jfaster.mango.support.model4table.Account;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  * 测试事务
@@ -41,54 +42,183 @@ public class TransactionTest {
 
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = new Mango(ds);
-    private final static MsgDao dao = mango.create(MsgDao.class);
+    private final static AccountDao dao = mango.create(AccountDao.class);
 
     @Before
     public void before() throws Exception {
         Connection conn = ds.getConnection();
-        Table.MSG.load(conn);
+        Table.ACCOUNT.load(conn);
         conn.close();
     }
 
     @Test
-    public void test() throws Exception {
-        Msg msg = new Msg();
-        msg.setUid(100);
-        msg.setContent("test");
-        int id = dao.insert(msg);
-        msg.setId(id);
-        Transaction tx = TransactionFactory.newTransaction(TransactionIsolationLevel.SERIALIZABLE);
-        try {
-            msg.setContent("test2");
-            dao.update(msg);
-            tx.commit();
-        } catch (Throwable t) {
-            tx.rollback();
-        }
+    public void testCommit() throws Exception {
+        int previousLevel = getPreviousLevel();
 
-        assertThat(dao.getMsgs(id), equalTo(msg));
+        Account x = new Account(1, 1000);
+        Account y = new Account(2, 2000);
+        dao.insert(x);
+        dao.insert(y);
+
+        int num = 50;
+        x.add(num);
+        y.sub(num);
+        TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
+        Transaction tx = TransactionFactory.newTransaction(level);
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, notNullValue());
+        assertThat(tc.getConnection(), nullValue());
+
+        dao.update(x);
+        checkConn(tc.getConnection(), false, level.getLevel());
+        dao.update(y);
+        checkConn(tc.getConnection(), false, level.getLevel());
+        tx.commit();
+
+        tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, Matchers.nullValue());
+        Connection conn = ds.getConnection();
+        checkConn(conn, true, previousLevel);
+        conn.close();
+
+        assertThat(dao.getAccount(1), equalTo(x));
+        assertThat(dao.getAccount(2), equalTo(y));
     }
 
-//    private void checkConn(boolean autoCommit, int level) throws Exception {
-//        Connection conn = ds.getConnection();
-//        assertThat(conn.getAutoCommit(), is(autoCommit));
-//        assertThat(conn.getTransactionIsolation(), is(level));
-//        conn.close();
-//    }
+    @Test
+    public void testRollback() throws Exception {
+        int previousLevel = getPreviousLevel();
+
+        Account x = new Account(1, 1000);
+        Account y = new Account(2, 2000);
+        dao.insert(x);
+        dao.insert(y);
+
+        int num = 50;
+        x.add(num);
+        y.sub(num);
+        TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
+        Transaction tx = TransactionFactory.newTransaction(level);
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, notNullValue());
+        assertThat(tc.getConnection(), nullValue());
+
+        dao.update(x);
+        checkConn(tc.getConnection(), false, level.getLevel());
+        dao.update(y);
+        checkConn(tc.getConnection(), false, level.getLevel());
+        tx.rollback();
+
+        tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, Matchers.nullValue());
+        Connection conn = ds.getConnection();
+        checkConn(conn, true, previousLevel);
+        conn.close();
+
+        x.sub(num);
+        y.add(num);
+        assertThat(dao.getAccount(1), equalTo(x));
+        assertThat(dao.getAccount(2), equalTo(y));
+    }
+
+    @Test
+    public void testRollback2() throws Exception {
+        int previousLevel = getPreviousLevel();
+
+        Account x = new Account(1, 1000);
+        Account y = new Account(2, 2000);
+        dao.insert(x);
+        dao.insert(y);
+
+        int num = 50;
+        x.add(num);
+        y.sub(num);
+        TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
+        Transaction tx = TransactionFactory.newTransaction(level);
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, notNullValue());
+        assertThat(tc.getConnection(), nullValue());
+
+        dao.update(x);
+        checkConn(tc.getConnection(), false, level.getLevel());
+        tx.rollback();
+
+        tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, Matchers.nullValue());
+
+        Connection conn = ds.getConnection();
+        checkConn(conn, true, previousLevel);
+        conn.close();
+
+        x.sub(num);
+        y.add(num);
+        assertThat(dao.getAccount(1), equalTo(x));
+        assertThat(dao.getAccount(2), equalTo(y));
+    }
+
+    @Test
+    public void testCommitEmpty() throws Exception {
+        int previousLevel = getPreviousLevel();
+
+        TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
+        Transaction tx = TransactionFactory.newTransaction(level);
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, notNullValue());
+        assertThat(tc.getConnection(), nullValue());
+
+        tx.commit();
+
+        tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, Matchers.nullValue());
+        Connection conn = ds.getConnection();
+        checkConn(conn, true, previousLevel);
+        conn.close();
+    }
 
 
-    @DB
-    interface MsgDao {
+    @Test
+    public void testRollbackEmpty() throws Exception {
+        int previousLevel = getPreviousLevel();
 
-        @ReturnGeneratedId
-        @SQL("insert into msg(uid, content) values(:1.uid, :1.content)")
-        public int insert(Msg msg);
+        TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
+        Transaction tx = TransactionFactory.newTransaction(level);
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, notNullValue());
+        assertThat(tc.getConnection(), nullValue());
 
-        @SQL("update msg set content=:1.content where id=:1.id and uid=:1.uid")
-        public int update(Msg msg);
+        tx.rollback();
 
-        @SQL("select id, uid, content from msg where id=:1")
-        public Msg getMsgs(int id);
+        tc = TransactionSynchronizationManager.getTransactionContext();
+        assertThat(tc, Matchers.nullValue());
+        Connection conn = ds.getConnection();
+        checkConn(conn, true, previousLevel);
+        conn.close();
+    }
+
+    private int getPreviousLevel() throws Exception {
+        Connection conn = ds.getConnection();
+        int level = conn.getTransactionIsolation();
+        conn.close();
+        return level;
+    }
+
+    private void checkConn(Connection conn, boolean autoCommit, int level) throws Exception {
+        assertThat(conn.getAutoCommit(), is(autoCommit));
+        assertThat(conn.getTransactionIsolation(), is(level));
+    }
+
+
+    @DB(table = "account")
+    interface AccountDao {
+
+        @SQL("insert into #table(id, balance) values(:1.id, :1.balance)")
+        public int insert(Account account);
+
+        @SQL("update #table set balance=:1.balance where id=:1.id")
+        public int update(Account account);
+
+        @SQL("select id, balance from #table where id=:1")
+        public Account getAccount(int id);
 
     }
 

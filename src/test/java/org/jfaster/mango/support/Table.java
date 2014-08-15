@@ -37,6 +37,7 @@ public enum Table {
     MSG_ROUTER2("msg_router2.sql"),
     MSG_ROUTER3("msg_router3.sql"),
     LONG_ID_MSG("long_id_msg.sql"),
+    ACCOUNT("account.sql"),
     ;
 
     private String name;
