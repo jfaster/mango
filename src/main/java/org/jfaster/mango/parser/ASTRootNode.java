@@ -17,12 +17,12 @@
 package org.jfaster.mango.parser;
 
 
-import org.jfaster.mango.TablePartition;
+import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.util.RuntimeContext;
-import org.jfaster.mango.util.TypeContext;
+import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.support.TypeContext;
 import org.jfaster.mango.util.Iterables;
 
 import javax.annotation.Nullable;

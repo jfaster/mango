@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.util.ArrayUtil;
+import org.jfaster.mango.util.Arrays;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ public class ArrayResultSetExtractor<T> implements ResultSetExtractor<Object> {
         while (rs.next()) {
             list.add(rowMapper.mapRow(rs, rowNum++));
         }
-        return ArrayUtil.toArray(list, rowMapper.getMappedClass());
+        return Arrays.toArray(list, rowMapper.getMappedClass());
     }
 
 }

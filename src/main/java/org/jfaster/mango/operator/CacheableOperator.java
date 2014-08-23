@@ -16,18 +16,20 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.*;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
+import org.jfaster.mango.cache.CacheExpire;
+import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
-import org.jfaster.mango.util.RuntimeContext;
+import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.ValuableParameter;
 import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.TypeToken;
-import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.Reflection;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
@@ -46,7 +48,7 @@ import java.util.Set;
 public abstract class CacheableOperator extends AbstractOperator implements Cacheable {
 
     /**
-     * 具体的缓存实现，通过{@link this#setCacheHandler(org.jfaster.mango.CacheHandler)}初始化
+     * 具体的缓存实现，通过{@link this#setCacheHandler(org.jfaster.mango.cache.CacheHandler)}初始化
      */
     private CacheHandler cacheHandler;
 

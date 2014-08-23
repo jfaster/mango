@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.IgnoreTablePartition;
-import org.jfaster.mango.TablePartition;
-import org.jfaster.mango.datasource.DataSourceRouter;
-import org.jfaster.mango.datasource.IgnoreDataSourceRouter;
+import org.jfaster.mango.partition.IgnoreTablePartition;
+import org.jfaster.mango.partition.TablePartition;
+import org.jfaster.mango.datasource.router.DataSourceRouter;
+import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
 
 import java.lang.annotation.*;
 
@@ -34,7 +34,7 @@ import java.lang.annotation.*;
 public @interface DB {
 
     /**
-     * 使用数据源，只有在使用{@link org.jfaster.mango.datasource.MultipleDataSourceFactory}时，dataSource的值才有意义。
+     * 使用数据源，只有在使用{@link org.jfaster.mango.datasource.factory.MultipleDataSourceFactory}时，dataSource的值才有意义。
      *
      * @return
      */

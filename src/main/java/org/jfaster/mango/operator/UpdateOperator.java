@@ -20,11 +20,12 @@ import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
-import org.jfaster.mango.util.RuntimeContext;
+import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.parser.ASTIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.logging.InternalLogger;
-import org.jfaster.mango.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.support.SQLType;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;

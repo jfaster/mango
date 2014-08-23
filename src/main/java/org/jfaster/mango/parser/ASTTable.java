@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.TablePartition;
+import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.util.RuntimeContext;
+import org.jfaster.mango.support.RuntimeContext;
 
 import javax.annotation.Nullable;
 

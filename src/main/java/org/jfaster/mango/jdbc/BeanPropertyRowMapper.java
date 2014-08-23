@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.util.reflect.Beans;
 import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.logging.InternalLogger;
-import org.jfaster.mango.logging.InternalLoggerFactory;
-import org.jfaster.mango.reflect.BeanInfoCache;
-import org.jfaster.mango.reflect.BeanUtil;
-import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.reflect.BeanInfoCache;
+import org.jfaster.mango.util.reflect.Reflection;
 
 import java.beans.PropertyDescriptor;
 import java.sql.ResultSet;
@@ -95,7 +95,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
                 if (logger.isDebugEnabled() && rowNumber == 0) {
                     logger.debug("Mapping column '" + column + "' to property '" + pd.getName() + "' of type " + pd.getPropertyType());
                 }
-                BeanUtil.setPropertyValue(mappedObject, pd.getName(), value);
+                Beans.setPropertyValue(mappedObject, pd.getName(), value);
             }
         }
         return mappedObject;

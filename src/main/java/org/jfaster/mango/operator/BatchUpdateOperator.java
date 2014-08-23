@@ -19,11 +19,12 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.util.RuntimeContext;
+import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.parser.ASTIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.TypeToken;
+import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;

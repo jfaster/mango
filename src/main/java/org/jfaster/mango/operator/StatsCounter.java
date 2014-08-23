@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.MethodStats;
-
 /**
  * @author ash
  */

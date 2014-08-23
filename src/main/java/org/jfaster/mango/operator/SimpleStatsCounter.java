@@ -16,9 +16,8 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.MethodStats;
-import org.jfaster.mango.atomic.LongAddable;
-import org.jfaster.mango.atomic.LongAddables;
+import org.jfaster.mango.util.concurrent.atomic.LongAddable;
+import org.jfaster.mango.util.concurrent.atomic.LongAddables;
 
 /**
  * @author ash

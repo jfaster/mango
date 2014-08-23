@@ -22,6 +22,7 @@ import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
+import org.jfaster.mango.support.SQLType;
 import org.jfaster.mango.util.Strings;
 
 import java.lang.reflect.Method;

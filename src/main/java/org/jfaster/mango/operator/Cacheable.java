@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.CacheHandler;
+import org.jfaster.mango.cache.CacheHandler;
 
 /**
  * @author ash

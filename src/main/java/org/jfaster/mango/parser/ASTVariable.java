@@ -18,8 +18,8 @@ package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.util.RuntimeContext;
-import org.jfaster.mango.util.TypeContext;
+import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.support.TypeContext;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;

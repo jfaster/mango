@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.CacheExpire;
+import org.jfaster.mango.cache.CacheExpire;
 
 import java.lang.annotation.*;
 

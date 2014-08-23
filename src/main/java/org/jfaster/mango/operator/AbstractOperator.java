@@ -16,23 +16,27 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.*;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.ShardBy;
-import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceFactoryHolder;
-import org.jfaster.mango.datasource.DataSourceRouter;
-import org.jfaster.mango.datasource.IgnoreDataSourceRouter;
+import org.jfaster.mango.datasource.router.DataSourceRouter;
+import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.jdbc.JdbcTemplate;
+import org.jfaster.mango.util.ToStringHelper;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.support.*;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.partition.IgnoreTablePartition;
+import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.util.*;
-import org.jfaster.mango.logging.InternalLogger;
-import org.jfaster.mango.logging.InternalLoggerFactory;
-import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.reflect.Reflection;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -57,7 +61,7 @@ public abstract class AbstractOperator implements Operator {
     protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
     /**
-     * 数据源工厂，通过{@link this#setDataSourceFactory(org.jfaster.mango.datasource.DataSourceFactory)}初始化
+     * 数据源工厂，通过{@link this#setDataSourceFactory(org.jfaster.mango.datasource.factory.DataSourceFactory)}初始化
      */
     private DataSourceFactoryHolder dataSourceFactoryHolder;
 

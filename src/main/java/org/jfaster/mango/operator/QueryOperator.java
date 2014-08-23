@@ -24,16 +24,16 @@ import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.jdbc.SingleColumnRowMapper;
-import org.jfaster.mango.util.RuntimeContext;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.parser.ASTIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.util.ArrayUtil;
-import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.TypeToken;
-import org.jfaster.mango.logging.InternalLogger;
-import org.jfaster.mango.logging.InternalLoggerFactory;
-import org.jfaster.mango.reflect.BeanInfoCache;
-import org.jfaster.mango.reflect.BeanUtil;
+import org.jfaster.mango.util.reflect.Beans;
+import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.util.*;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.reflect.BeanInfoCache;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
@@ -146,7 +146,7 @@ public class QueryOperator extends CacheableOperator {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
                 // 添加入缓存
-                Object suffix = BeanUtil.getPropertyValue(dbValue, interableProperty, mappedClass);
+                Object suffix = Beans.getPropertyValue(dbValue, interableProperty, mappedClass);
                 String key = getCacheKey(suffix);
                 setToCache(key, dbValue);
             }
@@ -240,7 +240,7 @@ public class QueryOperator extends CacheableOperator {
             } else if (isForSet) {
                 return hitValueSet;
             } else if (isForArray) {
-                return ArrayUtil.toArray(hitValueList, valueClass);
+                return org.jfaster.mango.util.Arrays.toArray(hitValueList, valueClass);
             } else {
                 throw new UnreachableCodeException();
             }

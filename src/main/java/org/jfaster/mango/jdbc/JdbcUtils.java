@@ -17,8 +17,8 @@
 package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.logging.InternalLogger;
-import org.jfaster.mango.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import java.sql.*;
 import java.util.HashSet;
