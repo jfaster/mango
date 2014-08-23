@@ -14,19 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.util;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public interface RuntimeContext {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public Object getPropertyValue(String parameterName, String propertyPath);
+
+    public Object getNullablePropertyValue(String parameterName, String propertyPath);
+
+    public void setPropertyValue(String parameterName, String propertyPath, Object value);
 
 }

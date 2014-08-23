@@ -14,19 +14,15 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.util;
 
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+import java.lang.reflect.Type;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public interface TypeContext {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public Type getPropertyType(String parameterName, String propertyPath);
 
 }

@@ -14,19 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.logging;
 
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+import org.apache.log4j.Logger;
 
 /**
- * 数据源工厂
- *
- * @author ash
+ * Logger factory which creates an
+ * <a href="http://logging.apache.org/log4j/1.2/index.html">Apache Log4J</a>
+ * logger.
  */
-public interface DataSourceFactory {
+public class Log4JLoggerFactory extends InternalLoggerFactory {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
-
+    @Override
+    public InternalLogger newInstance(String name) {
+        return new Log4JLogger(Logger.getLogger(name));
+    }
 }

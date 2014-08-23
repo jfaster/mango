@@ -14,19 +14,27 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.operator;
 
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+import org.jfaster.mango.MethodStats;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public interface StatsCounter {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public void recordInit(long initTime);
+
+    public void recordHits(int count);
+
+    public void recordMisses(int count);
+
+    public void recordExecuteSuccess(long executeTime);
+
+    public void recordExecuteException(long executeTime);
+
+    public void recordEviction(int count);
+
+    public MethodStats snapshot();
 
 }

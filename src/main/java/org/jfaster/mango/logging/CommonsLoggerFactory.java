@@ -14,19 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.logging;
 
-import org.jfaster.mango.operator.SQLType;
 
-import javax.sql.DataSource;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * 数据源工厂
- *
- * @author ash
+ * Logger factory which creates an
+ * <a href="http://commons.apache.org/logging/">Apache Commons Logging</a>
+ * logger.
  */
-public interface DataSourceFactory {
+public class CommonsLoggerFactory extends InternalLoggerFactory {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    @Override
+    public InternalLogger newInstance(String name) {
+        return new CommonsLogger(LogFactory.getLog(name), name);
+    }
 
 }

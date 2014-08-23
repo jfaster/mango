@@ -14,19 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.parser;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public class ASTBlank extends ASTString {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public ASTBlank(int i) {
+        super(i);
+    }
+
+    public ASTBlank(Parser p, int i) {
+        super(p, i);
+    }
 
 }

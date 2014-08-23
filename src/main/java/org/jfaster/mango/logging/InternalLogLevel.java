@@ -14,19 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.logging;
 
 /**
- * 数据源工厂
- *
- * @author ash
+ * The log level that {@link org.jfaster.mango.logging.InternalLogger} can log at.
  */
-public interface DataSourceFactory {
-
-    public DataSource getDataSource(String name, SQLType sqlType);
-
+public enum InternalLogLevel {
+    /**
+     * 'TRACE' log level.
+     */
+    TRACE,
+    /**
+     * 'DEBUG' log level.
+     */
+    DEBUG,
+    /**
+     * 'INFO' log level.
+     */
+    INFO,
+    /**
+     * 'WARN' log level.
+     */
+    WARN,
+    /**
+     * 'ERROR' log level.
+     */
+    ERROR
 }

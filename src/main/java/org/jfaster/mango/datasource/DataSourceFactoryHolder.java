@@ -16,31 +16,23 @@
 
 package org.jfaster.mango.datasource;
 
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
-import java.util.List;
-import java.util.Random;
-
 /**
- * 主从分离数据源工厂
- *
  * @author ash
  */
-public class MasterSlaveDataSourceFactory implements DataSourceFactory {
+public class DataSourceFactoryHolder {
 
-    private final DataSource master;
-    private final List<DataSource> slaves;
-    private final Random random = new Random();
+    private volatile DataSourceFactory dataSourceFactory;
 
-    public MasterSlaveDataSourceFactory(DataSource master, List<DataSource> slaves) {
-        this.master = master;
-        this.slaves = slaves;
+    public DataSourceFactoryHolder(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
     }
 
-    @Override
-    public DataSource getDataSource(String name, SQLType sqlType) {
-        return sqlType == SQLType.SELECT ? slaves.get(random.nextInt(slaves.size())) : master;
+    public DataSourceFactory get() {
+        return dataSourceFactory;
+    }
+
+    public void set(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
     }
 
 }

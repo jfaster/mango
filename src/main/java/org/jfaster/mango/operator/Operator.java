@@ -14,19 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.operator;
 
-import org.jfaster.mango.operator.SQLType;
 
-import javax.sql.DataSource;
+import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 
 /**
- * 数据源工厂
+ * db操作接口
  *
  * @author ash
  */
-public interface DataSourceFactory {
+public interface Operator {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public void setDataSourceFactoryHolder(DataSourceFactoryHolder dataSourceFactoryHolder);
+
+    public void setStatsCounter(StatsCounter statsCounter);
+
+    public Object execute(Object[] methodArgs);
 
 }

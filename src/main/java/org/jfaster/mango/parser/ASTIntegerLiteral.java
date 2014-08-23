@@ -14,28 +14,44 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+import org.jfaster.mango.util.RuntimeContext;
+import org.jfaster.mango.util.TypeContext;
 
 /**
- * 简单的单一数据源工厂
+ * 整数字面值
  *
  * @author ash
  */
-public class SimpleDataSourceFactory implements DataSourceFactory {
+public class ASTIntegerLiteral extends PrimaryExpression {
 
-    private final DataSource dataSource;
+    private Integer value;
 
-    public SimpleDataSourceFactory(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public ASTIntegerLiteral(int i) {
+        super(i);
+    }
+
+    public ASTIntegerLiteral(Parser p, int i) {
+        super(p, i);
+    }
+
+    public void setValue(Integer value) {
+        this.value = value;
     }
 
     @Override
-    public DataSource getDataSource(String name, SQLType sqlType) {
-        return dataSource;
+    void checkType(TypeContext context) {
+        return;
     }
 
+    @Override
+    public Object value(RuntimeContext context) {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

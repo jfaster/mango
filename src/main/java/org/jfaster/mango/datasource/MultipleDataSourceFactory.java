@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.datasource;
 
-import org.jfaster.mango.runtime.operator.SQLType;
+import org.jfaster.mango.operator.SQLType;
 
 import javax.sql.DataSource;
 import java.util.Map;

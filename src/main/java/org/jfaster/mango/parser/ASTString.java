@@ -14,19 +14,38 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.parser;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public class ASTString extends AbstractNode {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    private String value;
 
+    private String groupValue;
+
+    public ASTString(int i) {
+        super(i);
+    }
+
+    public ASTString(Parser p, int i) {
+        super(p, i);
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getGroupValue() {
+        return groupValue;
+    }
+
+    public void setGroupValue(String groupValue) {
+        this.groupValue = groupValue;
+    }
 }

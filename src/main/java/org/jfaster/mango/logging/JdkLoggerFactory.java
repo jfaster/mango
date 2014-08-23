@@ -14,19 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.logging;
 
-import org.jfaster.mango.operator.SQLType;
 
-import javax.sql.DataSource;
+import java.util.logging.Logger;
 
 /**
- * 数据源工厂
- *
- * @author ash
+ * Logger factory which creates a
+ * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/logging/">java.util.logging</a>
+ * logger.
  */
-public interface DataSourceFactory {
+public class JdkLoggerFactory extends InternalLoggerFactory {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
-
+    @Override
+    public InternalLogger newInstance(String name) {
+        return new JdkLogger(Logger.getLogger(name));
+    }
 }

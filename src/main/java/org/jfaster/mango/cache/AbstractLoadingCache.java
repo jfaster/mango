@@ -14,19 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.cache;
 
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+import org.jfaster.mango.exception.UncheckedException;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public abstract class AbstractLoadingCache<K, V> implements LoadingCache<K, V> {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    @Override
+    public V getUnchecked(K key) {
+        try {
+            return get(key);
+        } catch (Exception e) {
+            throw new UncheckedException(e.getMessage(), e.getCause());
+        }
+    }
 
 }

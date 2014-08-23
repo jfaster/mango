@@ -14,19 +14,31 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.parser;
 
 /**
- * 数据源工厂
+ * 一元表达式
  *
  * @author ash
  */
-public interface DataSourceFactory {
+public abstract class PrimaryExpression extends ValuableExpression {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public PrimaryExpression(int i) {
+        super(i);
+    }
+
+    public PrimaryExpression(Parser p, int i) {
+        super(p, i);
+    }
+
+    @Override
+    Token getFirstToken() {
+        return jjtGetFirstToken();
+    }
+
+    @Override
+    Token getLastToken() {
+        return jjtGetLastToken();
+    }
 
 }

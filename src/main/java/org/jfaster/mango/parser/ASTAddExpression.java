@@ -14,28 +14,37 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.parser;
 
 /**
- * 简单的单一数据源工厂
- *
  * @author ash
  */
-public class SimpleDataSourceFactory implements DataSourceFactory {
+public class ASTAddExpression extends MathExpression {
 
-    private final DataSource dataSource;
+    public ASTAddExpression(int i) {
+        super(i);
+    }
 
-    public SimpleDataSourceFactory(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public ASTAddExpression(Parser p, int i) {
+        super(p, i);
     }
 
     @Override
-    public DataSource getDataSource(String name, SQLType sqlType) {
-        return dataSource;
+    protected Object handleSpecial(Object left, Object right) {
+        if (left == null) {
+            left = "null";
+        } else if (right == null) {
+            right = "null";
+        }
+        if (left instanceof String || right instanceof String) {
+            return left.toString().concat(right.toString());
+        }
+        return null;
+    }
+
+    @Override
+    public Integer perform(Integer left, Integer right) {
+        return left + right;
     }
 
 }

@@ -14,19 +14,15 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.cache;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public interface LoadingCache<K, V> {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public V get(K key) throws Exception;
+
+    public V getUnchecked(K key);
 
 }

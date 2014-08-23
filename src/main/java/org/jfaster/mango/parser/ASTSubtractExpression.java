@@ -14,19 +14,24 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.operator.SQLType;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.parser;
 
 /**
- * 数据源工厂
- *
  * @author ash
  */
-public interface DataSourceFactory {
+public class ASTSubtractExpression extends MathExpression {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public ASTSubtractExpression(int i) {
+        super(i);
+    }
+
+    public ASTSubtractExpression(Parser p, int i) {
+        super(p, i);
+    }
+
+    @Override
+    public Integer perform(Integer left, Integer right) {
+        return left - right;
+    }
 
 }
