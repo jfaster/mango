@@ -17,6 +17,9 @@
 package org.jfaster.mango.runtime.operator;
 
 import org.jfaster.mango.*;
+import org.jfaster.mango.annotation.Cache;
+import org.jfaster.mango.annotation.CacheBy;
+import org.jfaster.mango.annotation.CacheIgnored;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.runtime.RuntimeContext;

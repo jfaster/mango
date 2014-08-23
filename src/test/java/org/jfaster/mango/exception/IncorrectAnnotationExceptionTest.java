@@ -17,6 +17,10 @@
 package org.jfaster.mango.exception;
 
 import org.jfaster.mango.*;
+import org.jfaster.mango.annotation.Cache;
+import org.jfaster.mango.annotation.CacheBy;
+import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.support.Config;
 import org.junit.Rule;
 import org.junit.Test;

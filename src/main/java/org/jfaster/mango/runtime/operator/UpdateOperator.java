@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.runtime.operator;
 
-import org.jfaster.mango.ReturnGeneratedId;
+import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;

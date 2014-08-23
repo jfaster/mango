@@ -14,24 +14,25 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.annotation;
+
+import java.lang.annotation.*;
 
 /**
- * 分表
+ * 修饰DAO接口中的方法，指明要执行的SQL语句
  *
  * @author ash
  */
-public interface TablePartition {
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface SQL {
 
     /**
-     * 获得分表后的表名
+     * 指明要执行的SQL语句
      *
-     * @param table
-     *          取{@link org.jfaster.mango.annotation.DB#table()}中的值
-     * @param shardParam
-     *          取{@link org.jfaster.mango.annotation.ShardBy}修饰的参数
      * @return
      */
-    public String getPartitionedTable(String table, Object shardParam);
+    String value();
 
 }

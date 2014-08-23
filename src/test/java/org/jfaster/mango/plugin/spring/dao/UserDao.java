@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.plugin.spring.dao;
 
-import org.jfaster.mango.DB;
+import org.jfaster.mango.annotation.DB;
 
 /**
  * @author ash

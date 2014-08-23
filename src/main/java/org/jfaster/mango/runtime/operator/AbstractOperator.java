@@ -17,6 +17,12 @@
 package org.jfaster.mango.runtime.operator;
 
 import org.jfaster.mango.*;
+import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.annotation.Rename;
+import org.jfaster.mango.annotation.ShardBy;
+import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceRouter;
+import org.jfaster.mango.datasource.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
@@ -53,7 +59,7 @@ public abstract class AbstractOperator implements Operator {
     protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
     /**
-     * 数据源工厂，通过{@link this#setDataSourceFactory(org.jfaster.mango.DataSourceFactory)}初始化
+     * 数据源工厂，通过{@link this#setDataSourceFactory(org.jfaster.mango.datasource.DataSourceFactory)}初始化
      */
     private DataSourceFactoryHolder dataSourceFactoryHolder;
 
@@ -210,7 +216,7 @@ public abstract class AbstractOperator implements Operator {
     }
 
     /**
-     * 提取{@link ShardBy}参数
+     * 提取{@link org.jfaster.mango.annotation.ShardBy}参数
      */
     private void shardBy() {
         Annotation[][] pass = method.getParameterAnnotations();

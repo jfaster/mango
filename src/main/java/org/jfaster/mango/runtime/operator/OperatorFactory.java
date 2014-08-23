@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.runtime.operator;
 
-import org.jfaster.mango.SQL;
+import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;

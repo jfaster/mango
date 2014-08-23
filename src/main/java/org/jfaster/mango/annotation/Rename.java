@@ -14,15 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.annotation;
+
+import java.lang.annotation.*;
 
 /**
- * 数据源路由
+ * 参数重命名
  *
  * @author ash
  */
-public interface DataSourceRouter {
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Rename {
 
-    public String getDataSourceName(Object shardParam);
+    String value();
 
 }

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.annotation;
 
 import java.lang.annotation.*;
 

@@ -17,7 +17,7 @@
 package org.jfaster.mango.exception;
 
 /**
- * 错误的使用{@link org.jfaster.mango.CacheBy}异常
+ * 错误的使用{@link org.jfaster.mango.annotation.CacheBy}异常
  *
  * @author ash
  */

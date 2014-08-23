@@ -14,17 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.annotation;
 
 import java.lang.annotation.*;
 
 /**
- * 用于修饰DAO中的方法，标识该方法不使用cache。
+ * 用此注解修饰的方法参数或参数中的某个属性将作为缓存key的后缀<br>
+ * {@link Cache#prefix()}为缓存key的前缀<br>
+ * 完整的缓存key=缓存key前缀＋缓存key后缀
  *
  * @author ash
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface CacheIgnored {
+public @interface CacheBy {
+
+    /**
+     * 如果value等于""，被修饰的参数直接作为缓存后缀<br>
+     * 如果value不等于""，则被修饰参数中的value值属性将作为缓存后缀
+     *
+     * @return
+     */
+    String value() default "";
+
 }

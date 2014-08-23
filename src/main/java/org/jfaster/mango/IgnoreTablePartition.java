@@ -19,7 +19,7 @@ package org.jfaster.mango;
 import org.jfaster.mango.exception.UnreachableCodeException;
 
 /**
- * {@link DB#tablePartition()}的默认值，表示不使用分表
+ * {@link org.jfaster.mango.annotation.DB#tablePartition()}的默认值，表示不使用分表
  *
  * @author ash
  */

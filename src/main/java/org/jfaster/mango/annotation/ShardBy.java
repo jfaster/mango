@@ -14,39 +14,27 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.annotation;
 
 import java.lang.annotation.*;
 
 /**
- * 指明该DAO需要集成cache
+ * 用此注解修饰的方法参数或参数中的某个属性将被作为参数传入
+ * {@link org.jfaster.mango.TablePartition#getPartitionedTable(String, Object)}中
  *
  * @author ash
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Cache {
+public @interface ShardBy {
 
     /**
-     * 缓存key前缀
+     * 如果value等于""，直接取被修饰的参数<br>
+     * 如果value不等于""，取被修饰参数的value属性
      *
      * @return
      */
-    String prefix();
-
-    /**
-     * 缓存过期时间单位
-     *
-     * @return
-     */
-    Class<? extends CacheExpire> expire();
-
-    /**
-     * 缓存过期时间数量
-     *
-     * @return
-     */
-    int num() default 1;
+    String value() default "";
 
 }

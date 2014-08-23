@@ -14,20 +14,41 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.CacheExpire;
+
+import java.lang.annotation.*;
 
 /**
- * {@link DB#dataSourceRouter()}的默认值，表示不使用数据源路由
+ * 指明该DAO需要集成cache
  *
  * @author ash
  */
-public final class IgnoreDataSourceRouter implements DataSourceRouter {
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Cache {
 
-    @Override
-    public String getDataSourceName(Object shardByParam) {
-        throw new UnreachableCodeException();
-    }
+    /**
+     * 缓存key前缀
+     *
+     * @return
+     */
+    String prefix();
+
+    /**
+     * 缓存过期时间单位
+     *
+     * @return
+     */
+    Class<? extends CacheExpire> expire();
+
+    /**
+     * 缓存过期时间数量
+     *
+     * @return
+     */
+    int num() default 1;
 
 }

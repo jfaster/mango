@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.plugin.spring;
 
-import org.jfaster.mango.DB;
+import org.jfaster.mango.annotation.DB;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

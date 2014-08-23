@@ -14,28 +14,33 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.datasource;
 
 import org.jfaster.mango.runtime.operator.SQLType;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
 /**
- * 简单的单一数据源工厂
+ * 多数据源工厂
+ * <p>
+ * 该工厂不能独立使用，需要和{@link SimpleDataSourceFactory}或{@link org.jfaster.mango.datasource.MasterSlaveDataSourceFactory}一起使用。
+ * </p>
  *
  * @author ash
  */
-public class SimpleDataSourceFactory implements DataSourceFactory {
+public class MultipleDataSourceFactory implements DataSourceFactory {
 
-    private final DataSource dataSource;
+    private final Map<String, DataSourceFactory> factories;
 
-    public SimpleDataSourceFactory(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public MultipleDataSourceFactory(Map<String, DataSourceFactory> factories) {
+        this.factories = factories;
     }
 
     @Override
     public DataSource getDataSource(String name, SQLType sqlType) {
-        return dataSource;
+        DataSourceFactory factory = factories.get(name);
+        return factory.getDataSource(name, sqlType);
     }
 
 }

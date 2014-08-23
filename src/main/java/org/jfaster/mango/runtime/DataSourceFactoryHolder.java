@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.runtime;
 
-import org.jfaster.mango.DataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceFactory;
 
 /**
  * @author ash

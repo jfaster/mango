@@ -17,9 +17,9 @@
 package org.jfaster.mango.exception;
 
 import org.jfaster.mango.support.Config;
-import org.jfaster.mango.DB;
+import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.Mango;
-import org.jfaster.mango.SQL;
+import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
 import org.junit.Before;

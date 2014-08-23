@@ -16,6 +16,7 @@
 
 package org.jfaster.mango;
 
+import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;

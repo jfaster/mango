@@ -16,6 +16,9 @@
 
 package org.jfaster.mango;
 
+import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.runtime.DataSourceFactoryHolder;
 import org.jfaster.mango.runtime.operator.*;

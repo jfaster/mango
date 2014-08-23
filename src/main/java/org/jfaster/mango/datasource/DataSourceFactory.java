@@ -14,25 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.datasource;
 
-import java.lang.annotation.*;
+import org.jfaster.mango.runtime.operator.SQLType;
+
+import javax.sql.DataSource;
 
 /**
- * 修饰DAO接口中的方法，指明要执行的SQL语句
+ * 数据源工厂
  *
  * @author ash
  */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface SQL {
+public interface DataSourceFactory {
 
-    /**
-     * 指明要执行的SQL语句
-     *
-     * @return
-     */
-    String value();
+    public DataSource getDataSource(String name, SQLType sqlType);
 
 }
