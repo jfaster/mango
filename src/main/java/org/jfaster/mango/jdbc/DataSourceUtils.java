@@ -17,6 +17,7 @@
 package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.exception.CannotGetJdbcConnectionException;
+import org.jfaster.mango.support.DataSourceMonitor;
 import org.jfaster.mango.transaction.TransactionContext;
 import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -67,7 +68,8 @@ public class DataSourceUtils {
 
     private static Connection doGetConnection(DataSource ds) throws SQLException {
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
-        if (tc != null) { // 事务
+        boolean inTransaction = tc != null;
+        if (inTransaction) {
             if (tc.getDataSource() != null
                     && tc.getDataSource() != ds) { // 在使用事务的过程中数据源不一致
                 throw new RuntimeException(); // TODO
@@ -83,7 +85,7 @@ public class DataSourceUtils {
             throw new RuntimeException(); // TODO
         }
 
-        if (tc != null) { // 事务
+        if (inTransaction) {
             tc.setConnection(conn);
             tc.setDataSource(ds);
 
@@ -97,8 +99,11 @@ public class DataSourceUtils {
                 tc.setPreviousLevel(previousLevel);
             }
         } else {
-            if (!conn.getAutoCommit()) {
-                conn.setAutoCommit(true);
+            if (DataSourceMonitor.needCheckAutoCommit(ds)) {
+                // 如果使用事务后，归还conn时，重置autoCommit失败，则需要检测
+                if (!conn.getAutoCommit()) {
+                    conn.setAutoCommit(true);
+                }
             }
         }
 
@@ -108,7 +113,7 @@ public class DataSourceUtils {
 
     private static void doReleaseConnection(Connection conn, DataSource ds) throws SQLException {
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
-        if (tc != null) { // 使用事务
+        if (tc != null) {
             if (tc.getDataSource() != ds) {
                 throw new RuntimeException(); // TODO
             }
