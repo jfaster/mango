@@ -14,10 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.transaction;
+package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.exception.TransactionException;
-import org.jfaster.mango.jdbc.datasource.DataSourceUtils;
+import org.jfaster.mango.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

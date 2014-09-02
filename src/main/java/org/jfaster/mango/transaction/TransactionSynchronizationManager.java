@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.transaction;
+package org.jfaster.mango.transaction;
 
 /**
  * @author ash

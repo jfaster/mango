@@ -14,11 +14,11 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.datasource;
+package org.jfaster.mango.datasource;
 
 import org.jfaster.mango.exception.CannotGetJdbcConnectionException;
-import org.jfaster.mango.jdbc.transaction.TransactionContext;
-import org.jfaster.mango.jdbc.transaction.TransactionSynchronizationManager;
+import org.jfaster.mango.transaction.TransactionContext;
+import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 

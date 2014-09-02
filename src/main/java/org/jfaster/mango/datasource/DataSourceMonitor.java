@@ -14,7 +14,26 @@
  * under the License.
  */
 
+package org.jfaster.mango.datasource;
+
+import javax.sql.DataSource;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- * 数据源路由
+ * 监控datasource
+ *
+ * @author ash
  */
-package org.jfaster.mango.jdbc.datasource.router;
+public class DataSourceMonitor {
+
+    private static ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
+
+    public static boolean needCheckAutoCommit(DataSource ds) {
+        return map.get(ds) != null;
+    }
+
+    public static void resetAutoCommitFail(DataSource ds) {
+        map.putIfAbsent(ds, new Object());
+    }
+
+}

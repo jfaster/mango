@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.datasource.router;
+package org.jfaster.mango.datasource.router;
 
 /**
  * 数据源路由

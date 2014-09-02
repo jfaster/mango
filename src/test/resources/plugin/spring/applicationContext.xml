@@ -14,7 +14,7 @@
         <constructor-arg type="javax.sql.DataSource" ref="dmds" />
     </bean>
 
-    <bean id="dmds" class="org.jfaster.mango.jdbc.datasource.DriverManagerDataSource">
+    <bean id="dmds" class="org.jfaster.mango.datasource.DriverManagerDataSource">
         <constructor-arg index="0" type="java.lang.String" value="org.hsqldb.jdbcDriver"/>
         <constructor-arg index="1" type="java.lang.String" value=""/>
         <constructor-arg index="2" type="java.lang.String" value=""/>

@@ -14,26 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.datasource;
+package org.jfaster.mango.datasource.router;
 
-import javax.sql.DataSource;
-import java.util.concurrent.ConcurrentHashMap;
+import org.jfaster.mango.exception.UnreachableCodeException;
 
 /**
- * 监控datasource
+ * {@link org.jfaster.mango.annotation.DB#dataSourceRouter()}的默认值，表示不使用数据源路由
  *
  * @author ash
  */
-public class DataSourceMonitor {
+public final class IgnoreDataSourceRouter implements DataSourceRouter {
 
-    private static ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
-
-    public static boolean needCheckAutoCommit(DataSource ds) {
-        return map.get(ds) != null;
-    }
-
-    public static void resetAutoCommitFail(DataSource ds) {
-        map.putIfAbsent(ds, new Object());
+    @Override
+    public String getDataSourceName(Object shardByParam) {
+        throw new UnreachableCodeException();
     }
 
 }

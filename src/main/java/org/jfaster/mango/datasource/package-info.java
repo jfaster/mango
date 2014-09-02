@@ -14,27 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.datasource;
-
-import org.jfaster.mango.jdbc.datasource.factory.DataSourceFactory;
-
 /**
- * @author ash
+ * 数据源
  */
-public class DataSourceFactoryHolder {
-
-    private volatile DataSourceFactory dataSourceFactory;
-
-    public DataSourceFactoryHolder(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
-    }
-
-    public DataSourceFactory get() {
-        return dataSourceFactory;
-    }
-
-    public void set(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
-    }
-
-}
+package org.jfaster.mango.datasource;

@@ -14,20 +14,15 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.datasource.router;
-
-import org.jfaster.mango.exception.UnreachableCodeException;
+package org.jfaster.mango.transaction;
 
 /**
- * {@link org.jfaster.mango.annotation.DB#dataSourceRouter()}的默认值，表示不使用数据源路由
- *
  * @author ash
  */
-public final class IgnoreDataSourceRouter implements DataSourceRouter {
+public interface Transaction {
 
-    @Override
-    public String getDataSourceName(Object shardByParam) {
-        throw new UnreachableCodeException();
-    }
+    public void commit();
+
+    public void rollback();
 
 }

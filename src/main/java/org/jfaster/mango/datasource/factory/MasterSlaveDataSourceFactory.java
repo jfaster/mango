@@ -14,10 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.datasource.factory;
+package org.jfaster.mango.datasource.factory;
 
 import org.jfaster.mango.support.SQLType;
-import org.jfaster.mango.jdbc.transaction.TransactionSynchronizationManager;
+import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
 import java.util.List;

@@ -17,4 +17,4 @@
 /**
  * 事务
  */
-package org.jfaster.mango.jdbc.transaction;
+package org.jfaster.mango.transaction;
