@@ -18,6 +18,7 @@ package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.exception.ReturnGeneratedKeyException;
 import org.jfaster.mango.exception.UncheckedSQLException;
+import org.jfaster.mango.jdbc.datasource.DataSourceUtils;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 

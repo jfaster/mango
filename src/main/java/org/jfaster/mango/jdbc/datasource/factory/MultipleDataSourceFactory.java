@@ -14,33 +14,33 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource.factory;
+package org.jfaster.mango.jdbc.datasource.factory;
 
 import org.jfaster.mango.support.SQLType;
 
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 /**
- * 主从分离数据源工厂
+ * 多数据源工厂
+ * <p>
+ * 该工厂不能独立使用，需要和{@link SimpleDataSourceFactory}或{@link MasterSlaveDataSourceFactory}一起使用。
+ * </p>
  *
  * @author ash
  */
-public class MasterSlaveDataSourceFactory implements DataSourceFactory {
+public class MultipleDataSourceFactory implements DataSourceFactory {
 
-    private final DataSource master;
-    private final List<DataSource> slaves;
-    private final Random random = new Random();
+    private final Map<String, DataSourceFactory> factories;
 
-    public MasterSlaveDataSourceFactory(DataSource master, List<DataSource> slaves) {
-        this.master = master;
-        this.slaves = slaves;
+    public MultipleDataSourceFactory(Map<String, DataSourceFactory> factories) {
+        this.factories = factories;
     }
 
     @Override
     public DataSource getDataSource(String name, SQLType sqlType) {
-        return sqlType == SQLType.SELECT ? slaves.get(random.nextInt(slaves.size())) : master;
+        DataSourceFactory factory = factories.get(name);
+        return factory.getDataSource(name, sqlType);
     }
 
 }

@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 
-import org.jfaster.mango.datasource.DataSourceFactoryHolder;
+import org.jfaster.mango.jdbc.datasource.DataSourceFactoryHolder;
 
 /**
  * db操作接口

@@ -14,15 +14,27 @@
  * under the License.
  */
 
-package org.jfaster.mango.transaction;
+package org.jfaster.mango.jdbc.datasource;
+
+import org.jfaster.mango.jdbc.datasource.factory.DataSourceFactory;
 
 /**
  * @author ash
  */
-public interface Transaction {
+public class DataSourceFactoryHolder {
 
-    public void commit();
+    private volatile DataSourceFactory dataSourceFactory;
 
-    public void rollback();
+    public DataSourceFactoryHolder(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
+    }
+
+    public DataSourceFactory get() {
+        return dataSourceFactory;
+    }
+
+    public void set(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
+    }
 
 }

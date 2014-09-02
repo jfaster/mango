@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.transaction;
+package org.jfaster.mango.jdbc.transaction;
 
 import org.hamcrest.Matchers;
 import org.jfaster.mango.annotation.DB;

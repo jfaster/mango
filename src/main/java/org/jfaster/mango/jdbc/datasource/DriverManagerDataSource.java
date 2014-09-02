@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.jdbc.datasource;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;

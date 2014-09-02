@@ -14,7 +14,28 @@
  * under the License.
  */
 
+package org.jfaster.mango.jdbc.datasource.factory;
+
+import org.jfaster.mango.support.SQLType;
+
+import javax.sql.DataSource;
+
 /**
- * 数据源
+ * 简单的单一数据源工厂
+ *
+ * @author ash
  */
-package org.jfaster.mango.datasource;
+public class SimpleDataSourceFactory implements DataSourceFactory {
+
+    private final DataSource dataSource;
+
+    public SimpleDataSourceFactory(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public DataSource getDataSource(String name, SQLType sqlType) {
+        return dataSource;
+    }
+
+}

@@ -19,10 +19,10 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.ShardBy;
-import org.jfaster.mango.datasource.factory.DataSourceFactory;
-import org.jfaster.mango.datasource.DataSourceFactoryHolder;
-import org.jfaster.mango.datasource.router.DataSourceRouter;
-import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
+import org.jfaster.mango.jdbc.datasource.factory.DataSourceFactory;
+import org.jfaster.mango.jdbc.datasource.DataSourceFactoryHolder;
+import org.jfaster.mango.jdbc.datasource.router.DataSourceRouter;
+import org.jfaster.mango.jdbc.datasource.router.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
@@ -61,7 +61,7 @@ public abstract class AbstractOperator implements Operator {
     protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
     /**
-     * 数据源工厂，通过{@link this#setDataSourceFactory(org.jfaster.mango.datasource.factory.DataSourceFactory)}初始化
+     * 数据源工厂，通过{@link this#setDataSourceFactory(org.jfaster.mango.jdbc.datasource.factory.DataSourceFactory)}初始化
      */
     private DataSourceFactoryHolder dataSourceFactoryHolder;
 

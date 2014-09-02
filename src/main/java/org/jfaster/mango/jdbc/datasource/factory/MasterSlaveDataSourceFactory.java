@@ -14,28 +14,37 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource.factory;
+package org.jfaster.mango.jdbc.datasource.factory;
 
 import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.jdbc.transaction.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
+import java.util.List;
+import java.util.Random;
 
 /**
- * 简单的单一数据源工厂
+ * 主从分离数据源工厂
  *
  * @author ash
  */
-public class SimpleDataSourceFactory implements DataSourceFactory {
+public class MasterSlaveDataSourceFactory implements DataSourceFactory {
 
-    private final DataSource dataSource;
+    private final DataSource master;
+    private final List<DataSource> slaves;
+    private final Random random = new Random();
 
-    public SimpleDataSourceFactory(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public MasterSlaveDataSourceFactory(DataSource master, List<DataSource> slaves) {
+        this.master = master;
+        this.slaves = slaves;
     }
 
     @Override
     public DataSource getDataSource(String name, SQLType sqlType) {
-        return dataSource;
+        if (TransactionSynchronizationManager.inTransaction()) { // 使用事务直接返回主数据源
+            return master;
+        }
+        return sqlType == SQLType.SELECT ? slaves.get(random.nextInt(slaves.size())) : master;
     }
 
 }

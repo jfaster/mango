@@ -42,7 +42,7 @@ public class Beans {
                     nestedPath.append(".");
                 }
                 nestedPath.append(propertyName);
-                Method method = BeanInfoCache.getWriteMethod(object.getClass(), propertyName);
+                Method method = BeanInfoCache.getReadMethod(object.getClass(), propertyName);
                 object = method.invoke(object, (Object[]) null);
                 propertyPath = propertyPath.substring(pos + 1);
                 pos = propertyPath.indexOf('.');

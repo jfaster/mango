@@ -14,7 +14,15 @@
  * under the License.
  */
 
+package org.jfaster.mango.jdbc.transaction;
+
 /**
- * 数据源路由
+ * @author ash
  */
-package org.jfaster.mango.datasource.router;
+public interface Transaction {
+
+    public void commit();
+
+    public void rollback();
+
+}

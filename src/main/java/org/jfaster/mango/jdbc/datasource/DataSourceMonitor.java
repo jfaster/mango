@@ -14,19 +14,26 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource.factory;
-
-import org.jfaster.mango.support.SQLType;
+package org.jfaster.mango.jdbc.datasource;
 
 import javax.sql.DataSource;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 数据源工厂
+ * 监控datasource
  *
  * @author ash
  */
-public interface DataSourceFactory {
+public class DataSourceMonitor {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    private static ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
+
+    public static boolean needCheckAutoCommit(DataSource ds) {
+        return map.get(ds) != null;
+    }
+
+    public static void resetAutoCommitFail(DataSource ds) {
+        map.putIfAbsent(ds, new Object());
+    }
 
 }

@@ -14,27 +14,39 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource;
-
-import org.jfaster.mango.datasource.factory.DataSourceFactory;
+package org.jfaster.mango.jdbc.transaction;
 
 /**
+ * 事务状态
+ *
  * @author ash
  */
-public class DataSourceFactoryHolder {
+public enum TransactionState {
 
-    private volatile DataSourceFactory dataSourceFactory;
+    /**
+     * 事务运行中
+     */
+    RUNNING,
 
-    public DataSourceFactoryHolder(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
-    }
+    /**
+     * 提交事务成功
+     */
+    COMMIT_SUCCESS,
 
-    public DataSourceFactory get() {
-        return dataSourceFactory;
-    }
+    /**
+     * 提交事务失败
+     */
+    COMMIT_FAIL,
 
-    public void set(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
-    }
+    /**
+     * 回滚事务成功
+     */
+    ROLLBACK_SUCCESS,
+
+    /**
+     * 回滚事务失败
+     */
+    ROLLBACK_FAIL;
+
 
 }

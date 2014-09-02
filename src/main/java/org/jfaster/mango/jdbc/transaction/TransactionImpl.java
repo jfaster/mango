@@ -14,11 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.transaction;
+package org.jfaster.mango.jdbc.transaction;
 
 import org.jfaster.mango.exception.TransactionException;
-import org.jfaster.mango.jdbc.DataSourceUtils;
+import org.jfaster.mango.jdbc.datasource.DataSourceUtils;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -61,8 +62,9 @@ public class TransactionImpl implements Transaction {
         }
 
         TransactionSynchronizationManager.clear();
-        DataSourceUtils.resetConnectionAfterTransaction(conn, tc.getPreviousLevel());
-        DataSourceUtils.releaseConnection(conn, transactionContext.getDataSource());
+        DataSource ds = transactionContext.getDataSource();
+        DataSourceUtils.resetConnectionAfterTransaction(conn, ds, tc.getPreviousLevel());
+        DataSourceUtils.releaseConnection(conn, ds);
         state = TransactionState.COMMIT_SUCCESS;
     }
 
@@ -92,8 +94,9 @@ public class TransactionImpl implements Transaction {
             new RuntimeException(); // TODO
         } finally {
             TransactionSynchronizationManager.clear();
-            DataSourceUtils.resetConnectionAfterTransaction(conn, tc.getPreviousLevel());
-            DataSourceUtils.releaseConnection(conn, transactionContext.getDataSource());
+            DataSource ds = transactionContext.getDataSource();
+            DataSourceUtils.resetConnectionAfterTransaction(conn, ds, tc.getPreviousLevel());
+            DataSourceUtils.releaseConnection(conn, ds);
         }
     }
 

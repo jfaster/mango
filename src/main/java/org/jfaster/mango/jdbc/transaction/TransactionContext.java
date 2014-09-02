@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.transaction;
+package org.jfaster.mango.jdbc.transaction;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

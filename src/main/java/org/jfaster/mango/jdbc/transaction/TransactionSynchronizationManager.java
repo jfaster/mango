@@ -14,26 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.support;
-
-import javax.sql.DataSource;
-import java.util.concurrent.ConcurrentHashMap;
+package org.jfaster.mango.jdbc.transaction;
 
 /**
- * 监控datasource
- *
  * @author ash
  */
-public class DataSourceMonitor {
+public abstract class TransactionSynchronizationManager {
 
-    private static ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
+    private static final ThreadLocal<TransactionContext> TRANSACTION_CONTEXT =
+            new ThreadLocal<TransactionContext>();
 
-    public static boolean needCheckAutoCommit(DataSource ds) {
-        return map.get(ds) != null;
+    public static void setTransactionContext(TransactionContext transactionContext) {
+        TRANSACTION_CONTEXT.set(transactionContext);
     }
 
-    public static void resetAutoCommitFail(DataSource ds) {
-        map.putIfAbsent(ds, new Object());
+    public static TransactionContext getTransactionContext() {
+        return TRANSACTION_CONTEXT.get();
+    }
+
+    public static boolean inTransaction() {
+        return getTransactionContext() != null;
+    }
+
+    public static void clear() {
+        TRANSACTION_CONTEXT.remove();
     }
 
 }

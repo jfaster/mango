@@ -14,39 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.transaction;
-
 /**
- * 事务状态
- *
- * @author ash
+ * 数据源
  */
-public enum TransactionState {
-
-    /**
-     * 事务运行中
-     */
-    RUNNING,
-
-    /**
-     * 提交事务成功
-     */
-    COMMIT_SUCCESS,
-
-    /**
-     * 提交事务失败
-     */
-    COMMIT_FAIL,
-
-    /**
-     * 回滚事务成功
-     */
-    ROLLBACK_SUCCESS,
-
-    /**
-     * 回滚事务失败
-     */
-    ROLLBACK_FAIL;
-
-
-}
+package org.jfaster.mango.jdbc.datasource;

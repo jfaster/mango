@@ -14,12 +14,11 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.jdbc.datasource;
 
 import org.jfaster.mango.exception.CannotGetJdbcConnectionException;
-import org.jfaster.mango.support.DataSourceMonitor;
-import org.jfaster.mango.transaction.TransactionContext;
-import org.jfaster.mango.transaction.TransactionSynchronizationManager;
+import org.jfaster.mango.jdbc.transaction.TransactionContext;
+import org.jfaster.mango.jdbc.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -52,16 +51,32 @@ public class DataSourceUtils {
         }
     }
 
-    public static boolean resetConnectionAfterTransaction(Connection conn, Integer previousIsolationLevel) {
+    public static void resetConnectionAfterTransaction(Connection conn, DataSource ds, Integer previousIsolationLevel) {
         try {
             conn.setAutoCommit(true);
+        } catch (SQLException e) {
+            logger.error("Could not reset autoCommit of JDBC Connection " +
+                    "after transaction", e);
+            DataSourceMonitor.resetAutoCommitFail(ds);
+        } catch (Throwable e) {
+            logger.error("Unexpected exception on resetting autoCommit of JDBC Connection " +
+                    "after transaction", e);
+            DataSourceMonitor.resetAutoCommitFail(ds);
+        }
+        try {
             if (previousIsolationLevel != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Resetting isolation level of JDBC Connection [" +
+                            conn + "] to " + previousIsolationLevel);
+                }
                 conn.setTransactionIsolation(previousIsolationLevel);
             }
-            return true;
-        } catch (Throwable e) {
-            logger.error("Could not reset JDBC Connection after transaction", e);
-            return false;
+        } catch (SQLException e) {
+            logger.error("Could not reset isolation level of JDBC Connection " +
+                    "after transaction", e);
+        }  catch (Throwable e) {
+            logger.error("Unexpected exception on resetting " +
+                    "isolation level of JDBC Connection after transaction", e);
         }
     }
 

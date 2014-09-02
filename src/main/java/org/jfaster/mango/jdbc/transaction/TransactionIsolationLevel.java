@@ -14,7 +14,30 @@
  * under the License.
  */
 
+package org.jfaster.mango.jdbc.transaction;
+
+import java.sql.Connection;
+
 /**
- * 数据源工厂
+ * 事务的隔离级别
+ *
+ * @author ash
  */
-package org.jfaster.mango.datasource.factory;
+public enum TransactionIsolationLevel {
+
+    READ_COMMITTED(Connection.TRANSACTION_READ_COMMITTED),
+    READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
+    REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
+    SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE);
+
+    private final int level;
+
+    private TransactionIsolationLevel(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+}

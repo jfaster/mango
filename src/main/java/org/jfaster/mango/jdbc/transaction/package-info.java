@@ -14,26 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.transaction;
-
 /**
- * @author ash
+ * 事务
  */
-public abstract class TransactionSynchronizationManager {
-
-    private static final ThreadLocal<TransactionContext> TRANSACTION_CONTEXT =
-            new ThreadLocal<TransactionContext>();
-
-    public static void setTransactionContext(TransactionContext transactionContext) {
-        TRANSACTION_CONTEXT.set(transactionContext);
-    }
-
-    public static TransactionContext getTransactionContext() {
-        return TRANSACTION_CONTEXT.get();
-    }
-
-    public static void clear() {
-        TRANSACTION_CONTEXT.remove();
-    }
-
-}
+package org.jfaster.mango.jdbc.transaction;
