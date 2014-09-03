@@ -18,6 +18,7 @@ package org.jfaster.mango.datasource;
 
 import org.jfaster.mango.exception.CannotGetJdbcConnectionException;
 import org.jfaster.mango.exception.IncorrectJdbcConnectionException;
+import org.jfaster.mango.exception.TransactionSystemException;
 import org.jfaster.mango.transaction.TransactionContext;
 import org.jfaster.mango.transaction.TransactionIsolationLevel;
 import org.jfaster.mango.transaction.TransactionSynchronizationManager;
@@ -41,7 +42,7 @@ public class DataSourceUtils {
         if (inTransaction) {
             if (tc.getDataSource() != null
                     && tc.getDataSource() != ds) { // 在使用事务的过程中数据源不一致
-                throw new RuntimeException(); // TODO
+                throw new TransactionSystemException("Multiple Datasources in transaction");
             }
             Connection conn = tc.getConnection();
             if (conn != null) { // 使用之前的连接

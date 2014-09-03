@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.transaction;
 
-import org.jfaster.mango.exception.TransactionException;
+import org.jfaster.mango.exception.TransactionSystemException;
 import org.jfaster.mango.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
@@ -39,11 +39,11 @@ public class TransactionImpl implements Transaction {
     @Override
     public void commit() {
         if (state != TransactionState.RUNNING) {
-            throw new TransactionException("transaction has commit or rollback");
+            throw new TransactionSystemException("transaction has commit or rollback");
         }
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
         if (tc == null) {
-            throw new TransactionException("no transaction context");
+            throw new TransactionSystemException("no transaction context");
         }
 
         Connection conn = transactionContext.getConnection();
@@ -58,7 +58,7 @@ public class TransactionImpl implements Transaction {
             conn.commit();
         } catch (SQLException e) { // commit出现异常，交由rollback回收connection
             state = TransactionState.COMMIT_FAIL;
-            new RuntimeException(); // TODO
+            new TransactionSystemException("Could not commit JDBC transaction");
         }
 
         TransactionSynchronizationManager.clear();
@@ -71,11 +71,11 @@ public class TransactionImpl implements Transaction {
     @Override
     public void rollback() {
         if (state != TransactionState.RUNNING && state != TransactionState.COMMIT_FAIL) {
-            throw new TransactionException("transaction has rollback or commit");
+            throw new TransactionSystemException("transaction has rollback or commit");
         }
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
         if (tc == null) {
-            throw new TransactionException("no transaction context");
+            throw new TransactionSystemException("no transaction context");
         }
 
         Connection conn = transactionContext.getConnection();
@@ -91,7 +91,7 @@ public class TransactionImpl implements Transaction {
             state = TransactionState.ROLLBACK_SUCCESS;
         } catch (SQLException e) {
             state = TransactionState.ROLLBACK_FAIL;
-            new RuntimeException(); // TODO
+            new TransactionSystemException("Could not roll back JDBC transaction");
         } finally {
             TransactionSynchronizationManager.clear();
             DataSource ds = transactionContext.getDataSource();

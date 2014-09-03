@@ -21,9 +21,9 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class TransactionException extends RuntimeException {
+public class TransactionSystemException extends RuntimeException {
 
-    public TransactionException(String message) {
+    public TransactionSystemException(String message) {
         super(message);
     }
 
