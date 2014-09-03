@@ -31,7 +31,10 @@ import java.util.Map;
  */
 public class MultipleDataSourceFactory implements DataSourceFactory {
 
-    private final Map<String, DataSourceFactory> factories;
+    private Map<String, DataSourceFactory> factories;
+
+    public MultipleDataSourceFactory() {
+    }
 
     public MultipleDataSourceFactory(Map<String, DataSourceFactory> factories) {
         this.factories = factories;
@@ -41,6 +44,14 @@ public class MultipleDataSourceFactory implements DataSourceFactory {
     public DataSource getDataSource(String name, SQLType sqlType) {
         DataSourceFactory factory = factories.get(name);
         return factory.getDataSource(name, sqlType);
+    }
+
+    public Map<String, DataSourceFactory> getFactories() {
+        return factories;
+    }
+
+    public void setFactories(Map<String, DataSourceFactory> factories) {
+        this.factories = factories;
     }
 
 }

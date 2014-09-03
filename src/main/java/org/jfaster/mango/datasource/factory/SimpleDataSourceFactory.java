@@ -27,7 +27,10 @@ import javax.sql.DataSource;
  */
 public class SimpleDataSourceFactory implements DataSourceFactory {
 
-    private final DataSource dataSource;
+    private DataSource dataSource;
+
+    public SimpleDataSourceFactory() {
+    }
 
     public SimpleDataSourceFactory(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -36,6 +39,14 @@ public class SimpleDataSourceFactory implements DataSourceFactory {
     @Override
     public DataSource getDataSource(String name, SQLType sqlType) {
         return dataSource;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
 }

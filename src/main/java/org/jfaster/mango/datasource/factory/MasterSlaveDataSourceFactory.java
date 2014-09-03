@@ -30,9 +30,12 @@ import java.util.Random;
  */
 public class MasterSlaveDataSourceFactory implements DataSourceFactory {
 
-    private final DataSource master;
-    private final List<DataSource> slaves;
+    private DataSource master;
+    private List<DataSource> slaves;
     private final Random random = new Random();
+
+    public MasterSlaveDataSourceFactory() {
+    }
 
     public MasterSlaveDataSourceFactory(DataSource master, List<DataSource> slaves) {
         this.master = master;
@@ -45,6 +48,22 @@ public class MasterSlaveDataSourceFactory implements DataSourceFactory {
             return master;
         }
         return sqlType == SQLType.SELECT ? slaves.get(random.nextInt(slaves.size())) : master;
+    }
+
+    public DataSource getMaster() {
+        return master;
+    }
+
+    public void setMaster(DataSource master) {
+        this.master = master;
+    }
+
+    public List<DataSource> getSlaves() {
+        return slaves;
+    }
+
+    public void setSlaves(List<DataSource> slaves) {
+        this.slaves = slaves;
     }
 
 }
