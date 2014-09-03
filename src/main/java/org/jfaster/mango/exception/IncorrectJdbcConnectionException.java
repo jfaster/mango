@@ -17,17 +17,14 @@
 package org.jfaster.mango.exception;
 
 /**
- * 不能获得jdbc连接异常
+ * 不正确的jdbc连接异常
  *
  * @author ash
  */
-public class CannotGetJdbcConnectionException extends DataAccessException {
+public class IncorrectJdbcConnectionException extends RuntimeException {
 
-    public CannotGetJdbcConnectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CannotGetJdbcConnectionException(String message) {
+    public IncorrectJdbcConnectionException(String message) {
         super(message);
     }
+
 }

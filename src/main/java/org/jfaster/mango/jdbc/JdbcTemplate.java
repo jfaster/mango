@@ -83,7 +83,7 @@ public class JdbcTemplate {
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, ds);
+            DataSourceUtils.releaseConnection(conn);
 
             if (logger.isDebugEnabled()) {
                 if (r != null) { // 执行成功
@@ -108,7 +108,7 @@ public class JdbcTemplate {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, ds);
+            DataSourceUtils.releaseConnection(conn);
 
             if (logger.isDebugEnabled()) {
                 List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
@@ -154,7 +154,7 @@ public class JdbcTemplate {
                 }
             }
         } finally {
-            DataSourceUtils.releaseConnection(conn, ds);
+            DataSourceUtils.releaseConnection(conn);
         }
         return r;
     }
@@ -178,7 +178,7 @@ public class JdbcTemplate {
         } finally {
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, ds);
+            DataSourceUtils.releaseConnection(conn);
 
             if (logger.isDebugEnabled()) {
                 if (success) { // 执行成功

@@ -64,7 +64,7 @@ public class TransactionImpl implements Transaction {
         TransactionSynchronizationManager.clear();
         DataSource ds = transactionContext.getDataSource();
         DataSourceUtils.resetConnectionAfterTransaction(conn, ds, tc.getPreviousLevel());
-        DataSourceUtils.releaseConnection(conn, ds);
+        DataSourceUtils.releaseConnection(conn);
         state = TransactionState.COMMIT_SUCCESS;
     }
 
@@ -96,7 +96,7 @@ public class TransactionImpl implements Transaction {
             TransactionSynchronizationManager.clear();
             DataSource ds = transactionContext.getDataSource();
             DataSourceUtils.resetConnectionAfterTransaction(conn, ds, tc.getPreviousLevel());
-            DataSourceUtils.releaseConnection(conn, ds);
+            DataSourceUtils.releaseConnection(conn);
         }
     }
 
