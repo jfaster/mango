@@ -18,6 +18,7 @@ package org.jfaster.mango.datasource;
 
 import org.jfaster.mango.exception.CannotGetJdbcConnectionException;
 import org.jfaster.mango.transaction.TransactionContext;
+import org.jfaster.mango.transaction.TransactionIsolationLevel;
 import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -108,10 +109,13 @@ public class DataSourceUtils {
                 conn.setAutoCommit(false); // throws SQLException
             }
 
-            int previousLevel = conn.getTransactionIsolation(); // throws SQLException
-            if (previousLevel != tc.getLevel().getLevel()) {
-                conn.setTransactionIsolation(tc.getLevel().getLevel()); // throws SQLException
-                tc.setPreviousLevel(previousLevel);
+            TransactionIsolationLevel expectedLevel = tc.getLevel();
+            if (expectedLevel != TransactionIsolationLevel.DEFAULT) {
+                int previousLevel = conn.getTransactionIsolation(); // throws SQLException
+                if (previousLevel != expectedLevel.getLevel()) {
+                    conn.setTransactionIsolation(expectedLevel.getLevel()); // throws SQLException
+                    tc.setPreviousLevel(previousLevel);
+                }
             }
         } else {
             if (DataSourceMonitor.needCheckAutoCommit(ds)) {

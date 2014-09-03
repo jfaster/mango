@@ -38,4 +38,8 @@ public abstract class TransactionFactory {
         return transaction;
     }
 
+    public static Transaction newTransaction() {
+        return newTransaction(TransactionIsolationLevel.DEFAULT);
+    }
+
 }
