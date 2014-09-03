@@ -81,10 +81,6 @@ public class JdbcTemplate {
         } catch (SQLException e) {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
-            JdbcUtils.closeResultSet(rs);
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn);
-
             if (logger.isDebugEnabled()) {
                 if (r != null) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, args, r);
@@ -92,6 +88,10 @@ public class JdbcTemplate {
                     logger.debug("[error] \"{}\" #args={}", sql, args);
                 }
             }
+
+            JdbcUtils.closeResultSet(rs);
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn);
         }
     }
 
@@ -107,9 +107,6 @@ public class JdbcTemplate {
         } catch (SQLException e) {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn);
-
             if (logger.isDebugEnabled()) {
                 List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
                 for (Object[] batchArg : batchArgs) {
@@ -121,6 +118,9 @@ public class JdbcTemplate {
                     logger.debug("[error] \"{}\" #args={}", sql, debugBatchArgs);
                 }
             }
+
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn);
         }
     }
 
@@ -142,8 +142,6 @@ public class JdbcTemplate {
                 } catch (SQLException e) {
                     throw new UncheckedSQLException(e.getMessage(), e);
                 } finally {
-                    JdbcUtils.closeStatement(ps);
-
                     if (logger.isDebugEnabled()) {
                         if (success[i]) {
                             logger.debug("\"{}\" #args={} #result={}", sql, args, r[i]);
@@ -151,6 +149,8 @@ public class JdbcTemplate {
                             logger.debug("[error] \"{}\" #args={}", sql, args);
                         }
                     }
+
+                    JdbcUtils.closeStatement(ps);
                 }
             }
         } finally {
@@ -176,10 +176,6 @@ public class JdbcTemplate {
         } catch (SQLException e) {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
-            JdbcUtils.closeResultSet(rs);
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn);
-
             if (logger.isDebugEnabled()) {
                 if (success) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, args, r);
@@ -187,6 +183,10 @@ public class JdbcTemplate {
                     logger.debug("[error] \"{}\" #args={}", sql, args);
                 }
             }
+
+            JdbcUtils.closeResultSet(rs);
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn);
         }
     }
 

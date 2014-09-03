@@ -46,10 +46,16 @@ public class DataSourceUtils {
             }
             Connection conn = tc.getConnection();
             if (conn != null) { // 使用之前的连接
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Fetching resumed JDBC Connection from TransactionContext");
+                }
                 return conn;
             }
         }
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Fetching JDBC Connection from DataSource");
+        }
         Connection conn;
         try {
             conn = ds.getConnection();
@@ -61,6 +67,9 @@ public class DataSourceUtils {
         }
 
         if (inTransaction) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Registering JDBC Connection to TransactionContext");
+            }
             tc.setConnection(conn);
             tc.setDataSource(ds);
 
@@ -73,6 +82,9 @@ public class DataSourceUtils {
                 if (expectedLevel != TransactionIsolationLevel.DEFAULT) {
                     int previousLevel = conn.getTransactionIsolation();
                     if (previousLevel != expectedLevel.getLevel()) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Setting isolation level of JDBC Connection [" + conn + "] to " + expectedLevel.getLevel());
+                        }
                         conn.setTransactionIsolation(expectedLevel.getLevel());
                         tc.setPreviousLevel(previousLevel);
                     }
@@ -102,6 +114,9 @@ public class DataSourceUtils {
         try {
             if (TransactionSynchronizationManager.inTransaction()) { // 在事务中不关闭连接，直接返回
                 return;
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Returning JDBC Connection to DataSource");
             }
             conn.close();
         } catch (SQLException e) {
