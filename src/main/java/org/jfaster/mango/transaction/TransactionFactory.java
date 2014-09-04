@@ -17,11 +17,15 @@
 package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.exception.TransactionSystemException;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 /**
  * @author ash
  */
 public abstract class TransactionFactory {
+
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(TransactionFactory.class);
 
     public static Transaction newTransaction(TransactionIsolationLevel level) {
         if (level == null) {
@@ -32,6 +36,11 @@ public abstract class TransactionFactory {
         if (tc != null) {
             throw new TransactionSystemException("already exists transaction");
         }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating new transaction");
+        }
+
         tc = new TransactionContext(level);
         Transaction transaction = new TransactionImpl(tc);
         TransactionSynchronizationManager.setTransactionContext(tc);

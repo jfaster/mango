@@ -36,7 +36,8 @@ public class DataSourceUtils {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceUtils.class);
 
-    public static Connection getConnection(DataSource ds) throws CannotGetJdbcConnectionException {
+    public static Connection getConnection(DataSource ds)
+            throws TransactionSystemException, CannotGetJdbcConnectionException, IncorrectJdbcConnectionException {
         TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
         boolean inTransaction = tc != null;
         if (inTransaction) {
@@ -47,7 +48,7 @@ public class DataSourceUtils {
             Connection conn = tc.getConnection();
             if (conn != null) { // 使用之前的连接
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Fetching resumed JDBC Connection from TransactionContext");
+                    logger.debug("Fetching JDBC Connection from TransactionContext");
                 }
                 return conn;
             }
@@ -74,20 +75,23 @@ public class DataSourceUtils {
             tc.setDataSource(ds);
 
             try {
-                if (conn.getAutoCommit()) {
-                    conn.setAutoCommit(false);
-                }
-
                 TransactionIsolationLevel expectedLevel = tc.getLevel();
                 if (expectedLevel != TransactionIsolationLevel.DEFAULT) {
                     int previousLevel = conn.getTransactionIsolation();
                     if (previousLevel != expectedLevel.getLevel()) {
                         if (logger.isDebugEnabled()) {
-                            logger.debug("Setting isolation level of JDBC Connection [" + conn + "] to " + expectedLevel.getLevel());
+                            logger.debug("Setting isolation level of JDBC Connection to " + expectedLevel.getLevel());
                         }
                         conn.setTransactionIsolation(expectedLevel.getLevel());
                         tc.setPreviousLevel(previousLevel);
                     }
+                }
+
+                if (conn.getAutoCommit()) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Switching JDBC Connection to manual commit");
+                    }
+                    conn.setAutoCommit(false);
                 }
             } catch (SQLException e) {
                 throw new IncorrectJdbcConnectionException("Incorrect JDBC Connection");
@@ -128,6 +132,9 @@ public class DataSourceUtils {
 
     public static void resetConnectionAfterTransaction(Connection conn, DataSource ds, Integer previousIsolationLevel) {
         try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Switching JDBC Connection to auto commit");
+            }
             conn.setAutoCommit(true);
         } catch (SQLException e) {
             logger.error("Could not reset autoCommit of JDBC Connection after transaction", e);
@@ -139,7 +146,7 @@ public class DataSourceUtils {
         try {
             if (previousIsolationLevel != null) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Resetting isolation level of JDBC Connection [" + conn + "] to " + previousIsolationLevel);
+                    logger.debug("Resetting isolation level of JDBC Connection to " + previousIsolationLevel);
                 }
                 conn.setTransactionIsolation(previousIsolationLevel);
             }

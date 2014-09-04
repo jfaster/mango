@@ -18,6 +18,8 @@ package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.exception.TransactionSystemException;
 import org.jfaster.mango.datasource.DataSourceUtils;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -27,6 +29,8 @@ import java.sql.SQLException;
  * @author ash
  */
 public class TransactionImpl implements Transaction {
+
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(TransactionFactory.class);
 
     private TransactionContext transactionContext;
 
@@ -54,6 +58,9 @@ public class TransactionImpl implements Transaction {
             return;
         }
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Committing JDBC transaction on Connection");
+        }
         try {
             conn.commit();
         } catch (SQLException e) { // commit出现异常，交由rollback回收connection
@@ -86,6 +93,9 @@ public class TransactionImpl implements Transaction {
             return;
         }
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Rolling back JDBC transaction on Connection");
+        }
         try {
             conn.rollback();
             state = TransactionState.ROLLBACK_SUCCESS;

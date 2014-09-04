@@ -24,7 +24,7 @@ import java.sql.Connection;
  */
 public class TransactionContext {
 
-    private TransactionIsolationLevel level;
+    private final TransactionIsolationLevel level;
     private DataSource dataSource;
     private Connection connection;
     private Integer previousLevel; // nul表示level不用变
@@ -60,4 +60,5 @@ public class TransactionContext {
     public Integer getPreviousLevel() {
         return previousLevel;
     }
+
 }
