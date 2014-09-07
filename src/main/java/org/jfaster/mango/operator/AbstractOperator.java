@@ -157,6 +157,9 @@ public abstract class AbstractOperator implements Operator {
     }
 
     protected DataSource getDataSource(String dsn) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("The name of Datasource is [" + dsn + "]");
+        }
         final DataSourceFactory dataSourceFactory = dataSourceFactoryHolder.get();
         DataSource ds = dataSourceFactory.getDataSource(dsn, sqlType);
         if (ds == null) {
