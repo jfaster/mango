@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.util;
 
-import java.util.Iterator;
-
 /**
  * @author ash
  */
@@ -25,23 +23,6 @@ public class Strings {
 
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.length() == 0; // string.isEmpty() in Java 6
-    }
-
-    public static String join(Iterable<?> iterable, String separator) {
-        StringBuffer sb = new StringBuffer();
-        Iterator<?> parts = iterable.iterator();
-        if (parts.hasNext()) {
-            sb.append(toString(parts.next()));
-            while (parts.hasNext()) {
-                sb.append(separator);
-                sb.append(toString(parts.next()));
-            }
-        }
-        return sb.toString();
-    }
-
-    private static CharSequence toString(Object part) {
-        return (part instanceof CharSequence) ? (CharSequence) part : part.toString();
     }
 
 }

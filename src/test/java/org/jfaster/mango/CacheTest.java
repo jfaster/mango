@@ -20,11 +20,11 @@ import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
 import org.jfaster.mango.support.model4table.User;
-import org.jfaster.mango.support.Config;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -207,6 +207,85 @@ public class CacheTest {
         assertThat(actual, contains(msgs.toArray()));
     }
 
+
+    @Test
+    public void testUpdateWithInStatement() {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        UserDao dao = mango.create(UserDao.class, cacheHandler);
+        List<User> users = createRandomUsers(5);
+        List<Integer> ids = new ArrayList<Integer>();
+        for (User user : users) {
+            int id = dao.insert(user);
+            user.setId(id);
+            ids.add(id);
+        }
+        for (Integer id : ids) {
+            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+        }
+        dao.getUserList(ids);
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
+            User user = users.get(i);
+            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+        }
+        String name = "ash";
+        int r = dao.updateWithInStatement(ids, name);
+        assertThat(r, greaterThan(0));
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
+            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+            users.get(i).setName(name);
+        }
+
+        List<User> actual = dao.getUserList(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
+    public void testBatchUpdate() {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        UserDao dao = mango.create(UserDao.class, cacheHandler);
+        List<User> users = createRandomUsers(5);
+        List<Integer> ids = new ArrayList<Integer>();
+        for (User user : users) {
+            int id = dao.insert(user);
+            user.setId(id);
+            ids.add(id);
+        }
+        for (Integer id : ids) {
+            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+        }
+        dao.getUserList(ids);
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
+            User user = users.get(i);
+            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+        }
+
+        List<User> newUsers = new ArrayList<User>();
+        String name = "ash";
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
+            User newUser = new User();
+            newUser.setId(id);
+            newUser.setName(name);
+            newUsers.add(newUser);
+            users.get(i).setName(name);
+        }
+
+        int[] r = dao.batchUpdate(newUsers);
+        assertThat(r.length, greaterThan(0));
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
+            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+        }
+
+        List<User> actual = dao.getUserList(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
     private String getUserKey(int id) {
         return "user_" + id;
     }
@@ -306,9 +385,11 @@ public class CacheTest {
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
         public User[] getUserArray(@CacheBy() List<Integer> ids);
 
+        @SQL("update user set name=:2 where id in (:1)")
+        public int updateWithInStatement(@CacheBy List<Integer> ids, String name);
 
-        @SQL("select id, name, age, gender, money, update_time from user where age=:1")
-        public List<User> getUserListByAge(@CacheBy int age);
+        @SQL("update user set name=:1.name where id=:1.id")
+        public int[] batchUpdate(@CacheBy("id") List<User> users);
 
     }
 

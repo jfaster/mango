@@ -24,6 +24,8 @@ import org.jfaster.mango.parser.ASTIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;
@@ -35,6 +37,9 @@ import java.util.*;
  * @author ash
  */
 public class BatchUpdateOperator extends CacheableOperator {
+
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
+
 
     public BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
         super(rootNode, method, sqlType);
@@ -102,6 +107,9 @@ public class BatchUpdateOperator extends CacheableOperator {
         int[] ints = executeDb(gorupMap);
         if (keys != null) { // 表示使用cache
             deleteFromCache(keys);
+            if (logger.isDebugEnabled()) {
+                logger.debug("cache delete #keys={}", keys);
+            }
         }
         return ints;
     }
