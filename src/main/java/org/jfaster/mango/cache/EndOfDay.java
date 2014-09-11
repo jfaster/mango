@@ -32,8 +32,8 @@ public class EndOfDay implements CacheExpire {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MILLISECOND, 999);
-        long d = Math.max(cal.getTimeInMillis() - System.currentTimeMillis(), 1);
-        return (int) d / 1000;
+        long d = cal.getTimeInMillis() - System.currentTimeMillis();
+        return Math.max((int) d / 1000, 1);
     }
 
 }
