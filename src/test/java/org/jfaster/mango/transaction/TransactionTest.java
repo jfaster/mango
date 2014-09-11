@@ -195,6 +195,33 @@ public class TransactionTest {
         conn.close();
     }
 
+    @Test
+    public void testDefaultLevel() throws Exception {
+        int previousLevel = getPreviousLevel();
+        Account x = new Account(1, 1000);
+        Account y = new Account(2, 2000);
+        dao.insert(x);
+        dao.insert(y);
+
+        int num = 50;
+        x.add(num);
+        y.sub(num);
+
+        Transaction tx = TransactionFactory.newTransaction();
+        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+
+        dao.update(x);
+        checkConn(tc.getConnection(), false, previousLevel);
+        dao.update(y);
+        checkConn(tc.getConnection(), false, previousLevel);
+        tx.commit();
+
+        Connection conn = ds.getConnection();
+        checkConn(conn, true, previousLevel);
+        conn.close();
+
+    }
+
     private int getPreviousLevel() throws Exception {
         Connection conn = ds.getConnection();
         int level = conn.getTransactionIsolation();

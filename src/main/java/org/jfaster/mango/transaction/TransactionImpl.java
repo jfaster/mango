@@ -59,7 +59,7 @@ public class TransactionImpl implements Transaction {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Committing JDBC transaction on Connection");
+            logger.debug("Committing JDBC transaction");
         }
         try {
             conn.commit();
@@ -94,7 +94,7 @@ public class TransactionImpl implements Transaction {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Rolling back JDBC transaction on Connection");
+            logger.debug("Rolling back JDBC transaction");
         }
         try {
             conn.rollback();
