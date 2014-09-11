@@ -39,11 +39,11 @@ public class ObjectResultSetExtractor<T> implements ResultSetExtractor<T> {
 
         // 原生类型
         if (!rs.next()) {
-            throw new NullPointerException("can't cast null to primitive type " + mappedClass);
+            throw new NullPointerException("no data, can't cast null to primitive type " + mappedClass);
         }
         T r = rowMapper.mapRow(rs, 1);
         if (r == null) {
-            throw new NullPointerException("can't cast null to primitive type " + mappedClass);
+            throw new NullPointerException("data is null, can't cast null to primitive type " + mappedClass);
         }
         return r;
     }
