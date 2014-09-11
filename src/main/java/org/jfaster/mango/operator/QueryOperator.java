@@ -163,10 +163,10 @@ public class QueryOperator extends CacheableOperator {
             }
             value = executeFromDb(context);
             if (value != null) {
-                setToCache(key, value);
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache set #key={} #value={}", key, value);
                 }
+                setToCache(key, value);
             }
         } else {
             if (logger.isDebugEnabled()) {

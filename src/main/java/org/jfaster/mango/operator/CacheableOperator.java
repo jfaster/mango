@@ -83,6 +83,11 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     private String suffixPropertyPath;
 
     /**
+     * 缓存前缀全名
+     */
+    private String suffixFullName;
+
+    /**
      * 是否使用多key缓存
      */
     private boolean useMultipleKeys;
@@ -170,6 +175,9 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
 
     protected Set<String> getCacheKeys(RuntimeContext context) {
         Iterables iterables = new Iterables(getSuffixObj(context));
+        if (iterables.isEmpty()) {
+            throw new IllegalArgumentException(suffixFullName + " can't be empty");
+        }
         Set<String> keys = new HashSet<String>(iterables.size() * 2);
         for (Object suffix : iterables) {
             String key = getCacheKey(suffix);
@@ -179,7 +187,11 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     }
 
     protected Object getSuffixObj(RuntimeContext context) {
-        return context.getPropertyValue(suffixParameterName, suffixPropertyPath);
+        Object obj = context.getPropertyValue(suffixParameterName, suffixPropertyPath);
+        if (obj == null) {
+            throw new NullPointerException(suffixFullName + " can't be null");
+        }
+        return obj;
     }
 
     protected void setSuffixObj(RuntimeContext context, Object obj) {
@@ -233,6 +245,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
         for (ValuableParameter vp : vps) {
             if (vp.getParameterName().equals(suffixParameterName) &&
                     vp.getPropertyPath().equals(suffixPropertyPath)) {
+                suffixFullName =  vp.getFullName();
                 return;
             }
         }

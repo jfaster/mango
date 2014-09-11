@@ -106,10 +106,10 @@ public class BatchUpdateOperator extends CacheableOperator {
         }
         int[] ints = executeDb(gorupMap);
         if (keys != null) { // 表示使用cache
-            deleteFromCache(keys);
             if (logger.isDebugEnabled()) {
                 logger.debug("cache delete #keys={}", keys);
             }
+            deleteFromCache(keys);
         }
         return ints;
     }

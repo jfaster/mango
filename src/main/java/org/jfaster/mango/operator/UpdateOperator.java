@@ -88,16 +88,16 @@ public class UpdateOperator extends CacheableOperator {
         if (isUseCache()) { // 如果使用cache，更新后需要从cache中删除对应的key或keys
             if (isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
                 Set<String> keys = getCacheKeys(context);
-                deleteFromCache(keys);
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache delete #keys={}", keys);
                 }
+                deleteFromCache(keys);
             } else { // 单个key，例如：update table set name='ash' where id ＝ 1;
                 String key = getCacheKey(context);
-                deleteFromCache(key);
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache delete #key={}", key);
                 }
+                deleteFromCache(key);
             }
         }
         return r;

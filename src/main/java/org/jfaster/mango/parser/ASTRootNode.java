@@ -243,8 +243,7 @@ public class ASTRootNode extends AbstractNode {
                     throw new NullPointerException(aip.getFullName() + " can't be null");
                 }
                 Iterables iterables = new Iterables(objs);
-                int size = iterables.size();
-                if (size == 0) {
+                if (iterables.isEmpty()) {
                     throw new IllegalArgumentException(aip.getFullName() + " can't be empty");
                 }
                 for (Object obj : iterables) {
