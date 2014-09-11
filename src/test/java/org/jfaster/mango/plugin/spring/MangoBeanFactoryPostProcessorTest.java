@@ -17,6 +17,7 @@
 package org.jfaster.mango.plugin.spring;
 
 import org.jfaster.mango.plugin.spring.dao.UserDao;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,6 +28,7 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
+@Ignore
 public class MangoBeanFactoryPostProcessorTest {
 
     @Test
