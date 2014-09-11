@@ -81,7 +81,6 @@ public class DriverManagerDataSource implements DataSource {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         throw new UnsupportedOperationException();
     }
