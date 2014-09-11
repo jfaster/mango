@@ -14,7 +14,7 @@
     <version>1.13-SNAPSHOT</version>
 
     <name>mango</name>
-    <url>https://github.com/jfaster/mango/</url>
+    <url>http://mango.jfaster.org/</url>
     <description>
         mango is a dao framework.
     </description>
