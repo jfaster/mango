@@ -176,7 +176,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     protected Set<String> getCacheKeys(RuntimeContext context) {
         Iterables iterables = new Iterables(getSuffixObj(context));
         if (iterables.isEmpty()) {
-            throw new IllegalArgumentException(suffixFullName + " can't be empty");
+            throw new IllegalArgumentException("value of " + suffixFullName + " can't be empty");
         }
         Set<String> keys = new HashSet<String>(iterables.size() * 2);
         for (Object suffix : iterables) {
@@ -189,7 +189,7 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
     protected Object getSuffixObj(RuntimeContext context) {
         Object obj = context.getPropertyValue(suffixParameterName, suffixPropertyPath);
         if (obj == null) {
-            throw new NullPointerException(suffixFullName + " can't be null");
+            throw new NullPointerException("value of " + suffixFullName + " can't be null");
         }
         return obj;
     }

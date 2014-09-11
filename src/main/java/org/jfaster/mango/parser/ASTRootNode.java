@@ -240,11 +240,11 @@ public class ASTRootNode extends AbstractNode {
                 ASTIterableParameter aip = (ASTIterableParameter) node;
                 Object objs = aip.value(context);
                 if (objs == null) {
-                    throw new NullPointerException(aip.getFullName() + " can't be null");
+                    throw new NullPointerException("value of " + aip.getFullName() + " can't be null");
                 }
                 Iterables iterables = new Iterables(objs);
                 if (iterables.isEmpty()) {
-                    throw new IllegalArgumentException(aip.getFullName() + " can't be empty");
+                    throw new IllegalArgumentException("value of " + aip.getFullName() + " can't be empty");
                 }
                 for (Object obj : iterables) {
                     args.add(obj);

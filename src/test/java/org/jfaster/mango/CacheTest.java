@@ -20,6 +20,7 @@ import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
@@ -319,42 +320,6 @@ public class CacheTest {
         msg.setUid(uid);
         msg.setContent(content);
         return msg;
-    }
-
-    private static class CacheHandlerImpl implements CacheHandler {
-
-        private Map<String, Object> cache = new HashMap<String, Object>();
-
-        @Override
-        public Object get(String key) {
-            return cache.get(key);
-        }
-
-        @Override
-        public Map<String, Object> getBulk(Set<String> keys) {
-            Map<String, Object> map = new HashMap<String, Object>();
-            for (String key : keys) {
-                map.put(key, cache.get(key));
-            }
-            return map;
-        }
-
-        @Override
-        public void set(String key, Object value, int expires) {
-            cache.put(key, value);
-        }
-
-        @Override
-        public void delete(Set<String> keys) {
-            for (String key : keys) {
-                delete(key);
-            }
-        }
-
-        @Override
-        public void delete(String key) {
-            cache.remove(key);
-        }
     }
 
 

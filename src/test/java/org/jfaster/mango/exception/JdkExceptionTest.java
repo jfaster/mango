@@ -16,6 +16,10 @@
 
 package org.jfaster.mango.exception;
 
+import org.jfaster.mango.annotation.Cache;
+import org.jfaster.mango.annotation.CacheBy;
+import org.jfaster.mango.cache.Day;
+import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.operator.Mango;
@@ -49,6 +53,7 @@ public class JdkExceptionTest {
     public void before() throws Exception {
         Connection conn = ds.getConnection();
         Table.MSG.load(conn);
+        Table.ACCOUNT.load(conn);
         conn.close();
     }
 
@@ -84,8 +89,53 @@ public class JdkExceptionTest {
         dao.getMsgs(new ArrayList<Integer>());
     }
 
+    @Test
+    public void testIterableParameterNullWithCache() {
+        thrown.expect(NullPointerException.class);
+        thrown.expectMessage("value of :1 can't be null");
+        MsgCacheDao dao = mango.create(MsgCacheDao.class, new CacheHandlerImpl());
+        dao.getMsgs(null);
+    }
+
+    @Test
+    public void testIterableParameterEmptyWithCache() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("value of :1 can't be empty");
+        MsgCacheDao dao = mango.create(MsgCacheDao.class, new CacheHandlerImpl());
+        dao.getMsgs(new ArrayList<Integer>());
+    }
+
+    @Test
+    public void testNoData() throws Exception {
+        thrown.expect(NullPointerException.class);
+        thrown.expectMessage("no data, can't cast null to primitive type int");
+        AccountDao dao = mango.create(AccountDao.class);
+        dao.getBalance(1);
+    }
+
+    @Test
+    public void testDataIsNull() throws Exception {
+        thrown.expect(NullPointerException.class);
+        thrown.expectMessage("data is null, can't cast null to primitive type int");
+        AccountDao dao = mango.create(AccountDao.class);
+        int id = 1;
+        dao.insert(id, null);
+        dao.getBalance(id);
+    }
+
+    @DB(table = "account")
+    interface AccountDao {
+
+        @SQL("insert into #table(id, balance) values(:1, :2)")
+        public int insert(int id, Integer balance);
+
+        @SQL("select balance from #table where id=:1")
+        public int getBalance(int id);
+
+    }
+
     @DB
-    static interface MsgDao {
+    interface MsgDao {
 
         @SQL("insert into msg(uid, content) values(:1.uid, :1.content)")
         public int[] batchInsert(List<Msg> msgs);
@@ -95,6 +145,13 @@ public class JdkExceptionTest {
 
     }
 
+    @DB
+    @Cache(prefix = "msg_", expire = Day.class)
+    interface MsgCacheDao {
 
+        @SQL("select id, uid, content from msg where id in (:1)")
+        public List<Msg> getMsgs(@CacheBy List<Integer> ids);
+
+    }
 
 }
