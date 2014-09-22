@@ -28,12 +28,17 @@ public class DataSourceMonitor {
 
     private static ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
 
+    private static volatile boolean forceCheckAutoCommit = false;
+
     public static boolean needCheckAutoCommit(DataSource ds) {
-        return map.get(ds) != null;
+        return forceCheckAutoCommit || map.get(ds) != null;
     }
 
     public static void resetAutoCommitFail(DataSource ds) {
         map.putIfAbsent(ds, new Object());
     }
 
+    public static void setForceCheckAutoCommit(boolean forceCheckAutoCommit) {
+        DataSourceMonitor.forceCheckAutoCommit = forceCheckAutoCommit;
+    }
 }
