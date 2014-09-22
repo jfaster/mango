@@ -23,6 +23,8 @@ import org.jfaster.mango.cache.CacheExpire;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
+import org.jfaster.mango.exception.IncorrectDefinitionException;
+import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -199,41 +201,62 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
         context.setPropertyValue(suffixParameterName, suffixPropertyPath, obj);
     }
 
+    protected String getInterableProperty() {
+        for (ASTJDBCIterableParameter jip : rootNode.getJDBCIterableParameters()) {
+            if (jip.getParameterName().equals(suffixParameterName)
+                    && jip.getPropertyPath().equals(suffixPropertyPath)) {
+                return jip.getInterableProperty();
+            }
+        }
+        throw new UnreachableCodeException();
+    }
+
     private void init() {
+        Annotation[][] pass = method.getParameterAnnotations();
+        int cacheByNum = 0;
+        for (int i = 0; i < pass.length; i++) {
+            Annotation[] pas = pass[i];
+            for (Annotation pa : pas) {
+                if (CacheBy.class.equals(pa.annotationType())) {
+                    suffixParameterName = getParameterNameByIndex(i);
+                    suffixPropertyPath = ((CacheBy) pa).value();
+                    cacheByNum++;
+                }
+            }
+        }
         Class<?> daoClass = method.getDeclaringClass();
+        CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
         Cache cacheAnno = daoClass.getAnnotation(Cache.class);
         if (cacheAnno != null) { // dao类使用cache
-            CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
             if (cacheIgnoredAnno == null) { // method不禁用cache
+                if (cacheByNum != 1) {
+                    throw new IncorrectAnnotationException("if use cache, each method " +
+                            "expected one and only one @CacheBy annotation on parameter " +
+                            "but found " + cacheByNum);
+                }
                 useCache = true;
                 prefix = cacheAnno.prefix();
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
-
-                Annotation[][] pass = method.getParameterAnnotations();
-                int num = 0;
-                for (int i = 0; i < pass.length; i++) {
-                    Annotation[] pas = pass[i];
-                    for (Annotation pa : pas) {
-                        if (CacheBy.class.equals(pa.annotationType())) {
-                            suffixParameterName = getParameterNameByIndex(i);
-                            suffixPropertyPath = ((CacheBy) pa).value();
-                            num++;
-                        }
-                    }
-                }
-                if (num != 1) {
-                    throw new IncorrectAnnotationException("if use cache, each method " +
-                            "expected one and only one @CacheBy annotation on parameter " +
-                            "but found " + num);
-                }
-
                 checkCacheBy();
-
                 Type suffixType = getTypeContext().getPropertyType(suffixParameterName, suffixPropertyPath);
                 TypeToken typeToken = new TypeToken(suffixType);
                 useMultipleKeys = typeToken.isIterable();
                 suffixClass = typeToken.getMappedClass();
+            } else {
+                if (cacheByNum > 0) {
+                    throw new IncorrectDefinitionException("if @CacheIgnored is on method, " +
+                            "@CacheBy can not on method's parameter");
+                }
+            }
+        } else {
+            if (cacheByNum > 0) {
+                throw new IncorrectDefinitionException("if @Cache is not defined, " +
+                        "@CacheBy can not on method's parameter");
+            }
+            if (cacheIgnoredAnno != null) {
+                throw new IncorrectDefinitionException("if @Cache is not defined, " +
+                        "@CacheIgnored can not on method");
             }
         }
     }

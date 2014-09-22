@@ -74,16 +74,13 @@ public class QueryOperator extends CacheableOperator {
                     "expected array or implementations of java.util.List or implementations of java.util.Set " +
                     "but " + method.getGenericReturnType()); // sql中使用了in查询，返回参数必须可迭代
         }
-        if (isUseCache()) { // TODO 异常提示？
-
-            if (jips.size() == 1) {
-                interableProperty = jips.get(0).getInterableProperty();
-                Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
-                if (readMethod == null) {
-                    // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
-                    throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
-                            + interableProperty + " of " + mappedClass + " expected readable but not");
-                }
+        if (isUseCache() && isUseMultipleKeys()) {
+            interableProperty = getInterableProperty();
+            Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
+            if (readMethod == null) {
+                // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
+                throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
+                        + interableProperty + " of " + mappedClass + " expected readable but not");
             }
         }
     }

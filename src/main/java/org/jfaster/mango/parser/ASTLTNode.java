@@ -32,10 +32,13 @@ public class ASTLTNode extends AbstractExpression {
     public boolean evaluate(RuntimeContext context) {
         Object left = ((AbstractExpression) jjtGetChild(0)).value(context);
         Object right = ((AbstractExpression) jjtGetChild(1)).value(context);
-        if (left instanceof Integer && right instanceof Integer) {
+        if (!(left instanceof Integer)) {
+            throw new ClassCastException(left.getClass() + " cannot be cast to " + Integer.class);
+        } else if (!(right instanceof Integer)) {
+            throw new ClassCastException(right.getClass() + " cannot be cast to " + Integer.class);
+        } else {
             return MathUtils.compare((Integer) left, (Integer) right) == -1;
         }
-        throw new RuntimeException(); // TODO
     }
 
     @Override

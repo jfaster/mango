@@ -209,7 +209,6 @@ public abstract class AbstractOperator implements Operator {
      * 提取{@link org.jfaster.mango.annotation.ShardBy}参数
      */
     private void shardBy() {
-        //TODO 优化异常提示
         Annotation[][] pass = method.getParameterAnnotations();
         int shardByNum = 0;
         for (int i = 0; i < pass.length; i++) {
@@ -224,19 +223,22 @@ public abstract class AbstractOperator implements Operator {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
+                Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
+                TypeToken typeToken = new TypeToken(shardType);
+                Class<?> mappedClass = typeToken.getMappedClass();
+                if (mappedClass == null || typeToken.isIterable()) {
+                    throw new IncorrectParameterTypeException("the type of parameter Modified @ShardBy is error, " +
+                            "type is " + shardType);
+                }
                 rootNode.setPartitionInfo(tablePartition, shardParameterName, shardPropertyPath);
             } else {
                 throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
-                        "need one and only one @ShardBy on method's parameter");
+                        "need one and only one @ShardBy on method's parameter but found " + shardByNum);
             }
-        }
-        if (shardByNum == 1) {
-            Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
-            TypeToken typeToken = new TypeToken(shardType);
-            Class<?> mappedClass = typeToken.getMappedClass();
-            if (mappedClass == null || typeToken.isIterable()) {
-                throw new IncorrectParameterTypeException("the type of parameter Modified @ShardBy is error, " +
-                        "type is " + shardType);
+        } else {
+            if (shardByNum > 0) {
+                throw new IncorrectDefinitionException("if @DB.tablePartition is not defined, " +
+                        "@ShardBy can not on method's parameter but found " + shardByNum);
             }
         }
     }

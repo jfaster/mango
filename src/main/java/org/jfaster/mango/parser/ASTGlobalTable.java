@@ -41,7 +41,7 @@ public class ASTGlobalTable extends AbstractRenderableNode {
     @Override
     public boolean render(RuntimeContext context) {
         if (table == null) {
-            throw new IllegalStateException(); // TODO
+            throw new IllegalStateException("please setTable before render");
         }
         String realTable;
         if (!needTablePartition()) {
