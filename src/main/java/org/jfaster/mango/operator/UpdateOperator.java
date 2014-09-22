@@ -20,12 +20,12 @@ import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
-import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.parser.ASTIterableParameter;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.support.SQLType;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.support.SQLType;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
@@ -70,10 +70,10 @@ public class UpdateOperator extends CacheableOperator {
     @Override
     protected void cacheInitPostProcessor() {
         if (isUseCache()) {
-            List<ASTIterableParameter> ips = rootNode.getIterableParameters();
-            if (ips.size() > 1) {
+            List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
+            if (jips.size() > 1) {
                 throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but " +
-                        ips.size()); // sql中不能有多个in语句
+                        jips.size()); // sql中不能有多个in语句
             }
         }
     }
@@ -82,8 +82,9 @@ public class UpdateOperator extends CacheableOperator {
     public Object execute(Object[] methodArgs) {
         RuntimeContext context = buildRuntimeContext(methodArgs);
         DataSource ds = getDataSource(context);
-        String sql = rootNode.getSql(context);
-        Object[] args = rootNode.getArgs(context);
+        rootNode.render(context);
+        String sql = context.getSql();
+        Object[] args = context.getArgs();
         Number r = executeDb(ds, sql, args);
         if (isUseCache()) { // 如果使用cache，更新后需要从cache中删除对应的key或keys
             if (isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);

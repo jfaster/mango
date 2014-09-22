@@ -16,10 +16,12 @@
 
 package org.jfaster.mango.parser;
 
+import org.jfaster.mango.support.RuntimeContext;
+
 /**
  * @author ash
  */
-public class ASTString extends AbstractNode {
+public abstract class ASTString extends AbstractRenderableNode {
 
     private String value;
 
@@ -31,6 +33,12 @@ public class ASTString extends AbstractNode {
 
     public ASTString(Parser p, int i) {
         super(p, i);
+    }
+
+    @Override
+    public boolean render(RuntimeContext context) {
+        context.writeToSqlBuffer(groupValue);
+        return true;
     }
 
     public String getValue() {
@@ -48,4 +56,16 @@ public class ASTString extends AbstractNode {
     public void setGroupValue(String groupValue) {
         this.groupValue = groupValue;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" + value + "]";
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
+    }
+
 }

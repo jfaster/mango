@@ -29,4 +29,10 @@ public class ASTText extends ASTString {
         super(p, i);
     }
 
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
+    }
+
 }

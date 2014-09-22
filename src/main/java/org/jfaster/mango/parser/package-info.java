@@ -15,6 +15,6 @@
  */
 
 /**
- * sql解析
+ * sql模版引擎
  */
 package org.jfaster.mango.parser;

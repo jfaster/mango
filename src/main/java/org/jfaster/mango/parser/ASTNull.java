@@ -16,22 +16,34 @@
 
 package org.jfaster.mango.parser;
 
-/**
- * @author ash
- */
-public class ASTSubtractExpression extends MathExpression {
+import org.jfaster.mango.support.RuntimeContext;
 
-    public ASTSubtractExpression(int i) {
-        super(i);
+public class ASTNull extends AbstractExpression {
+
+    private static Object value = null;
+
+    public ASTNull(int id) {
+        super(id);
     }
 
-    public ASTSubtractExpression(Parser p, int i) {
-        super(p, i);
+    public ASTNull(Parser p, int id) {
+        super(p, id);
     }
 
     @Override
-    public Integer perform(Integer left, Integer right) {
-        return left - right;
+    public boolean evaluate(RuntimeContext context) {
+        return false;
+    }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        return value;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
     }
 
 }

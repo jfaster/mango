@@ -23,13 +23,14 @@ import org.jfaster.mango.cache.CacheExpire;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
-import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
+import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.parser.ValuableParameter;
-import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
@@ -241,11 +242,19 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
      * 检测{@link CacheBy}定位到的参数db中是否有用到，如果db中没有用到，则抛出{@link IncorrectCacheByException}
      */
     private void checkCacheBy() {
-        List<ValuableParameter> vps = rootNode.getValuableParameters();
-        for (ValuableParameter vp : vps) {
-            if (vp.getParameterName().equals(suffixParameterName) &&
-                    vp.getPropertyPath().equals(suffixPropertyPath)) {
-                suffixFullName =  vp.getFullName();
+        List<ASTJDBCParameter> jps = rootNode.getJDBCParameters();
+        for (ASTJDBCParameter jp : jps) {
+            if (jp.getParameterName().equals(suffixParameterName) &&
+                    jp.getPropertyPath().equals(suffixPropertyPath)) {
+                suffixFullName = jp.getFullName();
+                return;
+            }
+        }
+        List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
+        for (ASTJDBCIterableParameter jip : jips) {
+            if (jip.getParameterName().equals(suffixParameterName) &&
+                    jip.getPropertyPath().equals(suffixPropertyPath)) {
+                suffixFullName = jip.getFullName();
                 return;
             }
         }

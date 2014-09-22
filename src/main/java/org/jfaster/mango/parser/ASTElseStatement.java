@@ -16,22 +16,28 @@
 
 package org.jfaster.mango.parser;
 
-/**
- * @author ash
- */
-public class ASTDivExpression extends MathExpression {
+import org.jfaster.mango.support.RuntimeContext;
 
-    public ASTDivExpression(int i) {
-        super(i);
+public class ASTElseStatement extends AbstractRenderableNode {
+
+    public ASTElseStatement(int id) {
+        super(id);
     }
 
-    public ASTDivExpression(Parser p, int i) {
-        super(p, i);
+    public ASTElseStatement(Parser p, int id) {
+        super(p, id);
     }
 
     @Override
-    public Integer perform(Integer left, Integer right) {
-        return left / right;
+    public boolean render(RuntimeContext context) {
+        ((AbstractRenderableNode) jjtGetChild(0)).render(context);
+        return true;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
     }
 
 }

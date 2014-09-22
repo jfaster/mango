@@ -17,39 +17,34 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.support.TypeContext;
 
 /**
- * @author ash
+ * 表达式
  */
-public class ASTExpression extends ValuableExpression {
+public class ASTExpression extends AbstractExpression {
 
-    public ASTExpression(int i) {
-        super(i);
+    public ASTExpression(int id) {
+        super(id);
     }
 
-    public ASTExpression(Parser p, int i) {
-        super(p, i);
-    }
-
-    @Override
-    Object value(RuntimeContext context) {
-        return ((ValuableExpression) jjtGetChild(0)).value(context);
+    public ASTExpression(Parser p, int id) {
+        super(p, id);
     }
 
     @Override
-    void checkType(TypeContext context) {
-        ((ValuableExpression) jjtGetChild(0)).checkType(context);
+    public boolean evaluate(RuntimeContext context) {
+        return ((AbstractExpression) jjtGetChild(0)).evaluate(context);
     }
 
     @Override
-    Token getFirstToken() {
-        return jjtGetFirstToken();
+    public Object value(RuntimeContext context) {
+        return ((AbstractExpression) jjtGetChild(0)).value(context);
     }
 
     @Override
-    Token getLastToken() {
-        return jjtGetLastToken();
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
     }
 
 }

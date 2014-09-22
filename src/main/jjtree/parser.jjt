@@ -36,103 +36,115 @@ PARSER_END(Parser)
 
 TOKEN:
 {
-        <#COLON: ":" >
-    |   <#NUMBER: ["1"-"9"] (["0"-"9"])* >
-    |   <#DOT: "." >
-    |   <#FIELD: ["a"-"z","_"] (["a"-"z","_", "0"-"9"])* >
-    |   <#PARAMETER: <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
+        <#COLON : ":" >
+    |   <#NUMBER : ["1"-"9"] (["0"-"9"])* >
+    |   <#DOT : "." >
+    |   <#FIELD : ["a"-"z","_"] (["a"-"z","_", "0"-"9"])* >
+    |   <#WHITESPACE : (" ")* >
 }
 
+<DEFAULT>
 TOKEN:
 {
-
-        <BLANK: (" ")+ >
-    |   <TABLE: "#table" >
-    |   <NON_ITERABLE_PARAMETER: <PARAMETER> >
-    |   <IN_START: "in" (" ")* "(" > {SwitchTo(I);}
-    |   <EXPR_START: "${" > {SwitchTo(G);}
-    |   <TEXT: (~[":", "$", "#", " "])+ >
+        <BLANK : (" ")+ >
+    |   <JDBC_ITERABLE_PARAMETER: "in" <WHITESPACE> "(" <WHITESPACE> <PARAMETER> <WHITESPACE> ")"  >
+    |   <GLOBAL_TABLE: "#table" >
+    |   <JOIN_PARAMETER: "#{" <WHITESPACE> <PARAMETER> <WHITESPACE> "}" >
+    |   <IF_DIRECTIVE: "#if" > {SwitchTo(EXPRESSION);}
+    |   <ELSEIF_DIRECTIVE: "#elseif" > {SwitchTo(EXPRESSION);}
+    |   <ELSE_DIRECTIVE: "#else" >
+    |   <END: "#end" >
+    |   <TEXT: (~[":", "#", " "])+ >
 }
 
-<I>
+<EXPRESSION>
 SKIP :
 {
         " "
 }
 
-<I>
-TOKEN :
+<EXPRESSION>
+TOKEN:
 {
-        <ITERABLE_PARAMETER: <PARAMETER> >
-    |   <IN_END: ")" > {SwitchTo(DEFAULT);}
+        <LOGICAL_AND: "&&" | "and" >
+    |   <LOGICAL_OR: "||" | "or" >
+    |   <LOGICAL_LT: "<" | "lt" >
+    |   <LOGICAL_LE: "<=" | "le" >
+    |   <LOGICAL_GT: ">" | "gt" >
+    |   <LOGICAL_GE: ">=" | "ge" >
+    |   <LOGICAL_EQ: "==" | "eq" >
+    |   <LOGICAL_NE: "!=" | "ne" >
+    |   <LOGICAL_NOT: "!" | "not" >
+    |   <INTEGER_LITERAL: (["0"-"9"])+ >
+    |   <TRUE: "true" >
+    |   <FALSE: "false" >
+    |   <NULL: "null" >
+    |   <LPAREN : "(" >
+    |   <RPAREN : ")" > {SwitchTo(DEFAULT);}
+}
+
+<DEFAULT, EXPRESSION>
+TOKEN:
+{
+    <PARAMETER : <COLON> (<NUMBER>|<FIELD>) (<DOT> <FIELD>)* >
 }
 
 
-<G>
-SKIP :
+ASTRootNode parse()  #RootNode : {}
 {
-        " "
-}
-
-<G>
-TOKEN :
-{
-        <VARIABLE: <PARAMETER> >
-    |   <MINUS: "-">
-    |   <PLUS: "+">
-    |   <MULTIPLY: "*">
-    |   <DIVIDE: "/">
-    |   <MODULUS: "%">
-    |   <INTEGER_LITERAL: ["1"-"9"] (["0"-"9"])* >
-    |   <LEFT_PAREN: "(" >
-    |   <RIGHT_PAREN: ")" >
-    |   <EXPR_END: "}" > {SwitchTo(DEFAULT);}
-}
-
-ASTRootNode parse()  #RootNode :
-{
-}
-{
-    (LOOKAHEAD(4) IterableParameter() | Table() | Text() | Blank() | NonIterableParameter() | DirectiveExpression())+ <EOF>
+    ( Statement() )+ #Block <EOF>
     {
         return jjtThis;
     }
 }
 
-void Table() :
+void Statement() #void : {}
 {
-}
-{
-    <TABLE>
+        JDBCParameter()
+    |   JDBCIterableParameter()
+    |   GlobalTable()
+    |   JoinParameter()
+    |   IfStatement()
+    |   Text()
+    |   Blank()
 }
 
-
-void IterableParameter() :
+void JDBCParameter() :
 {
     Token t;
 }
 {
-    t=<TEXT>
+    t=<PARAMETER>
     {
-        jjtThis.setInterableProperty(t.image);
+        jjtThis.init(t.image);
     }
-    <BLANK>
-    <IN_START>
-    t=<ITERABLE_PARAMETER>
-    {
-        jjtThis.setParameter(t.image);
-    }
-    <IN_END>
 }
 
-void NonIterableParameter() :
+void JDBCIterableParameter() :
 {
     Token t;
 }
 {
-    t=<NON_ITERABLE_PARAMETER>
+    t=<JDBC_ITERABLE_PARAMETER>
     {
-        jjtThis.setParameter(t.image);
+        jjtThis.init(t.image);
+    }
+}
+
+void GlobalTable() :
+{}
+{
+    <GLOBAL_TABLE>
+}
+
+void JoinParameter() :
+{
+    Token t;
+}
+{
+    t=<JOIN_PARAMETER>
+    {
+        jjtThis.init(t.image);
     }
 }
 
@@ -158,58 +170,90 @@ void Blank() :
     }
 }
 
-void DirectiveExpression() #void : // 标记为void不生成节点
+void IfStatement() :
+{}
 {
-}
-{
-    <EXPR_START> Expression() <EXPR_END>
+    <IF_DIRECTIVE> <LPAREN> Expression() <RPAREN>
+        ( Statement() )* #Block
+    [ ( ElseIfStatement() )+ ]
+    [ ElseStatement() ]
+    <END>
 }
 
+void ElseStatement() :
+{}
+{
+    <ELSE_DIRECTIVE>
+        ( Statement() )* #Block
+}
+
+void ElseIfStatement() :
+{}
+{
+    <ELSEIF_DIRECTIVE> <LPAREN> Expression() <RPAREN>
+        ( Statement() )* #Block
+}
 
 void Expression() :
-{
-}
-{
-    AdditiveExpression()
-}
-
-void AdditiveExpression() #void : // 标记为void不生成节点
 {}
 {
-    MultiplicativeExpression()
+    ConditionalOrExpression()
+}
+
+void ConditionalOrExpression() #void :
+{}
+{
+      ConditionalAndExpression()
+      (  <LOGICAL_OR>  ConditionalAndExpression() #OrNode(2) )*
+}
+
+
+void ConditionalAndExpression() #void :
+{}
+{
+      RelationalExpression()
+      ( <LOGICAL_AND> RelationalExpression() #AndNode(2) )*
+}
+
+void RelationalExpression() #void :
+{}
+{
+    UnaryExpression()
     (
-            <PLUS>  MultiplicativeExpression() #AddExpression(2)
-        |   <MINUS> MultiplicativeExpression() #SubtractExpression(2)
+            <LOGICAL_LT>    UnaryExpression()   #LTNode(2)
+        |   <LOGICAL_GT>    UnaryExpression()   #GTNode(2)
+        |   <LOGICAL_LE>    UnaryExpression()   #LENode(2)
+        |   <LOGICAL_GE>    UnaryExpression()   #GENode(2)
+        |   <LOGICAL_EQ>    UnaryExpression()   #EQNode(2)
+        |   <LOGICAL_NE>    UnaryExpression()   #NENode(2)
     )*
 }
 
-void MultiplicativeExpression() #void : // 标记为void不生成节点
+void UnaryExpression() #void :
 {}
 {
-    PrimaryExpression()
-    (
-            <MULTIPLY>  PrimaryExpression() #MulExpression(2)
-        |   <DIVIDE>  PrimaryExpression() #DivExpression(2)
-        |   <MODULUS>  PrimaryExpression() #ModExpression(2)
-    )*
+        <LOGICAL_NOT>  UnaryExpression() #NotNode(1)
+    |   PrimaryExpression()
 }
 
 void PrimaryExpression() #void :
 {}
 {
-        Variable()
+        ExpressionParameter()
     |   IntegerLiteral()
-    |   <LEFT_PAREN> AdditiveExpression() <RIGHT_PAREN>
+    |   True()
+    |   False()
+    |   Null()
 }
 
-void Variable() :
+void ExpressionParameter() :
 {
     Token t;
 }
 {
-    t=<VARIABLE>
+    t=<PARAMETER>
     {
-        jjtThis.setParameter(t.image);
+        jjtThis.init(t.image);
     }
 }
 
@@ -223,3 +267,30 @@ void IntegerLiteral() :
         jjtThis.setValue(Integer.valueOf(t.image));
     }
 }
+
+void True() :
+{}
+{
+    <TRUE>
+}
+
+void False() :
+{}
+{
+    <FALSE>
+}
+
+void Null() :
+{}
+{
+    <NULL>
+}
+
+
+
+
+
+
+
+
+

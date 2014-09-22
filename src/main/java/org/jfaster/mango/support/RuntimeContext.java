@@ -27,4 +27,12 @@ public interface RuntimeContext {
 
     public void setPropertyValue(String parameterName, String propertyPath, Object value);
 
+    public void writeToSqlBuffer(String str);
+
+    public void appendToArgs(Object obj);
+
+    public String getSql();
+
+    public Object[] getArgs();
+
 }

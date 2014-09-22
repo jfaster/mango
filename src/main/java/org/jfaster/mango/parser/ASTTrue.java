@@ -16,17 +16,34 @@
 
 package org.jfaster.mango.parser;
 
-/**
- * @author ash
- */
-public abstract class ValuableExpression extends ValuableNode {
+import org.jfaster.mango.support.RuntimeContext;
 
-    public ValuableExpression(int i) {
-        super(i);
+public class ASTTrue extends AbstractExpression {
+
+    private static Boolean value = Boolean.TRUE;
+
+    public ASTTrue(int id) {
+        super(id);
     }
 
-    public ValuableExpression(Parser p, int i) {
-        super(p, i);
+    public ASTTrue(Parser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public boolean evaluate(RuntimeContext context) {
+        return value;
+    }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        return value;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
     }
 
 }

@@ -18,40 +18,39 @@ package org.jfaster.mango.parser;
 
 import org.jfaster.mango.support.RuntimeContext;
 
-/**
- * 整数字面值
- *
- * @author ash
- */
-public class ASTIntegerLiteral extends AbstractExpression {
+public class ASTIfStatement extends AbstractRenderableNode {
 
-    private Integer value;
-
-    public ASTIntegerLiteral(int i) {
-        super(i);
+    public ASTIfStatement(int id) {
+        super(id);
     }
 
-    public ASTIntegerLiteral(Parser p, int i) {
-        super(p, i);
+    public ASTIfStatement(Parser p, int id) {
+        super(p, id);
     }
 
     @Override
-    public boolean evaluate(RuntimeContext context) {
-        return true;
-    }
+    public boolean render(RuntimeContext context) {
 
-    @Override
-    public Object value(RuntimeContext context) {
-        return value;
-    }
+        /**
+         * 检测#if(expression)是否返回true
+         */
+        AbstractExpression expr = (AbstractExpression) jjtGetChild(0);
+        if (expr.evaluate(context)) {
+            ((AbstractRenderableNode) jjtGetChild(1)).render(context);
+            return true;
+        }
 
-    public void setValue(Integer value) {
-        this.value = value;
-    }
+        /**
+         * #elseif与#else
+         */
+        for (int i = 2; i < jjtGetNumChildren(); i++) {
+            AbstractRenderableNode stmt = (AbstractRenderableNode) jjtGetChild(i);
+            if (stmt.render(context)) {
+                return true;
+            }
+        }
 
-    @Override
-    public String toString() {
-        return super.toString() + "[" + value + "]";
+        return false;
     }
 
     @Override

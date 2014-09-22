@@ -20,6 +20,8 @@ import org.jfaster.mango.util.reflect.Beans;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -30,6 +32,9 @@ public class RuntimeContextImpl implements RuntimeContext {
 
     private final Map<String, Object> parameterMap;
     private final Map<String, Object> cache;
+
+    private final StringBuffer sqlBuffer = new StringBuffer();
+    private final List<Object> args = new LinkedList<Object>();
 
     public RuntimeContextImpl(Map<String, Object> parameterMap) {
         this.parameterMap = parameterMap;
@@ -70,6 +75,26 @@ public class RuntimeContextImpl implements RuntimeContext {
     public void setPropertyValue(String parameterName, String propertyPath, Object value) {
         String key = getCacheKey(parameterName, propertyPath);
         cache.put(key, value);
+    }
+
+    @Override
+    public void writeToSqlBuffer(String str) {
+        sqlBuffer.append(str);
+    }
+
+    @Override
+    public void appendToArgs(Object obj) {
+        args.add(obj);
+    }
+
+    @Override
+    public String getSql() {
+        return sqlBuffer.toString();
+    }
+
+    @Override
+    public Object[] getArgs() {
+        return args.toArray();
     }
 
     private String getCacheKey(String parameterName, String propertyPath) {

@@ -27,16 +27,15 @@ import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.jdbc.JdbcTemplate;
-import org.jfaster.mango.util.ToStringHelper;
-import org.jfaster.mango.util.reflect.TypeToken;
-import org.jfaster.mango.support.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.util.*;
+import org.jfaster.mango.support.*;
+import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -74,11 +73,6 @@ public abstract class AbstractOperator implements Operator {
      * 数据源名称
      */
     private String dataSourceName;
-
-    /**
-     * 全局表名称
-     */
-    private String table;
 
     /**
      * 分表
@@ -189,18 +183,9 @@ public abstract class AbstractOperator implements Operator {
     }
 
     private void init() {
-        configDb();
+        dbAnno();
         alias();
         shardBy();
-        rootNode.init(table, tablePartition, shardParameterName, shardPropertyPath);
-        if (logger.isInfoEnabled()) {
-            String staticSql = rootNode.getStaticSql();
-            if (staticSql != null) {
-                logger.info("{} build a static sql \"{}\"", ToStringHelper.toString(method), staticSql);
-            } else {
-                logger.info("{} can't build static sql", ToStringHelper.toString(method));
-            }
-        }
         rootNode.checkType(getTypeContext()); // 检测sql中的参数是否和方法上的参数匹配
     }
 
@@ -224,23 +209,28 @@ public abstract class AbstractOperator implements Operator {
      * 提取{@link org.jfaster.mango.annotation.ShardBy}参数
      */
     private void shardBy() {
+        //TODO 优化异常提示
         Annotation[][] pass = method.getParameterAnnotations();
-        int num = 0;
+        int shardByNum = 0;
         for (int i = 0; i < pass.length; i++) {
             Annotation[] pas = pass[i];
             for (Annotation pa : pas) {
                 if (ShardBy.class.equals(pa.annotationType())) {
                     shardParameterName = getParameterNameByIndex(i);
                     shardPropertyPath = ((ShardBy) pa).value();
-                    num++;
+                    shardByNum++;
                 }
             }
         }
-        if (tablePartition != null && num != 1) {
-            throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
-                    "need one and only one @ShardBy on method's parameter");
+        if (tablePartition != null) {
+            if (shardByNum == 1) {
+                rootNode.setPartitionInfo(tablePartition, shardParameterName, shardPropertyPath);
+            } else {
+                throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
+                        "need one and only one @ShardBy on method's parameter");
+            }
         }
-        if (num == 1) {
+        if (shardByNum == 1) {
             Type shardType = getTypeContext().getPropertyType(shardParameterName, shardPropertyPath);
             TypeToken typeToken = new TypeToken(shardType);
             Class<?> mappedClass = typeToken.getMappedClass();
@@ -254,15 +244,17 @@ public abstract class AbstractOperator implements Operator {
     /**
      * 配置db信息
      */
-    private void configDb() {
+    private void dbAnno() {
         DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IncorrectAnnotationException("need @DB on dao interface");
         }
         dataSourceName = dbAnno.dataSource();
+        String globalTable = null;
         if (!Strings.isNullOrEmpty(dbAnno.table())) {
-            table = dbAnno.table();
+            globalTable = dbAnno.table();
         }
+        rootNode.setGlobalTable(globalTable);
         Class<? extends TablePartition> tpc = dbAnno.tablePartition();
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
             tablePartition = Reflection.instantiate(tpc);
@@ -272,7 +264,7 @@ public abstract class AbstractOperator implements Operator {
             dataSourceRouter = Reflection.instantiate(dsrc);
         }
 
-        if (tablePartition != null && table == null) { // 使用了分表但没有使用全局表名则抛出异常
+        if (tablePartition != null && globalTable == null) { // 使用了分表但没有使用全局表名则抛出异常
             throw new IncorrectDefinitionException("if @DB.tablePartition is defined, @DB.table must be defined");
         }
 

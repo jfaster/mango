@@ -19,11 +19,11 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.parser.ASTIterableParameter;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -64,10 +64,10 @@ public class BatchUpdateOperator extends CacheableOperator {
 
     @Override
     protected void dbInitPostProcessor() {
-        List<ASTIterableParameter> ips = rootNode.getIterableParameters();
-        if (ips.size() > 0) {
+        List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
+        if (jips.size() > 0) {
             throw new IncorrectSqlException("if use batch update, sql's in clause number expected 0 but " +
-                    ips.size()); // sql中不能有in语句
+                    jips.size()); // sql中不能有in语句
         }
     }
 
@@ -100,8 +100,9 @@ public class BatchUpdateOperator extends CacheableOperator {
                 group = new Group();
                 gorupMap.put(dataSourceName, group);
             }
-            String sql = rootNode.getSql(context);
-            Object[] args = rootNode.getArgs(context);
+            rootNode.render(context);
+            String sql = context.getSql();
+            Object[] args = context.getArgs();
             group.add(sql, args);
         }
         int[] ints = executeDb(gorupMap);

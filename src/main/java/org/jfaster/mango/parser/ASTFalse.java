@@ -16,18 +16,34 @@
 
 package org.jfaster.mango.parser;
 
-/**
- * @author ash
- */
-public abstract class AbstractNode extends SimpleNode {
+import org.jfaster.mango.support.RuntimeContext;
 
-    protected AbstractNode next;
+public class ASTFalse extends AbstractExpression {
 
-    public AbstractNode(int i) {
-        super(i);
+    private static Boolean value = Boolean.FALSE;
+
+    public ASTFalse(int id) {
+        super(id);
     }
 
-    public AbstractNode(Parser p, int i) {
-        super(p, i);
+    public ASTFalse(Parser p, int id) {
+        super(p, id);
     }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        return value;
+    }
+
+    @Override
+    public boolean evaluate(RuntimeContext context) {
+        return value;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
+    }
+
 }

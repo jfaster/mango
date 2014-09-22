@@ -16,13 +16,9 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.support.TypeContext;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.support.RuntimeContext;
 
-import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,45 +28,64 @@ import java.util.regex.Pattern;
  *
  * @author ash
  */
-public class ASTNonIterableParameter extends ValuableParameter {
+public class ASTJDBCParameter extends AbstractRenderableNode {
 
+    private String parameterName;
+    private String propertyPath; // 为""的时候表示没有属性
+    private String fullName;
 
-    public ASTNonIterableParameter(int i) {
+    public ASTJDBCParameter(int i) {
         super(i);
     }
 
-    public ASTNonIterableParameter(Parser p, int i) {
+    public ASTJDBCParameter(Parser p, int i) {
         super(p, i);
     }
 
-    public void setParameter(String parameter) {
+    public void init(String ss) {
         Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
-        Matcher m = p.matcher(parameter);
+        Matcher m = p.matcher(ss);
         if (!m.matches()) {
             throw new UnreachableCodeException();
         }
+        fullName = ss;
         parameterName = m.group(1);
-        propertyPath = parameter.substring(m.end(1));
+        propertyPath = ss.substring(m.end(1));
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
         }
-        fullName = parameter;
     }
 
     @Override
-    public void checkType(TypeContext context) {
-        Type type = context.getPropertyType(parameterName, propertyPath);
-        TypeToken typeToken = new TypeToken(type);
-        Class<?> mappedClass = typeToken.getMappedClass();
-        if (mappedClass == null || typeToken.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
-            throw new IncorrectParameterTypeException("invalid type of " + fullName + ", " +
-                    "expected a class can be identified by jdbc but " + type);
-        }
+    public boolean render(RuntimeContext context) {
+        context.writeToSqlBuffer("?");
+        Object obj = context.getNullablePropertyValue(parameterName, propertyPath);
+        context.appendToArgs(obj);
+        return true;
     }
 
     @Override
     public String toString() {
-        return fullName;
+        return super.toString() + "{" + "fullName=" + fullName + ", " +
+                "parameterName=" + parameterName + ", " +
+                "propertyPath=" + propertyPath + "}";
     }
 
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
+    }
+
+    public String getParameterName() {
+        return parameterName;
+    }
+
+    public String getPropertyPath() {
+        return propertyPath;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
 }

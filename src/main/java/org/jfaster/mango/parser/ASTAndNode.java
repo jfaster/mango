@@ -16,35 +16,34 @@
 
 package org.jfaster.mango.parser;
 
-/**
- * @author ash
- */
-public class ASTAddExpression extends MathExpression {
+import org.jfaster.mango.support.RuntimeContext;
 
-    public ASTAddExpression(int i) {
-        super(i);
+public class ASTAndNode extends AbstractExpression {
+
+    public ASTAndNode(int id) {
+        super(id);
     }
 
-    public ASTAddExpression(Parser p, int i) {
-        super(p, i);
-    }
-
-    @Override
-    protected Object handleSpecial(Object left, Object right) {
-        if (left == null) {
-            left = "null";
-        } else if (right == null) {
-            right = "null";
-        }
-        if (left instanceof String || right instanceof String) {
-            return left.toString().concat(right.toString());
-        }
-        return null;
+    public ASTAndNode(Parser p, int id) {
+        super(p, id);
     }
 
     @Override
-    public Integer perform(Integer left, Integer right) {
-        return left + right;
+    public boolean evaluate(RuntimeContext context) {
+        AbstractExpression left = (AbstractExpression) jjtGetChild(0);
+        AbstractExpression right = (AbstractExpression) jjtGetChild(1);
+        return left.evaluate(context) && right.evaluate(context);
+    }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
     }
 
 }

@@ -17,15 +17,12 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.support.RuntimeContext;
-
-import javax.annotation.Nullable;
 
 /**
  * @author ash
  */
-public class ASTTable extends AbstractNode {
+public class ASTGlobalTable extends AbstractRenderableNode {
 
     private String table; // 原始表名称
 
@@ -33,27 +30,28 @@ public class ASTTable extends AbstractNode {
     private String shardPpropertyPath; // 为""的时候表示没有属性
     private TablePartition tablePartition; // 分表
 
-    public ASTTable(int i) {
+    public ASTGlobalTable(int i) {
         super(i);
     }
 
-    public ASTTable(Parser p, int i) {
+    public ASTGlobalTable(Parser p, int i) {
         super(p, i);
     }
 
-    String getTable() {
-        if (needTablePartition()) {
-            throw new UnreachableCodeException();
+    @Override
+    public boolean render(RuntimeContext context) {
+        if (table == null) {
+            throw new IllegalStateException(); // TODO
         }
-        return table;
-    }
-
-    String getTable(RuntimeContext context) {
+        String realTable;
         if (!needTablePartition()) {
-            throw new UnreachableCodeException();
+            realTable = table;
+        } else {
+            Object shardParam = context.getPropertyValue(shardParameterName, shardPpropertyPath);
+            realTable = tablePartition.getPartitionedTable(table, shardParam);
         }
-        Object shardParam = context.getPropertyValue(shardParameterName, shardPpropertyPath);
-        return tablePartition.getPartitionedTable(table, shardParam);
+        context.writeToSqlBuffer(realTable);
+        return true;
     }
 
     boolean needTablePartition() {
@@ -64,15 +62,16 @@ public class ASTTable extends AbstractNode {
         this.table = table;
     }
 
-    public void setShardParameterName(@Nullable String shardParameterName) {
+    public void setPartitionInfo(TablePartition tablePartition, String shardParameterName, String shardPpropertyPath) {
+        this.tablePartition = tablePartition;
         this.shardParameterName = shardParameterName;
-    }
-
-    public void setShardPpropertyPath(@Nullable String shardPpropertyPath) {
         this.shardPpropertyPath = shardPpropertyPath;
     }
 
-    public void setTablePartition(@Nullable TablePartition tablePartition) {
-        this.tablePartition = tablePartition;
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
     }
+
 }

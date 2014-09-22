@@ -19,19 +19,10 @@ package org.jfaster.mango.parser;
 /**
  * @author ash
  */
-public class ASTMulExpression extends MathExpression {
+public class MathUtils {
 
-    public ASTMulExpression(int i) {
-        super(i);
-    }
-
-    public ASTMulExpression(Parser p, int i) {
-        super(p, i);
-    }
-
-    @Override
-    public Integer perform(Integer left, Integer right) {
-        return left * right;
+    public static int compare(int a, int b) {
+        return (a < b) ? -1 : ((a > b) ? 1 : 0);
     }
 
 }

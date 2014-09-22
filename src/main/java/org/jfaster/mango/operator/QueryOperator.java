@@ -24,16 +24,16 @@ import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.jdbc.SingleColumnRowMapper;
-import org.jfaster.mango.util.reflect.TypeToken;
-import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.parser.ASTIterableParameter;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.util.reflect.Beans;
+import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;
-import org.jfaster.mango.util.*;
+import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.BeanInfoCache;
+import org.jfaster.mango.util.reflect.Beans;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
@@ -68,15 +68,16 @@ public class QueryOperator extends CacheableOperator {
         Class<?> mappedClass = typeToken.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
 
-        List<ASTIterableParameter> ips = rootNode.getIterableParameters();
-        if (!ips.isEmpty() && !isForList && !isForSet && !isForArray) {
+        List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
+        if (!jips.isEmpty() && !isForList && !isForSet && !isForArray) {
             throw new IncorrectReturnTypeException("if sql has in clause, return type " +
                     "expected array or implementations of java.util.List or implementations of java.util.Set " +
                     "but " + method.getGenericReturnType()); // sql中使用了in查询，返回参数必须可迭代
         }
-        if (isUseCache()) {
-            if (ips.size() == 1) {
-                interableProperty = ips.get(0).getInterableProperty();
+        if (isUseCache()) { // TODO 异常提示？
+
+            if (jips.size() == 1) {
+                interableProperty = jips.get(0).getInterableProperty();
                 Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
                 if (readMethod == null) {
                     // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
@@ -95,10 +96,10 @@ public class QueryOperator extends CacheableOperator {
     @Override
     protected void cacheInitPostProcessor() {
         if (isUseCache()) {
-            List<ASTIterableParameter> ips = rootNode.getIterableParameters();
-            if (ips.size() > 1) {
+            List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
+            if (jips.size() > 1) {
                 throw new IncorrectSqlException("if use cache, sql's in clause expected less than or equal 1 but " +
-                        ips.size()); // sql中不能有多个in语句
+                        jips.size()); // sql中不能有多个in语句
             }
         }
     }
@@ -178,8 +179,9 @@ public class QueryOperator extends CacheableOperator {
 
     private Object executeFromDb(RuntimeContext context) {
         DataSource ds = getDataSource(context);
-        String sql = rootNode.getSql(context);
-        Object[] args = rootNode.getArgs(context);
+        rootNode.render(context);
+        String sql = context.getSql();
+        Object[] args = context.getArgs();
         Object r;
         boolean success = false;
         long now = System.nanoTime();

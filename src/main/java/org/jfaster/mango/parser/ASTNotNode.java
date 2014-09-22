@@ -16,29 +16,32 @@
 
 package org.jfaster.mango.parser;
 
-/**
- * 一元表达式
- *
- * @author ash
- */
-public abstract class PrimaryExpression extends ValuableExpression {
+import org.jfaster.mango.support.RuntimeContext;
 
-    public PrimaryExpression(int i) {
-        super(i);
+public class ASTNotNode extends AbstractExpression {
+
+    public ASTNotNode(int id) {
+        super(id);
     }
 
-    public PrimaryExpression(Parser p, int i) {
-        super(p, i);
+    public ASTNotNode(Parser p, int id) {
+        super(p, id);
     }
 
     @Override
-    Token getFirstToken() {
-        return jjtGetFirstToken();
+    public boolean evaluate(RuntimeContext context) {
+        return !((AbstractExpression) jjtGetChild(0)).evaluate(context);
     }
 
     @Override
-    Token getLastToken() {
-        return jjtGetLastToken();
+    public Object value(RuntimeContext context) {
+        return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
     }
 
 }
