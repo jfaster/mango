@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.parser;
 
+import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContextImpl;
 import org.junit.Test;
 

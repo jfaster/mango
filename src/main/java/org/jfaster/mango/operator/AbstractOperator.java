@@ -27,7 +27,7 @@ import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.jdbc.JdbcTemplate;
-import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.support.*;

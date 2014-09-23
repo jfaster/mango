@@ -20,7 +20,7 @@ import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
 import org.jfaster.mango.support.SQLType;
 import org.jfaster.mango.util.Strings;
