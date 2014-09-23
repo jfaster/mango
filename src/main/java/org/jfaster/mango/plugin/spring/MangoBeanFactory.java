@@ -32,7 +32,7 @@ public class MangoBeanFactory implements FactoryBean, ApplicationContextAware {
 
     @Override
     public Object getObject() throws Exception {
-        Mango mango = applicationContext.getBean(Mango.class);
+        Mango mango = getMango();
         return mango.create(daoClass);
     }
 
@@ -54,4 +54,9 @@ public class MangoBeanFactory implements FactoryBean, ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+
+    protected Mango getMango() {
+        return applicationContext.getBean(Mango.class);
+    }
+
 }
