@@ -19,6 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
@@ -41,8 +42,8 @@ public class BatchUpdateOperator extends CacheableOperator {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
 
 
-    public BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        super(rootNode, method, sqlType);
+    public BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType, InterceptorChain interceptorChain) {
+        super(rootNode, method, sqlType, interceptorChain);
     }
 
     @Override
@@ -103,6 +104,7 @@ public class BatchUpdateOperator extends CacheableOperator {
             rootNode.render(context);
             String sql = context.getSql();
             Object[] args = context.getArgs();
+            handleByInterceptorChain(sql, args);
             group.add(sql, args);
         }
         int[] ints = executeDb(gorupMap);

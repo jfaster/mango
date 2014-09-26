@@ -20,6 +20,7 @@ import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
 import org.jfaster.mango.support.SQLType;
@@ -47,7 +48,11 @@ public class OperatorFactory {
      * @return
      * @throws Exception
      */
-    public static CacheableOperator getOperator(Method method) throws Exception {
+    public static CacheableOperator getOperator(
+            Method method,
+            InterceptorChain queryInterceptorChain,
+            InterceptorChain updateInterceptorChain) throws Exception {
+
         SQL sqlAnno = method.getAnnotation(SQL.class);
         if (sqlAnno == null) {
             throw new IncorrectAnnotationException("each method expected one @SQL annotation " +
@@ -62,11 +67,11 @@ public class OperatorFactory {
 
         Class<?> returnType = method.getReturnType();
         if (sqlType == SQLType.SELECT) { // 查
-            return new QueryOperator(rootNode, method, sqlType);
+            return new QueryOperator(rootNode, method, sqlType, queryInterceptorChain);
         } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
-            return new UpdateOperator(rootNode, method, sqlType);
+            return new UpdateOperator(rootNode, method, sqlType, updateInterceptorChain);
         } else if (int[].class.equals(returnType)) { // 批量更新
-            return new BatchUpdateOperator(rootNode, method, sqlType);
+            return new BatchUpdateOperator(rootNode, method, sqlType, updateInterceptorChain);
         } else {
             throw new IncorrectReturnTypeException("if sql don't start with select, " +
                     "update return type expected int, " +

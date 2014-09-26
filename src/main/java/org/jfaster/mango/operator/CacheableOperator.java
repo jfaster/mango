@@ -25,6 +25,7 @@ import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTJDBCParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
@@ -100,8 +101,8 @@ public abstract class CacheableOperator extends AbstractOperator implements Cach
      */
     private Class<?> suffixClass;
 
-    protected CacheableOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        super(rootNode, method, sqlType);
+    protected CacheableOperator(ASTRootNode rootNode, Method method, SQLType sqlType, InterceptorChain interceptorChain) {
+        super(rootNode, method, sqlType, interceptorChain);
         init();
         cacheInitPostProcessor();
     }

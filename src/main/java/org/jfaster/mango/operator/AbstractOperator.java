@@ -26,6 +26,7 @@ import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.partition.IgnoreTablePartition;
@@ -43,6 +44,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -116,14 +118,20 @@ public abstract class AbstractOperator implements Operator {
     private TypeContext typeContext;
 
     /**
+     * 拦截器链
+     */
+    private InterceptorChain interceptorChain;
+
+    /**
      * 变量别名
      */
     private String[] aliases;
 
-    protected AbstractOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
+    protected AbstractOperator(ASTRootNode rootNode, Method method, SQLType sqlType, InterceptorChain interceptorChain) {
         this.rootNode = rootNode;
         this.method = method;
         this.sqlType = sqlType;
+        this.interceptorChain = interceptorChain;
         init();
         dbInitPostProcessor();
     }
@@ -180,6 +188,12 @@ public abstract class AbstractOperator implements Operator {
             typeContext = doGetTypeContext();
         }
         return typeContext;
+    }
+
+    protected void handleByInterceptorChain(String sql, Object[] args) {
+        if (interceptorChain.getInterceptors() != null) {
+            interceptorChain.intercept(sql, args);
+        }
     }
 
     private void init() {

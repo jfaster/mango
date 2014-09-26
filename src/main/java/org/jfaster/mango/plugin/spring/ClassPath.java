@@ -29,6 +29,9 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * @author ash
+ */
 public final class ClassPath {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(ClassPath.class);

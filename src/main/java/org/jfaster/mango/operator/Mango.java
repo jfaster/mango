@@ -22,6 +22,8 @@ import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
+import org.jfaster.mango.interceptor.Interceptor;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
@@ -52,6 +54,8 @@ public class Mango {
     private final DataSourceFactoryHolder dataSourceFactoryHolder;
     private final CacheHandler defaultCacheHandler;
     private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
+    private final InterceptorChain queryInterceptorChain;
+    private final InterceptorChain updateInterceptorChain;
 
     public Mango(DataSource dataSource) {
         this(new SimpleDataSourceFactory(dataSource));
@@ -69,6 +73,8 @@ public class Mango {
         this.dataSourceFactoryHolder = new DataSourceFactoryHolder(dataSourceFactory);
         this.defaultCacheHandler = defaultCacheHandler;
         this.statsCounterMap = new ConcurrentHashMap<Method, StatsCounter>();
+        this.queryInterceptorChain = new InterceptorChain();
+        this.updateInterceptorChain = new InterceptorChain();
     }
 
     /**
@@ -93,8 +99,16 @@ public class Mango {
         if (cacheHandler == null) {
             cacheHandler = defaultCacheHandler;
         }
-        return Reflection.newProxy(daoClass,
-                new MangoInvocationHandler(dataSourceFactoryHolder, cacheHandler, statsCounterMap));
+        return Reflection.newProxy(daoClass, new MangoInvocationHandler(this, cacheHandler));
+    }
+
+
+    public void addQueryInterceptor(Interceptor interceptor) {
+        queryInterceptorChain.addInterceptor(interceptor);
+    }
+
+    public void addUpdateInterceptor(Interceptor interceptor) {
+        updateInterceptorChain.addInterceptor(interceptor);
     }
 
     /**
@@ -125,16 +139,12 @@ public class Mango {
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
-        private final DataSourceFactoryHolder dataSourceFactoryHolder;
+        private final Mango mango;
         private final CacheHandler cacheHandler;
-        private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
 
-        private MangoInvocationHandler(DataSourceFactoryHolder dataSourceFactoryHolder,
-                                       @Nullable CacheHandler cacheHandler,
-                                       ConcurrentHashMap<Method, StatsCounter> statsCounterMap) {
-            this.dataSourceFactoryHolder = dataSourceFactoryHolder;
+        private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
+            this.mango = mango;
             this.cacheHandler = cacheHandler;
-            this.statsCounterMap = statsCounterMap;
         }
 
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
@@ -142,9 +152,11 @@ public class Mango {
                     public CacheableOperator load(Method method) throws Exception {
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
-                        CacheableOperator operator = OperatorFactory.getOperator(method);
+                        CacheableOperator operator = OperatorFactory.getOperator(
+                                method, mango.queryInterceptorChain,
+                                mango.updateInterceptorChain);
                         statsCounter.recordInit(System.nanoTime() - now);
-                        operator.setDataSourceFactoryHolder(dataSourceFactoryHolder);
+                        operator.setDataSourceFactoryHolder(mango.dataSourceFactoryHolder);
                         operator.setCacheHandler(cacheHandler);
                         operator.setStatsCounter(statsCounter);
                         return operator;
@@ -165,6 +177,7 @@ public class Mango {
         }
 
         private StatsCounter getStatusCounter(Method method) {
+            ConcurrentHashMap<Method,StatsCounter> statsCounterMap = mango.statsCounterMap;
             StatsCounter statsCounter = statsCounterMap.get(method);
             if (statsCounter == null) {
                 statsCounter = new SimpleStatsCounter();

@@ -19,6 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
@@ -44,8 +45,8 @@ public class UpdateOperator extends CacheableOperator {
 
     private Class<? extends Number> returnType;
 
-    public UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        super(rootNode, method, sqlType);
+    public UpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType, InterceptorChain interceptorChain) {
+        super(rootNode, method, sqlType, interceptorChain);
         init();
     }
 
@@ -105,6 +106,7 @@ public class UpdateOperator extends CacheableOperator {
     }
 
     private Number executeDb(DataSource ds, String sql, Object[] args) {
+        handleByInterceptorChain(sql, args);
         Number r = null;
         long now = System.nanoTime();
         try {

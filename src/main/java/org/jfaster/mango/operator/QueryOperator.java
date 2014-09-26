@@ -20,6 +20,7 @@ import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.jdbc.RowMapper;
@@ -55,8 +56,8 @@ public class QueryOperator extends CacheableOperator {
     private boolean isForArray;
     private String interableProperty; // "a in (:1)"中的a
 
-    public QueryOperator(ASTRootNode rootNode, Method method, SQLType sqlType) {
-        super(rootNode, method, sqlType);
+    public QueryOperator(ASTRootNode rootNode, Method method, SQLType sqlType, InterceptorChain interceptorChain) {
+        super(rootNode, method, sqlType, interceptorChain);
         init();
     }
 
@@ -179,6 +180,7 @@ public class QueryOperator extends CacheableOperator {
         rootNode.render(context);
         String sql = context.getSql();
         Object[] args = context.getArgs();
+        handleByInterceptorChain(sql, args);
         Object r;
         boolean success = false;
         long now = System.nanoTime();
