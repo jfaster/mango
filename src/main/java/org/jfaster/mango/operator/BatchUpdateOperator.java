@@ -24,6 +24,7 @@ import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -88,23 +89,28 @@ public class BatchUpdateOperator extends CacheableOperator {
             keys = new HashSet<String>(iterables.size() * 2);
         }
 
-        Map<String, Group> gorupMap = new HashMap<String, Group>();
+        Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
             RuntimeContext context = buildRuntimeContext(new Object[]{obj});
             if (keys != null) { // 表示使用cache
                 keys.add(getCacheKey(context));
             }
             String dataSourceName = getDataSourceName(context);
+            DataSource ds = getDataSource(dataSourceName);
 
-            Group group = gorupMap.get(dataSourceName);
+            Group group = gorupMap.get(ds);
             if (group == null) {
                 group = new Group();
-                gorupMap.put(dataSourceName, group);
+                gorupMap.put(ds, group);
             }
             rootNode.render(context);
-            String sql = context.getSql();
-            Object[] args = context.getArgs();
-            handleByInterceptorChain(sql, args);
+            SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+
+            // 拦截器
+            handleByInterceptorChain(sqlDescriptor, context.getMethodArgs());
+
+            String sql = sqlDescriptor.getSql();
+            Object[] args = sqlDescriptor.getArgs().toArray();
             group.add(sql, args);
         }
         int[] ints = executeDb(gorupMap);
@@ -117,12 +123,12 @@ public class BatchUpdateOperator extends CacheableOperator {
         return ints;
     }
 
-    private int[] executeDb(Map<String, Group> gorupMap) {
+    private int[] executeDb(Map<DataSource, Group> gorupMap) {
         int[] ints = null;
         long now = System.nanoTime();
         try {
-            for (Map.Entry<String, Group> entry : gorupMap.entrySet()) {
-                DataSource ds = getDataSource(entry.getKey());
+            for (Map.Entry<DataSource, Group> entry : gorupMap.entrySet()) {
+                DataSource ds = entry.getKey();
                 List<String> sqls = entry.getValue().getSqls();
                 List<Object[]> batchArgs = entry.getValue().getBatchArgs();
                 ints = isUniqueSql(sqls) ?
@@ -169,6 +175,5 @@ public class BatchUpdateOperator extends CacheableOperator {
             return batchArgs;
         }
     }
-
 
 }

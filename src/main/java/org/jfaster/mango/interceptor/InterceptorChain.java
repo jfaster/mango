@@ -1,5 +1,7 @@
 package org.jfaster.mango.interceptor;
 
+import org.jfaster.mango.support.SqlDescriptor;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,10 +17,10 @@ public class InterceptorChain {
         interceptors.add(interceptor);
     }
 
-    public void intercept(String sql, Object[] args) {
+    public void intercept(SqlDescriptor sqlDescriptor, List<MethodParameter> parameters) {
         if (getInterceptors() != null) {
             for (Interceptor interceptor : getInterceptors()) {
-                interceptor.intercept(sql, args);
+                interceptor.intercept(sqlDescriptor, parameters);
             }
         }
     }

@@ -19,10 +19,7 @@ package org.jfaster.mango.support;
 import org.jfaster.mango.util.reflect.Beans;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -31,13 +28,15 @@ import java.util.Map;
 public class RuntimeContextImpl implements RuntimeContext {
 
     private final Map<String, Object> parameterMap;
+    private final Object[] methodArgs;
     private final Map<String, Object> cache;
 
-    private final StringBuffer sqlBuffer = new StringBuffer();
+    private final StringBuffer sql = new StringBuffer();
     private final List<Object> args = new LinkedList<Object>();
 
-    public RuntimeContextImpl(Map<String, Object> parameterMap) {
+    public RuntimeContextImpl(Map<String, Object> parameterMap, Object[] methodArgs) {
         this.parameterMap = parameterMap;
+        this.methodArgs = methodArgs;
         this.cache = new HashMap<String, Object>();
     }
 
@@ -79,7 +78,7 @@ public class RuntimeContextImpl implements RuntimeContext {
 
     @Override
     public void writeToSqlBuffer(String str) {
-        sqlBuffer.append(str);
+        sql.append(str);
     }
 
     @Override
@@ -88,13 +87,13 @@ public class RuntimeContextImpl implements RuntimeContext {
     }
 
     @Override
-    public String getSql() {
-        return sqlBuffer.toString();
+    public SqlDescriptor getSqlDescriptor() {
+        return new SqlDescriptor(sql.toString(), args);
     }
 
     @Override
-    public Object[] getArgs() {
-        return args.toArray();
+    public Object[] getMethodArgs() {
+        return methodArgs;
     }
 
     private String getCacheKey(String parameterName, String propertyPath) {

@@ -25,6 +25,7 @@ import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -84,8 +85,13 @@ public class UpdateOperator extends CacheableOperator {
         RuntimeContext context = buildRuntimeContext(methodArgs);
         DataSource ds = getDataSource(context);
         rootNode.render(context);
-        String sql = context.getSql();
-        Object[] args = context.getArgs();
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+
+        // 拦截器
+        handleByInterceptorChain(sqlDescriptor, context.getMethodArgs());
+
+        String sql = sqlDescriptor.getSql();
+        Object[] args = sqlDescriptor.getArgs().toArray();
         Number r = executeDb(ds, sql, args);
         if (isUseCache()) { // 如果使用cache，更新后需要从cache中删除对应的key或keys
             if (isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
@@ -106,7 +112,6 @@ public class UpdateOperator extends CacheableOperator {
     }
 
     private Number executeDb(DataSource ds, String sql, Object[] args) {
-        handleByInterceptorChain(sql, args);
         Number r = null;
         long now = System.nanoTime();
         try {

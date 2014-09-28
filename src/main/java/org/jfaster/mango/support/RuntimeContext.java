@@ -31,8 +31,8 @@ public interface RuntimeContext {
 
     public void appendToArgs(Object obj);
 
-    public String getSql();
+    public SqlDescriptor getSqlDescriptor();
 
-    public Object[] getArgs();
+    public Object[] getMethodArgs();
 
 }

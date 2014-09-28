@@ -1,10 +1,14 @@
 package org.jfaster.mango.interceptor;
 
+import org.jfaster.mango.support.SqlDescriptor;
+
+import java.util.List;
+
 /**
  * @author ash
  */
 public interface Interceptor {
 
-    public void intercept(String sql, Object[] args);
+    public void intercept(SqlDescriptor sqlDescriptor, List<MethodParameter> parameters);
 
 }

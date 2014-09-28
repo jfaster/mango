@@ -27,6 +27,7 @@ import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.interceptor.MethodParameter;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.partition.IgnoreTablePartition;
@@ -43,9 +44,7 @@ import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 抽象db操作
@@ -123,6 +122,11 @@ public abstract class AbstractOperator implements Operator {
     private InterceptorChain interceptorChain;
 
     /**
+     * 方法参数描述
+     */
+    private List<MethodParameterDescriptor> methodParameterDescriptors;
+
+    /**
      * 变量别名
      */
     private String[] aliases;
@@ -151,7 +155,7 @@ public abstract class AbstractOperator implements Operator {
         for (int i = 0; i < methodArgs.length; i++) {
             parameters.put(getParameterNameByIndex(i), methodArgs[i]);
         }
-        return new RuntimeContextImpl(parameters);
+        return new RuntimeContextImpl(parameters, methodArgs);
     }
 
     protected DataSource getDataSource(RuntimeContext context) {
@@ -190,9 +194,14 @@ public abstract class AbstractOperator implements Operator {
         return typeContext;
     }
 
-    protected void handleByInterceptorChain(String sql, Object[] args) {
+    protected void handleByInterceptorChain(SqlDescriptor sqlDescriptor, Object[] methodArgs) {
         if (interceptorChain.getInterceptors() != null) {
-            interceptorChain.intercept(sql, args);
+            List<MethodParameter> parameters = new ArrayList<MethodParameter>(methodArgs.length);
+            for (int i = 0; i < methodArgs.length; i++) {
+                MethodParameterDescriptor mpd = methodParameterDescriptors.get(i);
+                parameters.add(new MethodParameter(mpd, methodArgs[i]));
+            }
+            interceptorChain.intercept(sqlDescriptor, parameters);
         }
     }
 
@@ -200,6 +209,7 @@ public abstract class AbstractOperator implements Operator {
         dbAnno();
         alias();
         shardBy();
+        initMethodParameters();
         rootNode.checkType(getTypeContext()); // 检测sql中的参数是否和方法上的参数匹配
     }
 
@@ -289,6 +299,22 @@ public abstract class AbstractOperator implements Operator {
                     "@DB.tablePartition must be defined");
         }
     }
+
+    private void initMethodParameters() {
+        methodParameterDescriptors = new LinkedList<MethodParameterDescriptor>();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            Class<?> type = parameterTypes[i];
+            Type genericType = genericParameterTypes[i];
+            Annotation[] annotations = parameterAnnotations[i];
+            methodParameterDescriptors.add(new MethodParameterDescriptor(type, genericType, annotations));
+        }
+
+    }
+
 
     /**
      * 构建类型上下文

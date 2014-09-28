@@ -18,6 +18,7 @@ package org.jfaster.mango.parser;
 
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContextImpl;
+import org.jfaster.mango.support.SqlDescriptor;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -41,10 +42,11 @@ public class ParserTest {
         params.put("1", "id");
         params.put("2", Arrays.asList(9, 5, 2, 7));
         params.put("3", "ash");
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("select id from user where id in (?,?,?,?) and name=?"));
-        assertThat(Arrays.asList(context.getArgs()), contains(new Object[]{9, 5, 2, 7, "ash"}));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select id from user where id in (?,?,?,?) and name=?"));
+        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{9, 5, 2, 7, "ash"}));
     }
 
     @Test
@@ -53,10 +55,11 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("1", 100);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1  and id>? "));
-        assertThat(Arrays.asList(context.getArgs()), contains(new Object[]{100}));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1  and id>? "));
+        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
@@ -65,10 +68,11 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("1", 100);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1 "));
-        assertThat(context.getArgs().length, equalTo(0));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 "));
+        assertThat(sqlDescriptor.getArgs().size(), equalTo(0));
     }
 
     @Test
@@ -82,10 +86,11 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("1", 100);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1 and id>?"));
-        assertThat(Arrays.asList(context.getArgs()), contains(new Object[]{100}));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id>?"));
+        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
@@ -99,10 +104,11 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("1", -100);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1 and id<?"));
-        assertThat(Arrays.asList(context.getArgs()), contains(new Object[]{-100}));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id<?"));
+        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{-100}));
     }
 
     @Test
@@ -118,10 +124,11 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("1", 100);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1 and id>?"));
-        assertThat(Arrays.asList(context.getArgs()), contains(new Object[]{100}));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id>?"));
+        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
@@ -137,10 +144,11 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("1", -100);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1 and id<?"));
-        assertThat(Arrays.asList(context.getArgs()), contains(new Object[]{-100}));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id<?"));
+        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{-100}));
     }
 
     @Test
@@ -156,10 +164,11 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("1", 0);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1 and id=?"));
-        assertThat(Arrays.asList(context.getArgs()), contains(new Object[]{0}));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id=?"));
+        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{0}));
     }
 
     @Test
@@ -170,9 +179,10 @@ public class ParserTest {
         params.put("1", false);
         params.put("2", new Object());
         params.put("3", true);
-        RuntimeContextImpl context = new RuntimeContextImpl(params);
+        RuntimeContextImpl context = new RuntimeContextImpl(params, null);
         n.render(context);
-        assertThat(context.getSql(), equalTo("where 1=1  and id>10 "));
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1  and id>10 "));
     }
 
 }

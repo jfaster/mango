@@ -29,6 +29,7 @@ import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -110,7 +111,7 @@ public class QueryOperator extends CacheableOperator {
                     multipleKeysCache(context, rowMapper.getMappedClass(), getSuffixClass()) :
                     singleKeyCache(context);
         } else { // 直接使用db
-            return executeFromDb(context);
+            return execute(context);
         }
     }
 
@@ -140,7 +141,7 @@ public class QueryOperator extends CacheableOperator {
         }
         if (!missSuffix.isEmpty()) { // 有key没有命中
             setSuffixObj(context, missSuffix);
-            Object dbValues = executeFromDb(context);
+            Object dbValues = execute(context);
             for (Object dbValue : new Iterables(dbValues)) {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
@@ -160,7 +161,7 @@ public class QueryOperator extends CacheableOperator {
             if (logger.isDebugEnabled()) {
                 logger.debug("cache miss #key＝{}", key);
             }
-            value = executeFromDb(context);
+            value = execute(context);
             if (value != null) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("cache set #key={} #value={}", key, value);
@@ -175,12 +176,21 @@ public class QueryOperator extends CacheableOperator {
         return value;
     }
 
-    private Object executeFromDb(RuntimeContext context) {
+    private Object execute(RuntimeContext context) {
         DataSource ds = getDataSource(context);
         rootNode.render(context);
-        String sql = context.getSql();
-        Object[] args = context.getArgs();
-        handleByInterceptorChain(sql, args);
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+
+        // 拦截器
+        handleByInterceptorChain(sqlDescriptor, context.getMethodArgs());
+
+        String sql = sqlDescriptor.getSql();
+        Object[] args = sqlDescriptor.getArgs().toArray();
+
+        return executeFromDb(ds, sql, args);
+    }
+
+    private Object executeFromDb(DataSource ds, String sql, Object[] args) {
         Object r;
         boolean success = false;
         long now = System.nanoTime();
