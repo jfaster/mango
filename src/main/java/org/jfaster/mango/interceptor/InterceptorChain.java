@@ -17,10 +17,10 @@ public class InterceptorChain {
         interceptors.add(interceptor);
     }
 
-    public void intercept(SqlDescriptor sqlDescriptor, List<MethodParameter> parameters) {
+    public void intercept(SqlDescriptor sqlDescriptor, List<MethodParameter> methodParameters) {
         if (getInterceptors() != null) {
             for (Interceptor interceptor : getInterceptors()) {
-                interceptor.intercept(sqlDescriptor, parameters);
+                interceptor.intercept(sqlDescriptor, methodParameters);
             }
         }
     }

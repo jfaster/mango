@@ -196,12 +196,12 @@ public abstract class AbstractOperator implements Operator {
 
     protected void handleByInterceptorChain(SqlDescriptor sqlDescriptor, Object[] methodArgs) {
         if (interceptorChain.getInterceptors() != null) {
-            List<MethodParameter> parameters = new ArrayList<MethodParameter>(methodArgs.length);
+            List<MethodParameter> methodParameters = new ArrayList<MethodParameter>(methodArgs.length);
             for (int i = 0; i < methodArgs.length; i++) {
                 MethodParameterDescriptor mpd = methodParameterDescriptors.get(i);
-                parameters.add(new MethodParameter(mpd, methodArgs[i]));
+                methodParameters.add(new MethodParameter(mpd, methodArgs[i]));
             }
-            interceptorChain.intercept(sqlDescriptor, parameters);
+            interceptorChain.intercept(sqlDescriptor, methodParameters);
         }
     }
 
