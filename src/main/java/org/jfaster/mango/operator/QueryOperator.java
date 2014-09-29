@@ -5,7 +5,6 @@ import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.jdbc.SingleColumnRowMapper;
-import org.jfaster.mango.operator.driver.OperatorDriver;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;

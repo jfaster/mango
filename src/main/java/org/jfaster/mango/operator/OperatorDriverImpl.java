@@ -1,4 +1,4 @@
-package org.jfaster.mango.operator.driver;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Rename;
@@ -11,7 +11,6 @@ import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.operator.OperatorType;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;

@@ -3,7 +3,6 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
-import org.jfaster.mango.operator.driver.OperatorDriver;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;

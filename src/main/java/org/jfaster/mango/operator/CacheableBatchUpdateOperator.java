@@ -1,6 +1,5 @@
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.operator.driver.CacheableOperatorDriver;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.util.Iterables;

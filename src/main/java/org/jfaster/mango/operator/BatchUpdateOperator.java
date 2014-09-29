@@ -1,7 +1,6 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.operator.driver.OperatorDriver;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;

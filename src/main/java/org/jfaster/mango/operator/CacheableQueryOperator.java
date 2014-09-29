@@ -3,7 +3,6 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.operator.driver.CacheableOperatorDriver;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;

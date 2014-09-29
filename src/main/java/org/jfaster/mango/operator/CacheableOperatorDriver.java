@@ -1,4 +1,4 @@
-package org.jfaster.mango.operator.driver;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.support.RuntimeContext;
 

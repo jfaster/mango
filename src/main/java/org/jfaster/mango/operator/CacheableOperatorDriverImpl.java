@@ -1,4 +1,4 @@
-package org.jfaster.mango.operator.driver;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
@@ -9,7 +9,6 @@ import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
-import org.jfaster.mango.operator.OperatorType;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTJDBCParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
