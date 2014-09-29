@@ -156,9 +156,9 @@ public class OperatorDriverImpl implements OperatorDriver {
     }
 
     private void initTypeContext(OperatorType operatorType, Method method) {
-        Type[] methodArgTypes;
+        Type[] parameterTypes;
         if (operatorType != OperatorType.BATCHUPDATE) {
-            methodArgTypes = method.getGenericParameterTypes();
+            parameterTypes = method.getGenericParameterTypes();
         } else {
             if (method.getGenericParameterTypes().length != 1) {
                 throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
@@ -172,12 +172,12 @@ public class OperatorDriverImpl implements OperatorDriver {
                         "expected array or implementations of java.util.List or implementations of java.util.Set " +
                         "but " + type); // 批量更新的参数必须可迭代
             }
-            methodArgTypes = new Type[]{mappedClass};
+            parameterTypes = new Type[]{mappedClass};
         }
 
         Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
-        for (int i = 0; i < methodArgTypes.length; i++) {
-            parameterTypeMap.put(getParameterNameByIndex(i), methodArgTypes[i]);
+        for (int i = 0; i < parameterTypes.length; i++) {
+            parameterTypeMap.put(getParameterNameByIndex(i), parameterTypes[i]);
         }
         typeContext = new TypeContextImpl(parameterTypeMap);
     }
