@@ -25,7 +25,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private CacheableOperatorDriver driver;
 
-    private String interableProperty = driver.getInterableProperty();
+    private String interableProperty;
 
     protected CacheableQueryOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, Method method, StatsCounter statsCounter) {
         super(rootNode, driver, method, statsCounter);
