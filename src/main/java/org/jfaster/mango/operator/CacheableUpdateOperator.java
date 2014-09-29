@@ -26,9 +26,11 @@ public class CacheableUpdateOperator extends UpdateOperator {
             ASTRootNode rootNode,
             CacheableOperatorDriver driver,
             Method method,
-            SQLType sqlType
+            SQLType sqlType,
+            StatsCounter statsCounter
             ) {
-        super(rootNode, driver, method, sqlType);
+        super(rootNode, driver, method, sqlType, statsCounter);
+
         this.driver = driver;
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();

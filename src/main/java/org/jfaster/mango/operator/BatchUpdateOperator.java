@@ -21,8 +21,8 @@ public class BatchUpdateOperator extends AbstractOperator {
      */
     private OperatorDriver driver;
 
-    protected BatchUpdateOperator(ASTRootNode rootNode, OperatorDriver driver) {
-        super(rootNode);
+    protected BatchUpdateOperator(ASTRootNode rootNode, OperatorDriver driver, StatsCounter statsCounter) {
+        super(rootNode, statsCounter);
         this.driver = driver;
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 0) {

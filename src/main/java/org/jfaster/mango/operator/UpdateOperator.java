@@ -26,8 +26,8 @@ public class UpdateOperator extends AbstractOperator {
 
     private Class<? extends Number> returnType;
 
-    protected UpdateOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, SQLType sqlType) { // TODO
-        super(rootNode);
+    protected UpdateOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, SQLType sqlType, StatsCounter statsCounter) { // TODO
+        super(rootNode, statsCounter);
         this.driver = driver;
         init(method, sqlType);
     }

@@ -83,25 +83,25 @@ public class OperatorFactoryImpl implements OperatorFactory {
             OperatorDriver driver = new OperatorDriverImpl(dataSourceFactoryHolder, sqlType, operatorType, method, rootNode);
             switch (operatorType) {
                 case SELECT:
-                    operator = new QueryOperator(rootNode, driver, method);
+                    operator = new QueryOperator(rootNode, driver, method, statsCounter);
                     break;
                 case UPDATE:
-                    operator = new UpdateOperator(rootNode, driver, method, sqlType);
+                    operator = new UpdateOperator(rootNode, driver, method, sqlType, statsCounter);
                     break;
                 default:
-                    operator = new BatchUpdateOperator(rootNode, driver);
+                    operator = new BatchUpdateOperator(rootNode, driver, statsCounter);
             }
         } else {
             CacheableOperatorDriver driver = new CacheableOperatorDriverImpl(dataSourceFactoryHolder, sqlType, operatorType, method, rootNode, cacheHandler);
             switch (operatorType) {
                 case SELECT:
-                    operator = new CacheableQueryOperator(rootNode, driver, method);
+                    operator = new CacheableQueryOperator(rootNode, driver, method, statsCounter);
                     break;
                 case UPDATE:
-                    operator = new CacheableUpdateOperator(rootNode, driver, method, sqlType);
+                    operator = new CacheableUpdateOperator(rootNode, driver, method, sqlType, statsCounter);
                     break;
                 default:
-                    operator = new CacheableBatchUpdateOperator(rootNode, driver);
+                    operator = new CacheableBatchUpdateOperator(rootNode, driver, statsCounter);
             }
         }
         return operator;

@@ -30,9 +30,10 @@ public class QueryOperator extends AbstractOperator {
     protected boolean isForList;
     protected boolean isForSet;
     protected boolean isForArray;
+    protected Class<?> mappedClass;
 
-    protected QueryOperator(ASTRootNode rootNode, OperatorDriver driver, Method method) {
-        super(rootNode);
+    protected QueryOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, StatsCounter statsCounter) {
+        super(rootNode, statsCounter);
         this.driver = driver;
         init(rootNode, method);
     }
@@ -42,7 +43,7 @@ public class QueryOperator extends AbstractOperator {
         isForList = typeToken.isList();
         isForSet = typeToken.isSet();
         isForArray = typeToken.isArray();
-        Class<?> mappedClass = typeToken.getMappedClass();
+        mappedClass = typeToken.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();

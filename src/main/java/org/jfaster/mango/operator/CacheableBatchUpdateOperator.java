@@ -22,8 +22,8 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
     private CacheableOperatorDriver driver;
 
-    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver) {
-        super(rootNode, driver);
+    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, StatsCounter statsCounter) {
+        super(rootNode, driver, statsCounter);
         this.driver = driver;
     }
 
