@@ -24,7 +24,6 @@ import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.datasource.factory.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
-import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.partition.ModTenTablePartition;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Randoms;
