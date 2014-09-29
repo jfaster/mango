@@ -1,71 +1,29 @@
-/*
- * Copyright 2014 mango.jfaster.org
- *
- * The Mango Project licenses this file to you under the Apache License,
- * version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.IncorrectParameterCountException;
-import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.operator.driver.OperatorDriver;
 import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.support.SQLType;
 import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
  * @author ash
  */
-public class BatchUpdateOperator extends CacheableOperator {
+public class BatchUpdateOperator extends AbstractOperator {
 
-    private final static InternalLogger logger = InternalLoggerFactory.getInstance(BatchUpdateOperator.class);
+    /**
+     * operator驱动
+     */
+    private OperatorDriver driver;
 
-
-    public BatchUpdateOperator(ASTRootNode rootNode, Method method, SQLType sqlType, InterceptorChain interceptorChain) {
-        super(rootNode, method, sqlType, interceptorChain);
-    }
-
-    @Override
-    Type[] getMethodArgTypes(Method method) {
-        if (method.getGenericParameterTypes().length != 1) {
-            throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
-                    method.getGenericParameterTypes().length); // 批量更新只能有一个参数
-        }
-        Type type = method.getGenericParameterTypes()[0];
-        TypeToken typeToken = new TypeToken(type);
-        Class<?> mappedClass = typeToken.getMappedClass();
-        if (mappedClass == null || !typeToken.isIterable()) {
-            throw new IncorrectParameterTypeException("parameter of batch update " +
-                    "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                    "but " + type); // 批量更新的参数必须可迭代
-        }
-        return new Type[]{mappedClass};
-    }
-
-    @Override
-    protected void dbInitPostProcessor() {
+    protected BatchUpdateOperator(ASTRootNode rootNode, OperatorDriver driver) {
+        super(rootNode);
+        this.driver = driver;
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 0) {
             throw new IncorrectSqlException("if use batch update, sql's in clause number expected 0 but " +
@@ -84,50 +42,38 @@ public class BatchUpdateOperator extends CacheableOperator {
             throw new IllegalArgumentException("batchUpdate's parameter can't be empty");
         }
 
-        Set<String> keys = null;
-        if (isUseCache()) {
-            keys = new HashSet<String>(iterables.size() * 2);
-        }
-
         Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
-            RuntimeContext context = buildRuntimeContext(new Object[]{obj});
-            if (keys != null) { // 表示使用cache
-                keys.add(getCacheKey(context));
-            }
-            String dataSourceName = getDataSourceName(context);
-            DataSource ds = getDataSource(dataSourceName);
-
-            Group group = gorupMap.get(ds);
-            if (group == null) {
-                group = new Group();
-                gorupMap.put(ds, group);
-            }
-            rootNode.render(context);
-            SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-
-            // 拦截器
-            handleByInterceptorChain(sqlDescriptor, context.getMethodArgs());
-
-            String sql = sqlDescriptor.getSql();
-            Object[] args = sqlDescriptor.getArgs().toArray();
-            group.add(sql, args);
+            RuntimeContext context = driver.buildRuntimeContext(new Object[]{obj});
+            group(context, gorupMap);
         }
         int[] ints = executeDb(gorupMap);
-        if (keys != null) { // 表示使用cache
-            if (logger.isDebugEnabled()) {
-                logger.debug("cache delete #keys={}", keys);
-            }
-            deleteFromCache(keys);
-        }
         return ints;
     }
 
-    private int[] executeDb(Map<DataSource, Group> gorupMap) {
+    protected void group(RuntimeContext context, Map<DataSource, Group> groupMap) {
+        DataSource ds = driver.getDataSource(context);
+        Group group = groupMap.get(ds);
+        if (group == null) {
+            group = new Group();
+            groupMap.put(ds, group);
+        }
+        rootNode.render(context);
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+
+        // 拦截器
+        //handleByInterceptorChain(sqlDescriptor, context.getMethodArgs()); // TOOD
+
+        String sql = sqlDescriptor.getSql();
+        Object[] args = sqlDescriptor.getArgs().toArray();
+        group.add(sql, args);
+    }
+
+    protected int[] executeDb(Map<DataSource, Group> groupMap) {
         int[] ints = null;
         long now = System.nanoTime();
         try {
-            for (Map.Entry<DataSource, Group> entry : gorupMap.entrySet()) {
+            for (Map.Entry<DataSource, Group> entry : groupMap.entrySet()) {
                 DataSource ds = entry.getKey();
                 List<String> sqls = entry.getValue().getSqls();
                 List<Object[]> batchArgs = entry.getValue().getBatchArgs();
@@ -146,7 +92,7 @@ public class BatchUpdateOperator extends CacheableOperator {
         return ints;
     }
 
-    private boolean isUniqueSql(List<String> sqls) {
+    protected boolean isUniqueSql(List<String> sqls) {
         String sql = sqls.get(0);
         boolean r = true;
         for (int i = 1; i < sqls.size(); i++) {
@@ -158,7 +104,7 @@ public class BatchUpdateOperator extends CacheableOperator {
         return r;
     }
 
-    private static class Group {
+    protected static class Group {
         private List<String> sqls = new LinkedList<String>();
         private List<Object[]> batchArgs = new LinkedList<Object[]>();
 

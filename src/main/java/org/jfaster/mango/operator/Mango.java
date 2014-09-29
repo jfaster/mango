@@ -141,6 +141,7 @@ public class Mango {
 
         private final Mango mango;
         private final CacheHandler cacheHandler;
+        private final OperatorFactory operatorFactory = new OperatorFactoryImpl();
 
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
             this.mango = mango;
@@ -149,16 +150,11 @@ public class Mango {
 
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
                 new CacheLoader<Method, Operator>() {
-                    public CacheableOperator load(Method method) throws Exception {
+                    public Operator load(Method method) throws Exception {
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
-                        CacheableOperator operator = OperatorFactory.getOperator(
-                                method, mango.queryInterceptorChain,
-                                mango.updateInterceptorChain);
+                        Operator operator = operatorFactory.getOperator(method, mango.dataSourceFactoryHolder, cacheHandler, statsCounter);
                         statsCounter.recordInit(System.nanoTime() - now);
-                        operator.setDataSourceFactoryHolder(mango.dataSourceFactoryHolder);
-                        operator.setCacheHandler(cacheHandler);
-                        operator.setStatsCounter(statsCounter);
                         return operator;
                     }
                 });

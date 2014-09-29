@@ -17,18 +17,12 @@
 package org.jfaster.mango.operator;
 
 
-import org.jfaster.mango.datasource.DataSourceFactoryHolder;
-
 /**
  * db操作接口
  *
  * @author ash
  */
 public interface Operator {
-
-    public void setDataSourceFactoryHolder(DataSourceFactoryHolder dataSourceFactoryHolder);
-
-    public void setStatsCounter(StatsCounter statsCounter);
 
     public Object execute(Object[] methodArgs);
 
