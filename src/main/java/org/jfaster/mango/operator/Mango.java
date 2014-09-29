@@ -22,8 +22,6 @@ import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
-import org.jfaster.mango.interceptor.Interceptor;
-import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;

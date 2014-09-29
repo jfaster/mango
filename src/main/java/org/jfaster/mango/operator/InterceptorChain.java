@@ -1,4 +1,4 @@
-package org.jfaster.mango.interceptor;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.support.SqlDescriptor;
 
