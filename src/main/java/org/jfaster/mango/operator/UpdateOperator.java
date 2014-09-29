@@ -61,8 +61,8 @@ public class UpdateOperator extends AbstractOperator {
     }
 
     @Override
-    public Object execute(Object[] methodArgs) {
-        RuntimeContext context = driver.buildRuntimeContext(methodArgs);
+    public Object execute(Object[] values) {
+        RuntimeContext context = driver.buildRuntimeContext(values);
         return execute(context);
     }
 

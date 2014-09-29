@@ -25,13 +25,13 @@ import java.util.List;
 /**
  * @author ash
  */
-public class MethodParameterDescriptor {
+public class ParameterDescriptor {
 
     private final Class<?> type;
     private final Type genericType;
     private final List<Annotation> annotations;
 
-    public MethodParameterDescriptor(Class<?> type, Type genericType, Annotation[] annotations) {
+    public ParameterDescriptor(Class<?> type, Type genericType, Annotation[] annotations) {
         this.type = type;
         this.genericType = genericType;
         this.annotations = Collections.unmodifiableList(Arrays.asList(annotations));

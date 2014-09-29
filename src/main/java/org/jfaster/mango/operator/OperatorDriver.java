@@ -29,7 +29,7 @@ public interface OperatorDriver {
 
     public TypeContext getTypeContext();
 
-    public RuntimeContext buildRuntimeContext(Object[] methodArgs); // TODO 参数换名字
+    public RuntimeContext buildRuntimeContext(Object[] values);
 
     public DataSource getDataSource(RuntimeContext context);
 

@@ -47,12 +47,12 @@ public class BatchUpdateOperator extends AbstractOperator {
     }
 
     @Override
-    public Object execute(Object[] methodArgs) {
-        Object methodArg = methodArgs[0];
-        if (methodArg == null) {
+    public Object execute(Object[] values) {
+        Object firstValue = values[0];
+        if (firstValue == null) {
             throw new NullPointerException("batchUpdate's parameter can't be null");
         }
-        Iterables iterables = new Iterables(methodArg);
+        Iterables iterables = new Iterables(firstValue);
         if (iterables.isEmpty()) {
             throw new IllegalArgumentException("batchUpdate's parameter can't be empty");
         }

@@ -16,10 +16,14 @@
 
 package org.jfaster.mango.support;
 
+import java.util.List;
+
 /**
  * @author ash
  */
 public interface RuntimeContext {
+
+    public void addParameter(String parameterName, Object parameterValue);
 
     public Object getPropertyValue(String parameterName, String propertyPath);
 
@@ -33,6 +37,6 @@ public interface RuntimeContext {
 
     public SqlDescriptor getSqlDescriptor();
 
-    public Object[] getMethodArgs();
+    public List<Object> getParameterValues();
 
 }

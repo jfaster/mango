@@ -27,17 +27,17 @@ import java.util.*;
  */
 public class RuntimeContextImpl implements RuntimeContext {
 
-    private final Map<String, Object> parameterMap;
-    private final Object[] methodArgs;
-    private final Map<String, Object> cache;
+    private final Map<String, Object> parameterMap = new HashMap<String, Object>();
+    private final List<Object> parameterValues = new LinkedList<Object>();
+    private final Map<String, Object> cache = new HashMap<String, Object>();
 
     private final StringBuffer sql = new StringBuffer();
     private final List<Object> args = new LinkedList<Object>();
 
-    public RuntimeContextImpl(Map<String, Object> parameterMap, Object[] methodArgs) {
-        this.parameterMap = parameterMap;
-        this.methodArgs = methodArgs;
-        this.cache = new HashMap<String, Object>();
+    @Override
+    public void addParameter(String parameterName, Object parameterValue) {
+        parameterMap.put(parameterName, parameterValue);
+        parameterValues.add(parameterValue);
     }
 
     @Override
@@ -92,8 +92,8 @@ public class RuntimeContextImpl implements RuntimeContext {
     }
 
     @Override
-    public Object[] getMethodArgs() {
-        return methodArgs;
+    public List<Object> getParameterValues() {
+        return parameterValues;
     }
 
     private String getCacheKey(String parameterName, String propertyPath) {

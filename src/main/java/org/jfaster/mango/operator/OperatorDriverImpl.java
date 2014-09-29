@@ -115,12 +115,12 @@ public class OperatorDriverImpl implements OperatorDriver {
     }
 
     @Override
-    public RuntimeContext buildRuntimeContext(Object[] methodArgs) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        for (int i = 0; i < methodArgs.length; i++) {
-            parameters.put(getParameterNameByIndex(i), methodArgs[i]);
+    public RuntimeContext buildRuntimeContext(Object[] values) {
+        RuntimeContext context = new RuntimeContextImpl();
+        for (int i = 0; i < values.length; i++) {
+            context.addParameter(getParameterNameByIndex(i), values[i]);
         }
-        return new RuntimeContextImpl(parameters, methodArgs);
+        return context;
     }
 
     @Override

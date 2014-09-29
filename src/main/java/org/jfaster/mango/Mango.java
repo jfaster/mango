@@ -138,13 +138,13 @@ public class Mango {
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
-        private final Mango mango;
-        private final CacheHandler cacheHandler;
-        private final OperatorFactory operatorFactory = new OperatorFactoryImpl();
+        private final ConcurrentHashMap<Method,StatsCounter> statsCounterMap;
+        private final OperatorFactory operatorFactory;
 
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
-            this.mango = mango;
-            this.cacheHandler = cacheHandler;
+            statsCounterMap = mango.statsCounterMap;
+            operatorFactory = new OperatorFactoryImpl(mango.dataSourceFactoryHolder, cacheHandler,
+                    mango.queryInterceptorChain, mango.updateInterceptorChain);
         }
 
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
@@ -152,7 +152,7 @@ public class Mango {
                     public Operator load(Method method) throws Exception {
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
-                        Operator operator = operatorFactory.getOperator(method, mango.dataSourceFactoryHolder, cacheHandler, statsCounter);
+                        Operator operator = operatorFactory.getOperator(method, statsCounter);
                         statsCounter.recordInit(System.nanoTime() - now);
                         return operator;
                     }
@@ -172,7 +172,6 @@ public class Mango {
         }
 
         private StatsCounter getStatusCounter(Method method) {
-            ConcurrentHashMap<Method,StatsCounter> statsCounterMap = mango.statsCounterMap;
             StatsCounter statsCounter = statsCounterMap.get(method);
             if (statsCounter == null) {
                 statsCounter = new SimpleStatsCounter();

@@ -39,9 +39,21 @@ import java.util.regex.Pattern;
  */
 public class OperatorFactoryImpl implements OperatorFactory {
 
+    private final DataSourceFactoryHolder dataSourceFactoryHolder;
+    private final CacheHandler cacheHandler;
+    private final InterceptorChain queryInterceptorChain;
+    private final InterceptorChain updateInterceptorChain;
+
+    public OperatorFactoryImpl(DataSourceFactoryHolder dataSourceFactoryHolder, CacheHandler cacheHandler,
+                               InterceptorChain queryInterceptorChain, InterceptorChain updateInterceptorChain) {
+        this.dataSourceFactoryHolder = dataSourceFactoryHolder;
+        this.cacheHandler = cacheHandler;
+        this.queryInterceptorChain = queryInterceptorChain;
+        this.updateInterceptorChain = updateInterceptorChain;
+    }
+
     @Override
-    public Operator getOperator(Method method, DataSourceFactoryHolder dataSourceFactoryHolder,
-                                CacheHandler cacheHandler, StatsCounter statsCounter) throws Exception {
+    public Operator getOperator(Method method, StatsCounter statsCounter) throws Exception {
         SQL sqlAnno = method.getAnnotation(SQL.class);
         if (sqlAnno == null) {
             throw new IncorrectAnnotationException("each method expected one @SQL annotation " +

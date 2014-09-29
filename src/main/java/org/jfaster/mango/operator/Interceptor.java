@@ -25,6 +25,6 @@ import java.util.List;
  */
 public interface Interceptor {
 
-    public void intercept(SqlDescriptor sqlDescriptor, List<MethodParameter> methodParameters);
+    public void intercept(SqlDescriptor sqlDescriptor, List<Parameter> parameters);
 
 }

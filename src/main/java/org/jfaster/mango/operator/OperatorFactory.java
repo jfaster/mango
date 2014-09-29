@@ -16,9 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.cache.CacheHandler;
-import org.jfaster.mango.datasource.DataSourceFactoryHolder;
-
 import java.lang.reflect.Method;
 
 /**
@@ -31,7 +28,6 @@ public interface OperatorFactory {
     /**
      * 获取Operator
      */
-    public Operator getOperator(Method method, DataSourceFactoryHolder dataSourceFactoryHolder,
-                                CacheHandler cacheHandler, StatsCounter statsCounter) throws Exception;
+    public Operator getOperator(Method method, StatsCounter statsCounter) throws Exception;
 
 }

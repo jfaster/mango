@@ -24,6 +24,6 @@ package org.jfaster.mango.operator;
  */
 public interface Operator {
 
-    public Object execute(Object[] methodArgs);
+    public Object execute(Object[] values);
 
 }

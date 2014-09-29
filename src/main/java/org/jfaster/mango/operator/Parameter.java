@@ -24,12 +24,12 @@ import java.util.List;
 /**
  * @author ash
  */
-public class MethodParameter {
+public class Parameter {
 
-    private final MethodParameterDescriptor methodParameterDescriptor;
+    private final ParameterDescriptor methodParameterDescriptor;
     private final Object value;
 
-    public MethodParameter(MethodParameterDescriptor methodParameterDescriptor, Object value) {
+    public Parameter(ParameterDescriptor methodParameterDescriptor, Object value) {
         this.methodParameterDescriptor = methodParameterDescriptor;
         this.value = value;
     }
