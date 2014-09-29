@@ -42,7 +42,7 @@ public class UpdateOperator extends AbstractOperator {
     private Class<? extends Number> returnType;
 
     protected UpdateOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, SQLType sqlType, StatsCounter statsCounter) { // TODO
-        super(rootNode, statsCounter);
+        super(rootNode, statsCounter, method);
         this.driver = driver;
         init(method, sqlType);
     }
@@ -72,7 +72,7 @@ public class UpdateOperator extends AbstractOperator {
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 
         // 拦截器
-        // handleByInterceptorChain(sqlDescriptor, context.getMethodArgs()); // TODO
+        handleByInterceptorChain(sqlDescriptor, context.getParameterValues());
 
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();

@@ -24,6 +24,7 @@ import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.Iterables;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -36,8 +37,8 @@ public class BatchUpdateOperator extends AbstractOperator {
      */
     private OperatorDriver driver;
 
-    protected BatchUpdateOperator(ASTRootNode rootNode, OperatorDriver driver, StatsCounter statsCounter) {
-        super(rootNode, statsCounter);
+    protected BatchUpdateOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, StatsCounter statsCounter) {
+        super(rootNode, statsCounter, method);
         this.driver = driver;
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 0) {
@@ -77,7 +78,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 
         // 拦截器
-        //handleByInterceptorChain(sqlDescriptor, context.getMethodArgs()); // TOOD
+        handleByInterceptorChain(sqlDescriptor, context.getParameterValues());
 
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();

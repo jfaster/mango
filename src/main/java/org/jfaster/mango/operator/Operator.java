@@ -26,4 +26,6 @@ public interface Operator {
 
     public Object execute(Object[] values);
 
+    public void setInterceptorChain(InterceptorChain interceptorChain);
+
 }

@@ -18,6 +18,14 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.support.SqlDescriptor;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author ash
@@ -34,14 +42,56 @@ public abstract class AbstractOperator implements Operator {
      */
     protected final StatsCounter statsCounter;
 
+    protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+
+    /**
+     * 方法参数描述
+     */
+    private List<ParameterDescriptor> parameterDescriptors;
+
+    /**
+     * 拦截器链
+     */
+    private InterceptorChain interceptorChain;
+
     /**
      * 用于对db进行操作
      */
-    protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
-
-    protected AbstractOperator(ASTRootNode rootNode, StatsCounter statsCounter) {
+    protected AbstractOperator(ASTRootNode rootNode, StatsCounter statsCounter, Method method) {
         this.rootNode = rootNode;
         this.statsCounter = statsCounter;
+
+        initParameterDescriptors(method);
+    }
+
+    protected void handleByInterceptorChain(SqlDescriptor sqlDescriptor, List<Object> parameterValues) {
+        if (interceptorChain.getInterceptors() != null) {
+            List<Parameter> methodParameters = new ArrayList<Parameter>(parameterValues.size());
+            for (int i = 0; i < parameterValues.size(); i++) {
+                ParameterDescriptor pd = parameterDescriptors.get(i);
+                methodParameters.add(new Parameter(pd, parameterValues.get(i)));
+            }
+            interceptorChain.intercept(sqlDescriptor, methodParameters);
+        }
+    }
+
+    private void initParameterDescriptors(Method method) {
+        parameterDescriptors = new LinkedList<ParameterDescriptor>();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            Class<?> type = parameterTypes[i];
+            Type genericType = genericParameterTypes[i];
+            Annotation[] annotations = parameterAnnotations[i];
+            parameterDescriptors.add(new ParameterDescriptor(type, genericType, annotations));
+        }
+    }
+
+    @Override
+    public void setInterceptorChain(InterceptorChain interceptorChain) {
+        this.interceptorChain = interceptorChain;
     }
 
 }
