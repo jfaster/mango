@@ -17,8 +17,8 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.Iterables;
@@ -39,8 +39,8 @@ public class BatchUpdateOperator extends AbstractOperator {
      */
     private OperatorDriver driver;
 
-    protected BatchUpdateOperator(ASTRootNode rootNode, OperatorDriver driver, StatsCounter statsCounter) {
-        super(rootNode, statsCounter);
+    protected BatchUpdateOperator(ASTRootNode rootNode, OperatorDriver driver) {
+        super(rootNode);
         this.driver = driver;
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 0) {

@@ -17,8 +17,7 @@
 package org.jfaster.mango.parser.visitor;
 
 
-import org.jfaster.mango.parser.ParserVisitor;
-import org.jfaster.mango.parser.node.*;
+import org.jfaster.mango.parser.*;
 
 /**
  * Text与Blank连接
@@ -38,6 +37,26 @@ public class TextBlankJoinVisitor implements ParserVisitor {
     }
 
     @Override
+    public Object visit(ASTInsert node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTDelete node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTUpdate node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTSelect node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Object visit(ASTBlock father, Object data) {
         int num = father.jjtGetNumChildren();
         int i = 0;
@@ -50,10 +69,10 @@ public class TextBlankJoinVisitor implements ParserVisitor {
                 prev.next = node;
             }
             prev = node;
-            if (node instanceof ASTString) {
+            if (node instanceof AbstractStringNode) {
                 StringBuffer sb = new StringBuffer();
-                while (node instanceof ASTString) {
-                    ASTString str = (ASTString) node;
+                while (node instanceof AbstractStringNode) {
+                    AbstractStringNode str = (AbstractStringNode) node;
                     sb.append(str.getValue());
                     i++;
                     if (i == num) {
@@ -61,7 +80,7 @@ public class TextBlankJoinVisitor implements ParserVisitor {
                     }
                     node = (AbstractRenderableNode) father.jjtGetChild(i);
                 }
-                ((ASTString) prev).setGroupValue(sb.toString());
+                ((AbstractStringNode) prev).setGroupValue(sb.toString());
             } else {
                 i++;
             }

@@ -14,20 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.parser;
 
+import org.jfaster.mango.support.RuntimeContext;
 
-/**
- * db操作接口
- *
- * @author ash
- */
-public interface Operator {
+public class ASTElseStatement extends AbstractRenderableNode {
 
-    public Object execute(Object[] values);
+    public ASTElseStatement(int id) {
+        super(id);
+    }
 
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
+    public ASTElseStatement(Parser p, int id) {
+        super(p, id);
+    }
 
-    public void setStatsCounter(StatsCounter statsCounter);
+    @Override
+    public boolean render(RuntimeContext context) {
+        ((AbstractRenderableNode) jjtGetChild(0)).render(context);
+        return true;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
+    }
 
 }

@@ -21,8 +21,8 @@ import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.jdbc.SingleColumnRowMapper;
-import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -47,8 +47,8 @@ public class QueryOperator extends AbstractOperator {
     protected boolean isForArray;
     protected Class<?> mappedClass;
 
-    protected QueryOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, StatsCounter statsCounter) {
-        super(rootNode, statsCounter);
+    protected QueryOperator(ASTRootNode rootNode, OperatorDriver driver, Method method) {
+        super(rootNode);
         this.driver = driver;
         init(rootNode, method);
     }

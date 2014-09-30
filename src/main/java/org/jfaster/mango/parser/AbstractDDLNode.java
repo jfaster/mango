@@ -14,20 +14,38 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.parser;
 
+import org.jfaster.mango.support.RuntimeContext;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public abstract class AbstractDDLNode extends AbstractRenderableNode {
 
-    public Object execute(Object[] values);
+    private String value;
 
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
+    public AbstractDDLNode(int i) {
+        super(i);
+    }
 
-    public void setStatsCounter(StatsCounter statsCounter);
+    public AbstractDDLNode(Parser p, int i) {
+        super(p, i);
+    }
+
+    @Override
+    public boolean render(RuntimeContext context) {
+        context.writeToSqlBuffer(value);
+        return true;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" + value + "]";
+    }
 
 }

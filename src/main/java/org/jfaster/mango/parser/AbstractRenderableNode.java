@@ -14,20 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.parser;
 
+import org.jfaster.mango.support.RuntimeContext;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public abstract class AbstractRenderableNode extends SimpleNode {
 
-    public Object execute(Object[] values);
+    public AbstractRenderableNode next;
 
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
+    public AbstractRenderableNode(int i) {
+        super(i);
+    }
 
-    public void setStatsCounter(StatsCounter statsCounter);
+    public AbstractRenderableNode(Parser p, int i) {
+        super(p, i);
+    }
+
+    /**
+     * 渲染sql与args
+     */
+    public abstract boolean render(RuntimeContext context);
 
 }

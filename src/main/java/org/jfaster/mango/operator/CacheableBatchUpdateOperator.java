@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -37,8 +37,8 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
     private CacheableOperatorDriver driver;
 
-    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, StatsCounter statsCounter) {
-        super(rootNode, driver, statsCounter);
+    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver) {
+        super(rootNode, driver);
         this.driver = driver;
     }
 

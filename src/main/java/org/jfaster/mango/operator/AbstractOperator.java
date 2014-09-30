@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.jdbc.JdbcTemplate;
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTRootNode;
 
 /**
  * @author ash
@@ -30,28 +30,35 @@ public abstract class AbstractOperator implements Operator {
     protected final ASTRootNode rootNode;
 
     /**
-     * 状态统计
-     */
-    protected final StatsCounter statsCounter;
-
-    protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
-
-    /**
      * 拦截器链
      */
     protected RuntimeInterceptorChain runtimeInterceptorChain;
 
     /**
+     * 状态统计
+     */
+    protected StatsCounter statsCounter;
+
+    /**
+     * jdbc操作
+     */
+    protected final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+
+    /**
      * 用于对db进行操作
      */
-    protected AbstractOperator(ASTRootNode rootNode, StatsCounter statsCounter) {
+    protected AbstractOperator(ASTRootNode rootNode) {
         this.rootNode = rootNode;
-        this.statsCounter = statsCounter;
     }
 
     @Override
     public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain) {
         this.runtimeInterceptorChain = runtimeInterceptorChain;
+    }
+
+    @Override
+    public void setStatsCounter(StatsCounter statsCounter) {
+        this.statsCounter = statsCounter;
     }
 
 }

@@ -14,20 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
 
+package org.jfaster.mango.parser;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public class NodeInfo {
 
-    public Object execute(Object[] values);
-
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
-
-    public void setStatsCounter(StatsCounter statsCounter);
+    public List<ASTJDBCParameter> jdbcParameters = new LinkedList<ASTJDBCParameter>();
+    public List<ASTJDBCIterableParameter> jdbcIterableParameters = new LinkedList<ASTJDBCIterableParameter>();
+    public List<ASTGlobalTable> globalTables = new LinkedList<ASTGlobalTable>();
 
 }

@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContextImpl;
 import org.jfaster.mango.support.SqlDescriptor;
 import org.junit.Test;
@@ -48,31 +47,31 @@ public class ParserTest {
 
     @Test
     public void testIf() throws Exception {
-        String sql = "where 1=1 #if(:1) and id>:1 #end";
+        String sql = "select where 1=1 #if(:1) and id>:1 #end";
         ASTRootNode n = new Parser(sql).parse().init();
         RuntimeContextImpl context = new RuntimeContextImpl();
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1  and id>? "));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1  and id>? "));
         assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
     public void testIf2() throws Exception {
-        String sql = "where 1=1 #if(!:1) and id>:1 #end";
+        String sql = "select where 1=1 #if(!:1) and id>:1 #end";
         ASTRootNode n = new Parser(sql).parse().init();
         RuntimeContextImpl context = new RuntimeContextImpl();
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 "));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 "));
         assertThat(sqlDescriptor.getArgs().size(), equalTo(0));
     }
 
     @Test
     public void testIfElseIf() throws Exception {
-        String sql = "where 1=1" +
+        String sql = "select where 1=1" +
                 "#if(:1>0)" +
                     " and id>:1" +
                 "#elseif(:1<0)" +
@@ -83,13 +82,13 @@ public class ParserTest {
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id>?"));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id>?"));
         assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
     public void testIfElseIf2() throws Exception {
-        String sql = "where 1=1" +
+        String sql = "select where 1=1" +
                 "#if(:1>0)" +
                     " and id>:1" +
                 "#elseif(:1<0)" +
@@ -100,13 +99,13 @@ public class ParserTest {
         context.addParameter("1", -100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id<?"));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id<?"));
         assertThat(sqlDescriptor.getArgs(), contains(new Object[]{-100}));
     }
 
     @Test
     public void testIfElseIfElse() throws Exception {
-        String sql = "where 1=1" +
+        String sql = "select where 1=1" +
                 "#if(:1>0)" +
                     " and id>:1" +
                 "#elseif(:1<0)" +
@@ -119,13 +118,13 @@ public class ParserTest {
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id>?"));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id>?"));
         assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
     public void testIfElseIfElse2() throws Exception {
-        String sql = "where 1=1" +
+        String sql = "select where 1=1" +
                 "#if(:1>0)" +
                     " and id>:1" +
                 "#elseif(:1<0)" +
@@ -138,13 +137,13 @@ public class ParserTest {
         context.addParameter("1", -100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id<?"));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id<?"));
         assertThat(sqlDescriptor.getArgs(), contains(new Object[]{-100}));
     }
 
     @Test
     public void testIfElseIfElse3() throws Exception {
-        String sql = "where 1=1" +
+        String sql = "select where 1=1" +
                 "#if(:1>0)" +
                     " and id>:1" +
                 "#elseif(:1<0)" +
@@ -157,13 +156,13 @@ public class ParserTest {
         context.addParameter("1", 0);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1 and id=?"));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id=?"));
         assertThat(sqlDescriptor.getArgs(), contains(new Object[]{0}));
     }
 
     @Test
     public void testExpression() throws Exception {
-        String sql = "where 1=1 #if(:1==false && :2!=null && :3==true) and id>10 #end";
+        String sql = "select where 1=1 #if(:1==false && :2!=null && :3==true) and id>10 #end";
         ASTRootNode n = new Parser(sql).parse().init();
         RuntimeContextImpl context = new RuntimeContextImpl();
         context.addParameter("1", false);
@@ -171,7 +170,17 @@ public class ParserTest {
         context.addParameter("3", true);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("where 1=1  and id>10 "));
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1  and id>10 "));
+    }
+
+    @Test
+    public void testParse() throws Exception {
+        String sql = "SELECT * from user where id in ( select id from user2 )";
+        ASTRootNode n = new Parser(sql).parse().init();
+        RuntimeContextImpl context = new RuntimeContextImpl();
+        n.render(context);
+        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
+        assertThat(sqlDescriptor.getSql().toString(), equalTo("SELECT * from user where id in ( select id from user2 )"));
     }
 
 }

@@ -54,6 +54,10 @@ TOKEN:
     |   <ELSEIF_DIRECTIVE: "#elseif" > {SwitchTo(EXPRESSION);}
     |   <ELSE_DIRECTIVE: "#else" >
     |   <END: "#end" >
+    |   <INSERT: "insert" >
+    |   <DELETE: "delete" >
+    |   <UPDATE: "update" >
+    |   <SELECT: "select" >
     |   <TEXT: (~[":", "#", " "])+ >
 }
 
@@ -92,9 +96,53 @@ TOKEN:
 
 ASTRootNode parse()  #RootNode : {}
 {
-    ( Statement() )+ #Block <EOF>
+    ( Insert() | Delete() | Update() | Select() ) ( Statement() )+ #Block <EOF>
     {
         return jjtThis;
+    }
+}
+
+void Insert() :
+{
+    Token t;
+}
+{
+    t=<INSERT>
+    {
+        jjtThis.setValue(t.image);
+    }
+}
+
+void Delete() :
+{
+    Token t;
+}
+{
+    t=<DELETE>
+    {
+        jjtThis.setValue(t.image);
+    }
+}
+
+void Update() :
+{
+    Token t;
+}
+{
+    t=<UPDATE>
+    {
+        jjtThis.setValue(t.image);
+    }
+}
+
+void Select() :
+{
+    Token t;
+}
+{
+    t=<SELECT>
+    {
+        jjtThis.setValue(t.image);
     }
 }
 
@@ -153,7 +201,7 @@ void Text() :
     Token t;
 }
 {
-    t=<TEXT>
+    ( t=<TEXT> | t=<INSERT> | t=<DELETE> | t=<UPDATE> | t=<SELECT> )
     {
         jjtThis.setValue(t.image);
     }

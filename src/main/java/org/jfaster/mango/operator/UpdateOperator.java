@@ -19,7 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.support.SQLType;
 import org.jfaster.mango.support.SqlDescriptor;
@@ -41,10 +41,10 @@ public class UpdateOperator extends AbstractOperator {
 
     private Class<? extends Number> returnType;
 
-    protected UpdateOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, SQLType sqlType, StatsCounter statsCounter) { // TODO
-        super(rootNode, statsCounter);
+    protected UpdateOperator(ASTRootNode rootNode, OperatorDriver driver, Method method) {
+        super(rootNode);
         this.driver = driver;
-        init(method, sqlType);
+        init(method, rootNode.getSQLType());
     }
 
     private void init(Method method, SQLType sqlType) {

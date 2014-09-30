@@ -19,8 +19,8 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -42,8 +42,8 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private String interableProperty;
 
-    protected CacheableQueryOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, Method method, StatsCounter statsCounter) {
-        super(rootNode, driver, method, statsCounter);
+    protected CacheableQueryOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, Method method) {
+        super(rootNode, driver, method);
         this.driver = driver;
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();

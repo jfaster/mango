@@ -18,8 +18,7 @@ package org.jfaster.mango.parser.visitor;
 
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.parser.ParserVisitor;
-import org.jfaster.mango.parser.node.*;
+import org.jfaster.mango.parser.*;
 import org.jfaster.mango.support.TypeContext;
 import org.jfaster.mango.util.reflect.TypeToken;
 
@@ -39,6 +38,26 @@ public class TypeCheckVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTRootNode node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTInsert node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTDelete node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTUpdate node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTSelect node, Object data) {
         throw new UnsupportedOperationException();
     }
 

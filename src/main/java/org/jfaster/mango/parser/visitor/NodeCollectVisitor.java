@@ -16,8 +16,7 @@
 
 package org.jfaster.mango.parser.visitor;
 
-import org.jfaster.mango.parser.ParserVisitor;
-import org.jfaster.mango.parser.node.*;
+import org.jfaster.mango.parser.*;
 
 /**
  * 节点信息收集
@@ -33,6 +32,26 @@ public class NodeCollectVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTRootNode node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTInsert node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTDelete node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTUpdate node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object visit(ASTSelect node, Object data) {
         throw new UnsupportedOperationException();
     }
 

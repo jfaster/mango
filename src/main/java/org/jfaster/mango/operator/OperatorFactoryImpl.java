@@ -24,13 +24,12 @@ import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
-import org.jfaster.mango.parser.node.ASTRootNode;
 import org.jfaster.mango.support.SQLType;
 import org.jfaster.mango.util.Strings;
 
 import java.lang.reflect.Method;
-import java.util.regex.Pattern;
 
 /**
  * Operator工厂实现
@@ -63,10 +62,10 @@ public class OperatorFactoryImpl implements OperatorFactory {
         if (Strings.isNullOrEmpty(sql)) {
             throw new IncorrectSqlException("sql is null or empty");
         }
-        SQLType sqlType = getSQLType(sql);
+        ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
         OperatorType operatorType;
         Class<?> returnType = method.getReturnType();
-        if (sqlType == SQLType.SELECT) { // 查
+        if (rootNode.getSQLType() == SQLType.SELECT) { // 查
             operatorType = OperatorType.SELECT;
         } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
             operatorType = OperatorType.UPDATE;
@@ -79,8 +78,6 @@ public class OperatorFactoryImpl implements OperatorFactory {
                     "but " + method.getReturnType());
         }
 
-        ASTRootNode rootNode = new Parser(sql).parse().init();
-
         Class<?> daoClass = method.getDeclaringClass();
         CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
         Cache cacheAnno = daoClass.getAnnotation(Cache.class);
@@ -89,56 +86,40 @@ public class OperatorFactoryImpl implements OperatorFactory {
         Operator operator;
         RuntimeInterceptorChain chain;
         if (!useCache) {
-            OperatorDriver driver = new OperatorDriverImpl(dataSourceFactoryHolder, sqlType, operatorType, method, rootNode);
+            OperatorDriver driver = new OperatorDriverImpl(dataSourceFactoryHolder, operatorType, method, rootNode);
             switch (operatorType) {
                 case SELECT:
-                    operator = new QueryOperator(rootNode, driver, method, statsCounter);
+                    operator = new QueryOperator(rootNode, driver, method);
                     chain = new RuntimeInterceptorChain(queryInterceptorChain, method);
                     break;
                 case UPDATE:
-                    operator = new UpdateOperator(rootNode, driver, method, sqlType, statsCounter);
+                    operator = new UpdateOperator(rootNode, driver, method);
                     chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
                     break;
                 default:
-                    operator = new BatchUpdateOperator(rootNode, driver, statsCounter);
+                    operator = new BatchUpdateOperator(rootNode, driver);
                     chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
             }
         } else {
-            CacheableOperatorDriver driver = new CacheableOperatorDriverImpl(dataSourceFactoryHolder, sqlType, operatorType, method, rootNode, cacheHandler);
+            CacheableOperatorDriver driver = new CacheableOperatorDriverImpl(dataSourceFactoryHolder,
+                    operatorType, method, rootNode, cacheHandler);
             switch (operatorType) {
                 case SELECT:
-                    operator = new CacheableQueryOperator(rootNode, driver, method, statsCounter);
+                    operator = new CacheableQueryOperator(rootNode, driver, method);
                     chain = new RuntimeInterceptorChain(queryInterceptorChain, method);
                     break;
                 case UPDATE:
-                    operator = new CacheableUpdateOperator(rootNode, driver, method, sqlType, statsCounter);
+                    operator = new CacheableUpdateOperator(rootNode, driver, method);
                     chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
                     break;
                 default:
-                    operator = new CacheableBatchUpdateOperator(rootNode, driver, statsCounter);
+                    operator = new CacheableBatchUpdateOperator(rootNode, driver);
                     chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
             }
         }
         operator.setRuntimeInterceptorChain(chain);
+        operator.setStatsCounter(statsCounter);
         return operator;
     }
 
-    private final static Pattern INSERT_PATTERN = Pattern.compile("^\\s*INSERT\\s+", Pattern.CASE_INSENSITIVE);
-    private final static Pattern DELETE_PATTERN = Pattern.compile("^\\s*DELETE\\s+", Pattern.CASE_INSENSITIVE);
-    private final static Pattern UPDATE_PATTERN = Pattern.compile("^\\s*UPDATE\\s+", Pattern.CASE_INSENSITIVE);
-    private final static Pattern SELECT_PATTERN = Pattern.compile("^\\s*SELECT\\s+", Pattern.CASE_INSENSITIVE);
-
-    private static SQLType getSQLType(String sql) {
-        if (INSERT_PATTERN.matcher(sql).find()) {
-            return SQLType.INSERT;
-        } else if (DELETE_PATTERN.matcher(sql).find()) {
-            return SQLType.DELETE;
-        } else if (UPDATE_PATTERN.matcher(sql).find()) {
-            return SQLType.UPDATE;
-        } else if (SELECT_PATTERN.matcher(sql).find()) {
-            return SQLType.SELECT;
-        } else {
-            throw new IncorrectSqlException("sql must start with INSERT or DELETE or UPDATE or SELECT");
-        }
-    }
 }

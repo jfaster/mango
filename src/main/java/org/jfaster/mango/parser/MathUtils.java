@@ -14,20 +14,15 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
-
+package org.jfaster.mango.parser;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public class MathUtils {
 
-    public Object execute(Object[] values);
-
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
-
-    public void setStatsCounter(StatsCounter statsCounter);
+    public static int compare(int a, int b) {
+        return (a < b) ? -1 : ((a > b) ? 1 : 0);
+    }
 
 }

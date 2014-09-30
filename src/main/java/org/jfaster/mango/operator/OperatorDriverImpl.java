@@ -27,7 +27,7 @@ import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.support.*;
@@ -98,10 +98,10 @@ public class OperatorDriverImpl implements OperatorDriver {
     private String shardPropertyPath;
 
 
-    public OperatorDriverImpl(DataSourceFactoryHolder dataSourceFactoryHolder, SQLType sqlType,
-                              OperatorType operatorType, Method method, ASTRootNode rootNode) {
+    public OperatorDriverImpl(DataSourceFactoryHolder dataSourceFactoryHolder, OperatorType operatorType,
+                              Method method, ASTRootNode rootNode) {
         this.dataSourceFactoryHolder = dataSourceFactoryHolder;
-        this.sqlType = sqlType;
+        this.sqlType = rootNode.getSQLType();
         initAlias(method);
         initTypeContext(operatorType, method);
         initDbAnno(method, rootNode);

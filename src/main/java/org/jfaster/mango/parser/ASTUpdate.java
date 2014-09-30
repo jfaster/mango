@@ -14,20 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.parser;
 
+public class ASTUpdate extends AbstractDDLNode {
 
-/**
- * db操作接口
- *
- * @author ash
- */
-public interface Operator {
+    public ASTUpdate(int id) {
+        super(id);
+    }
 
-    public Object execute(Object[] values);
+    public ASTUpdate(Parser p, int id) {
+        super(p, id);
+    }
 
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
-
-    public void setStatsCounter(StatsCounter statsCounter);
+    public Object jjtAccept(ParserVisitor visitor, Object data) {
+        return visitor.visit(this, data);
+    }
 
 }

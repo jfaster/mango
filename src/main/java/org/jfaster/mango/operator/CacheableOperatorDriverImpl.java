@@ -25,11 +25,10 @@ import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
-import org.jfaster.mango.parser.node.ASTJDBCIterableParameter;
-import org.jfaster.mango.parser.node.ASTJDBCParameter;
-import org.jfaster.mango.parser.node.ASTRootNode;
+import org.jfaster.mango.parser.ASTJDBCIterableParameter;
+import org.jfaster.mango.parser.ASTJDBCParameter;
+import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.support.SQLType;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -94,10 +93,10 @@ public class CacheableOperatorDriverImpl extends OperatorDriverImpl implements C
 
     private String interableProperty;
 
-    public CacheableOperatorDriverImpl(DataSourceFactoryHolder dataSourceFactoryHolder, SQLType sqlType,
+    public CacheableOperatorDriverImpl(DataSourceFactoryHolder dataSourceFactoryHolder,
                                        OperatorType operatorType, Method method,
                                        ASTRootNode rootNode, CacheHandler cacheHandler) {
-        super(dataSourceFactoryHolder, sqlType, operatorType, method, rootNode);
+        super(dataSourceFactoryHolder, operatorType, method, rootNode);
         this.cacheHandler = cacheHandler;
         init(method, rootNode);
     }

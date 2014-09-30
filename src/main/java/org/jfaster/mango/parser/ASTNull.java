@@ -14,20 +14,36 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.parser;
 
+import org.jfaster.mango.support.RuntimeContext;
 
-/**
- * db操作接口
- *
- * @author ash
- */
-public interface Operator {
+public class ASTNull extends AbstractExpression {
 
-    public Object execute(Object[] values);
+    private static Object value = null;
 
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
+    public ASTNull(int id) {
+        super(id);
+    }
 
-    public void setStatsCounter(StatsCounter statsCounter);
+    public ASTNull(Parser p, int id) {
+        super(p, id);
+    }
+
+    @Override
+    public boolean evaluate(RuntimeContext context) {
+        return false;
+    }
+
+    @Override
+    public Object value(RuntimeContext context) {
+        return value;
+    }
+
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
+    }
 
 }

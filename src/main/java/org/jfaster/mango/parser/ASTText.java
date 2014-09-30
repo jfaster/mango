@@ -14,20 +14,25 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
-
+package org.jfaster.mango.parser;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public class ASTText extends AbstractStringNode {
 
-    public Object execute(Object[] values);
+    public ASTText(int i) {
+        super(i);
+    }
 
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
+    public ASTText(Parser p, int i) {
+        super(p, i);
+    }
 
-    public void setStatsCounter(StatsCounter statsCounter);
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data)
+    {
+        return visitor.visit(this, data);
+    }
 
 }
