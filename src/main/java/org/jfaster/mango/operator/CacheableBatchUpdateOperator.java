@@ -23,7 +23,6 @@ import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,8 +37,8 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
     private CacheableOperatorDriver driver;
 
-    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, Method method, StatsCounter statsCounter) {
-        super(rootNode, driver, method, statsCounter);
+    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, StatsCounter statsCounter) {
+        super(rootNode, driver, statsCounter);
         this.driver = driver;
     }
 

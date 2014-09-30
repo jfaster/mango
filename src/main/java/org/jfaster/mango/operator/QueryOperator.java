@@ -48,7 +48,7 @@ public class QueryOperator extends AbstractOperator {
     protected Class<?> mappedClass;
 
     protected QueryOperator(ASTRootNode rootNode, OperatorDriver driver, Method method, StatsCounter statsCounter) {
-        super(rootNode, statsCounter, method);
+        super(rootNode, statsCounter);
         this.driver = driver;
         init(rootNode, method);
     }
@@ -81,7 +81,7 @@ public class QueryOperator extends AbstractOperator {
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 
         // 拦截器
-        handleByInterceptorChain(sqlDescriptor, context.getParameterValues());
+        runtimeInterceptorChain.intercept(sqlDescriptor, context);
 
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();

@@ -87,37 +87,39 @@ public class OperatorFactoryImpl implements OperatorFactory {
         boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
 
         Operator operator;
+        RuntimeInterceptorChain chain;
         if (!useCache) {
             OperatorDriver driver = new OperatorDriverImpl(dataSourceFactoryHolder, sqlType, operatorType, method, rootNode);
             switch (operatorType) {
                 case SELECT:
                     operator = new QueryOperator(rootNode, driver, method, statsCounter);
-                    operator.setInterceptorChain(queryInterceptorChain);
+                    chain = new RuntimeInterceptorChain(queryInterceptorChain, method);
                     break;
                 case UPDATE:
                     operator = new UpdateOperator(rootNode, driver, method, sqlType, statsCounter);
-                    operator.setInterceptorChain(updateInterceptorChain);
+                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
                     break;
                 default:
-                    operator = new BatchUpdateOperator(rootNode, driver, method, statsCounter);
-                    operator.setInterceptorChain(updateInterceptorChain);
+                    operator = new BatchUpdateOperator(rootNode, driver, statsCounter);
+                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
             }
         } else {
             CacheableOperatorDriver driver = new CacheableOperatorDriverImpl(dataSourceFactoryHolder, sqlType, operatorType, method, rootNode, cacheHandler);
             switch (operatorType) {
                 case SELECT:
                     operator = new CacheableQueryOperator(rootNode, driver, method, statsCounter);
-                    operator.setInterceptorChain(queryInterceptorChain);
+                    chain = new RuntimeInterceptorChain(queryInterceptorChain, method);
                     break;
                 case UPDATE:
                     operator = new CacheableUpdateOperator(rootNode, driver, method, sqlType, statsCounter);
-                    operator.setInterceptorChain(updateInterceptorChain);
+                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
                     break;
                 default:
-                    operator = new CacheableBatchUpdateOperator(rootNode, driver, method, statsCounter);
-                    operator.setInterceptorChain(updateInterceptorChain);
+                    operator = new CacheableBatchUpdateOperator(rootNode, driver, statsCounter);
+                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
             }
         }
+        operator.setRuntimeInterceptorChain(chain);
         return operator;
     }
 
