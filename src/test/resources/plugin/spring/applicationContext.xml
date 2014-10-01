@@ -10,7 +10,7 @@
         </property>
     </bean>
 
-    <bean class="org.jfaster.mango.Mango">
+    <bean class="org.jfaster.mango.operator.Mango">
         <constructor-arg type="javax.sql.DataSource" ref="dmds" />
     </bean>
 

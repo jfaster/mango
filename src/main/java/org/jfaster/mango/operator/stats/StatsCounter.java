@@ -14,17 +14,25 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
-
-import org.jfaster.mango.support.SqlDescriptor;
-
-import java.util.List;
+package org.jfaster.mango.operator.stats;
 
 /**
  * @author ash
  */
-public interface Interceptor {
+public interface StatsCounter {
 
-    public void intercept(SqlDescriptor sqlDescriptor, List<Parameter> parameters);
+    public void recordInit(long initTime);
+
+    public void recordHits(int count);
+
+    public void recordMisses(int count);
+
+    public void recordExecuteSuccess(long executeTime);
+
+    public void recordExecuteException(long executeTime);
+
+    public void recordEviction(int count);
+
+    public MethodStats snapshot();
 
 }

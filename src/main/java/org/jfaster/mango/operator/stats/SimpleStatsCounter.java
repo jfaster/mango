@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.stats;
 
 import org.jfaster.mango.util.concurrent.atomic.LongAddable;
 import org.jfaster.mango.util.concurrent.atomic.LongAddables;

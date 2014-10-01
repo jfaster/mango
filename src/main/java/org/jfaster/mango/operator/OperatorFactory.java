@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.operator.stats.StatsCounter;
+
 import java.lang.reflect.Method;
 
 /**

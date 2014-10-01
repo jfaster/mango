@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.datasource.factory;
 
-import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.util.SQLType;
 
 import javax.sql.DataSource;
 

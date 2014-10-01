@@ -14,9 +14,9 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.operator.RuntimeContext;
 
 import java.util.Map;
 import java.util.Set;

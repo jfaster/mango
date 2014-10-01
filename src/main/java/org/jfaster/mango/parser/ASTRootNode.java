@@ -6,9 +6,9 @@ import org.jfaster.mango.parser.visitor.NodeCollectVisitor;
 import org.jfaster.mango.parser.visitor.TextBlankJoinVisitor;
 import org.jfaster.mango.parser.visitor.TypeCheckVisitor;
 import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.support.SQLType;
-import org.jfaster.mango.support.TypeContext;
+import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.operator.TypeContext;
 
 import java.util.List;
 

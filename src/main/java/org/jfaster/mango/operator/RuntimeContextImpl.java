@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.support;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.util.reflect.Beans;
 

@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.support.RuntimeContextImpl;
-import org.jfaster.mango.support.SqlDescriptor;
+import org.jfaster.mango.operator.RuntimeContextImpl;
+import org.jfaster.mango.operator.SqlDescriptor;
 import org.junit.Test;
 
 import java.util.Arrays;

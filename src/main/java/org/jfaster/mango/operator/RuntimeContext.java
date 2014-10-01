@@ -14,15 +14,29 @@
  * under the License.
  */
 
-package org.jfaster.mango.support;
+package org.jfaster.mango.operator;
 
-import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * @author ash
  */
-public interface TypeContext {
+public interface RuntimeContext {
 
-    public Type getPropertyType(String parameterName, String propertyPath);
+    public void addParameter(String parameterName, Object parameterValue);
+
+    public Object getPropertyValue(String parameterName, String propertyPath);
+
+    public Object getNullablePropertyValue(String parameterName, String propertyPath);
+
+    public void setPropertyValue(String parameterName, String propertyPath, Object value);
+
+    public void writeToSqlBuffer(String str);
+
+    public void appendToArgs(Object obj);
+
+    public SqlDescriptor getSqlDescriptor();
+
+    public List<Object> getParameterValues();
 
 }

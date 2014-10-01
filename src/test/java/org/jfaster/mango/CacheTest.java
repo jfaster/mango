@@ -19,6 +19,7 @@ package org.jfaster.mango;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.cache.Day;
+import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Randoms;

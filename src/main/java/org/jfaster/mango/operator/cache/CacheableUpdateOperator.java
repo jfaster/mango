@@ -14,13 +14,14 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.operator.UpdateOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -37,7 +38,7 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
     private CacheDriver driver;
 
-    protected CacheableUpdateOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
+    public CacheableUpdateOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
         super(rootNode, method);
 
         this.driver = new CacheDriverImpl(method, rootNode, cacheHandler, getTypeContext(), getNameProvider());

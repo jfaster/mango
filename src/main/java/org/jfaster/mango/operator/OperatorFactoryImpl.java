@@ -25,9 +25,15 @@ import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.jdbc.JdbcTemplate;
+import org.jfaster.mango.operator.cache.CacheableBatchUpdateOperator;
+import org.jfaster.mango.operator.cache.CacheableQueryOperator;
+import org.jfaster.mango.operator.cache.CacheableUpdateOperator;
+import org.jfaster.mango.operator.interceptor.InterceptorChain;
+import org.jfaster.mango.operator.interceptor.RuntimeInterceptorChain;
+import org.jfaster.mango.operator.stats.StatsCounter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
-import org.jfaster.mango.support.SQLType;
+import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.Strings;
 
 import java.lang.reflect.Method;

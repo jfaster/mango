@@ -1,4 +1,4 @@
-package org.jfaster.mango.support;
+package org.jfaster.mango.operator;
 
 import java.util.List;
 

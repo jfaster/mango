@@ -14,7 +14,17 @@
  * under the License.
  */
 
+package org.jfaster.mango.operator.interceptor;
+
+import org.jfaster.mango.operator.SqlDescriptor;
+
+import java.util.List;
+
 /**
- * 支持类
+ * @author ash
  */
-package org.jfaster.mango.support;
+public interface Interceptor {
+
+    public void intercept(SqlDescriptor sqlDescriptor, List<Parameter> parameters);
+
+}

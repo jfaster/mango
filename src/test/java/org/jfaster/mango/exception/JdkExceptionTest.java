@@ -22,7 +22,7 @@ import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.Mango;
+import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;

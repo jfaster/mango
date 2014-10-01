@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.interceptor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

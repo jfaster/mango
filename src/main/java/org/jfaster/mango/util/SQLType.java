@@ -14,17 +14,31 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.util;
 
 /**
  * @author ash
  */
-public enum OperatorType {
+public enum SQLType {
 
-    SELECT,
+    /**
+     * 增
+     */
+    INSERT,
 
+    /**
+     * 删
+     */
+    DELETE,
+
+    /**
+     * 改
+     */
     UPDATE,
 
-    BATCHUPDATE,
+    /**
+     * 查
+     */
+    SELECT,
 
 }

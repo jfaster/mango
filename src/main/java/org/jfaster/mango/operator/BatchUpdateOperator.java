@@ -21,8 +21,6 @@ import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.reflect.TypeToken;
 

@@ -14,11 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.cache.CacheHandler;
+import org.jfaster.mango.operator.BatchUpdateOperator;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -39,7 +40,7 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
     private CacheDriver driver;
 
-    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
+    public CacheableBatchUpdateOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
         super(rootNode, method);
         this.driver = new CacheDriverImpl(method, rootNode, cacheHandler, getTypeContext(), getNameProvider());
     }

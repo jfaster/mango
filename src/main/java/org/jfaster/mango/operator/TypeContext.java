@@ -16,23 +16,13 @@
 
 package org.jfaster.mango.operator;
 
+import java.lang.reflect.Type;
+
 /**
  * @author ash
  */
-public interface StatsCounter {
+public interface TypeContext {
 
-    public void recordInit(long initTime);
-
-    public void recordHits(int count);
-
-    public void recordMisses(int count);
-
-    public void recordExecuteSuccess(long executeTime);
-
-    public void recordExecuteException(long executeTime);
-
-    public void recordEviction(int count);
-
-    public MethodStats snapshot();
+    public Type getPropertyType(String parameterName, String propertyPath);
 
 }

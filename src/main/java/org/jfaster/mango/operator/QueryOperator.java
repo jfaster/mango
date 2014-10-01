@@ -23,8 +23,6 @@ import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.jdbc.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.support.RuntimeContext;
-import org.jfaster.mango.support.SqlDescriptor;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;

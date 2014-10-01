@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.operator.RuntimeContext;
 
 /**
  * @author ash
