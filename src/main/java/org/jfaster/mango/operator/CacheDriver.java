@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @author ash
  */
-public interface CacheableOperatorDriver extends OperatorDriver {
+public interface CacheDriver {
 
     public boolean isUseMultipleKeys();
 

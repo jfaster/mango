@@ -29,6 +29,7 @@ import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -36,20 +37,14 @@ import java.util.List;
  */
 public class QueryOperator extends AbstractOperator {
 
-    /**
-     * operator驱动
-     */
-    private OperatorDriver driver;
-
     protected RowMapper<?> rowMapper;
     protected boolean isForList;
     protected boolean isForSet;
     protected boolean isForArray;
     protected Class<?> mappedClass;
 
-    protected QueryOperator(ASTRootNode rootNode, OperatorDriver driver, Method method) {
-        super(rootNode);
-        this.driver = driver;
+    protected QueryOperator(ASTRootNode rootNode, Method method) {
+        super(rootNode, method);
         init(rootNode, method);
     }
 
@@ -70,13 +65,18 @@ public class QueryOperator extends AbstractOperator {
     }
 
     @Override
+    Type[] getMethodArgTypes(Method method) {
+        return method.getGenericParameterTypes();
+    }
+
+    @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = driver.buildRuntimeContext(values);
+        RuntimeContext context = buildRuntimeContext(values);
         return execute(context);
     }
 
     protected Object execute(RuntimeContext context) {
-        DataSource ds = driver.getDataSource(context);
+        DataSource ds = getDataSource(context);
         rootNode.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 

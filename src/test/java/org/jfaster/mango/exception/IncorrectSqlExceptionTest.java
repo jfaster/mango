@@ -22,11 +22,13 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.Mango;
+import org.jfaster.mango.parser.ParseException;
 import org.jfaster.mango.support.Config;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,8 +71,7 @@ public class IncorrectSqlExceptionTest {
 
     @Test
     public void test4() {
-        thrown.expect(IncorrectSqlException.class);
-        thrown.expectMessage("sql must start with INSERT or DELETE or UPDATE or SELECT");
+        thrown.expect(UndeclaredThrowableException.class);
         Dao dao = mango.create(Dao.class);
         dao.add3();
     }

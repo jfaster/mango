@@ -18,7 +18,6 @@ package org.jfaster.mango;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.cache.CacheHandler;
-import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
@@ -50,7 +49,7 @@ public class Mango {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
-    private final DataSourceFactoryHolder dataSourceFactoryHolder;
+    private final DataSourceFactory dataSourceFactory;
     private final CacheHandler defaultCacheHandler;
     private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
     private final InterceptorChain queryInterceptorChain;
@@ -69,7 +68,7 @@ public class Mango {
     }
 
     public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
-        this.dataSourceFactoryHolder = new DataSourceFactoryHolder(dataSourceFactory);
+        this.dataSourceFactory = dataSourceFactory;
         this.defaultCacheHandler = defaultCacheHandler;
         this.statsCounterMap = new ConcurrentHashMap<Method, StatsCounter>();
         this.queryInterceptorChain = new InterceptorChain();
@@ -122,20 +121,6 @@ public class Mango {
         return map;
     }
 
-    /**
-     * 设置新的{@link DataSourceFactory}，实时生效
-     */
-    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
-        dataSourceFactoryHolder.set(dataSourceFactory);
-    }
-
-    /**
-     * 获得正在使用的{@link DataSourceFactory}
-     */
-    public DataSourceFactory getDataSourceFactory() {
-        return dataSourceFactoryHolder.get();
-    }
-
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
         private final ConcurrentHashMap<Method,StatsCounter> statsCounterMap;
@@ -143,7 +128,7 @@ public class Mango {
 
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
             statsCounterMap = mango.statsCounterMap;
-            operatorFactory = new OperatorFactoryImpl(mango.dataSourceFactoryHolder, cacheHandler,
+            operatorFactory = new OperatorFactoryImpl(mango.dataSourceFactory, cacheHandler,
                     mango.queryInterceptorChain, mango.updateInterceptorChain);
         }
 

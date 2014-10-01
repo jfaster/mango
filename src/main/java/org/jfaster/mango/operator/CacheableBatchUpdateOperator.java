@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
 import org.jfaster.mango.util.Iterables;
@@ -23,6 +24,7 @@ import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,11 +37,11 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(CacheableBatchUpdateOperator.class);
 
-    private CacheableOperatorDriver driver;
+    private CacheDriver driver;
 
-    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver) {
-        super(rootNode, driver);
-        this.driver = driver;
+    protected CacheableBatchUpdateOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
+        super(rootNode, method);
+        this.driver = new CacheDriverImpl(method, rootNode, cacheHandler, getTypeContext(), getNameProvider());
     }
 
     @Override
@@ -57,7 +59,7 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
         Map<DataSource, Group> groupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
-            RuntimeContext context = driver.buildRuntimeContext(new Object[]{obj});
+            RuntimeContext context = buildRuntimeContext(new Object[]{obj});
             keys.add(driver.getCacheKey(context));
             group(context, groupMap);
         }

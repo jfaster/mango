@@ -17,6 +17,9 @@
 package org.jfaster.mango.operator;
 
 
+import org.jfaster.mango.datasource.factory.DataSourceFactory;
+import org.jfaster.mango.jdbc.JdbcTemplate;
+
 /**
  * db操作接口
  *
@@ -25,6 +28,10 @@ package org.jfaster.mango.operator;
 public interface Operator {
 
     public Object execute(Object[] values);
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate);
+
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory);
 
     public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
 

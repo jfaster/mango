@@ -20,10 +20,11 @@ import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheIgnored;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.cache.CacheHandler;
-import org.jfaster.mango.datasource.DataSourceFactoryHolder;
+import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
 import org.jfaster.mango.support.SQLType;
@@ -38,14 +39,14 @@ import java.lang.reflect.Method;
  */
 public class OperatorFactoryImpl implements OperatorFactory {
 
-    private final DataSourceFactoryHolder dataSourceFactoryHolder;
+    private final DataSourceFactory dataSourceFactory;
     private final CacheHandler cacheHandler;
     private final InterceptorChain queryInterceptorChain;
     private final InterceptorChain updateInterceptorChain;
 
-    public OperatorFactoryImpl(DataSourceFactoryHolder dataSourceFactoryHolder, CacheHandler cacheHandler,
+    public OperatorFactoryImpl(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
                                InterceptorChain queryInterceptorChain, InterceptorChain updateInterceptorChain) {
-        this.dataSourceFactoryHolder = dataSourceFactoryHolder;
+        this.dataSourceFactory = dataSourceFactory;
         this.cacheHandler = cacheHandler;
         this.queryInterceptorChain = queryInterceptorChain;
         this.updateInterceptorChain = updateInterceptorChain;
@@ -63,20 +64,6 @@ public class OperatorFactoryImpl implements OperatorFactory {
             throw new IncorrectSqlException("sql is null or empty");
         }
         ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
-        OperatorType operatorType;
-        Class<?> returnType = method.getReturnType();
-        if (rootNode.getSQLType() == SQLType.SELECT) { // 查
-            operatorType = OperatorType.SELECT;
-        } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
-            operatorType = OperatorType.UPDATE;
-        } else if (int[].class.equals(returnType)) { // 批量更新
-            operatorType = OperatorType.BATCHUPDATE;
-        } else {
-            throw new IncorrectReturnTypeException("if sql don't start with select, " +
-                    "update return type expected int, " +
-                    "batch update return type expected int[], " +
-                    "but " + method.getReturnType());
-        }
 
         Class<?> daoClass = method.getDeclaringClass();
         CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
@@ -85,38 +72,31 @@ public class OperatorFactoryImpl implements OperatorFactory {
 
         Operator operator;
         RuntimeInterceptorChain chain;
-        if (!useCache) {
-            OperatorDriver driver = new OperatorDriverImpl(dataSourceFactoryHolder, operatorType, method, rootNode);
-            switch (operatorType) {
-                case SELECT:
-                    operator = new QueryOperator(rootNode, driver, method);
-                    chain = new RuntimeInterceptorChain(queryInterceptorChain, method);
-                    break;
-                case UPDATE:
-                    operator = new UpdateOperator(rootNode, driver, method);
-                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
-                    break;
-                default:
-                    operator = new BatchUpdateOperator(rootNode, driver);
-                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
-            }
+        Class<?> returnType = method.getReturnType();
+        if (rootNode.getSQLType() == SQLType.SELECT) { // 查
+            operator = useCache ?
+                    new CacheableQueryOperator(rootNode, method, cacheHandler) :
+                    new QueryOperator(rootNode, method);
+            chain = new RuntimeInterceptorChain(queryInterceptorChain, method);
+        } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
+            operator = useCache ?
+                    new CacheableUpdateOperator(rootNode, method, cacheHandler) :
+                    new UpdateOperator(rootNode, method);
+            chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
+        } else if (int[].class.equals(returnType)) { // 批量更新
+            operator = useCache ?
+                    new CacheableBatchUpdateOperator(rootNode, method, cacheHandler) :
+                    new BatchUpdateOperator(rootNode, method);
+            chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
         } else {
-            CacheableOperatorDriver driver = new CacheableOperatorDriverImpl(dataSourceFactoryHolder,
-                    operatorType, method, rootNode, cacheHandler);
-            switch (operatorType) {
-                case SELECT:
-                    operator = new CacheableQueryOperator(rootNode, driver, method);
-                    chain = new RuntimeInterceptorChain(queryInterceptorChain, method);
-                    break;
-                case UPDATE:
-                    operator = new CacheableUpdateOperator(rootNode, driver, method);
-                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
-                    break;
-                default:
-                    operator = new CacheableBatchUpdateOperator(rootNode, driver);
-                    chain = new RuntimeInterceptorChain(updateInterceptorChain, method);
-            }
+            throw new IncorrectReturnTypeException("if sql don't start with select, " +
+                    "update return type expected int, " +
+                    "batch update return type expected int[], " +
+                    "but " + method.getReturnType());
         }
+
+        operator.setJdbcTemplate(new JdbcTemplate());
+        operator.setDataSourceFactory(dataSourceFactory);
         operator.setRuntimeInterceptorChain(chain);
         operator.setStatsCounter(statsCounter);
         return operator;

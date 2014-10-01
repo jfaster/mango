@@ -21,7 +21,6 @@ import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
 import org.jfaster.mango.cache.CacheExpire;
 import org.jfaster.mango.cache.CacheHandler;
-import org.jfaster.mango.datasource.DataSourceFactoryHolder;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
@@ -29,6 +28,7 @@ import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.support.RuntimeContext;
+import org.jfaster.mango.support.TypeContext;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -44,12 +44,14 @@ import java.util.Set;
 /**
  * @author ash
  */
-public class CacheableOperatorDriverImpl extends OperatorDriverImpl implements CacheableOperatorDriver {
+public class CacheDriverImpl implements CacheDriver {
 
     /**
      * 具体的缓存实现，通过{@link this#setCacheHandler(org.jfaster.mango.cache.CacheHandler)}初始化
      */
     private CacheHandler cacheHandler;
+
+    private NameProvider nameProvider;
 
     /**
      * 缓存key前缀
@@ -93,12 +95,11 @@ public class CacheableOperatorDriverImpl extends OperatorDriverImpl implements C
 
     private String interableProperty;
 
-    public CacheableOperatorDriverImpl(DataSourceFactoryHolder dataSourceFactoryHolder,
-                                       OperatorType operatorType, Method method,
-                                       ASTRootNode rootNode, CacheHandler cacheHandler) {
-        super(dataSourceFactoryHolder, operatorType, method, rootNode);
+    public CacheDriverImpl(Method method, ASTRootNode rootNode, CacheHandler cacheHandler,
+                           TypeContext context, NameProvider nameProvider) {
         this.cacheHandler = cacheHandler;
-        init(method, rootNode);
+        this.nameProvider = nameProvider;
+        init(method, rootNode, context);
     }
 
     @Override
@@ -186,14 +187,14 @@ public class CacheableOperatorDriverImpl extends OperatorDriverImpl implements C
         return interableProperty;
     }
 
-    private void init(Method method, ASTRootNode rootNode) {
+    private void init(Method method, ASTRootNode rootNode, TypeContext context) {
         Annotation[][] pass = method.getParameterAnnotations();
         int cacheByNum = 0;
         for (int i = 0; i < pass.length; i++) {
             Annotation[] pas = pass[i];
             for (Annotation pa : pas) {
                 if (CacheBy.class.equals(pa.annotationType())) {
-                    suffixParameterName = getParameterNameByIndex(i);
+                    suffixParameterName = nameProvider.getParameterNameByIndex(i);
                     suffixPropertyPath = ((CacheBy) pa).value();
                     cacheByNum++;
                 }
@@ -213,7 +214,7 @@ public class CacheableOperatorDriverImpl extends OperatorDriverImpl implements C
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
                 checkCacheBy(rootNode);
-                Type suffixType = getTypeContext().getPropertyType(suffixParameterName, suffixPropertyPath);
+                Type suffixType = context.getPropertyType(suffixParameterName, suffixPropertyPath);
                 TypeToken typeToken = new TypeToken(suffixType);
                 useMultipleKeys = typeToken.isIterable();
                 suffixClass = typeToken.getMappedClass();

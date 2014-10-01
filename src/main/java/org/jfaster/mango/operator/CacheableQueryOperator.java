@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
@@ -38,13 +39,14 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(CacheableUpdateOperator.class);
 
-    private CacheableOperatorDriver driver;
+    private CacheDriver driver;
 
     private String interableProperty;
 
-    protected CacheableQueryOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, Method method) {
-        super(rootNode, driver, method);
-        this.driver = driver;
+    protected CacheableQueryOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
+        super(rootNode, method);
+
+        this.driver = new CacheDriverImpl(method, rootNode, cacheHandler, getTypeContext(), getNameProvider());
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 1) {
@@ -65,7 +67,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
     @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = driver.buildRuntimeContext(values);
+        RuntimeContext context = buildRuntimeContext(values);
         return driver.isUseMultipleKeys() ?
                 multipleKeysCache(context, rowMapper.getMappedClass(), driver.getSuffixClass()) :
                 singleKeyCache(context);

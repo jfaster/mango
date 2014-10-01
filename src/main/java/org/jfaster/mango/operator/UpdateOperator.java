@@ -26,24 +26,19 @@ import org.jfaster.mango.support.SqlDescriptor;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
 public class UpdateOperator extends AbstractOperator {
 
-    /**
-     * operator驱动
-     */
-    private OperatorDriver driver;
-
     private boolean returnGeneratedId;
 
     private Class<? extends Number> returnType;
 
-    protected UpdateOperator(ASTRootNode rootNode, OperatorDriver driver, Method method) {
-        super(rootNode);
-        this.driver = driver;
+    protected UpdateOperator(ASTRootNode rootNode, Method method) {
+        super(rootNode, method);
         init(method, rootNode.getSQLType());
     }
 
@@ -61,13 +56,18 @@ public class UpdateOperator extends AbstractOperator {
     }
 
     @Override
+    Type[] getMethodArgTypes(Method method) {
+        return method.getGenericParameterTypes();
+    }
+
+    @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = driver.buildRuntimeContext(values);
+        RuntimeContext context = buildRuntimeContext(values);
         return execute(context);
     }
 
     public Number execute(RuntimeContext context) {
-        DataSource ds = driver.getDataSource(context);
+        DataSource ds = getDataSource(context);
         rootNode.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 

@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -34,12 +35,12 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(CacheableUpdateOperator.class);
 
-    private CacheableOperatorDriver driver;
+    private CacheDriver driver;
 
-    protected CacheableUpdateOperator(ASTRootNode rootNode, CacheableOperatorDriver driver, Method method) {
-        super(rootNode, driver, method);
+    protected CacheableUpdateOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
+        super(rootNode, method);
 
-        this.driver = driver;
+        this.driver = new CacheDriverImpl(method, rootNode, cacheHandler, getTypeContext(), getNameProvider());
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 1) {
@@ -50,7 +51,7 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
     @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = driver.buildRuntimeContext(values);
+        RuntimeContext context = buildRuntimeContext(values);
         if (driver.isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
             Set<String> keys = driver.getCacheKeys(context);
             if (logger.isDebugEnabled()) {
