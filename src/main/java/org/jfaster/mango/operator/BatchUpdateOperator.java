@@ -62,6 +62,7 @@ public class BatchUpdateOperator extends AbstractOperator {
     }
 
     protected void group(RuntimeContext context, Map<DataSource, Group> groupMap) {
+        context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
         Group group = groupMap.get(ds);
         if (group == null) {

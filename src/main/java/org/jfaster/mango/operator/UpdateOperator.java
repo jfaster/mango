@@ -59,6 +59,7 @@ public class UpdateOperator extends AbstractOperator {
     }
 
     public Number execute(RuntimeContext context) {
+        context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
         rootNode.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();

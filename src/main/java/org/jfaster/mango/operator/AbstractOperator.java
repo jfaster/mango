@@ -50,6 +50,11 @@ public abstract class AbstractOperator implements Operator {
     protected StatsCounter statsCounter;
 
     /**
+     * 全局表
+     */
+    protected TableGenerator tableGenerator;
+
+    /**
      * 数据源
      */
     protected DataSourceGenerator dataSourceGenerator;
@@ -72,6 +77,11 @@ public abstract class AbstractOperator implements Operator {
     @Override
     public void setRuntimeContextFactory(RuntimeContextFactory runtimeContextFactory) {
         this.runtimeContextFactory = runtimeContextFactory;
+    }
+
+    @Override
+    public void setTableGenerator(TableGenerator tableGenerator) {
+        this.tableGenerator = tableGenerator;
     }
 
     @Override

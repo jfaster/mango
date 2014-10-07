@@ -68,6 +68,7 @@ public class QueryOperator extends AbstractOperator {
     }
 
     protected Object execute(RuntimeContext context) {
+        context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
         rootNode.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();

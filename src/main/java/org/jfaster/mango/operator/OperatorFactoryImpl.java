@@ -140,8 +140,9 @@ public class OperatorFactoryImpl implements OperatorFactory {
         }
 
         operator.setJdbcTemplate(new JdbcTemplate());
+        operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
-        operator.setRuntimeContextFactory(new RuntimeContextFactoryImpl(nameProvider, tableGenerator));
+        operator.setRuntimeContextFactory(new RuntimeContextFactoryImpl(nameProvider));
         operator.setRuntimeInterceptorChain(chain);
         operator.setStatsCounter(statsCounter);
         return operator;

@@ -34,6 +34,8 @@ public interface Operator {
 
     public void setRuntimeContextFactory(RuntimeContextFactory runtimeContextFactory);
 
+    public void setTableGenerator(TableGenerator tableGenerator);
+
     public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator);
 
     public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain);
