@@ -34,6 +34,8 @@ public class RuntimeContextImpl implements RuntimeContext {
     private final StringBuffer sql = new StringBuffer();
     private final List<Object> args = new LinkedList<Object>();
 
+    private String globalTable;
+
     @Override
     public void addParameter(String parameterName, Object parameterValue) {
         parameterMap.put(parameterName, parameterValue);
@@ -71,9 +73,19 @@ public class RuntimeContextImpl implements RuntimeContext {
     }
 
     @Override
-    public void setPropertyValue(String parameterName, String propertyPath, Object value) {
+    public void setPropertyValue(String parameterName, String propertyPath, Object propertyValue) {
         String key = getCacheKey(parameterName, propertyPath);
-        cache.put(key, value);
+        cache.put(key, propertyValue);
+    }
+
+    @Override
+    public String getGlobalTable() {
+        return globalTable;
+    }
+
+    @Override
+    public void setGlobalTable(String globalTable) {
+        this.globalTable = globalTable;
     }
 
     @Override

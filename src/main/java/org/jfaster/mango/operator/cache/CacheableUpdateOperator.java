@@ -16,12 +16,11 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.operator.UpdateOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -38,10 +37,10 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
     private CacheDriver driver;
 
-    public CacheableUpdateOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
+    public CacheableUpdateOperator(ASTRootNode rootNode, Method method, CacheDriver cacheDriver) {
         super(rootNode, method);
 
-        this.driver = new CacheDriverImpl(method, rootNode, cacheHandler, getTypeContext(), getNameProvider());
+        this.driver = cacheDriver;
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 1) {
@@ -52,7 +51,7 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
     @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = buildRuntimeContext(values);
+        RuntimeContext context = runtimeContextFactory.newRuntimeContext(values);
         if (driver.isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
             Set<String> keys = driver.getCacheKeys(context);
             if (logger.isDebugEnabled()) {

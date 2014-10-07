@@ -16,10 +16,8 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.annotation.Rename;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ash
@@ -29,24 +27,15 @@ public class NameProvider {
     /**
      * 重命名后的变量名
      */
-    private String[] names;
+    private Map<Integer, String> names = new HashMap<Integer, String>();
 
-    public NameProvider(Method method) {
-        Annotation[][] pass = method.getParameterAnnotations();
-        names = new String[pass.length];
-        for (int i = 0; i < pass.length; i++) {
-            Annotation[] pas = pass[i];
-            for (Annotation pa : pas) {
-                if (Rename.class.equals(pa.annotationType())) {
-                    names[i] = ((Rename) pa).value();
-                }
-            }
-        }
+    public void setParameterName(int index, String name) {
+        names.put(index, name);
     }
 
-    public String getParameterNameByIndex(int index) {
-        String alias = names[index];
-        return alias != null ? alias : String.valueOf(index + 1);
+    public String getParameterName(int index) {
+        String name = names.get(index);
+        return name != null ? name : String.valueOf(index + 1);
     }
 
 }

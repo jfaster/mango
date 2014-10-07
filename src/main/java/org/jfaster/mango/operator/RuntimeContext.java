@@ -29,7 +29,11 @@ public interface RuntimeContext {
 
     public Object getNullablePropertyValue(String parameterName, String propertyPath);
 
-    public void setPropertyValue(String parameterName, String propertyPath, Object value);
+    public void setPropertyValue(String parameterName, String propertyPath, Object propertyValue);
+
+    public String getGlobalTable();
+
+    public void setGlobalTable(String globalTable);
 
     public void writeToSqlBuffer(String str);
 

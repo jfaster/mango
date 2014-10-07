@@ -16,14 +16,13 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.operator.QueryOperator;
+import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -44,10 +43,10 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private String interableProperty;
 
-    public CacheableQueryOperator(ASTRootNode rootNode, Method method, CacheHandler cacheHandler) {
+    public CacheableQueryOperator(ASTRootNode rootNode, Method method, CacheDriver cacheDriver) {
         super(rootNode, method);
 
-        this.driver = new CacheDriverImpl(method, rootNode, cacheHandler, getTypeContext(), getNameProvider());
+        this.driver = cacheDriver;
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 1) {
@@ -68,7 +67,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
     @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = buildRuntimeContext(values);
+        RuntimeContext context = runtimeContextFactory.newRuntimeContext(values);
         return driver.isUseMultipleKeys() ?
                 multipleKeysCache(context, rowMapper.getMappedClass(), driver.getSuffixClass()) :
                 singleKeyCache(context);

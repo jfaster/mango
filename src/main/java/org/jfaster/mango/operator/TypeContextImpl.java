@@ -28,13 +28,8 @@ import java.util.Map;
  */
 public class TypeContextImpl implements TypeContext {
 
-    private final Map<String, Type> parameterTypeMap;
-    private final Map<String, Type> cache;
-
-    public TypeContextImpl(Map<String, Type> parameterTypeMap) {
-        this.parameterTypeMap = parameterTypeMap;
-        this.cache = new HashMap<String, Type>();
-    }
+    private final Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
+    private final Map<String, Type> cache = new HashMap<String, Type>();
 
     @Override
     public Type getPropertyType(String parameterName, String propertyPath) {
@@ -52,6 +47,11 @@ public class TypeContextImpl implements TypeContext {
                 parameterType;
         cache.put(key, type);
         return type;
+    }
+
+    @Override
+    public void addParameter(String parameterName, Type parameterType) {
+        parameterTypeMap.put(parameterName, parameterType);
     }
 
     private String getCacheKey(String parameterName, String propertyPath) {

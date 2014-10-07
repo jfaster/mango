@@ -16,17 +16,12 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.IncorrectParameterCountException;
-import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,30 +32,13 @@ import java.util.Map;
  */
 public class BatchUpdateOperator extends AbstractOperator {
 
-    protected BatchUpdateOperator(ASTRootNode rootNode, Method method) {
-        super(rootNode, method);
+    protected BatchUpdateOperator(ASTRootNode rootNode) {
+        super(rootNode);
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         if (jips.size() > 0) {
             throw new IncorrectSqlException("if use batch update, sql's in clause number expected 0 but " +
                     jips.size()); // sql中不能有in语句
         }
-    }
-
-    @Override
-    Type[] getMethodArgTypes(Method method) {
-        if (method.getGenericParameterTypes().length != 1) {
-            throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
-                    method.getGenericParameterTypes().length); // 批量更新只能有一个参数
-        }
-        Type type = method.getGenericParameterTypes()[0];
-        TypeToken typeToken = new TypeToken(type);
-        Class<?> mappedClass = typeToken.getMappedClass();
-        if (mappedClass == null || !typeToken.isIterable()) {
-            throw new IncorrectParameterTypeException("parameter of batch update " +
-                    "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                    "but " + type); // 批量更新的参数必须可迭代
-        }
-        return new Type[]{mappedClass};
     }
 
     @Override
@@ -76,7 +54,7 @@ public class BatchUpdateOperator extends AbstractOperator {
 
         Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
-            RuntimeContext context = buildRuntimeContext(new Object[]{obj});
+            RuntimeContext context = runtimeContextFactory.newRuntimeContext(new Object[]{obj});
             group(context, gorupMap);
         }
         int[] ints = executeDb(gorupMap);
@@ -84,7 +62,7 @@ public class BatchUpdateOperator extends AbstractOperator {
     }
 
     protected void group(RuntimeContext context, Map<DataSource, Group> groupMap) {
-        DataSource ds = getDataSource(context);
+        DataSource ds = dataSourceGenerator.getDataSource(context);
         Group group = groupMap.get(ds);
         if (group == null) {
             group = new Group();

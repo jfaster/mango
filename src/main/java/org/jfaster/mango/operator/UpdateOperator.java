@@ -24,7 +24,6 @@ import org.jfaster.mango.util.SQLType;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 /**
  * @author ash
@@ -36,7 +35,7 @@ public class UpdateOperator extends AbstractOperator {
     private Class<? extends Number> returnType;
 
     protected UpdateOperator(ASTRootNode rootNode, Method method) {
-        super(rootNode, method);
+        super(rootNode);
         init(method, rootNode.getSQLType());
     }
 
@@ -54,18 +53,13 @@ public class UpdateOperator extends AbstractOperator {
     }
 
     @Override
-    Type[] getMethodArgTypes(Method method) {
-        return method.getGenericParameterTypes();
-    }
-
-    @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = buildRuntimeContext(values);
+        RuntimeContext context = runtimeContextFactory.newRuntimeContext(values);
         return execute(context);
     }
 
     public Number execute(RuntimeContext context) {
-        DataSource ds = getDataSource(context);
+        DataSource ds = dataSourceGenerator.getDataSource(context);
         rootNode.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 

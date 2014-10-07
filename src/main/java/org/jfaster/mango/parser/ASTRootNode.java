@@ -1,14 +1,12 @@
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.exception.IncorrectDefinitionException;
+import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.TypeContext;
 import org.jfaster.mango.parser.visitor.InterablePropertyCollectVisitor;
 import org.jfaster.mango.parser.visitor.NodeCollectVisitor;
 import org.jfaster.mango.parser.visitor.TextBlankJoinVisitor;
 import org.jfaster.mango.parser.visitor.TypeCheckVisitor;
-import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.operator.TypeContext;
 
 import java.util.List;
 
@@ -61,36 +59,38 @@ public class ASTRootNode extends AbstractRenderableNode {
         getBlock().jjtAccept(new TypeCheckVisitor(), context);
     }
 
-    /**
-     * 设置全局表名
-     */
-    public void setGlobalTable(String globalTable) {
-        List<ASTGlobalTable> tableNodes = nodeInfo.globalTables;
-        if (!tableNodes.isEmpty() && globalTable == null) {
-            throw new IncorrectDefinitionException("if sql contains #table, @DB.table must define");
-        }
-        if (tableNodes.isEmpty() && globalTable != null) {
-            throw new IncorrectDefinitionException("if @DB.table is defined, sql must contain #table");
-        }
-        if (globalTable != null) {
-            for (ASTGlobalTable tableNode : tableNodes) {
-                tableNode.setTable(globalTable);
-            }
-        }
-    }
 
-    /**
-     * 设置分表信息
-     */
-    public void setPartitionInfo(TablePartition tablePartition, String shardParameterName, String shardPropertyPath) {
-        List<ASTGlobalTable> tableNodes = nodeInfo.globalTables;
-        if (tableNodes.isEmpty()) {
-            throw new IllegalStateException(""); // TODO
-        }
-        for (ASTGlobalTable tableNode : tableNodes) {
-            tableNode.setPartitionInfo(tablePartition, shardParameterName, shardPropertyPath);
-        }
-    }
+    //TODO
+//    /**
+//     * 设置全局表名
+//     */
+//    public void setGlobalTable(String globalTable) {
+//        List<ASTGlobalTable> tableNodes = nodeInfo.globalTables;
+//        if (!tableNodes.isEmpty() && globalTable == null) {
+//            throw new IncorrectDefinitionException("if sql contains #table, @DB.table must define");
+//        }
+//        if (tableNodes.isEmpty() && globalTable != null) {
+//            throw new IncorrectDefinitionException("if @DB.table is defined, sql must contain #table");
+//        }
+//        if (globalTable != null) {
+//            for (ASTGlobalTable tableNode : tableNodes) {
+//                tableNode.setTable(globalTable);
+//            }
+//        }
+//    }
+//
+//    /**
+//     * 设置分表信息
+//     */
+//    public void setPartitionInfo(TablePartition tablePartition, String shardParameterName, String shardPropertyPath) {
+//        List<ASTGlobalTable> tableNodes = nodeInfo.globalTables;
+//        if (tableNodes.isEmpty()) {
+//            throw new IllegalStateException(""); // TODO
+//        }
+//        for (ASTGlobalTable tableNode : tableNodes) {
+//            tableNode.setPartitionInfo(tablePartition, shardParameterName, shardPropertyPath);
+//        }
+//    }
 
     public List<ASTJDBCParameter> getJDBCParameters() {
         return nodeInfo.jdbcParameters;

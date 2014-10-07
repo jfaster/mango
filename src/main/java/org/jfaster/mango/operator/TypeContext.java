@@ -25,4 +25,6 @@ public interface TypeContext {
 
     public Type getPropertyType(String parameterName, String propertyPath);
 
+    public void addParameter(String parameterName, Type parameterType);
+
 }

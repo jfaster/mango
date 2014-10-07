@@ -79,7 +79,7 @@ TOKEN:
     |   <LOGICAL_EQ: "==" | "eq" >
     |   <LOGICAL_NE: "!=" | "ne" >
     |   <LOGICAL_NOT: "!" | "not" >
-    |   <INTEGER_LITERAL: (["0"-"9"])+ >
+    |   <INTEGER_LITERAL: ("-")? (["0"-"9"])+ >
     |   <TRUE: "true" >
     |   <FALSE: "false" >
     |   <NULL: "null" >

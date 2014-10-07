@@ -195,7 +195,7 @@ public class CacheDriverImpl implements CacheDriver {
             Annotation[] pas = pass[i];
             for (Annotation pa : pas) {
                 if (CacheBy.class.equals(pa.annotationType())) {
-                    suffixParameterName = nameProvider.getParameterNameByIndex(i);
+                    suffixParameterName = nameProvider.getParameterName(i);
                     suffixPropertyPath = ((CacheBy) pa).value();
                     cacheByNum++;
                 }

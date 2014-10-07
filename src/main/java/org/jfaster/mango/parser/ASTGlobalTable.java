@@ -16,19 +16,12 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.operator.RuntimeContext;
 
 /**
  * @author ash
  */
 public class ASTGlobalTable extends AbstractRenderableNode {
-
-    private String table; // 原始表名称
-
-    private String shardParameterName;
-    private String shardPpropertyPath; // 为""的时候表示没有属性
-    private TablePartition tablePartition; // 分表
 
     public ASTGlobalTable(int i) {
         super(i);
@@ -40,37 +33,16 @@ public class ASTGlobalTable extends AbstractRenderableNode {
 
     @Override
     public boolean render(RuntimeContext context) {
+        String table = context.getGlobalTable();
         if (table == null) {
-            throw new IllegalStateException("please setTable before render");
+            throw new IllegalStateException(""); // TODO
         }
-        String realTable;
-        if (!needTablePartition()) {
-            realTable = table;
-        } else {
-            Object shardParam = context.getPropertyValue(shardParameterName, shardPpropertyPath);
-            realTable = tablePartition.getPartitionedTable(table, shardParam);
-        }
-        context.writeToSqlBuffer(realTable);
+        context.writeToSqlBuffer(table);
         return true;
     }
 
-    boolean needTablePartition() {
-        return tablePartition != null && shardParameterName != null && shardPpropertyPath != null;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public void setPartitionInfo(TablePartition tablePartition, String shardParameterName, String shardPpropertyPath) {
-        this.tablePartition = tablePartition;
-        this.shardParameterName = shardParameterName;
-        this.shardPpropertyPath = shardPpropertyPath;
-    }
-
     @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data)
-    {
+    public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }
 

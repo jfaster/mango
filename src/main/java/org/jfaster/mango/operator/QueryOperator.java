@@ -27,7 +27,6 @@ import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -42,7 +41,7 @@ public class QueryOperator extends AbstractOperator {
     protected Class<?> mappedClass;
 
     protected QueryOperator(ASTRootNode rootNode, Method method) {
-        super(rootNode, method);
+        super(rootNode);
         init(rootNode, method);
     }
 
@@ -63,18 +62,13 @@ public class QueryOperator extends AbstractOperator {
     }
 
     @Override
-    Type[] getMethodArgTypes(Method method) {
-        return method.getGenericParameterTypes();
-    }
-
-    @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = buildRuntimeContext(values);
+        RuntimeContext context = runtimeContextFactory.newRuntimeContext(values);
         return execute(context);
     }
 
     protected Object execute(RuntimeContext context) {
-        DataSource ds = getDataSource(context);
+        DataSource ds = dataSourceGenerator.getDataSource(context);
         rootNode.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 
