@@ -22,7 +22,6 @@ import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.*;
-import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.operator.cache.CacheDriverImpl;
 import org.jfaster.mango.operator.cache.CacheableBatchUpdateOperator;
 import org.jfaster.mango.operator.cache.CacheableQueryOperator;
@@ -33,12 +32,14 @@ import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.reflect.MethodDescriptor;
+import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeToken;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operator工厂
@@ -60,8 +61,8 @@ public class OperatorFactory {
         this.updateInterceptorChain = updateInterceptorChain;
     }
 
-    public Operator getOperator(Method method, StatsCounter statsCounter) throws Exception {
-        SQL sqlAnno = method.getAnnotation(SQL.class);
+    public Operator getOperator(MethodDescriptor md) throws Exception {
+        SQL sqlAnno = md.getAnnotation(SQL.class);
         if (sqlAnno == null) {
             throw new IncorrectAnnotationException("each method expected one @SQL annotation " +
                     "but not found");
@@ -72,46 +73,45 @@ public class OperatorFactory {
         }
         ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
 
-        Class<?> daoClass = method.getDeclaringClass();
-        CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
-        Cache cacheAnno = daoClass.getAnnotation(Cache.class);
+        CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
+        Cache cacheAnno = md.getAnnotation(Cache.class);
         boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
 
-        Class<?> returnType = method.getReturnType();
+        Class<?> returnType = md.getRawReturnType();
         InvocationInterceptorChain chain;
         OperatorType operatorType;
         if (rootNode.getSQLType() == SQLType.SELECT) { // 查
             operatorType = OperatorType.QUERY;
-            chain = new InvocationInterceptorChain(queryInterceptorChain, method);
+            chain = new InvocationInterceptorChain(queryInterceptorChain, md);
         } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
             operatorType = OperatorType.UPDATE;
-            chain = new InvocationInterceptorChain(updateInterceptorChain, method);
+            chain = new InvocationInterceptorChain(updateInterceptorChain, md);
         } else if (int[].class.equals(returnType)) { // 批量更新
             operatorType = OperatorType.BATCHUPDATYPE;
-            chain = new InvocationInterceptorChain(updateInterceptorChain, method);
+            chain = new InvocationInterceptorChain(updateInterceptorChain, md);
         } else {
             throw new IncorrectReturnTypeException("if sql don't start with select, " +
                     "update return type expected int, " +
                     "batch update return type expected int[], " +
-                    "but " + method.getReturnType());
+                    "but " + md.getRawReturnType());
         }
 
-        NameProvider nameProvider = buildNameProvider(method);
-        TypeContext typeContext = buildTypeContext(method, nameProvider, operatorType);
+        NameProvider nameProvider = buildNameProvider(md);
+        TypeContext typeContext = buildTypeContext(md, nameProvider, operatorType);
         rootNode.checkType(typeContext);
         TableGenerator tableGenerator = new TableGenerator();
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType());
-        fill(method, tableGenerator, dataSourceGenerator, nameProvider, typeContext);
+        fill(md, tableGenerator, dataSourceGenerator, nameProvider, typeContext);
 
         Operator operator;
         if (useCache) {
-            CacheDriverImpl driver = new CacheDriverImpl(method, rootNode, cacheHandler, typeContext, nameProvider);
+            CacheDriverImpl driver = new CacheDriverImpl(md, rootNode, cacheHandler, typeContext, nameProvider);
             switch (operatorType) {
                 case QUERY:
-                    operator = new CacheableQueryOperator(rootNode, method, driver);
+                    operator = new CacheableQueryOperator(rootNode, md, driver);
                     break;
                 case UPDATE:
-                    operator = new CacheableUpdateOperator(rootNode, method, driver);
+                    operator = new CacheableUpdateOperator(rootNode, md, driver);
                     break;
                 case BATCHUPDATYPE:
                     operator = new CacheableBatchUpdateOperator(rootNode, driver);
@@ -122,10 +122,10 @@ public class OperatorFactory {
         } else {
             switch (operatorType) {
                 case QUERY:
-                    operator = new QueryOperator(rootNode, method);
+                    operator = new QueryOperator(rootNode, md);
                     break;
                 case UPDATE:
-                    operator = new UpdateOperator(rootNode, method);
+                    operator = new UpdateOperator(rootNode, md);
                     break;
                 case BATCHUPDATYPE:
                     operator = new BatchUpdateOperator(rootNode);
@@ -135,37 +135,32 @@ public class OperatorFactory {
             }
         }
 
-        operator.setJdbcOperations(new JdbcTemplate());
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
         operator.setInvocationContextFactory(new InvocationContextFactory(nameProvider));
         operator.setInvocationInterceptorChain(chain);
-        operator.setStatsCounter(statsCounter);
         return operator;
     }
 
-    NameProvider buildNameProvider(Method method) {
-        Annotation[][] pass = method.getParameterAnnotations();
+    NameProvider buildNameProvider(MethodDescriptor md) {
         NameProvider np = new NameProvider();
-        for (int i = 0; i < pass.length; i++) {
-            Annotation[] pas = pass[i];
-            for (Annotation pa : pas) {
-                if (Rename.class.equals(pa.annotationType())) {
-                    np.setParameterName(i, ((Rename) pa).value());
-                }
+        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+            Rename renameAnno = pd.getAnnotation(Rename.class);
+            if (renameAnno != null) {
+                np.setParameterName(pd.getPosition(), renameAnno.value());
             }
         }
         return np;
     }
 
-    TypeContext buildTypeContext(Method method, NameProvider nameProvider, OperatorType operatorType) {
-        Type[] types = method.getGenericParameterTypes();
+    TypeContext buildTypeContext(MethodDescriptor md, NameProvider nameProvider, OperatorType operatorType) {
+        List<Type> types = md.getParameterTypes();
         if (operatorType == OperatorType.BATCHUPDATYPE) {
-            if (types.length != 1) {
+            if (types.size() != 1) {
                 throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
-                        types.length); // 批量更新只能有一个参数
+                        types.size()); // 批量更新只能有一个参数
             }
-            Type type = types[0];
+            Type type = types.get(0);
             TypeToken typeToken = new TypeToken(type);
             Class<?> mappedClass = typeToken.getMappedClass();
             if (mappedClass == null || !typeToken.isIterable()) {
@@ -173,18 +168,19 @@ public class OperatorFactory {
                         "expected array or implementations of java.util.List or implementations of java.util.Set " +
                         "but " + type); // 批量更新的参数必须可迭代
             }
-            types = new Type[]{mappedClass};
+            types = new ArrayList<Type>();
+            types.add(mappedClass);
         }
         TypeContext typeContext = new TypeContext();
-        for (int i = 0; i < types.length; i++) {
-            typeContext.addParameter(nameProvider.getParameterName(i), types[i]);
+        for (int i = 0; i < types.size(); i++) {
+            typeContext.addParameter(nameProvider.getParameterName(i), types.get(i));
         }
         return typeContext;
     }
 
-    void fill(Method method, TableGenerator tableGenerator, DataSourceGenerator dataSourceGenerator,
+    void fill(MethodDescriptor md, TableGenerator tableGenerator, DataSourceGenerator dataSourceGenerator,
               NameProvider nameProvider, TypeContext typeContext) {
-        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+        DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IncorrectAnnotationException("need @DB on dao interface");
         }
@@ -213,18 +209,15 @@ public class OperatorFactory {
                     "@DB.tablePartition must be defined");
         }
 
-        Annotation[][] pass = method.getParameterAnnotations();
         int shardByNum = 0;
         String shardParameterName = null;
         String shardPropertyPath = null;
-        for (int i = 0; i < pass.length; i++) {
-            Annotation[] pas = pass[i];
-            for (Annotation pa : pas) {
-                if (ShardBy.class.equals(pa.annotationType())) {
-                    shardParameterName = nameProvider.getParameterName(i);
-                    shardPropertyPath = ((ShardBy) pa).value();
-                    shardByNum++;
-                }
+        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+            ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
+            if (shardByAnno != null) {
+                shardParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardPropertyPath = shardByAnno.value();
+                shardByNum++;
             }
         }
         if (tablePartition != null) {

@@ -28,6 +28,7 @@ import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.BeanInfoCache;
 import org.jfaster.mango.util.reflect.Beans;
+import org.jfaster.mango.util.reflect.MethodDescriptor;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -43,8 +44,8 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private String interableProperty;
 
-    public CacheableQueryOperator(ASTRootNode rootNode, Method method, CacheDriver cacheDriver) {
-        super(rootNode, method);
+    public CacheableQueryOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver) {
+        super(rootNode, md);
 
         this.driver = cacheDriver;
 

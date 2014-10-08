@@ -21,6 +21,7 @@ import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
+import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
@@ -28,6 +29,8 @@ import org.jfaster.mango.util.concurrent.cache.LoadingCache;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.AbstractInvocationHandler;
+import org.jfaster.mango.util.reflect.MethodDescriptor;
+import org.jfaster.mango.util.reflect.Methods;
 import org.jfaster.mango.util.reflect.Reflection;
 
 import javax.annotation.Nullable;
@@ -136,7 +139,10 @@ public class Mango {
                     public Operator load(Method method) throws Exception {
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
-                        Operator operator = operatorFactory.getOperator(method, statsCounter);
+                        MethodDescriptor md = Methods.getMethodDescriptor(method);
+                        Operator operator = operatorFactory.getOperator(md);
+                        operator.setJdbcOperations(new JdbcTemplate());
+                        operator.setStatsCounter(statsCounter);
                         statsCounter.recordInit(System.nanoTime() - now);
                         return operator;
                     }

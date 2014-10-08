@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.util.reflect;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
@@ -26,11 +26,11 @@ import java.util.List;
  */
 public class Parameter {
 
-    private final ParameterDescriptor methodParameterDescriptor;
+    private final ParameterDescriptor descriptor;
     private final Object value;
 
-    public Parameter(ParameterDescriptor methodParameterDescriptor, Object value) {
-        this.methodParameterDescriptor = methodParameterDescriptor;
+    public Parameter(ParameterDescriptor descriptor, Object value) {
+        this.descriptor = descriptor;
         this.value = value;
     }
 
@@ -52,16 +52,16 @@ public class Parameter {
         return value;
     }
 
-    public Class<?> getType() {
-        return methodParameterDescriptor.getType();
+    public Type getType() {
+        return descriptor.getType();
     }
 
-    public Type getGenericType() {
-        return methodParameterDescriptor.getGenericType();
+    public Class<?> getRawType() {
+        return descriptor.getRawType();
     }
 
     public List<Annotation> getAnnotations() {
-        return methodParameterDescriptor.getAnnotations();
+        return descriptor.getAnnotations();
     }
 
 }

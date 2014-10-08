@@ -16,6 +16,10 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.util.reflect.MethodDescriptor;
+import org.jfaster.mango.util.reflect.Parameter;
+import org.jfaster.mango.util.reflect.ParameterDescriptor;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -32,9 +36,9 @@ public class InvocationInterceptorChain {
 
     private List<ParameterDescriptor> parameterDescriptors;
 
-    public InvocationInterceptorChain(InterceptorChain interceptorChain, Method method) {
+    public InvocationInterceptorChain(InterceptorChain interceptorChain, MethodDescriptor md) {
         this.interceptorChain = interceptorChain;
-        initParameterDescriptors(method);
+        //initParameterDescriptors(method);
     }
 
     public void intercept(SqlDescriptor sqlDescriptor, InvocationContext context) {
@@ -49,18 +53,18 @@ public class InvocationInterceptorChain {
         }
     }
 
-    private void initParameterDescriptors(Method method) {
-        parameterDescriptors = new LinkedList<ParameterDescriptor>();
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            Class<?> type = parameterTypes[i];
-            Type genericType = genericParameterTypes[i];
-            Annotation[] annotations = parameterAnnotations[i];
-            parameterDescriptors.add(new ParameterDescriptor(type, genericType, annotations));
-        }
-    }
+//    private void initParameterDescriptors(Method method) {
+//        parameterDescriptors = new LinkedList<ParameterDescriptor>();
+//        Class<?>[] parameterTypes = method.getParameterTypes();
+//        Type[] genericParameterTypes = method.getGenericParameterTypes();
+//        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+//
+//        for (int i = 0; i < genericParameterTypes.length; i++) {
+//            Class<?> type = parameterTypes[i];
+//            Type genericType = genericParameterTypes[i];
+//            Annotation[] annotations = parameterAnnotations[i];
+//            parameterDescriptors.add(new ParameterDescriptor(type, genericType, annotations));
+//        }
+//    }
 
 }

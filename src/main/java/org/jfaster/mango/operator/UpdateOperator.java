@@ -21,9 +21,9 @@ import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.util.reflect.MethodDescriptor;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
 
 /**
  * @author ash
@@ -34,18 +34,18 @@ public class UpdateOperator extends AbstractOperator {
 
     private Class<? extends Number> returnType;
 
-    protected UpdateOperator(ASTRootNode rootNode, Method method) {
+    protected UpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
-        init(method, rootNode.getSQLType());
+        init(md, rootNode.getSQLType());
     }
 
-    private void init(Method method, SQLType sqlType) {
-        ReturnGeneratedId returnGeneratedIdAnno = method.getAnnotation(ReturnGeneratedId.class);
+    private void init(MethodDescriptor md, SQLType sqlType) {
+        ReturnGeneratedId returnGeneratedIdAnno = md.getAnnotation(ReturnGeneratedId.class);
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
-        if (int.class.equals(method.getReturnType())) {
+        if (int.class.equals(md.getRawReturnType())) {
             returnType = int.class;
-        } else if (long.class.equals(method.getReturnType())) {
+        } else if (long.class.equals(md.getRawReturnType())) {
             returnType = long.class;
         } else {
             throw new UnreachableCodeException();

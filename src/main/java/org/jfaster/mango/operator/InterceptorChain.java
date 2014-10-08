@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.util.reflect.Parameter;
+
 import java.util.LinkedList;
 import java.util.List;
 

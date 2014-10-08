@@ -23,8 +23,8 @@ import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.reflect.MethodDescriptor;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
@@ -37,8 +37,8 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
     private CacheDriver driver;
 
-    public CacheableUpdateOperator(ASTRootNode rootNode, Method method, CacheDriver cacheDriver) {
-        super(rootNode, method);
+    public CacheableUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver) {
+        super(rootNode, md);
 
         this.driver = cacheDriver;
 

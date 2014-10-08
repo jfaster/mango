@@ -14,11 +14,11 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.util.reflect;
 
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,22 +27,42 @@ import java.util.List;
  */
 public class ParameterDescriptor {
 
-    private final Class<?> type;
-    private final Type genericType;
+    private final int position;
+    private final Type type;
+    private final Class<?> rawType;
     private final List<Annotation> annotations;
 
-    public ParameterDescriptor(Class<?> type, Type genericType, Annotation[] annotations) {
+    public ParameterDescriptor(int position, Type type, Class<?> rawType, List<Annotation> annotations) {
+        this.position = position;
         this.type = type;
-        this.genericType = genericType;
-        this.annotations = Collections.unmodifiableList(Arrays.asList(annotations));
+        this.rawType = rawType;
+        this.annotations = Collections.unmodifiableList(annotations);
     }
 
-    public Class<?> getType() {
+    public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
+        return getAnnotation(annotationType) != null;
+    }
+
+    @Nullable
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        for (Annotation annotation : getAnnotations()) {
+            if (annotationType.isInstance(annotation)) {
+                return annotationType.cast(annotation);
+            }
+        }
+        return null;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public Type getType() {
         return type;
     }
 
-    public Type getGenericType() {
-        return genericType;
+    public Class<?> getRawType() {
+        return rawType;
     }
 
     public List<Annotation> getAnnotations() {

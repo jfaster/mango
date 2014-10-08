@@ -20,9 +20,7 @@ import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.util.Strings;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 
 /**
  * @author ash
@@ -71,6 +69,30 @@ public class Types {
         throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
                 "the type of " + parentFullName + " is " + type + ", please check it's get method");
     }
+
+//    public static Class<?> getRawType(Type type) {
+//        Set<Class<?>> set = new HashSet
+//        final ImmutableSet.Builder<Class<?>> builder = ImmutableSet.builder();
+//        new TypeVisitor() {
+//            @Override void visitTypeVariable(TypeVariable<?> t) {
+//                visit(t.getBounds());
+//            }
+//            @Override void visitWildcardType(WildcardType t) {
+//                visit(t.getUpperBounds());
+//            }
+//            @Override void visitParameterizedType(ParameterizedType t) {
+//                builder.add((Class<?>) t.getRawType());
+//            }
+//            @Override void visitClass(Class<?> t) {
+//                builder.add(t);
+//            }
+//            @Override void visitGenericArrayType(GenericArrayType t) {
+//                builder.add(Types.getArrayClass(getRawType(t.getGenericComponentType())));
+//            }
+//
+//        }.visit(type);
+//    }
+
 
     private static Class<?> getClassFromType(Type type) {
         Class<?> clazz = null;

@@ -26,16 +26,16 @@ import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.NameProvider;
+import org.jfaster.mango.operator.TypeContext;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.operator.TypeContext;
 import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.reflect.MethodDescriptor;
+import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeToken;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
@@ -96,11 +96,11 @@ public class CacheDriverImpl implements CacheDriver {
 
     private String interableProperty;
 
-    public CacheDriverImpl(Method method, ASTRootNode rootNode, CacheHandler cacheHandler,
+    public CacheDriverImpl(MethodDescriptor md, ASTRootNode rootNode, CacheHandler cacheHandler,
                            TypeContext context, NameProvider nameProvider) {
         this.cacheHandler = cacheHandler;
         this.nameProvider = nameProvider;
-        init(method, rootNode, context);
+        init(md, rootNode, context);
     }
 
     @Override
@@ -188,22 +188,19 @@ public class CacheDriverImpl implements CacheDriver {
         return interableProperty;
     }
 
-    private void init(Method method, ASTRootNode rootNode, TypeContext context) {
-        Annotation[][] pass = method.getParameterAnnotations();
+    private void init(MethodDescriptor md, ASTRootNode rootNode, TypeContext context) {
         int cacheByNum = 0;
-        for (int i = 0; i < pass.length; i++) {
-            Annotation[] pas = pass[i];
-            for (Annotation pa : pas) {
-                if (CacheBy.class.equals(pa.annotationType())) {
-                    suffixParameterName = nameProvider.getParameterName(i);
-                    suffixPropertyPath = ((CacheBy) pa).value();
-                    cacheByNum++;
-                }
+        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+            CacheBy cacheByAnno = pd.getAnnotation(CacheBy.class);
+            if (cacheByAnno != null) {
+                suffixParameterName = nameProvider.getParameterName(pd.getPosition());
+                suffixPropertyPath = cacheByAnno.value();
+                cacheByNum++;
             }
         }
-        Class<?> daoClass = method.getDeclaringClass();
-        CacheIgnored cacheIgnoredAnno = method.getAnnotation(CacheIgnored.class);
-        Cache cacheAnno = daoClass.getAnnotation(Cache.class);
+
+        CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
+        Cache cacheAnno = md.getAnnotation(Cache.class);
         if (cacheAnno != null) { // dao类使用cache
             if (cacheIgnoredAnno == null) { // method不禁用cache
                 if (cacheByNum != 1) {
