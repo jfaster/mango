@@ -17,18 +17,22 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.NotReadableParameterException;
+import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.Types;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author ash
  */
-public class TypeContext {
+public class ParameterDescriptorContext {
 
-    private final Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
+    private final Map<String, ParameterDescriptor> parameterDescriptorMap = new HashMap<String, ParameterDescriptor>();
+    private final List<ParameterDescriptor> parameterDescriptors = new LinkedList<ParameterDescriptor>();
     private final Map<String, Type> cache = new HashMap<String, Type>();
 
     public Type getPropertyType(String parameterName, String propertyPath) {
@@ -37,10 +41,11 @@ public class TypeContext {
         if (cachedType != null) { // 缓存命中，直接返回
             return cachedType;
         }
-        Type parameterType = parameterTypeMap.get(parameterName);
-        if (parameterType == null ) {
+        ParameterDescriptor pd = parameterDescriptorMap.get(parameterName);
+        if (pd == null ) {
             throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
         }
+        Type parameterType = pd.getType();
         Type type = !propertyPath.isEmpty() ?
                 Types.getPropertyType(parameterType, parameterName, propertyPath) :
                 parameterType;
@@ -48,8 +53,13 @@ public class TypeContext {
         return type;
     }
 
-    public void addParameter(String parameterName, Type parameterType) {
-        parameterTypeMap.put(parameterName, parameterType);
+    public List<ParameterDescriptor> getParameterDescriptors() {
+        return parameterDescriptors;
+    }
+
+    public void addParameterDescriptor(String parameterName, ParameterDescriptor pd) {
+        parameterDescriptorMap.put(parameterName, pd);
+        parameterDescriptors.add(pd);
     }
 
     private String getCacheKey(String parameterName, String propertyPath) {

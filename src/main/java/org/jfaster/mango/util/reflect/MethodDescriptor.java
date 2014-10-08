@@ -20,7 +20,6 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -54,15 +53,6 @@ public class MethodDescriptor {
         }
         return null;
     }
-
-    public List<Type> getParameterTypes() {
-        List<Type> types = new LinkedList<Type>();
-        for (ParameterDescriptor pd : parameterDescriptors) {
-            types.add(pd.getType());
-        }
-        return types;
-    }
-
 
     public Type getReturnType() {
         return returnType;

@@ -18,8 +18,8 @@ package org.jfaster.mango.parser.visitor;
 
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.jdbc.JdbcUtils;
+import org.jfaster.mango.operator.ParameterDescriptorContext;
 import org.jfaster.mango.parser.*;
-import org.jfaster.mango.operator.TypeContext;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -68,7 +68,7 @@ public class TypeCheckVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
-        TypeContext context = getTypeContext(data);
+        ParameterDescriptorContext context = getTypeContext(data);
         Type type = context.getPropertyType(node.getParameterName(), node.getPropertyPath());
         TypeToken typeToken = new TypeToken(type);
         Class<?> mappedClass = typeToken.getMappedClass();
@@ -81,7 +81,7 @@ public class TypeCheckVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
-        TypeContext context = getTypeContext(data);
+        ParameterDescriptorContext context = getTypeContext(data);
         Type type = context.getPropertyType(node.getParameterName(), node.getPropertyPath());
         TypeToken typeToken = new TypeToken(type);
         Class<?> mappedClass = typeToken.getMappedClass();
@@ -106,7 +106,7 @@ public class TypeCheckVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
-        TypeContext context = getTypeContext(data);
+        ParameterDescriptorContext context = getTypeContext(data);
         context.getPropertyType(node.getParameterName(), node.getPropertyPath()); // 保证能取到即可
         return node.childrenAccept(this, data);
     }
@@ -188,7 +188,7 @@ public class TypeCheckVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
-        TypeContext context = getTypeContext(data);
+        ParameterDescriptorContext context = getTypeContext(data);
         context.getPropertyType(node.getParameterName(), node.getPropertyPath()); // 保证能取到即可
         return node.childrenAccept(this, data);
     }
@@ -213,8 +213,8 @@ public class TypeCheckVisitor implements ParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    private TypeContext getTypeContext(Object data) {
-        return (TypeContext) data;
+    private ParameterDescriptorContext getTypeContext(Object data) {
+        return (ParameterDescriptorContext) data;
     }
 
 }

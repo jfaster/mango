@@ -26,7 +26,7 @@ import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.NameProvider;
-import org.jfaster.mango.operator.TypeContext;
+import org.jfaster.mango.operator.ParameterDescriptorContext;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -97,7 +97,7 @@ public class CacheDriverImpl implements CacheDriver {
     private String interableProperty;
 
     public CacheDriverImpl(MethodDescriptor md, ASTRootNode rootNode, CacheHandler cacheHandler,
-                           TypeContext context, NameProvider nameProvider) {
+                           ParameterDescriptorContext context, NameProvider nameProvider) {
         this.cacheHandler = cacheHandler;
         this.nameProvider = nameProvider;
         init(md, rootNode, context);
@@ -188,7 +188,7 @@ public class CacheDriverImpl implements CacheDriver {
         return interableProperty;
     }
 
-    private void init(MethodDescriptor md, ASTRootNode rootNode, TypeContext context) {
+    private void init(MethodDescriptor md, ASTRootNode rootNode, ParameterDescriptorContext context) {
         int cacheByNum = 0;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             CacheBy cacheByAnno = pd.getAnnotation(CacheBy.class);

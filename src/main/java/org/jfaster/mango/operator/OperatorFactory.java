@@ -82,13 +82,10 @@ public class OperatorFactory {
         OperatorType operatorType;
         if (rootNode.getSQLType() == SQLType.SELECT) { // 查
             operatorType = OperatorType.QUERY;
-            chain = new InvocationInterceptorChain(queryInterceptorChain, md);
         } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
             operatorType = OperatorType.UPDATE;
-            chain = new InvocationInterceptorChain(updateInterceptorChain, md);
         } else if (int[].class.equals(returnType)) { // 批量更新
             operatorType = OperatorType.BATCHUPDATYPE;
-            chain = new InvocationInterceptorChain(updateInterceptorChain, md);
         } else {
             throw new IncorrectReturnTypeException("if sql don't start with select, " +
                     "update return type expected int, " +
@@ -97,15 +94,15 @@ public class OperatorFactory {
         }
 
         NameProvider nameProvider = buildNameProvider(md);
-        TypeContext typeContext = buildTypeContext(md, nameProvider, operatorType);
-        rootNode.checkType(typeContext);
+        ParameterDescriptorContext context = buildTypeContext(md, nameProvider, operatorType);
+        rootNode.checkType(context);
         TableGenerator tableGenerator = new TableGenerator();
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType());
-        fill(md, tableGenerator, dataSourceGenerator, nameProvider, typeContext);
+        fill(md, tableGenerator, dataSourceGenerator, nameProvider, context);
 
         Operator operator;
         if (useCache) {
-            CacheDriverImpl driver = new CacheDriverImpl(md, rootNode, cacheHandler, typeContext, nameProvider);
+            CacheDriverImpl driver = new CacheDriverImpl(md, rootNode, cacheHandler, context, nameProvider);
             switch (operatorType) {
                 case QUERY:
                     operator = new CacheableQueryOperator(rootNode, md, driver);
@@ -135,6 +132,10 @@ public class OperatorFactory {
             }
         }
 
+        chain =  rootNode.getSQLType() == SQLType.SELECT ?
+                new InvocationInterceptorChain(queryInterceptorChain, context) :
+                new InvocationInterceptorChain(updateInterceptorChain, context);
+
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
         operator.setInvocationContextFactory(new InvocationContextFactory(nameProvider));
@@ -153,33 +154,33 @@ public class OperatorFactory {
         return np;
     }
 
-    TypeContext buildTypeContext(MethodDescriptor md, NameProvider nameProvider, OperatorType operatorType) {
-        List<Type> types = md.getParameterTypes();
+    ParameterDescriptorContext buildTypeContext(MethodDescriptor md, NameProvider nameProvider, OperatorType operatorType) {
+        List<ParameterDescriptor> pds = md.getParameterDescriptors();
         if (operatorType == OperatorType.BATCHUPDATYPE) {
-            if (types.size() != 1) {
+            if (pds.size() != 1) {
                 throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
-                        types.size()); // 批量更新只能有一个参数
+                        pds.size()); // 批量更新只能有一个参数
             }
-            Type type = types.get(0);
-            TypeToken typeToken = new TypeToken(type);
+            ParameterDescriptor pd = pds.get(0);
+            TypeToken typeToken = new TypeToken(pd.getType());
             Class<?> mappedClass = typeToken.getMappedClass();
             if (mappedClass == null || !typeToken.isIterable()) {
                 throw new IncorrectParameterTypeException("parameter of batch update " +
                         "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                        "but " + type); // 批量更新的参数必须可迭代
+                        "but " + pd.getType()); // 批量更新的参数必须可迭代
             }
-            types = new ArrayList<Type>();
-            types.add(mappedClass);
+            pds = new ArrayList<ParameterDescriptor>(1);
+            pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations()));
         }
-        TypeContext typeContext = new TypeContext();
-        for (int i = 0; i < types.size(); i++) {
-            typeContext.addParameter(nameProvider.getParameterName(i), types.get(i));
+        ParameterDescriptorContext typeContext = new ParameterDescriptorContext();
+        for (int i = 0; i < pds.size(); i++) {
+            typeContext.addParameterDescriptor(nameProvider.getParameterName(i), pds.get(i));
         }
         return typeContext;
     }
 
     void fill(MethodDescriptor md, TableGenerator tableGenerator, DataSourceGenerator dataSourceGenerator,
-              NameProvider nameProvider, TypeContext typeContext) {
+              NameProvider nameProvider, ParameterDescriptorContext typeContext) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IncorrectAnnotationException("need @DB on dao interface");

@@ -1,7 +1,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.operator.InvocationContext;
-import org.jfaster.mango.operator.TypeContext;
+import org.jfaster.mango.operator.ParameterDescriptorContext;
 import org.jfaster.mango.parser.visitor.InterablePropertyCollectVisitor;
 import org.jfaster.mango.parser.visitor.NodeCollectVisitor;
 import org.jfaster.mango.parser.visitor.TextBlankJoinVisitor;
@@ -55,7 +55,7 @@ public class ASTRootNode extends AbstractRenderableNode {
     /**
      * 检测节点类型
      */
-    public void checkType(TypeContext context) {
+    public void checkType(ParameterDescriptorContext context) {
         getBlock().jjtAccept(new TypeCheckVisitor(), context);
     }
 

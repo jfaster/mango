@@ -16,15 +16,10 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.util.reflect.MethodDescriptor;
 import org.jfaster.mango.util.reflect.Parameter;
 import org.jfaster.mango.util.reflect.ParameterDescriptor;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,9 +31,9 @@ public class InvocationInterceptorChain {
 
     private List<ParameterDescriptor> parameterDescriptors;
 
-    public InvocationInterceptorChain(InterceptorChain interceptorChain, MethodDescriptor md) {
+    public InvocationInterceptorChain(InterceptorChain interceptorChain, ParameterDescriptorContext context) {
         this.interceptorChain = interceptorChain;
-        //initParameterDescriptors(method);
+        this.parameterDescriptors = context.getParameterDescriptors();
     }
 
     public void intercept(SqlDescriptor sqlDescriptor, InvocationContext context) {
@@ -52,19 +47,5 @@ public class InvocationInterceptorChain {
             interceptorChain.intercept(sqlDescriptor, methodParameters);
         }
     }
-
-//    private void initParameterDescriptors(Method method) {
-//        parameterDescriptors = new LinkedList<ParameterDescriptor>();
-//        Class<?>[] parameterTypes = method.getParameterTypes();
-//        Type[] genericParameterTypes = method.getGenericParameterTypes();
-//        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-//
-//        for (int i = 0; i < genericParameterTypes.length; i++) {
-//            Class<?> type = parameterTypes[i];
-//            Type genericType = genericParameterTypes[i];
-//            Annotation[] annotations = parameterAnnotations[i];
-//            parameterDescriptors.add(new ParameterDescriptor(type, genericType, annotations));
-//        }
-//    }
 
 }
