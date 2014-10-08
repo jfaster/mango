@@ -58,7 +58,7 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
         Map<DataSource, Group> groupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
-            InvocationContext context = invocationContextFactory.newRuntimeContext(new Object[]{obj});
+            InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
             keys.add(driver.getCacheKey(context));
             group(context, groupMap);
         }

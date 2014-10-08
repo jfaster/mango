@@ -67,7 +67,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
     @Override
     public Object execute(Object[] values) {
-        InvocationContext context = invocationContextFactory.newRuntimeContext(values);
+        InvocationContext context = invocationContextFactory.newInvocationContext(values);
         return driver.isUseMultipleKeys() ?
                 multipleKeysCache(context, rowMapper.getMappedClass(), driver.getSuffixClass()) :
                 singleKeyCache(context);

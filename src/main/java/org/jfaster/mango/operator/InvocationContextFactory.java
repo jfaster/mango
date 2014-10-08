@@ -11,7 +11,7 @@ public class InvocationContextFactory {
         this.nameProvider = nameProvider;
     }
 
-    public InvocationContext newRuntimeContext(Object[] values) {
+    public InvocationContext newInvocationContext(Object[] values) {
         InvocationContext context = new InvocationContext();
         for (int i = 0; i < values.length; i++) {
             context.addParameter(nameProvider.getParameterName(i), values[i]);

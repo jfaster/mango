@@ -54,7 +54,7 @@ public class UpdateOperator extends AbstractOperator {
 
     @Override
     public Object execute(Object[] values) {
-        InvocationContext context = invocationContextFactory.newRuntimeContext(values);
+        InvocationContext context = invocationContextFactory.newInvocationContext(values);
         return execute(context);
     }
 

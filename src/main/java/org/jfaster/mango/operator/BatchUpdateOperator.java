@@ -54,7 +54,7 @@ public class BatchUpdateOperator extends AbstractOperator {
 
         Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
-            InvocationContext context = invocationContextFactory.newRuntimeContext(new Object[]{obj});
+            InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
             group(context, gorupMap);
         }
         int[] ints = executeDb(gorupMap);
