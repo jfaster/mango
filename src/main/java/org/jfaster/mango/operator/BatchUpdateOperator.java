@@ -89,8 +89,8 @@ public class BatchUpdateOperator extends AbstractOperator {
                 List<String> sqls = entry.getValue().getSqls();
                 List<Object[]> batchArgs = entry.getValue().getBatchArgs();
                 ints = isUniqueSql(sqls) ?
-                        jdbcTemplate.batchUpdate(ds, sqls.get(0), batchArgs) :
-                        jdbcTemplate.batchUpdate(ds, sqls, batchArgs);
+                        jdbcOperations.batchUpdate(ds, sqls.get(0), batchArgs) :
+                        jdbcOperations.batchUpdate(ds, sqls, batchArgs);
             }
         } finally {
             long cost = System.nanoTime() - now;

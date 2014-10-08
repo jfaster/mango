@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.jdbc.JdbcTemplate;
+import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.interceptor.RuntimeInterceptorChain;
 import org.jfaster.mango.operator.stats.StatsCounter;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -67,11 +67,11 @@ public abstract class AbstractOperator implements Operator {
     /**
      * jdbc操作
      */
-    protected JdbcTemplate jdbcTemplate;
+    protected JdbcOperations jdbcOperations;
 
     @Override
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public void setJdbcOperations(JdbcOperations jdbcOperations) {
+        this.jdbcOperations = jdbcOperations;
     }
 
     @Override

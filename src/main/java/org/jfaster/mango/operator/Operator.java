@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 
-import org.jfaster.mango.jdbc.JdbcTemplate;
+import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.interceptor.RuntimeInterceptorChain;
 import org.jfaster.mango.operator.stats.StatsCounter;
 
@@ -30,7 +30,7 @@ public interface Operator {
 
     public Object execute(Object[] values);
 
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate);
+    public void setJdbcOperations(JdbcOperations jdbcOperations);
 
     public void setRuntimeContextFactory(RuntimeContextFactory runtimeContextFactory);
 

@@ -88,13 +88,13 @@ public class QueryOperator extends AbstractOperator {
         long now = System.nanoTime();
         try {
             if (isForList) {
-                r = jdbcTemplate.queryForList(ds, sql, args, rowMapper);
+                r = jdbcOperations.queryForList(ds, sql, args, rowMapper);
             } else if (isForSet) {
-                r = jdbcTemplate.queryForSet(ds, sql, args, rowMapper);
+                r = jdbcOperations.queryForSet(ds, sql, args, rowMapper);
             } else if (isForArray) {
-                r= jdbcTemplate.queryForArray(ds, sql, args, rowMapper);
+                r= jdbcOperations.queryForArray(ds, sql, args, rowMapper);
             } else {
-                r = jdbcTemplate.queryForObject(ds, sql, args, rowMapper);
+                r = jdbcOperations.queryForObject(ds, sql, args, rowMapper);
             }
             success = true;
         } finally {

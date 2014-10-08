@@ -79,10 +79,10 @@ public class UpdateOperator extends AbstractOperator {
         try {
             if (returnGeneratedId) {
                 GeneratedKeyHolder holder = new GeneratedKeyHolder(returnType);
-                jdbcTemplate.update(ds, sql, args, holder);
+                jdbcOperations.update(ds, sql, args, holder);
                 r = holder.getKey();
             } else {
-                r = jdbcTemplate.update(ds, sql, args);
+                r = jdbcOperations.update(ds, sql, args);
             }
         } finally {
             long cost = System.nanoTime() - now;

@@ -33,30 +33,36 @@ import java.util.Set;
 /**
  * @author ash
  */
-public class JdbcTemplate {
+public class JdbcTemplate implements JdbcOperations {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(JdbcTemplate.class);
 
+    @Override
     public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
     }
 
+    @Override
     public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
+    @Override
     public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
+    @Override
     public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
         return executeQuery(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 
+    @Override
     public int update(DataSource ds, String sql, Object[] args) {
         return update(ds, sql, args, null);
     }
 
+    @Override
     public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
         Connection conn = DataSourceUtils.getConnection(ds);
         PreparedStatement ps = null;
@@ -95,6 +101,7 @@ public class JdbcTemplate {
         }
     }
 
+    @Override
     public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
         Connection conn = DataSourceUtils.getConnection(ds);
         PreparedStatement ps = null;
@@ -124,6 +131,7 @@ public class JdbcTemplate {
         }
     }
 
+    @Override
     public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs) {
         int size = Math.min(sqls.size(), batchArgs.size());
         int[] r = new int[size];
