@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 /**
  * @author ash
@@ -36,6 +36,6 @@ public abstract class AbstractRenderableNode extends SimpleNode {
     /**
      * 渲染sql与args
      */
-    public abstract boolean render(RuntimeContext context);
+    public abstract boolean render(InvocationContext context);
 
 }

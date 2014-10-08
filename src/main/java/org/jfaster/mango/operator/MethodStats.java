@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.stats;
+package org.jfaster.mango.operator;
 
 import javax.annotation.Nullable;
 

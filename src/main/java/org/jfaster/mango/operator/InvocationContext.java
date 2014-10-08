@@ -19,13 +19,15 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.util.reflect.Beans;
 
 import javax.annotation.Nullable;
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author ash
  */
-public class RuntimeContextImpl implements RuntimeContext {
+public class InvocationContext {
 
     private final Map<String, Object> parameterMap = new HashMap<String, Object>();
     private final List<Object> parameterValues = new LinkedList<Object>();
@@ -36,13 +38,11 @@ public class RuntimeContextImpl implements RuntimeContext {
 
     private String globalTable;
 
-    @Override
     public void addParameter(String parameterName, Object parameterValue) {
         parameterMap.put(parameterName, parameterValue);
         parameterValues.add(parameterValue);
     }
 
-    @Override
     public Object getPropertyValue(String parameterName, String propertyPath) {
         String key = getCacheKey(parameterName, propertyPath);
         Object cachedValue = cache.get(key);
@@ -57,7 +57,6 @@ public class RuntimeContextImpl implements RuntimeContext {
         return value;
     }
 
-    @Override
     @Nullable
     public Object getNullablePropertyValue(String parameterName, String propertyPath) {
         String key = getCacheKey(parameterName, propertyPath);
@@ -72,38 +71,31 @@ public class RuntimeContextImpl implements RuntimeContext {
         return value;
     }
 
-    @Override
     public void setPropertyValue(String parameterName, String propertyPath, Object propertyValue) {
         String key = getCacheKey(parameterName, propertyPath);
         cache.put(key, propertyValue);
     }
 
-    @Override
     public String getGlobalTable() {
         return globalTable;
     }
 
-    @Override
     public void setGlobalTable(String globalTable) {
         this.globalTable = globalTable;
     }
 
-    @Override
     public void writeToSqlBuffer(String str) {
         sql.append(str);
     }
 
-    @Override
     public void appendToArgs(Object obj) {
         args.add(obj);
     }
 
-    @Override
     public SqlDescriptor getSqlDescriptor() {
         return new SqlDescriptor(sql.toString(), args);
     }
 
-    @Override
     public List<Object> getParameterValues() {
         return parameterValues;
     }

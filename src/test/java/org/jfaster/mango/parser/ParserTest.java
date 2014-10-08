@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContextImpl;
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.SqlDescriptor;
 import org.junit.Test;
 
@@ -35,7 +35,7 @@ public class ParserTest {
     public void testBase() throws Exception {
         String sql = "select #{:1} from user where id in (:2) and name=:3";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", "id");
         context.addParameter("2", Arrays.asList(9, 5, 2, 7));
         context.addParameter("3", "ash");
@@ -49,7 +49,7 @@ public class ParserTest {
     public void testIf() throws Exception {
         String sql = "select where 1=1 #if(:1) and id>:1 #end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
@@ -61,7 +61,7 @@ public class ParserTest {
     public void testIf2() throws Exception {
         String sql = "select where 1=1 #if(!:1) and id>:1 #end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
@@ -78,7 +78,7 @@ public class ParserTest {
                     " and id<:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
@@ -95,7 +95,7 @@ public class ParserTest {
                     " and id<:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", -100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
@@ -114,7 +114,7 @@ public class ParserTest {
                     " and id=:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
@@ -133,7 +133,7 @@ public class ParserTest {
                     " and id=:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", -100);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
@@ -152,7 +152,7 @@ public class ParserTest {
                     " and id=:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", 0);
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
@@ -164,7 +164,7 @@ public class ParserTest {
     public void testExpression() throws Exception {
         String sql = "select where 1=1 #if(:1==false && :2!=null && :3==true) and id>10 #end";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         context.addParameter("1", false);
         context.addParameter("2", new Object());
         context.addParameter("3", true);
@@ -177,7 +177,7 @@ public class ParserTest {
     public void testParse() throws Exception {
         String sql = "SELECT * from user where id in ( select id from user2 )";
         ASTRootNode n = new Parser(sql).parse().init();
-        RuntimeContextImpl context = new RuntimeContextImpl();
+        InvocationContext context = new InvocationContext();
         n.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
         assertThat(sqlDescriptor.getSql().toString(), equalTo("SELECT * from user where id in ( select id from user2 )"));

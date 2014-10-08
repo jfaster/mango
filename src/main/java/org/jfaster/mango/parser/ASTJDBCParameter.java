@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +57,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
         context.writeToSqlBuffer("?");
         Object obj = context.getNullablePropertyValue(parameterName, propertyPath);
         context.appendToArgs(obj);

@@ -21,11 +21,6 @@ import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
-import org.jfaster.mango.operator.interceptor.Interceptor;
-import org.jfaster.mango.operator.interceptor.InterceptorChain;
-import org.jfaster.mango.operator.stats.MethodStats;
-import org.jfaster.mango.operator.stats.SimpleStatsCounter;
-import org.jfaster.mango.operator.stats.StatsCounter;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
@@ -132,7 +127,7 @@ public class Mango {
 
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
             statsCounterMap = mango.statsCounterMap;
-            operatorFactory = new OperatorFactoryImpl(mango.dataSourceFactory, cacheHandler,
+            operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
                     mango.queryInterceptorChain, mango.updateInterceptorChain);
         }
 
@@ -163,7 +158,7 @@ public class Mango {
         private StatsCounter getStatusCounter(Method method) {
             StatsCounter statsCounter = statsCounterMap.get(method);
             if (statsCounter == null) {
-                statsCounter = new SimpleStatsCounter();
+                statsCounter = new StatsCounter();
                 StatsCounter old = statsCounterMap.putIfAbsent(method, statsCounter);
                 if (old != null) { // 已经存在，就用老的，这样能保证单例
                     statsCounter = old;

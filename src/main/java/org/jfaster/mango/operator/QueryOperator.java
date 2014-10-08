@@ -63,18 +63,18 @@ public class QueryOperator extends AbstractOperator {
 
     @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = runtimeContextFactory.newRuntimeContext(values);
+        InvocationContext context = invocationContextFactory.newRuntimeContext(values);
         return execute(context);
     }
 
-    protected Object execute(RuntimeContext context) {
+    protected Object execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
         rootNode.render(context);
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 
         // 拦截器
-        runtimeInterceptorChain.intercept(sqlDescriptor, context);
+        invocationInterceptorChain.intercept(sqlDescriptor, context);
 
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 /**
  * @author ash
@@ -34,7 +34,7 @@ public abstract class AbstractDDLNode extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
         context.writeToSqlBuffer(value);
         return true;
     }

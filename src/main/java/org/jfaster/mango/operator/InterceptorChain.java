@@ -14,9 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.interceptor;
-
-import org.jfaster.mango.operator.SqlDescriptor;
+package org.jfaster.mango.operator;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 /**
  * 整数字面值
@@ -36,12 +36,12 @@ public class ASTIntegerLiteral extends AbstractExpression {
     }
 
     @Override
-    public boolean evaluate(RuntimeContext context) {
+    public boolean evaluate(InvocationContext context) {
         return true;
     }
 
     @Override
-    public Object value(RuntimeContext context) {
+    public Object value(InvocationContext context) {
         return value;
     }
 

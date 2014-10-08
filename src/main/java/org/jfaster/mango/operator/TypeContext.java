@@ -16,15 +16,45 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.exception.NotReadableParameterException;
+import org.jfaster.mango.util.reflect.Types;
+
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ash
  */
-public interface TypeContext {
+public class TypeContext {
 
-    public Type getPropertyType(String parameterName, String propertyPath);
+    private final Map<String, Type> parameterTypeMap = new HashMap<String, Type>();
+    private final Map<String, Type> cache = new HashMap<String, Type>();
 
-    public void addParameter(String parameterName, Type parameterType);
+    public Type getPropertyType(String parameterName, String propertyPath) {
+        String key = getCacheKey(parameterName, propertyPath);
+        Type cachedType = cache.get(key);
+        if (cachedType != null) { // 缓存命中，直接返回
+            return cachedType;
+        }
+        Type parameterType = parameterTypeMap.get(parameterName);
+        if (parameterType == null ) {
+            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
+        }
+        Type type = !propertyPath.isEmpty() ?
+                Types.getPropertyType(parameterType, parameterName, propertyPath) :
+                parameterType;
+        cache.put(key, type);
+        return type;
+    }
+
+    public void addParameter(String parameterName, Type parameterType) {
+        parameterTypeMap.put(parameterName, parameterType);
+    }
+
+    private String getCacheKey(String parameterName, String propertyPath) {
+        return propertyPath.isEmpty() ? parameterName : parameterName + "." + propertyPath;
+    }
+
 
 }

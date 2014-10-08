@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 /**
  * 表达式抽象类
@@ -36,11 +36,11 @@ public abstract class AbstractExpression extends SimpleNode {
     /**
      * 取布尔值
      */
-    public abstract boolean evaluate(RuntimeContext context);
+    public abstract boolean evaluate(InvocationContext context);
 
     /**
      * 取值
      */
-    public abstract Object value(RuntimeContext context);
+    public abstract Object value(InvocationContext context);
 
 }

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 public class ASTBlock extends AbstractRenderableNode {
 
@@ -31,7 +31,7 @@ public class ASTBlock extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
         AbstractRenderableNode node = head;
         while (node != null) {
             node.render(context);

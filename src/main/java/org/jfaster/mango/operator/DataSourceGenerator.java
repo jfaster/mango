@@ -31,7 +31,7 @@ public class DataSourceGenerator {
         this.sqlType = sqlType;
     }
 
-    public DataSource getDataSource(RuntimeContext context) {
+    public DataSource getDataSource(InvocationContext context) {
         return getDataSource(getDataSourceName(context));
     }
 
@@ -47,7 +47,7 @@ public class DataSourceGenerator {
     }
 
     @Nullable
-    public String getDataSourceName(RuntimeContext context) {
+    public String getDataSourceName(InvocationContext context) {
         String realDataSourceName = dataSourceRouter != null ?
                 dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardPropertyPath)) :
                 dataSourceName;

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 /**
  * @author ash
@@ -32,7 +32,7 @@ public class ASTGlobalTable extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
         String table = context.getGlobalTable();
         if (table == null) {
             throw new IllegalStateException(""); // TODO

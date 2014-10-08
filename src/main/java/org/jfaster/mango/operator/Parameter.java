@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.interceptor;
+package org.jfaster.mango.operator;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,15 +40,15 @@ public interface CacheDriver {
 
     public Class<?> getSuffixClass();
 
-    public String getCacheKey(RuntimeContext context);
+    public String getCacheKey(InvocationContext context);
 
     public String getCacheKey(Object suffix);
 
-    public Set<String> getCacheKeys(RuntimeContext context);
+    public Set<String> getCacheKeys(InvocationContext context);
 
-    public Object getSuffixObj(RuntimeContext context);
+    public Object getSuffixObj(InvocationContext context);
 
-    public void setSuffixObj(RuntimeContext context, Object obj);
+    public void setSuffixObj(InvocationContext context, Object obj);
 
     public String getInterableProperty();
 

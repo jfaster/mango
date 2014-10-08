@@ -1,6 +1,6 @@
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.TypeContext;
 import org.jfaster.mango.parser.visitor.InterablePropertyCollectVisitor;
 import org.jfaster.mango.parser.visitor.NodeCollectVisitor;
@@ -30,7 +30,7 @@ public class ASTRootNode extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
         ((AbstractRenderableNode) getDDLNode()).render(context);
         ((AbstractRenderableNode) getBlock()).render(context);
         return true;

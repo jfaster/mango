@@ -15,7 +15,7 @@ public class TableGenerator {
     public TableGenerator() {
     }
 
-    public String getTable(RuntimeContext context) {
+    public String getTable(InvocationContext context) {
         String realTable;
         if (!needTablePartition()) {
             realTable = table;

@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Iterables;
 
 import java.util.regex.Matcher;
@@ -59,7 +59,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
         Object objs = context.getNullablePropertyValue(parameterName, propertyPath);
         if (objs == null) {
             throw new NullPointerException("value of " + fullName + " can't be null");

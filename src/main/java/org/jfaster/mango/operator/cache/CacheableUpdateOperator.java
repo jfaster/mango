@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.UpdateOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -51,7 +51,7 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
     @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = runtimeContextFactory.newRuntimeContext(values);
+        InvocationContext context = invocationContextFactory.newRuntimeContext(values);
         if (driver.isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
             Set<String> keys = driver.getCacheKeys(context);
             if (logger.isDebugEnabled()) {

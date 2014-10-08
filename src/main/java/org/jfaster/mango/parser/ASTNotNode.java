@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 public class ASTNotNode extends AbstractExpression {
 
@@ -29,12 +29,12 @@ public class ASTNotNode extends AbstractExpression {
     }
 
     @Override
-    public boolean evaluate(RuntimeContext context) {
+    public boolean evaluate(InvocationContext context) {
         return !((AbstractExpression) jjtGetChild(0)).evaluate(context);
     }
 
     @Override
-    public Object value(RuntimeContext context) {
+    public Object value(InvocationContext context) {
         return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
     }
 

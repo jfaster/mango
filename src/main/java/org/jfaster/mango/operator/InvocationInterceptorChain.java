@@ -14,10 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.interceptor;
-
-import org.jfaster.mango.operator.RuntimeContext;
-import org.jfaster.mango.operator.SqlDescriptor;
+package org.jfaster.mango.operator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -29,18 +26,18 @@ import java.util.List;
 /**
  * @author ash
  */
-public class RuntimeInterceptorChain {
+public class InvocationInterceptorChain {
 
     private InterceptorChain interceptorChain;
 
     private List<ParameterDescriptor> parameterDescriptors;
 
-    public RuntimeInterceptorChain(InterceptorChain interceptorChain, Method method) {
+    public InvocationInterceptorChain(InterceptorChain interceptorChain, Method method) {
         this.interceptorChain = interceptorChain;
         initParameterDescriptors(method);
     }
 
-    public void intercept(SqlDescriptor sqlDescriptor, RuntimeContext context) {
+    public void intercept(SqlDescriptor sqlDescriptor, InvocationContext context) {
         if (interceptorChain.getInterceptors() != null) {
             List<Object> parameterValues = context.getParameterValues();
             List<Parameter> methodParameters = new ArrayList<Parameter>(parameterValues.size());

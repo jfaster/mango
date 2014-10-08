@@ -19,8 +19,8 @@ package org.jfaster.mango.operator.cache;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.QueryOperator;
-import org.jfaster.mango.operator.RuntimeContext;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;
@@ -67,13 +67,13 @@ public class CacheableQueryOperator extends QueryOperator {
 
     @Override
     public Object execute(Object[] values) {
-        RuntimeContext context = runtimeContextFactory.newRuntimeContext(values);
+        InvocationContext context = invocationContextFactory.newRuntimeContext(values);
         return driver.isUseMultipleKeys() ?
                 multipleKeysCache(context, rowMapper.getMappedClass(), driver.getSuffixClass()) :
                 singleKeyCache(context);
     }
 
-    private <T, U> Object multipleKeysCache(RuntimeContext context, Class<T> mappedClass, Class<U> suffixClass) {
+    private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass, Class<U> suffixClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
         Set<String> keys = driver.getCacheKeys(context);
         Map<String, Object> cacheResults = driver.getBulkFromCache(keys);
@@ -112,7 +112,7 @@ public class CacheableQueryOperator extends QueryOperator {
         return addableObj.getReturn();
     }
 
-    private Object singleKeyCache(RuntimeContext context) {
+    private Object singleKeyCache(InvocationContext context) {
         String key = driver.getCacheKey(context);
         Object value = driver.getFromCache(key);
         if (value == null) {

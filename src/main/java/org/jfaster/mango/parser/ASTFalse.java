@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 public class ASTFalse extends AbstractExpression {
 
@@ -31,12 +31,12 @@ public class ASTFalse extends AbstractExpression {
     }
 
     @Override
-    public Object value(RuntimeContext context) {
+    public Object value(InvocationContext context) {
         return value;
     }
 
     @Override
-    public boolean evaluate(RuntimeContext context) {
+    public boolean evaluate(InvocationContext context) {
         return value;
     }
 

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 public class ASTElseStatement extends AbstractRenderableNode {
 
@@ -29,7 +29,7 @@ public class ASTElseStatement extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
         ((AbstractRenderableNode) jjtGetChild(0)).render(context);
         return true;
     }

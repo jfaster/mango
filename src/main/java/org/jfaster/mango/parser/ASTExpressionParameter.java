@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +43,7 @@ public class ASTExpressionParameter extends AbstractExpression {
     }
 
     @Override
-    public boolean evaluate(RuntimeContext context) {
+    public boolean evaluate(InvocationContext context) {
         Object obj = context.getNullablePropertyValue(parameterName, propertyPath);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
@@ -52,7 +52,7 @@ public class ASTExpressionParameter extends AbstractExpression {
     }
 
     @Override
-    public Object value(RuntimeContext context) {
+    public Object value(InvocationContext context) {
         return context.getNullablePropertyValue(parameterName, propertyPath);
     }
 

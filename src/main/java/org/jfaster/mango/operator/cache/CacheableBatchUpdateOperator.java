@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.operator.BatchUpdateOperator;
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -58,7 +58,7 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
         Map<DataSource, Group> groupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
-            RuntimeContext context = runtimeContextFactory.newRuntimeContext(new Object[]{obj});
+            InvocationContext context = invocationContextFactory.newRuntimeContext(new Object[]{obj});
             keys.add(driver.getCacheKey(context));
             group(context, groupMap);
         }

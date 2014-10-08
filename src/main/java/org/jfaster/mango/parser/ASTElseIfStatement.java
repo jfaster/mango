@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 public class ASTElseIfStatement extends AbstractRenderableNode {
 
@@ -29,7 +29,7 @@ public class ASTElseIfStatement extends AbstractRenderableNode {
     }
 
     @Override
-    public boolean render(RuntimeContext context) {
+    public boolean render(InvocationContext context) {
 
         /**
          * 检测#elseif(expression)是否返回true

@@ -17,8 +17,6 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.jdbc.JdbcOperations;
-import org.jfaster.mango.operator.interceptor.RuntimeInterceptorChain;
-import org.jfaster.mango.operator.stats.StatsCounter;
 import org.jfaster.mango.parser.ASTRootNode;
 
 /**
@@ -42,7 +40,7 @@ public abstract class AbstractOperator implements Operator {
     /**
      * 拦截器链
      */
-    protected RuntimeInterceptorChain runtimeInterceptorChain;
+    protected InvocationInterceptorChain invocationInterceptorChain;
 
     /**
      * 状态统计
@@ -62,7 +60,7 @@ public abstract class AbstractOperator implements Operator {
     /**
      * 运行时环境工厂
      */
-    protected RuntimeContextFactory runtimeContextFactory;
+    protected InvocationContextFactory invocationContextFactory;
 
     /**
      * jdbc操作
@@ -75,8 +73,8 @@ public abstract class AbstractOperator implements Operator {
     }
 
     @Override
-    public void setRuntimeContextFactory(RuntimeContextFactory runtimeContextFactory) {
-        this.runtimeContextFactory = runtimeContextFactory;
+    public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory) {
+        this.invocationContextFactory = invocationContextFactory;
     }
 
     @Override
@@ -90,8 +88,8 @@ public abstract class AbstractOperator implements Operator {
     }
 
     @Override
-    public void setRuntimeInterceptorChain(RuntimeInterceptorChain runtimeInterceptorChain) {
-        this.runtimeInterceptorChain = runtimeInterceptorChain;
+    public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain) {
+        this.invocationInterceptorChain = invocationInterceptorChain;
     }
 
     @Override

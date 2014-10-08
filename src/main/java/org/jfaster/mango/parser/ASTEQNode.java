@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.RuntimeContext;
+import org.jfaster.mango.operator.InvocationContext;
 
 public class ASTEQNode extends AbstractExpression {
 
@@ -29,7 +29,7 @@ public class ASTEQNode extends AbstractExpression {
     }
 
     @Override
-    public boolean evaluate(RuntimeContext context) {
+    public boolean evaluate(InvocationContext context) {
         Object left = ((AbstractExpression) jjtGetChild(0)).value(context);
         Object right = ((AbstractExpression) jjtGetChild(1)).value(context);
         if (left instanceof Integer && right instanceof Integer) {
@@ -55,7 +55,7 @@ public class ASTEQNode extends AbstractExpression {
     }
 
     @Override
-    public Object value(RuntimeContext context) {
+    public Object value(InvocationContext context) {
         return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
     }
 

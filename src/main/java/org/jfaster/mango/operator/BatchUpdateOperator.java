@@ -54,14 +54,14 @@ public class BatchUpdateOperator extends AbstractOperator {
 
         Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
         for (Object obj : iterables) {
-            RuntimeContext context = runtimeContextFactory.newRuntimeContext(new Object[]{obj});
+            InvocationContext context = invocationContextFactory.newRuntimeContext(new Object[]{obj});
             group(context, gorupMap);
         }
         int[] ints = executeDb(gorupMap);
         return ints;
     }
 
-    protected void group(RuntimeContext context, Map<DataSource, Group> groupMap) {
+    protected void group(InvocationContext context, Map<DataSource, Group> groupMap) {
         context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
         Group group = groupMap.get(ds);
@@ -73,7 +73,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
 
         // 拦截器
-        runtimeInterceptorChain.intercept(sqlDescriptor, context);
+        invocationInterceptorChain.intercept(sqlDescriptor, context);
 
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();
