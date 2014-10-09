@@ -20,7 +20,7 @@ import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.operator.ParameterDescriptorContext;
 import org.jfaster.mango.parser.*;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
 
 import java.lang.reflect.Type;
 
@@ -70,9 +70,9 @@ public class TypeCheckVisitor implements ParserVisitor {
     public Object visit(ASTJDBCParameter node, Object data) {
         ParameterDescriptorContext context = getTypeContext(data);
         Type type = context.getPropertyType(node.getParameterName(), node.getPropertyPath());
-        TypeToken typeToken = new TypeToken(type);
-        Class<?> mappedClass = typeToken.getMappedClass();
-        if (mappedClass == null || typeToken.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
+        TypeWrapper tw = new TypeWrapper(type);
+        Class<?> mappedClass = tw.getMappedClass();
+        if (mappedClass == null || tw.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
             throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
                     "expected a class can be identified by jdbc but " + type);
         }
@@ -83,18 +83,18 @@ public class TypeCheckVisitor implements ParserVisitor {
     public Object visit(ASTJDBCIterableParameter node, Object data) {
         ParameterDescriptorContext context = getTypeContext(data);
         Type type = context.getPropertyType(node.getParameterName(), node.getPropertyPath());
-        TypeToken typeToken = new TypeToken(type);
-        Class<?> mappedClass = typeToken.getMappedClass();
-        if (!typeToken.isIterable()) { // 不是集合或数组抛出异常
+        TypeWrapper tw = new TypeWrapper(type);
+        Class<?> mappedClass = tw.getMappedClass();
+        if (!tw.isIterable()) { // 不是集合或数组抛出异常
             throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
                     "expected array or implementations of java.util.List or implementations of java.util.Set " +
                     "but " + type);
         }
         if (mappedClass == null || !JdbcUtils.isSingleColumnClass(mappedClass)) {
-            String s = typeToken.isArray() ? "component" : "actual";
+            String s = tw.isArray() ? "component" : "actual";
             throw new IncorrectParameterTypeException("invalid " + s + " type of " + node.getFullName() + ", " +
                     s + " type of " + node.getFullName() + " expected a class can be identified by jdbc " +
-                    "but " + typeToken.getMappedType());
+                    "but " + tw.getMappedType());
         }
         return node.childrenAccept(this, data);
     }

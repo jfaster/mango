@@ -16,6 +16,10 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.annotation.Rename;
+import org.jfaster.mango.util.reflect.MethodDescriptor;
+import org.jfaster.mango.util.reflect.ParameterDescriptor;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +32,17 @@ public class NameProvider {
      * 重命名后的变量名
      */
     private Map<Integer, String> names = new HashMap<Integer, String>();
+
+    public static NameProvider newNameProvider(MethodDescriptor md) {
+        NameProvider np = new NameProvider();
+        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+            Rename renameAnno = pd.getAnnotation(Rename.class);
+            if (renameAnno != null) {
+                np.setParameterName(pd.getPosition(), renameAnno.value());
+            }
+        }
+        return np;
+    }
 
     public void setParameterName(int index, String name) {
         names.put(index, name);

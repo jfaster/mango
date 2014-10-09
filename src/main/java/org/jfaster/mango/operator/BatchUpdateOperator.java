@@ -69,12 +69,11 @@ public class BatchUpdateOperator extends AbstractOperator {
             group = new Group();
             groupMap.put(ds, group);
         }
+
         rootNode.render(context);
+        invocationInterceptorChain.intercept(context); // 拦截器
+
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-
-        // 拦截器
-        invocationInterceptorChain.intercept(sqlDescriptor, context);
-
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();
         group.add(sql, args);

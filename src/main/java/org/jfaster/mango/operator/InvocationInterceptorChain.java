@@ -36,7 +36,7 @@ public class InvocationInterceptorChain {
         this.parameterDescriptors = context.getParameterDescriptors();
     }
 
-    public void intercept(SqlDescriptor sqlDescriptor, InvocationContext context) {
+    public void intercept(InvocationContext context) {
         if (interceptorChain.getInterceptors() != null) {
             List<Object> parameterValues = context.getParameterValues();
             List<Parameter> methodParameters = new ArrayList<Parameter>(parameterValues.size());
@@ -44,7 +44,7 @@ public class InvocationInterceptorChain {
                 ParameterDescriptor pd = parameterDescriptors.get(i);
                 methodParameters.add(new Parameter(pd, parameterValues.get(i)));
             }
-            interceptorChain.intercept(sqlDescriptor, methodParameters);
+            interceptorChain.intercept(context.getSqlDescriptor(), methodParameters);
         }
     }
 

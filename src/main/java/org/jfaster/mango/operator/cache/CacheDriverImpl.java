@@ -34,7 +34,7 @@ import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.reflect.MethodDescriptor;
 import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.Reflection;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
@@ -213,9 +213,9 @@ public class CacheDriverImpl implements CacheDriver {
                 expireNum = cacheAnno.num();
                 checkCacheBy(rootNode);
                 Type suffixType = context.getPropertyType(suffixParameterName, suffixPropertyPath);
-                TypeToken typeToken = new TypeToken(suffixType);
-                useMultipleKeys = typeToken.isIterable();
-                suffixClass = typeToken.getMappedClass();
+                TypeWrapper tw = new TypeWrapper(suffixType);
+                useMultipleKeys = tw.isIterable();
+                suffixClass = tw.getMappedClass();
             } else {
                 if (cacheByNum > 0) {
                     throw new IncorrectDefinitionException("if @CacheIgnored is on method, " +

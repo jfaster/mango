@@ -61,12 +61,11 @@ public class UpdateOperator extends AbstractOperator {
     public Number execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
+
         rootNode.render(context);
+        invocationInterceptorChain.intercept(context);  // 拦截器
+
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-
-        // 拦截器
-        invocationInterceptorChain.intercept(sqlDescriptor, context);
-
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();
         Number r = executeDb(ds, sql, args);

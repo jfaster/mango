@@ -29,7 +29,6 @@ public abstract class AbstractOperator implements Operator {
      */
     protected final ASTRootNode rootNode;
 
-
     /**
      * 用于对db进行操作
      */

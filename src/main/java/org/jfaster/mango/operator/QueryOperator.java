@@ -24,7 +24,7 @@ import org.jfaster.mango.jdbc.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.reflect.MethodDescriptor;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -46,11 +46,11 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private void init(ASTRootNode rootNode, MethodDescriptor md) {
-        TypeToken typeToken = new TypeToken(md.getReturnType());
-        isForList = typeToken.isList();
-        isForSet = typeToken.isSet();
-        isForArray = typeToken.isArray();
-        mappedClass = typeToken.getMappedClass();
+        TypeWrapper tw = new TypeWrapper(md.getReturnType());
+        isForList = tw.isList();
+        isForSet = tw.isSet();
+        isForArray = tw.isArray();
+        mappedClass = tw.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
 
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
@@ -70,12 +70,11 @@ public class QueryOperator extends AbstractOperator {
     protected Object execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
+
         rootNode.render(context);
+        invocationInterceptorChain.intercept(context); // 拦截器
+
         SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-
-        // 拦截器
-        invocationInterceptorChain.intercept(sqlDescriptor, context);
-
         String sql = sqlDescriptor.getSql();
         Object[] args = sqlDescriptor.getArgs().toArray();
 

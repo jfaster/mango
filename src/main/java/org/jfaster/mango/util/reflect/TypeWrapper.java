@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @author ash
  */
-public class TypeToken {
+public class TypeWrapper {
 
     private Class<?> mappedClass = null;
     private Type mappedType = null; // 抛出异常时需要用到
@@ -32,7 +32,7 @@ public class TypeToken {
     private boolean isSet;
     private boolean isArray;
 
-    public TypeToken(Type type) {
+    public TypeWrapper(Type type) {
         if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
             mappedClass = byte[].class;
         } else if (type instanceof ParameterizedType) { // 参数化类型

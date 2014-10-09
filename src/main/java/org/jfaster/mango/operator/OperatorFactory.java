@@ -35,11 +35,9 @@ import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.reflect.MethodDescriptor;
 import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.Reflection;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Operator工厂
@@ -93,8 +91,8 @@ public class OperatorFactory {
                     "but " + md.getRawReturnType());
         }
 
-        NameProvider nameProvider = buildNameProvider(md);
-        ParameterDescriptorContext context = buildTypeContext(md, nameProvider, operatorType);
+        NameProvider nameProvider = NameProvider.newNameProvider(md);
+        ParameterDescriptorContext context = ParameterDescriptorContext.newContext(md, nameProvider, operatorType);
         rootNode.checkType(context);
         TableGenerator tableGenerator = new TableGenerator();
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType());
@@ -143,44 +141,8 @@ public class OperatorFactory {
         return operator;
     }
 
-    NameProvider buildNameProvider(MethodDescriptor md) {
-        NameProvider np = new NameProvider();
-        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
-            Rename renameAnno = pd.getAnnotation(Rename.class);
-            if (renameAnno != null) {
-                np.setParameterName(pd.getPosition(), renameAnno.value());
-            }
-        }
-        return np;
-    }
-
-    ParameterDescriptorContext buildTypeContext(MethodDescriptor md, NameProvider nameProvider, OperatorType operatorType) {
-        List<ParameterDescriptor> pds = md.getParameterDescriptors();
-        if (operatorType == OperatorType.BATCHUPDATYPE) {
-            if (pds.size() != 1) {
-                throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
-                        pds.size()); // 批量更新只能有一个参数
-            }
-            ParameterDescriptor pd = pds.get(0);
-            TypeToken typeToken = new TypeToken(pd.getType());
-            Class<?> mappedClass = typeToken.getMappedClass();
-            if (mappedClass == null || !typeToken.isIterable()) {
-                throw new IncorrectParameterTypeException("parameter of batch update " +
-                        "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                        "but " + pd.getType()); // 批量更新的参数必须可迭代
-            }
-            pds = new ArrayList<ParameterDescriptor>(1);
-            pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations()));
-        }
-        ParameterDescriptorContext typeContext = new ParameterDescriptorContext();
-        for (int i = 0; i < pds.size(); i++) {
-            typeContext.addParameterDescriptor(nameProvider.getParameterName(i), pds.get(i));
-        }
-        return typeContext;
-    }
-
     void fill(MethodDescriptor md, TableGenerator tableGenerator, DataSourceGenerator dataSourceGenerator,
-              NameProvider nameProvider, ParameterDescriptorContext typeContext) {
+              NameProvider nameProvider, ParameterDescriptorContext context) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IncorrectAnnotationException("need @DB on dao interface");
@@ -223,10 +185,10 @@ public class OperatorFactory {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
-                Type shardType = typeContext.getPropertyType(shardParameterName, shardPropertyPath);
-                TypeToken typeToken = new TypeToken(shardType);
-                Class<?> mappedClass = typeToken.getMappedClass();
-                if (mappedClass == null || typeToken.isIterable()) {
+                Type shardType = context.getPropertyType(shardParameterName, shardPropertyPath);
+                TypeWrapper tw = new TypeWrapper(shardType);
+                Class<?> mappedClass = tw.getMappedClass();
+                if (mappedClass == null || tw.isIterable()) {
                     throw new IncorrectParameterTypeException("the type of parameter Modified @ShardBy is error, " +
                             "type is " + shardType);
                 }
@@ -250,16 +212,6 @@ public class OperatorFactory {
         dataSourceGenerator.setShardParameterName(shardParameterName);
         dataSourceGenerator.setShardPropertyPath(shardPropertyPath);
         dataSourceGenerator.setDataSourceRouter(dataSourceRouter);
-    }
-
-    enum OperatorType {
-
-        QUERY,
-
-        UPDATE,
-
-        BATCHUPDATYPE,
-
     }
 
 }
