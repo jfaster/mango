@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.operator.InvocationContext;
-import org.jfaster.mango.operator.SqlDescriptor;
+import org.jfaster.mango.operator.PreparedSql;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -40,9 +40,9 @@ public class ParserTest {
         context.addParameter("2", Arrays.asList(9, 5, 2, 7));
         context.addParameter("3", "ash");
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select id from user where id in (?,?,?,?) and name=?"));
-        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{9, 5, 2, 7, "ash"}));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select id from user where id in (?,?,?,?) and name=?"));
+        assertThat(preparedSql.getArgs(), contains(new Object[]{9, 5, 2, 7, "ash"}));
     }
 
     @Test
@@ -52,9 +52,9 @@ public class ParserTest {
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1  and id>? "));
-        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1  and id>? "));
+        assertThat(preparedSql.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
@@ -64,9 +64,9 @@ public class ParserTest {
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 "));
-        assertThat(sqlDescriptor.getArgs().size(), equalTo(0));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 "));
+        assertThat(preparedSql.getArgs().size(), equalTo(0));
     }
 
     @Test
@@ -81,9 +81,9 @@ public class ParserTest {
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id>?"));
-        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id>?"));
+        assertThat(preparedSql.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
@@ -98,9 +98,9 @@ public class ParserTest {
         InvocationContext context = new InvocationContext();
         context.addParameter("1", -100);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id<?"));
-        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{-100}));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id<?"));
+        assertThat(preparedSql.getArgs(), contains(new Object[]{-100}));
     }
 
     @Test
@@ -117,9 +117,9 @@ public class ParserTest {
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id>?"));
-        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{100}));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id>?"));
+        assertThat(preparedSql.getArgs(), contains(new Object[]{100}));
     }
 
     @Test
@@ -136,9 +136,9 @@ public class ParserTest {
         InvocationContext context = new InvocationContext();
         context.addParameter("1", -100);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id<?"));
-        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{-100}));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id<?"));
+        assertThat(preparedSql.getArgs(), contains(new Object[]{-100}));
     }
 
     @Test
@@ -155,9 +155,9 @@ public class ParserTest {
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 0);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1 and id=?"));
-        assertThat(sqlDescriptor.getArgs(), contains(new Object[]{0}));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id=?"));
+        assertThat(preparedSql.getArgs(), contains(new Object[]{0}));
     }
 
     @Test
@@ -169,8 +169,8 @@ public class ParserTest {
         context.addParameter("2", new Object());
         context.addParameter("3", true);
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("select where 1=1  and id>10 "));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1  and id>10 "));
     }
 
     @Test
@@ -179,8 +179,8 @@ public class ParserTest {
         ASTRootNode n = new Parser(sql).parse().init();
         InvocationContext context = new InvocationContext();
         n.render(context);
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        assertThat(sqlDescriptor.getSql().toString(), equalTo("SELECT * from user where id in ( select id from user2 )"));
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("SELECT * from user where id in ( select id from user2 )"));
     }
 
 }

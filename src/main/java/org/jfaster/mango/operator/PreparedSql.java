@@ -5,12 +5,12 @@ import java.util.List;
 /**
  * @author ash
  */
-public class SqlDescriptor {
+public class PreparedSql {
 
     private String sql;
     private List<Object> args;
 
-    public SqlDescriptor(String sql, List<Object> args) {
+    public PreparedSql(String sql, List<Object> args) {
         this.sql = sql;
         this.args = args;
     }

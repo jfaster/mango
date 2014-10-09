@@ -14,30 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.util;
 
-
-import org.jfaster.mango.jdbc.JdbcOperations;
+import javax.annotation.Nullable;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public class Objects {
 
-    public Object execute(Object[] values);
+    public static boolean equal(@Nullable Object a, @Nullable Object b) {
+        return a == b || (a != null && a.equals(b));
+    }
 
-    public void setJdbcOperations(JdbcOperations jdbcOperations);
-
-    public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory);
-
-    public void setTableGenerator(TableGenerator tableGenerator);
-
-    public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator);
-
-    public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain);
-
-    public void setStatsCounter(StatsCounter statsCounter);
+    public static int hashCode(@Nullable Object... objects) {
+        return java.util.Arrays.hashCode(objects);
+    }
 
 }

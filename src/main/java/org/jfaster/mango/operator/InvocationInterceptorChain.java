@@ -31,20 +31,21 @@ public class InvocationInterceptorChain {
 
     private List<ParameterDescriptor> parameterDescriptors;
 
-    public InvocationInterceptorChain(InterceptorChain interceptorChain, ParameterDescriptorContext context) {
+    public InvocationInterceptorChain(InterceptorChain interceptorChain,
+                                      List<ParameterDescriptor> parameterDescriptors) {
         this.interceptorChain = interceptorChain;
-        this.parameterDescriptors = context.getParameterDescriptors();
+        this.parameterDescriptors = parameterDescriptors;
     }
 
-    public void intercept(InvocationContext context) {
+    public void intercept(PreparedSql preparedSql, InvocationContext context) {
         if (interceptorChain.getInterceptors() != null) {
             List<Object> parameterValues = context.getParameterValues();
-            List<Parameter> methodParameters = new ArrayList<Parameter>(parameterValues.size());
+            List<Parameter> parameters = new ArrayList<Parameter>(parameterValues.size());
             for (int i = 0; i < parameterValues.size(); i++) {
                 ParameterDescriptor pd = parameterDescriptors.get(i);
-                methodParameters.add(new Parameter(pd, parameterValues.get(i)));
+                parameters.add(new Parameter(pd, parameterValues.get(i)));
             }
-            interceptorChain.intercept(context.getSqlDescriptor(), methodParameters);
+            interceptorChain.intercept(preparedSql, parameters);
         }
     }
 

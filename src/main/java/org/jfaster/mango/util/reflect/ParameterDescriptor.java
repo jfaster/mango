@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.util.reflect;
 
+import org.jfaster.mango.util.Objects;
+
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -67,6 +69,24 @@ public class ParameterDescriptor {
 
     public List<Annotation> getAnnotations() {
         return annotations;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final ParameterDescriptor other = (ParameterDescriptor) obj;
+        return Objects.equal(this.position, other.position)
+                && Objects.equal(this.type, other.type)
+                && Objects.equal(this.rawType, other.rawType)
+                && Objects.equal(this.annotations, other.annotations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(position, type, rawType, annotations);
     }
 
 }

@@ -92,8 +92,8 @@ public class InvocationContext {
         args.add(obj);
     }
 
-    public SqlDescriptor getSqlDescriptor() {
-        return new SqlDescriptor(sql.toString(), args);
+    public PreparedSql getPreparedSql() {
+        return new PreparedSql(sql.toString(), args);
     }
 
     public List<Object> getParameterValues() {

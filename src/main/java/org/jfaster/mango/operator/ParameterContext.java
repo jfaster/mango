@@ -19,7 +19,6 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
-import org.jfaster.mango.util.reflect.MethodDescriptor;
 import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.TypeWrapper;
 import org.jfaster.mango.util.reflect.Types;
@@ -30,36 +29,32 @@ import java.util.*;
 /**
  * @author ash
  */
-public class ParameterDescriptorContext {
+public class ParameterContext {
 
     private final Map<String, ParameterDescriptor> parameterDescriptorMap = new HashMap<String, ParameterDescriptor>();
     private final List<ParameterDescriptor> parameterDescriptors = new LinkedList<ParameterDescriptor>();
     private final Map<String, Type> cache = new HashMap<String, Type>();
 
-    public static ParameterDescriptorContext newContext(MethodDescriptor md, NameProvider nameProvider,
-                                                        OperatorType operatorType) {
-        List<ParameterDescriptor> pds = md.getParameterDescriptors();
+    public ParameterContext(List<ParameterDescriptor> pds, NameProvider nameProvider, OperatorType operatorType) {
         if (operatorType == OperatorType.BATCHUPDATYPE) {
             if (pds.size() != 1) {
-                throw new IncorrectParameterCountException("batch update expected one and only one parameter but " +
-                        pds.size()); // 批量更新只能有一个参数
+                throw new IncorrectParameterCountException("batch update expected one and " +
+                        "only one parameter but " + pds.size()); // 批量更新只能有一个参数
             }
             ParameterDescriptor pd = pds.get(0);
             TypeWrapper tw = new TypeWrapper(pd.getType());
             Class<?> mappedClass = tw.getMappedClass();
             if (mappedClass == null || !tw.isIterable()) {
-                throw new IncorrectParameterTypeException("parameter of batch update " +
-                        "expected array or implementations of java.util.List or implementations of java.util.Set " +
+                throw new IncorrectParameterTypeException("parameter of batch update expected array or " +
+                        "implementations of java.util.List or implementations of java.util.Set " +
                         "but " + pd.getType()); // 批量更新的参数必须可迭代
             }
             pds = new ArrayList<ParameterDescriptor>(1);
             pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations()));
         }
-        ParameterDescriptorContext context = new ParameterDescriptorContext();
         for (int i = 0; i < pds.size(); i++) {
-            context.addParameterDescriptor(nameProvider.getParameterName(i), pds.get(i));
+            addParameterDescriptor(nameProvider.getParameterName(i), pds.get(i));
         }
-        return context;
     }
 
     public Type getPropertyType(String parameterName, String propertyPath) {
@@ -84,7 +79,7 @@ public class ParameterDescriptorContext {
         return parameterDescriptors;
     }
 
-    public void addParameterDescriptor(String parameterName, ParameterDescriptor pd) {
+    private void addParameterDescriptor(String parameterName, ParameterDescriptor pd) {
         parameterDescriptorMap.put(parameterName, pd);
         parameterDescriptors.add(pd);
     }
@@ -92,6 +87,5 @@ public class ParameterDescriptorContext {
     private String getCacheKey(String parameterName, String propertyPath) {
         return propertyPath.isEmpty() ? parameterName : parameterName + "." + propertyPath;
     }
-
 
 }

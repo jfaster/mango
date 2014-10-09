@@ -91,8 +91,8 @@ public class OperatorFactory {
                     "but " + md.getRawReturnType());
         }
 
-        NameProvider nameProvider = NameProvider.newNameProvider(md);
-        ParameterDescriptorContext context = ParameterDescriptorContext.newContext(md, nameProvider, operatorType);
+        NameProvider nameProvider = new NameProvider(md.getParameterDescriptors());
+        ParameterContext context = new ParameterContext(md.getParameterDescriptors(), nameProvider, operatorType);
         rootNode.checkType(context);
         TableGenerator tableGenerator = new TableGenerator();
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType());
@@ -131,8 +131,8 @@ public class OperatorFactory {
         }
 
         chain =  rootNode.getSQLType() == SQLType.SELECT ?
-                new InvocationInterceptorChain(queryInterceptorChain, context) :
-                new InvocationInterceptorChain(updateInterceptorChain, context);
+                new InvocationInterceptorChain(queryInterceptorChain, context.getParameterDescriptors()) :
+                new InvocationInterceptorChain(updateInterceptorChain, context.getParameterDescriptors());
 
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
@@ -142,7 +142,7 @@ public class OperatorFactory {
     }
 
     void fill(MethodDescriptor md, TableGenerator tableGenerator, DataSourceGenerator dataSourceGenerator,
-              NameProvider nameProvider, ParameterDescriptorContext context) {
+              NameProvider nameProvider, ParameterContext context) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IncorrectAnnotationException("need @DB on dao interface");

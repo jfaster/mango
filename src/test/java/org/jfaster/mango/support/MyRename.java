@@ -14,30 +14,31 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.support;
 
+import org.jfaster.mango.annotation.Rename;
 
-import org.jfaster.mango.jdbc.JdbcOperations;
+import java.lang.annotation.Annotation;
 
 /**
- * db操作接口
- *
  * @author ash
  */
-public interface Operator {
+public class MyRename implements Annotation, Rename {
 
-    public Object execute(Object[] values);
+    private String value;
 
-    public void setJdbcOperations(JdbcOperations jdbcOperations);
+    public MyRename(String value) {
+        this.value = value;
+    }
 
-    public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory);
+    @Override
+    public String value() {
+        return value;
+    }
 
-    public void setTableGenerator(TableGenerator tableGenerator);
-
-    public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator);
-
-    public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain);
-
-    public void setStatsCounter(StatsCounter statsCounter);
+    @Override
+    public Class<? extends Annotation> annotationType() {
+        throw new UnsupportedOperationException();
+    }
 
 }

@@ -70,29 +70,9 @@ public class Types {
                 "the type of " + parentFullName + " is " + type + ", please check it's get method");
     }
 
-//    public static Class<?> getRawType(Type type) {
-//        Set<Class<?>> set = new HashSet
-//        final ImmutableSet.Builder<Class<?>> builder = ImmutableSet.builder();
-//        new TypeVisitor() {
-//            @Override void visitTypeVariable(TypeVariable<?> t) {
-//                visit(t.getBounds());
-//            }
-//            @Override void visitWildcardType(WildcardType t) {
-//                visit(t.getUpperBounds());
-//            }
-//            @Override void visitParameterizedType(ParameterizedType t) {
-//                builder.add((Class<?>) t.getRawType());
-//            }
-//            @Override void visitClass(Class<?> t) {
-//                builder.add(t);
-//            }
-//            @Override void visitGenericArrayType(GenericArrayType t) {
-//                builder.add(Types.getArrayClass(getRawType(t.getGenericComponentType())));
-//            }
-//
-//        }.visit(type);
-//    }
-
+    static Class<?> getArrayClass(Class<?> componentType) {
+        return Array.newInstance(componentType, 0).getClass();
+    }
 
     private static Class<?> getClassFromType(Type type) {
         Class<?> clazz = null;

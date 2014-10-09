@@ -63,11 +63,11 @@ public class UpdateOperator extends AbstractOperator {
         DataSource ds = dataSourceGenerator.getDataSource(context);
 
         rootNode.render(context);
-        invocationInterceptorChain.intercept(context);  // 拦截器
+        PreparedSql preparedSql = context.getPreparedSql();
+        invocationInterceptorChain.intercept(preparedSql, context);  // 拦截器
 
-        SqlDescriptor sqlDescriptor = context.getSqlDescriptor();
-        String sql = sqlDescriptor.getSql();
-        Object[] args = sqlDescriptor.getArgs().toArray();
+        String sql = preparedSql.getSql();
+        Object[] args = preparedSql.getArgs().toArray();
         Number r = executeDb(ds, sql, args);
         return r;
     }
