@@ -41,7 +41,7 @@ public class DataSourceGenerator {
         }
         DataSource ds = dataSourceFactory.getDataSource(dataSourceName, sqlType);
         if (ds == null) {
-            throw new IncorrectDefinitionException("can't find datasource for name " + dataSourceName);
+            throw new IncorrectDefinitionException("can't find datasource for name [" + dataSourceName + "]");
         }
         return ds;
     }

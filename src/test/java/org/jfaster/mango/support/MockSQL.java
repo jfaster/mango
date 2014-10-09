@@ -16,18 +16,18 @@
 
 package org.jfaster.mango.support;
 
-import org.jfaster.mango.annotation.Rename;
+import org.jfaster.mango.annotation.SQL;
 
 import java.lang.annotation.Annotation;
 
 /**
  * @author ash
  */
-public class MyRename implements Annotation, Rename {
+public class MockSQL implements Annotation, SQL {
 
     private String value;
 
-    public MyRename(String value) {
+    public MockSQL(String value) {
         this.value = value;
     }
 

@@ -36,7 +36,7 @@ public class StatsCounter {
     public StatsCounter() {}
 
     public void recordInit(long initTime) {
-        if (initTime > 0) {
+        if (initTime >= 0) {
             initCount.increment();
             totalInitTime.add(initTime);
         }
@@ -55,14 +55,14 @@ public class StatsCounter {
     }
 
     public void recordExecuteSuccess(long executeTime) {
-        if (executeTime > 0) {
+        if (executeTime >= 0) {
             executeSuccessCount.increment();
             totalExecuteTime.add(executeTime);
         }
     }
 
     public void recordExecuteException(long executeTime) {
-        if (executeTime > 0) {
+        if (executeTime >= 0) {
             executeExceptionCount.increment();
             totalExecuteTime.add(executeTime);
         }
