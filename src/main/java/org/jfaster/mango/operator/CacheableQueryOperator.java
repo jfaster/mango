@@ -92,6 +92,8 @@ public class CacheableQueryOperator extends QueryOperator {
                 }
             }
         }
+        statsCounter.recordHits(hitSuffix.size());
+        statsCounter.recordMisses(missSuffix.size());
         if (isDebugEnabled) {
             logger.debug("cache hit #keys={} #values={}", hitSuffix, addableObj);
             logger.debug("cache miss #keys={}", missSuffix);
@@ -115,6 +117,7 @@ public class CacheableQueryOperator extends QueryOperator {
         String key = driver.getCacheKey(context);
         Object value = driver.getFromCache(key);
         if (value == null) {
+            statsCounter.recordMisses(1);
             if (logger.isDebugEnabled()) {
                 logger.debug("cache miss #key＝{}", key);
             }
@@ -126,6 +129,7 @@ public class CacheableQueryOperator extends QueryOperator {
                 driver.setToCache(key, value);
             }
         } else {
+            statsCounter.recordHits(1);
             if (logger.isDebugEnabled()) {
                 logger.debug("cache hit #key={} #value={}", key, value);
             }

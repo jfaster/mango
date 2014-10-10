@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.operator.InvocationContext;
-
 import java.util.Map;
 import java.util.Set;
 
