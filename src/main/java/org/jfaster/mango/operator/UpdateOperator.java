@@ -32,7 +32,7 @@ public class UpdateOperator extends AbstractOperator {
 
     private boolean returnGeneratedId;
 
-    private Class<? extends Number> returnType;
+    private Class<? extends Number> rawReturnType;
 
     protected UpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
@@ -44,9 +44,9 @@ public class UpdateOperator extends AbstractOperator {
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
         if (int.class.equals(md.getRawReturnType())) {
-            returnType = int.class;
+            rawReturnType = int.class;
         } else if (long.class.equals(md.getRawReturnType())) {
-            returnType = long.class;
+            rawReturnType = long.class;
         } else {
             throw new UnreachableCodeException();
         }
@@ -77,7 +77,7 @@ public class UpdateOperator extends AbstractOperator {
         long now = System.nanoTime();
         try {
             if (returnGeneratedId) {
-                GeneratedKeyHolder holder = new GeneratedKeyHolder(returnType);
+                GeneratedKeyHolder holder = new GeneratedKeyHolder(rawReturnType);
                 jdbcOperations.update(ds, sql, args, holder);
                 r = holder.getKey();
             } else {
