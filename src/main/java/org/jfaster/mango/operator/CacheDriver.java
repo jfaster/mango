@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.cache;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.operator.InvocationContext;
 

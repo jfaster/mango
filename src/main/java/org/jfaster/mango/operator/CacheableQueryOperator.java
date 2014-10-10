@@ -14,13 +14,11 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.cache;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.operator.InvocationContext;
-import org.jfaster.mango.operator.QueryOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;

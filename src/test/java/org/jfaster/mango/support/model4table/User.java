@@ -35,6 +35,11 @@ public class User {
     public User() {
     }
 
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public User(String name, int age, boolean gender, long money, Date updateTime) {
         this.name = name;
         this.age = age;

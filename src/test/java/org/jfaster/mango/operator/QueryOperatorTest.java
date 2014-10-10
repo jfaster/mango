@@ -48,11 +48,11 @@ public class QueryOperatorTest {
     public void testQueryObject() throws Exception {
         TypeToken<User> t = TypeToken.of(User.class);
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator query = getOperator(t, t, srcSql);
+        Operator operator = getOperator(t, t, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        query.setStatsCounter(sc);
-        query.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id=? and name=?";
@@ -68,7 +68,7 @@ public class QueryOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        query.execute(new Object[] {user});
+        operator.execute(new Object[]{user});
     }
 
     @Test
@@ -76,11 +76,11 @@ public class QueryOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<List<User>> rt = new TypeToken<List<User>>() {};
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator query = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        query.setStatsCounter(sc);
-        query.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id=? and name=?";
@@ -96,7 +96,7 @@ public class QueryOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        query.execute(new Object[] {user});
+        operator.execute(new Object[]{user});
     }
 
     @Test
@@ -104,11 +104,11 @@ public class QueryOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<Set<User>> rt = new TypeToken<Set<User>>() {};
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator query = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        query.setStatsCounter(sc);
-        query.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id=? and name=?";
@@ -124,7 +124,7 @@ public class QueryOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        query.execute(new Object[] {user});
+        operator.execute(new Object[]{user});
     }
 
     @Test
@@ -132,11 +132,11 @@ public class QueryOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<User[]> rt = new TypeToken<User[]>() {};
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator query = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        query.setStatsCounter(sc);
-        query.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id=? and name=?";
@@ -152,7 +152,7 @@ public class QueryOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        query.execute(new Object[] {user});
+        operator.execute(new Object[]{user});
     }
 
     @Test
@@ -160,11 +160,11 @@ public class QueryOperatorTest {
         TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
         TypeToken<List<User>> rt = new TypeToken<List<User>>() {};
         String srcSql = "select * from user where id in (:1)";
-        Operator query = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        query.setStatsCounter(sc);
-        query.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id in (?,?,?)";
@@ -179,40 +179,40 @@ public class QueryOperatorTest {
         });
 
         List<Integer> ids = Arrays.asList(100, 200, 300);
-        query.execute(new Object[] {ids});
+        operator.execute(new Object[]{ids});
     }
 
     @Test
     public void testStatsCounter() throws Exception {
         TypeToken<User> t = TypeToken.of(User.class);
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator query = getOperator(t, t, srcSql);
+        Operator operator = getOperator(t, t, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        query.setStatsCounter(sc);
+        operator.setStatsCounter(sc);
         User user = new User();
         user.setId(100);
         user.setName("ash");
 
-        query.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 return null;
             }
         });
-        query.execute(new Object[]{user});
+        operator.execute(new Object[]{user});
         assertThat(sc.snapshot().executeSuccessCount(), equalTo(1L));
-        query.execute(new Object[] {user});
+        operator.execute(new Object[]{user});
         assertThat(sc.snapshot().executeSuccessCount(), equalTo(2L));
 
-        query.setJdbcOperations(new JdbcOperationsAdapter());
+        operator.setJdbcOperations(new JdbcOperationsAdapter());
         try {
-            query.execute(new Object[] {user});
+            operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
         assertThat(sc.snapshot().executeExceptionCount(), equalTo(1L));
         try {
-            query.execute(new Object[] {user});
+            operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
         assertThat(sc.snapshot().executeExceptionCount(), equalTo(2L));

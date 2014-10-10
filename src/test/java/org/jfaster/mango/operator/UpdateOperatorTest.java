@@ -46,11 +46,11 @@ public class UpdateOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<Integer> rt = TypeToken.of(int.class);
         String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator update = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        update.setStatsCounter(sc);
-        update.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public int update(DataSource ds, String sql, Object[] args) {
                 String descSql = "update user set name=? where id=?";
@@ -65,7 +65,7 @@ public class UpdateOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        Object r = update.execute(new Object[]{user});
+        Object r = operator.execute(new Object[]{user});
         assertThat(r.getClass().equals(Integer.class), is(true));
     }
 
@@ -74,11 +74,11 @@ public class UpdateOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<Integer> rt = TypeToken.of(int.class);
         String srcSql = "insert into user(id, name) values(:1.id, :1.name)";
-        Operator update = getOperatorReturnGeneratedId(pt, rt, srcSql);
+        Operator operator = getOperatorReturnGeneratedId(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        update.setStatsCounter(sc);
-        update.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
                 String descSql = "insert into user(id, name) values(?, ?)";
@@ -95,7 +95,7 @@ public class UpdateOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        Object r = update.execute(new Object[]{user});
+        Object r = operator.execute(new Object[]{user});
         assertThat(r.getClass().equals(Integer.class), is(true));
     }
 
@@ -104,11 +104,11 @@ public class UpdateOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<Long> rt = TypeToken.of(long.class);
         String srcSql = "insert into user(id, name) values(:1.id, :1.name)";
-        Operator update = getOperatorReturnGeneratedId(pt, rt, srcSql);
+        Operator operator = getOperatorReturnGeneratedId(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        update.setStatsCounter(sc);
-        update.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
                 String descSql = "insert into user(id, name) values(?, ?)";
@@ -125,7 +125,7 @@ public class UpdateOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        Object r = update.execute(new Object[]{user});
+        Object r = operator.execute(new Object[]{user});
         assertThat(r.getClass().equals(Long.class), is(true));
     }
 
@@ -134,11 +134,11 @@ public class UpdateOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<Integer> rt = TypeToken.of(int.class);
         String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator update = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql);
 
         StatsCounter sc = new StatsCounter();
-        update.setStatsCounter(sc);
-        update.setJdbcOperations(new JdbcOperationsAdapter() {
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public int update(DataSource ds, String sql, Object[] args) {
                 String descSql = "update user set name=? where id=?";
@@ -153,19 +153,19 @@ public class UpdateOperatorTest {
         User user = new User();
         user.setId(100);
         user.setName("ash");
-        update.execute(new Object[]{user});
+        operator.execute(new Object[]{user});
         assertThat(sc.snapshot().executeSuccessCount(), equalTo(1L));
-        update.execute(new Object[]{user});
+        operator.execute(new Object[]{user});
         assertThat(sc.snapshot().executeSuccessCount(), equalTo(2L));
 
-        update.setJdbcOperations(new JdbcOperationsAdapter());
+        operator.setJdbcOperations(new JdbcOperationsAdapter());
         try {
-            update.execute(new Object[] {user});
+            operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
         assertThat(sc.snapshot().executeExceptionCount(), equalTo(1L));
         try {
-            update.execute(new Object[] {user});
+            operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
         assertThat(sc.snapshot().executeExceptionCount(), equalTo(2L));
