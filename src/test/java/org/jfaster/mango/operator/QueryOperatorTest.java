@@ -248,8 +248,8 @@ public class QueryOperatorTest {
                 new SimpleDataSourceFactory(Config.getDataSource()),
                 null, new InterceptorChain(), new InterceptorChain());
 
-        Operator query = factory.getOperator(md);
-        return query;
+        Operator operator = factory.getOperator(md);
+        return operator;
     }
 
 }

@@ -159,8 +159,8 @@ public class BatchUpdateOperatorTest {
                 new SimpleDataSourceFactory(Config.getDataSource()),
                 null, new InterceptorChain(), new InterceptorChain());
 
-        Operator query = factory.getOperator(md);
-        return query;
+        Operator operator = factory.getOperator(md);
+        return operator;
     }
 
     private Operator getOperator2(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
@@ -180,8 +180,8 @@ public class BatchUpdateOperatorTest {
         map.put("g50", new SimpleDataSourceFactory(Config.getDataSource(1)));
         DataSourceFactory dsf = new MultipleDataSourceFactory(map);
         OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), new InterceptorChain());
-        Operator query = factory.getOperator(md);
-        return query;
+        Operator operator = factory.getOperator(md);
+        return operator;
     }
 
     public static class MyDataSourceRouter implements DataSourceRouter {
