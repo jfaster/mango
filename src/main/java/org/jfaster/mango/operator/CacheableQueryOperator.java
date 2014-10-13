@@ -26,9 +26,9 @@ import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.BeanInfoCache;
 import org.jfaster.mango.util.reflect.Beans;
+import org.jfaster.mango.util.reflect.GetterInvoker;
 import org.jfaster.mango.util.reflect.MethodDescriptor;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -55,8 +55,8 @@ public class CacheableQueryOperator extends QueryOperator {
 
         if (driver.isUseMultipleKeys()) {
             interableProperty = driver.getInterableProperty();
-            Method readMethod = BeanInfoCache.getReadMethod(mappedClass, interableProperty);
-            if (readMethod == null) {
+            GetterInvoker invoker = BeanInfoCache.getGetterInvoker(mappedClass, interableProperty);
+            if (invoker == null) {
                 // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
                 throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
                         + interableProperty + " of " + mappedClass + " expected readable but not");

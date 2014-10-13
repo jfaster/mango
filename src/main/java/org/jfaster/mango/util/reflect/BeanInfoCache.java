@@ -22,7 +22,10 @@ import org.jfaster.mango.util.concurrent.cache.LoadingCache;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -30,12 +33,12 @@ import java.util.*;
  */
 public class BeanInfoCache {
 
-    public static Method getReadMethod(Class<?> clazz, String propertyName) {
-        return cache.getUnchecked(clazz).getReadMethod(propertyName);
+    public static GetterInvoker getGetterInvoker(Class<?> clazz, String propertyName) {
+        return cache.getUnchecked(clazz).getGetterInvoker(propertyName);
     }
 
-    public static Method getWriteMethod(Class<?> clazz, String propertyName) {
-        return cache.getUnchecked(clazz).getWriteMethod(propertyName);
+    public static SetterInvoker getSetterInvoker(Class<?> clazz, String propertyName) {
+        return cache.getUnchecked(clazz).getSetterInvoker(propertyName);
     }
 
     public static List<PropertyDescriptor> getPropertyDescriptors(Class<?> clazz) {
@@ -52,12 +55,12 @@ public class BeanInfoCache {
     private static class BeanInfo {
 
         final List<PropertyDescriptor> propertyDescriptors;
-        final Map<String, Method> readMethodMap;
-        final Map<String, Method> writeMethodMap;
+        final Map<String, GetterInvoker> getterInvokerMap;
+        final Map<String, SetterInvoker> setterInvokerMap;
 
         public BeanInfo(Class<?> clazz) throws Exception {
-            Map<String, Method> rmm = new HashMap<String, Method>();
-            Map<String, Method> wmm = new HashMap<String, Method>();
+            Map<String, GetterInvoker> gim = new HashMap<String, GetterInvoker>();
+            Map<String, SetterInvoker> sim = new HashMap<String, SetterInvoker>();
             List<PropertyDescriptor> pds = new ArrayList<PropertyDescriptor>();
 
             java.beans.BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
@@ -66,29 +69,64 @@ public class BeanInfoCache {
                 String name = pd.getName();
                 Method readMethod = pd.getReadMethod();
                 if (readMethod != null) {
-                    rmm.put(name, readMethod);
+                    gim.put(name, createGetterInvoker(readMethod));
                 }
                 Method writeMethod = pd.getWriteMethod();
                 if (writeMethod != null) {
-                    wmm.put(name, writeMethod);
+                    sim.put(name, createSetterInvoker(writeMethod));
                 }
             }
 
             propertyDescriptors = Collections.unmodifiableList(pds);
-            readMethodMap = Collections.unmodifiableMap(rmm);
-            writeMethodMap = Collections.unmodifiableMap(wmm);
+            getterInvokerMap = Collections.unmodifiableMap(gim);
+            setterInvokerMap = Collections.unmodifiableMap(sim);
         }
 
-        public Method getReadMethod(String propertyName) {
-            return readMethodMap.get(propertyName);
+        public GetterInvoker getGetterInvoker(String propertyName) {
+            return getterInvokerMap.get(propertyName);
         }
 
-        public Method getWriteMethod(String propertyName) {
-            return writeMethodMap.get(propertyName);
+        public SetterInvoker getSetterInvoker(String propertyName) {
+            return setterInvokerMap.get(propertyName);
         }
 
         public List<PropertyDescriptor> getPropertyDescriptors() {
             return propertyDescriptors;
+        }
+
+        private GetterInvoker createGetterInvoker(final Method method) {
+            handleModifier(method);
+
+            return new GetterInvoker() {
+                @Override
+                public Object invoke(Object obj) throws IllegalAccessException, InvocationTargetException {
+                    return method.invoke(obj);
+                }
+
+                @Override
+                public Type getReturnType() {
+                    return method.getGenericReturnType();
+                }
+            };
+        }
+
+        private SetterInvoker createSetterInvoker(final Method method) {
+            handleModifier(method);
+
+            return new SetterInvoker() {
+                @Override
+                public void invoke(Object obj, Object arg) throws IllegalAccessException, InvocationTargetException {
+                    method.invoke(obj, arg);
+                }
+            };
+        }
+
+        private void handleModifier(Method method) {
+            int modifiers = method.getModifiers();
+            if (!Modifier.isPublic(modifiers) ||
+                    !Modifier.isPublic(method.getDeclaringClass().getModifiers())) {
+                method.setAccessible(true);
+            }
         }
 
     }

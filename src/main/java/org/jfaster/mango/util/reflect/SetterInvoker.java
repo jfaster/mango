@@ -16,20 +16,13 @@
 
 package org.jfaster.mango.util.reflect;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author ash
  */
-abstract class TypeCapture<T> {
+public interface SetterInvoker {
 
-    final Type capture() {
-        Type superclass = getClass().getGenericSuperclass();
-        if (!(superclass instanceof ParameterizedType)) {
-            throw new IllegalArgumentException(superclass + " isn't parameterized");
-        }
-        return ((ParameterizedType) superclass).getActualTypeArguments()[0];
-    }
+    void invoke(Object obj, Object arg) throws IllegalAccessException, InvocationTargetException;
 
 }

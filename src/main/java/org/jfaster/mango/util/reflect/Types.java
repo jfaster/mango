@@ -38,9 +38,9 @@ public class Types {
             String propertyName = propertyPath.substring(0, pos);
             Class<?> clazz = getClassFromType(type);
             if (clazz != null) {
-                Method method = BeanInfoCache.getReadMethod(clazz, propertyName);
-                if (method != null) {
-                    type = method.getGenericReturnType();
+                GetterInvoker invoker = BeanInfoCache.getGetterInvoker(clazz, propertyName);
+                if (invoker != null) {
+                    type = invoker.getReturnType();
                     propertyPath = propertyPath.substring(pos + 1);
                     pos = propertyPath.indexOf('.');
                     appendParentPath(parentPath, propertyName);
@@ -57,9 +57,9 @@ public class Types {
 
         Class<?> clazz = getClassFromType(type);
         if (clazz != null) {
-            Method method = BeanInfoCache.getReadMethod(clazz, propertyPath);
-            if (method != null) {
-                type = method.getGenericReturnType();
+            GetterInvoker invoker = BeanInfoCache.getGetterInvoker(clazz, propertyPath);
+            if (invoker != null) {
+                type = invoker.getReturnType();
                 return type;
             }
         }

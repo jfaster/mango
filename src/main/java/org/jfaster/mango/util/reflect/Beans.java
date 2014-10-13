@@ -20,7 +20,6 @@ import org.jfaster.mango.exception.UncheckedException;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * @author ash
@@ -42,8 +41,8 @@ public class Beans {
                     nestedPath.append(".");
                 }
                 nestedPath.append(propertyName);
-                Method method = BeanInfoCache.getReadMethod(object.getClass(), propertyName);
-                object = method.invoke(object, (Object[]) null);
+                GetterInvoker invoker = BeanInfoCache.getGetterInvoker(object.getClass(), propertyName);
+                object = invoker.invoke(object);
                 propertyPath = propertyPath.substring(pos + 1);
                 pos = propertyPath.indexOf('.');
                 t++;
@@ -51,8 +50,8 @@ public class Beans {
             if (object == null) {
                 throw new NullPointerException(getErrorMessage(nestedPath.toString(), rootClass));
             }
-            Method method = BeanInfoCache.getWriteMethod(object.getClass(), propertyPath);
-            method.invoke(object, value);
+            SetterInvoker invoker = BeanInfoCache.getSetterInvoker(object.getClass(), propertyPath);
+            invoker.invoke(object, value);
         } catch (InvocationTargetException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
         } catch (IllegalAccessException e) {
@@ -84,8 +83,8 @@ public class Beans {
                     nestedPath.append(".");
                 }
                 nestedPath.append(propertyName);
-                Method method = BeanInfoCache.getReadMethod(value.getClass(), propertyName);
-                value = method.invoke(value, (Object[]) null);
+                GetterInvoker invoker = BeanInfoCache.getGetterInvoker(value.getClass(), propertyName);
+                value = invoker.invoke(value);
                 propertyPath = propertyPath.substring(pos + 1);
                 pos = propertyPath.indexOf('.');
                 t++;
@@ -93,8 +92,8 @@ public class Beans {
             if (value == null) {
                 throw new NullPointerException(getErrorMessage(nestedPath.toString(), useForException));
             }
-            Method method = BeanInfoCache.getReadMethod(value.getClass(), propertyPath);
-            value = method.invoke(value, (Object[]) null);
+            GetterInvoker invoker = BeanInfoCache.getGetterInvoker(value.getClass(), propertyPath);
+            value = invoker.invoke(value);
             return value;
         } catch (InvocationTargetException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
