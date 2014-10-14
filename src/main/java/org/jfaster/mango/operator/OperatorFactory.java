@@ -62,7 +62,7 @@ public class OperatorFactory {
                     "but not found");
         }
         String sql = sqlAnno.value();
-        if (Strings.isNullOrEmpty(sql)) {
+        if (Strings.isEmpty(sql)) {
             throw new IncorrectSqlException("sql is null or empty");
         }
         ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
@@ -145,7 +145,7 @@ public class OperatorFactory {
         }
         String dataSourceName = dbAnno.dataSource();
         String globalTable = null;
-        if (!Strings.isNullOrEmpty(dbAnno.table())) {
+        if (!Strings.isEmpty(dbAnno.table())) {
             globalTable = dbAnno.table();
         }
         Class<? extends TablePartition> tpc = dbAnno.tablePartition();

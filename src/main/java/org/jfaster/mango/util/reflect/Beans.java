@@ -26,31 +26,17 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class Beans {
 
-    public static void setPropertyValue(Object object, String propertyPath, Object value) {
+    public static void setPropertyValue(Object object, String propertyName, @Nullable Object value) {
         try {
-            Class<?> rootClass = object.getClass();
-            int pos = propertyPath.indexOf('.');
-            StringBuffer nestedPath = new StringBuffer(propertyPath.length());
-            int t = 0;
-            while (pos > -1) {
-                if (object == null) {
-                    throw new NullPointerException(getErrorMessage(nestedPath.toString(), rootClass));
-                }
-                String propertyName = propertyPath.substring(0, pos);
-                if (t != 0) {
-                    nestedPath.append(".");
-                }
-                nestedPath.append(propertyName);
-                GetterInvoker invoker = BeanInfoCache.getGetterInvoker(object.getClass(), propertyName);
-                object = invoker.invoke(object);
-                propertyPath = propertyPath.substring(pos + 1);
-                pos = propertyPath.indexOf('.');
-                t++;
+            SetterInvoker invoker = BeanInfoCache.getSetterInvoker(object.getClass(), propertyName);
+            if (invoker == null) {
+                throw new NullPointerException("property " + propertyName + " of " +
+                        object.getClass() + " is not readable");
             }
-            if (object == null) {
-                throw new NullPointerException(getErrorMessage(nestedPath.toString(), rootClass));
+            if (value == null && invoker.getParameterRawType().isPrimitive()) {
+                throw new NullPointerException("property " + propertyName + " of " +
+                        object.getClass() + " is primitive, can not be assigned to null");
             }
-            SetterInvoker invoker = BeanInfoCache.getSetterInvoker(object.getClass(), propertyPath);
             invoker.invoke(object, value);
         } catch (InvocationTargetException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
@@ -59,16 +45,7 @@ public class Beans {
         }
     }
 
-    public static Object getPropertyValue(@Nullable Object object, String propertyPath, Object useForException) {
-        Object value = getNullablePropertyValue(object, propertyPath, useForException);
-        if (value == null) {
-            throw new NullPointerException(getErrorMessage(propertyPath, useForException));
-        }
-        return value;
-    }
-
-    @Nullable
-    public static Object getNullablePropertyValue(@Nullable Object object, String propertyPath, Object useForException) {
+    public static Result getPropertyValue(Object object, String propertyPath) {
         try {
             Object value = object;
             int pos = propertyPath.indexOf('.');
@@ -76,7 +53,7 @@ public class Beans {
             int t = 0;
             while (pos > -1) {
                 if (value == null) {
-                    throw new NullPointerException(getErrorMessage(nestedPath.toString(), useForException));
+                    return new Result(ErrorType.NULL, nestedPath.toString());
                 }
                 String propertyName = propertyPath.substring(0, pos);
                 if (t != 0) {
@@ -84,17 +61,23 @@ public class Beans {
                 }
                 nestedPath.append(propertyName);
                 GetterInvoker invoker = BeanInfoCache.getGetterInvoker(value.getClass(), propertyName);
+                if (invoker == null) {
+                    return new Result(ErrorType.NO_PROPERTY, nestedPath.toString());
+                }
                 value = invoker.invoke(value);
                 propertyPath = propertyPath.substring(pos + 1);
                 pos = propertyPath.indexOf('.');
                 t++;
             }
             if (value == null) {
-                throw new NullPointerException(getErrorMessage(nestedPath.toString(), useForException));
+                return new Result(ErrorType.NULL, nestedPath.toString());
             }
             GetterInvoker invoker = BeanInfoCache.getGetterInvoker(value.getClass(), propertyPath);
+            if (invoker == null) {
+                return new Result(ErrorType.NO_PROPERTY, nestedPath.append(".").append(propertyPath).toString());
+            }
             value = invoker.invoke(value);
-            return value;
+            return new Result(value);
         } catch (InvocationTargetException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
         } catch (IllegalAccessException e) {
@@ -102,21 +85,42 @@ public class Beans {
         }
     }
 
-    private static String getErrorMessage(String nestedPath, Object useForException) {
-        if (useForException instanceof String) {
-            String parameterName = (String) useForException;
-            if (nestedPath.isEmpty()) {
-                return "parameter ':" + parameterName + "' is null";
-            } else {
-                return "property ':" + parameterName + "." + nestedPath + "' is null";
-            }
-        } else if (useForException instanceof Class) {
-            Class<?> clazz = (Class<?>) useForException;
-            return "property " + nestedPath + " of " + clazz + " is null, please check return type";
-        } else {
-            throw new IllegalArgumentException("useForException's type expected Class or String but "
-                    + useForException.getClass());
+    public enum ErrorType {
+        NULL, NO_PROPERTY
+    }
+
+    public static class Result {
+
+        Object value;
+
+        ErrorType errorType;
+        String path;
+
+        public Result(Object value) {
+            this.value = value;
         }
+
+        public Result(ErrorType errorType, String path) {
+            this.errorType = errorType;
+            this.path = path;
+        }
+
+        public boolean isError() {
+            return errorType != null;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public ErrorType getErrorType() {
+            return errorType;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
     }
 
 }

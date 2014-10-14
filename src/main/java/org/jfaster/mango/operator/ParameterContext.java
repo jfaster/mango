@@ -19,6 +19,8 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
+import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.TypeWrapper;
 import org.jfaster.mango.util.reflect.Types;
@@ -53,7 +55,9 @@ public class ParameterContext {
             pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations()));
         }
         for (int i = 0; i < pds.size(); i++) {
-            addParameterDescriptor(nameProvider.getParameterName(i), pds.get(i));
+            ParameterDescriptor pd = pds.get(i);
+            parameterDescriptorMap.put(nameProvider.getParameterName(i), pd);
+            parameterDescriptors.add(pd);
         }
     }
 
@@ -68,20 +72,26 @@ public class ParameterContext {
             throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
         }
         Type parameterType = pd.getType();
-        Type type = !propertyPath.isEmpty() ?
-                Types.getPropertyType(parameterType, parameterName, propertyPath) :
-                parameterType;
+        Type type;
+        if (Strings.isEmpty(propertyPath)) {
+            type = parameterType;
+        } else {
+            Types.Result tr = Types.getPropertyType(parameterType, propertyPath);
+            if (tr.isError()) {
+                String fullName = Strings.getFullName(parameterName, tr.getPath());
+                String parentFullName = Strings.getFullName(parameterName, tr.getParentPath());
+                Type parentType = tr.getParentType();
+                throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
+                        "the type of " + parentFullName + " is " + parentType + ", please check it's get method");
+            }
+            type = tr.getType();
+        }
         cache.put(key, type);
         return type;
     }
 
     public List<ParameterDescriptor> getParameterDescriptors() {
         return parameterDescriptors;
-    }
-
-    private void addParameterDescriptor(String parameterName, ParameterDescriptor pd) {
-        parameterDescriptorMap.put(parameterName, pd);
-        parameterDescriptors.add(pd);
     }
 
     private String getCacheKey(String parameterName, String propertyPath) {

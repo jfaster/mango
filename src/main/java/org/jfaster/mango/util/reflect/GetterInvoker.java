@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
  */
 public interface GetterInvoker {
 
-    Object invoke(Object obj) throws IllegalAccessException, InvocationTargetException;
+    Object invoke(Object object) throws IllegalAccessException, InvocationTargetException;
 
     Type getReturnType();
 

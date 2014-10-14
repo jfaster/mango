@@ -23,6 +23,9 @@ import java.lang.reflect.InvocationTargetException;
  */
 public interface SetterInvoker {
 
-    void invoke(Object obj, Object arg) throws IllegalAccessException, InvocationTargetException;
+    void invoke(Object object, Object parameter) throws IllegalAccessException, InvocationTargetException;
+
+    Class<?> getParameterRawType();
+
 
 }

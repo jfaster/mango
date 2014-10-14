@@ -105,7 +105,12 @@ public class CacheableQueryOperator extends QueryOperator {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
                 // 添加入缓存
-                Object suffix = Beans.getPropertyValue(dbValue, interableProperty, mappedClass);
+                Beans.Result br = Beans.getPropertyValue(dbValue, interableProperty);
+                if (br.isError()) {
+                    throw new NullPointerException("property " + interableProperty + " of " +
+                            mappedClass + " is null, please check return type");
+                }
+                Object suffix = br.getValue();
                 String key = driver.getCacheKey(suffix);
                 driver.setToCache(key, dbValue);
             }

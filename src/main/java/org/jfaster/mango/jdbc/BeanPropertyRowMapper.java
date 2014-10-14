@@ -64,7 +64,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     }
 
     private String underscoreName(String name) {
-        if (Strings.isNullOrEmpty(name)) {
+        if (Strings.isEmpty(name)) {
             return "";
         }
         StringBuilder result = new StringBuilder();

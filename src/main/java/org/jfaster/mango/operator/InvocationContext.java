@@ -16,6 +16,9 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.exception.NotReadableParameterException;
+import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.reflect.Beans;
 
 import javax.annotation.Nullable;
@@ -44,16 +47,12 @@ public class InvocationContext {
     }
 
     public Object getPropertyValue(String parameterName, String propertyPath) {
-        String key = getCacheKey(parameterName, propertyPath);
-        Object cachedValue = cache.get(key);
-        if (cachedValue != null) { // 非null缓存命中，直接返回
-            return cachedValue;
+        Object value = getNullablePropertyValue(parameterName, propertyPath);
+        if (value == null) {
+            String fullName = Strings.getFullName(parameterName, propertyPath);
+            String key = Strings.isEmpty(propertyPath) ? "parameter" : "property";
+            throw new NullPointerException(key + " " + fullName + " need a non-null value");
         }
-        Object object = parameterMap.get(parameterName);
-        Object value = !propertyPath.isEmpty() ?
-                Beans.getPropertyValue(object, propertyPath, parameterName) :
-                object;
-        cache.put(key, value);
         return value;
     }
 
@@ -63,10 +62,37 @@ public class InvocationContext {
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);
         }
-        Object object = parameterMap.get(parameterName);
-        Object value = !propertyPath.isEmpty() ?
-                Beans.getNullablePropertyValue(object, propertyPath, parameterName) :
-                object;
+        if (!parameterMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
+            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
+        }
+        Object obj = parameterMap.get(parameterName);
+        Object value;
+        if (Strings.isEmpty(propertyPath)) {
+            value = obj;
+        } else {
+            if (obj == null) { // 传入参数为null，但需要取该参数上的属性
+                String fullName = Strings.getFullName(parameterName, propertyPath);
+                throw new NullPointerException("parameter :" + parameterName + " is null, " +
+                        "so can't get value from " + fullName);
+            }
+            Beans.Result br = Beans.getPropertyValue(obj, propertyPath);
+            if (br.isError()) {
+                Beans.ErrorType errorType = br.getErrorType();
+                String fullName = Strings.getFullName(parameterName, propertyPath);
+                String errorFullName = Strings.getFullName(parameterName, br.getPath());
+                switch (errorType) {
+                    case NO_PROPERTY:
+                        throw new NotReadablePropertyException("property " + errorFullName + " is not readable, " +
+                                "so can't get value from " + fullName);
+                    case NULL:
+                        throw new NullPointerException("property " + errorFullName + " is null, " +
+                                "so can't get value from " + fullName);
+                    default:
+                        throw new IllegalStateException();
+                }
+            }
+            value = br.getValue();
+        }
         cache.put(key, value);
         return value;
     }

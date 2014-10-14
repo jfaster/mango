@@ -92,7 +92,7 @@ public class JdkExceptionTest {
     @Test
     public void testIterableParameterNullWithCache() {
         thrown.expect(NullPointerException.class);
-        thrown.expectMessage("value of :1 can't be null");
+        thrown.expectMessage("parameter :1 need a non-null value");
         MsgCacheDao dao = mango.create(MsgCacheDao.class, new CacheHandlerImpl());
         dao.getMsgs(null);
     }

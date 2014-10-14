@@ -16,22 +16,15 @@
 
 package org.jfaster.mango.util.reflect;
 
-import org.jfaster.mango.exception.NotReadablePropertyException;
-import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.util.Strings;
-
-import java.lang.reflect.*;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
 public class Types {
 
-    public static Type getPropertyType(Type type, String parameterName, String propertyPath) {
-        if (Strings.isNullOrEmpty(propertyPath)) {
-            throw new UnreachableCodeException();
-        }
-
+    public static Result getPropertyType(Type type, String propertyPath) {
         int pos = propertyPath.indexOf('.');
         StringBuffer parentPath = new StringBuffer(propertyPath.length());
         while (pos > -1) {
@@ -47,31 +40,21 @@ public class Types {
                     continue;
                 }
             }
-
-            String parentFullName = getFullName(parameterName, parentPath.toString());
+            String parentPathStr = parentPath.toString();
             appendParentPath(parentPath, propertyName);
-            String fullName = getFullName(parameterName, parentPath.toString());
-            throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
-                    "the type of " + parentFullName + " is " + type + ", please check it's get method");
+            return new Result(parentPath.toString(), parentPathStr, type);
         }
-
         Class<?> clazz = getClassFromType(type);
         if (clazz != null) {
             GetterInvoker invoker = BeanInfoCache.getGetterInvoker(clazz, propertyPath);
             if (invoker != null) {
                 type = invoker.getReturnType();
-                return type;
+                return new Result(type);
             }
         }
-        String parentFullName = getFullName(parameterName, parentPath.toString());
+        String parentPathStr = parentPath.toString();
         appendParentPath(parentPath, propertyPath);
-        String fullName = getFullName(parameterName, parentPath.toString());
-        throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
-                "the type of " + parentFullName + " is " + type + ", please check it's get method");
-    }
-
-    static Class<?> getArrayClass(Class<?> componentType) {
-        return Array.newInstance(componentType, 0).getClass();
+        return new Result(parentPath.toString(), parentPathStr, type);
     }
 
     private static Class<?> getClassFromType(Type type) {
@@ -92,8 +75,45 @@ public class Types {
         }
     }
 
-    private static String getFullName(String parameterName, String propertyPath) {
-        return ":" + (!propertyPath.isEmpty() ? parameterName + "." + propertyPath : parameterName);
+    public static class Result {
+
+        Type type;
+
+        String path;
+
+        String parentPath;
+
+        Type parentType;
+
+        public Result(Type type) {
+            this.type = type;
+        }
+
+        public Result(String path, String parentPath, Type parentType) {
+            this.path = path;
+            this.parentPath = parentPath;
+            this.parentType = parentType;
+        }
+
+        public boolean isError() {
+            return type == null;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getParentPath() {
+            return parentPath;
+        }
+
+        public Type getParentType() {
+            return parentType;
+        }
     }
 
 }

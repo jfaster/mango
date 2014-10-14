@@ -82,7 +82,11 @@ public abstract class TypeToken<T> extends TypeCapture {
 
             @Override
             void visitGenericArrayType(GenericArrayType t) {
-                set.add(Types.getArrayClass(getRawType(t.getGenericComponentType())));
+                set.add(getArrayClass(getRawType(t.getGenericComponentType())));
+            }
+
+            private Class<?> getArrayClass(Class<?> componentType) {
+                return Array.newInstance(componentType, 0).getClass();
             }
 
         }.visit(type);

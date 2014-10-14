@@ -20,6 +20,7 @@ import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
 import org.jfaster.mango.util.concurrent.cache.LoadingCache;
 
+import javax.annotation.Nullable;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -33,10 +34,12 @@ import java.util.*;
  */
 public class BeanInfoCache {
 
+    @Nullable
     public static GetterInvoker getGetterInvoker(Class<?> clazz, String propertyName) {
         return cache.getUnchecked(clazz).getGetterInvoker(propertyName);
     }
 
+    @Nullable
     public static SetterInvoker getSetterInvoker(Class<?> clazz, String propertyName) {
         return cache.getUnchecked(clazz).getSetterInvoker(propertyName);
     }
@@ -99,8 +102,8 @@ public class BeanInfoCache {
 
             return new GetterInvoker() {
                 @Override
-                public Object invoke(Object obj) throws IllegalAccessException, InvocationTargetException {
-                    return method.invoke(obj);
+                public Object invoke(Object object) throws IllegalAccessException, InvocationTargetException {
+                    return method.invoke(object);
                 }
 
                 @Override
@@ -115,8 +118,14 @@ public class BeanInfoCache {
 
             return new SetterInvoker() {
                 @Override
-                public void invoke(Object obj, Object arg) throws IllegalAccessException, InvocationTargetException {
-                    method.invoke(obj, arg);
+                public void invoke(Object object, Object parameter)
+                        throws IllegalAccessException, InvocationTargetException {
+                    method.invoke(object, parameter);
+                }
+
+                @Override
+                public Class<?> getParameterRawType() {
+                    return method.getParameterTypes()[0];
                 }
             };
         }

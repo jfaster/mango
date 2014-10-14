@@ -21,8 +21,16 @@ package org.jfaster.mango.util;
  */
 public class Strings {
 
-    public static boolean isNullOrEmpty(String string) {
-        return string == null || string.length() == 0; // string.isEmpty() in Java 6
+    public static boolean isEmpty(String str) {
+        return str == null || str.length() == 0; // string.isEmpty() in Java 6
+    }
+
+    public static boolean isNotEmpty(String str) {
+        return !Strings.isEmpty(str);
+    }
+
+    public static String getFullName(String name, String path) {
+        return ":" + (Strings.isNotEmpty(path) ? name + "." + path : name);
     }
 
 }
