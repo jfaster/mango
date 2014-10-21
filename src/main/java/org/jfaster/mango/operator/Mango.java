@@ -21,6 +21,7 @@ import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
+import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
@@ -52,17 +53,20 @@ public class Mango {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
     private final DataSourceFactory dataSourceFactory;
+    private final JdbcOperations jdbcOperations;
     private final CacheHandler defaultCacheHandler;
-    private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
-    private final InterceptorChain queryInterceptorChain;
-    private final InterceptorChain updateInterceptorChain;
+
+    private final InterceptorChain queryInterceptorChain = new InterceptorChain();
+    private final InterceptorChain updateInterceptorChain = new InterceptorChain();
+    private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap =
+            new ConcurrentHashMap<Method, StatsCounter>();
 
     public Mango(DataSource dataSource) {
         this(new SimpleDataSourceFactory(dataSource));
     }
 
     public Mango(DataSourceFactory dataSourceFactory) {
-        this(dataSourceFactory, null);
+        this(dataSourceFactory, (CacheHandler) null);
     }
 
     public Mango(DataSource dataSource, CacheHandler defaultCacheHandler) {
@@ -71,11 +75,28 @@ public class Mango {
 
     public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
+        this.jdbcOperations = new JdbcTemplate();
         this.defaultCacheHandler = defaultCacheHandler;
-        this.statsCounterMap = new ConcurrentHashMap<Method, StatsCounter>();
-        this.queryInterceptorChain = new InterceptorChain();
-        this.updateInterceptorChain = new InterceptorChain();
     }
+
+    public Mango(DataSource dataSource, JdbcOperations jdbcOperations) {
+        this(new SimpleDataSourceFactory(dataSource), jdbcOperations);
+    }
+
+    public Mango(DataSourceFactory dataSourceFactory, JdbcOperations jdbcOperations) {
+        this(dataSourceFactory, jdbcOperations, null);
+    }
+
+    public Mango(DataSource dataSource, JdbcOperations jdbcOperations,  CacheHandler defaultCacheHandler) {
+        this(new SimpleDataSourceFactory(dataSource), jdbcOperations, defaultCacheHandler);
+    }
+
+    public Mango(DataSourceFactory dataSourceFactory, JdbcOperations jdbcOperations, CacheHandler defaultCacheHandler) {
+        this.dataSourceFactory = dataSourceFactory;
+        this.jdbcOperations = jdbcOperations;
+        this.defaultCacheHandler = defaultCacheHandler;
+    }
+
 
     /**
      * 创建代理DAO类
@@ -125,10 +146,12 @@ public class Mango {
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
+        private final JdbcOperations jdbcOperations;
         private final ConcurrentHashMap<Method,StatsCounter> statsCounterMap;
         private final OperatorFactory operatorFactory;
 
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
+            jdbcOperations = mango.jdbcOperations;
             statsCounterMap = mango.statsCounterMap;
             operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
                     mango.queryInterceptorChain, mango.updateInterceptorChain);
@@ -141,7 +164,7 @@ public class Mango {
                         long now = System.nanoTime();
                         MethodDescriptor md = Methods.getMethodDescriptor(method);
                         Operator operator = operatorFactory.getOperator(md);
-                        operator.setJdbcOperations(new JdbcTemplate());
+                        operator.setJdbcOperations(jdbcOperations);
                         operator.setStatsCounter(statsCounter);
                         statsCounter.recordInit(System.nanoTime() - now);
                         return operator;
