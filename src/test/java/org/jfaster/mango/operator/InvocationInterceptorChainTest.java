@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.support.model4table.User;
+import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.reflect.Parameter;
 import org.jfaster.mango.util.reflect.ParameterDescriptor;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -49,17 +50,18 @@ public class InvocationInterceptorChainTest {
         InterceptorChain ic = new InterceptorChain();
         ic.addInterceptor(new Interceptor() {
             @Override
-            public void intercept(PreparedSql preparedSql, List<Parameter> parameters) {
+            public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
                 assertThat(preparedSql.getSql(), equalTo(sql));
                 assertThat(preparedSql.getArgs(), equalTo(args));
                 assertThat((User) parameters.get(0).getValue(), equalTo(user));
+                assertThat(sqlType, equalTo(SQLType.SELECT));
             }
         });
         List<Annotation> empty = Collections.emptyList();
         TypeToken<User> t = new TypeToken<User>() {};
         ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty);
         List<ParameterDescriptor> pds = Arrays.asList(p);
-        InvocationInterceptorChain iic = new InvocationInterceptorChain(ic, pds);
+        InvocationInterceptorChain iic = new InvocationInterceptorChain(ic, pds, SQLType.SELECT);
 
         InvocationContextFactory f = new InvocationContextFactory(new NameProvider(pds));
         InvocationContext ctx = f.newInvocationContext(new Object[] {user});
