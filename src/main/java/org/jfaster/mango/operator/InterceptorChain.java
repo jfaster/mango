@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.reflect.Parameter;
 
 import java.util.LinkedList;
@@ -33,10 +34,10 @@ public class InterceptorChain {
         interceptors.add(interceptor);
     }
 
-    public void intercept(PreparedSql preparedSql, List<Parameter> parameters) {
+    public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
         if (getInterceptors() != null) {
             for (Interceptor interceptor : getInterceptors()) {
-                interceptor.intercept(preparedSql, parameters);
+                interceptor.intercept(preparedSql, parameters, sqlType);
             }
         }
     }

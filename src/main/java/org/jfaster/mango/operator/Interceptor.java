@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.reflect.Parameter;
 
 import java.util.List;
@@ -25,6 +26,6 @@ import java.util.List;
  */
 public interface Interceptor {
 
-    public void intercept(PreparedSql preparedSql, List<Parameter> parameters);
+    public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType);
 
 }

@@ -66,6 +66,7 @@ public class OperatorFactory {
             throw new IncorrectSqlException("sql is null or empty");
         }
         ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
+        SQLType sqlType = rootNode.getSQLType();
 
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
         Cache cacheAnno = md.getAnnotation(Cache.class);
@@ -74,7 +75,7 @@ public class OperatorFactory {
         Class<?> returnType = md.getRawReturnType();
         InvocationInterceptorChain chain;
         OperatorType operatorType;
-        if (rootNode.getSQLType() == SQLType.SELECT) { // 查
+        if (sqlType == SQLType.SELECT) { // 查
             operatorType = OperatorType.QUERY;
         } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
             operatorType = OperatorType.UPDATE;
@@ -126,9 +127,9 @@ public class OperatorFactory {
             }
         }
 
-        chain =  rootNode.getSQLType() == SQLType.SELECT ?
-                new InvocationInterceptorChain(queryInterceptorChain, context.getParameterDescriptors()) :
-                new InvocationInterceptorChain(updateInterceptorChain, context.getParameterDescriptors());
+        chain =  sqlType == SQLType.SELECT ?
+                new InvocationInterceptorChain(queryInterceptorChain, context.getParameterDescriptors(), sqlType) :
+                new InvocationInterceptorChain(updateInterceptorChain, context.getParameterDescriptors(), sqlType);
 
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);

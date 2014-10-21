@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.reflect.Parameter;
 import org.jfaster.mango.util.reflect.ParameterDescriptor;
 
@@ -31,10 +32,14 @@ public class InvocationInterceptorChain {
 
     private List<ParameterDescriptor> parameterDescriptors;
 
+    private SQLType sqlType;
+
     public InvocationInterceptorChain(InterceptorChain interceptorChain,
-                                      List<ParameterDescriptor> parameterDescriptors) {
+                                      List<ParameterDescriptor> parameterDescriptors,
+                                      SQLType sqlType) {
         this.interceptorChain = interceptorChain;
         this.parameterDescriptors = parameterDescriptors;
+        this.sqlType = sqlType;
     }
 
     public void intercept(PreparedSql preparedSql, InvocationContext context) {
@@ -45,7 +50,7 @@ public class InvocationInterceptorChain {
                 ParameterDescriptor pd = parameterDescriptors.get(i);
                 parameters.add(new Parameter(pd, parameterValues.get(i)));
             }
-            interceptorChain.intercept(preparedSql, parameters);
+            interceptorChain.intercept(preparedSql, parameters, sqlType);
         }
     }
 
