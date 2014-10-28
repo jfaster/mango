@@ -112,6 +112,11 @@ public class JdbcUtils {
             value = rs.getBlob(index);
         } else if (java.sql.Clob.class.equals(requiredType)) {
             value = rs.getClob(index);
+        } else if (java.math.BigInteger.class.equals(requiredType)) {
+            value = rs.getObject(index);
+            if (value != null && Long.class.equals(value.getClass())) {
+                value = java.math.BigInteger.valueOf((Long) value);
+            }
         } else {
             // Some unknown type desired -> rely on getObject.
             value = getResultSetValue(rs, index);
