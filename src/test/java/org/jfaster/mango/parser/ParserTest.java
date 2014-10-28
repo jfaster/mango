@@ -200,10 +200,21 @@ public class ParserTest {
         String sql = "select #if (:1 > 10) ok #end";
         ASTRootNode n = new Parser(sql).parse().init();
         InvocationContext context = new InvocationContext();
-        context.addParameter("1", 100);
+        context.addParameter("1", Long.MAX_VALUE);
         n.render(context);
         PreparedSql preparedSql = context.getPreparedSql();
         assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    }
+
+    @Test
+    public void testIntegerLiteral3() throws Exception {
+        String sql = "select #if (:1 > 9223372036854775800) ok #end";
+        ASTRootNode n = new Parser(sql).parse().init();
+        InvocationContext context = new InvocationContext();
+        context.addParameter("1", 100);
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
     }
 
 }
