@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -65,7 +65,10 @@ public class JdbcUtils {
         }
     }
 
-    public static Object getResultSetValue(ResultSet rs, int index, Class requiredType) throws SQLException {
+    public static Object getResultSetValue(ResultSet rs, int index, @Nullable Class requiredType) throws SQLException {
+        if (requiredType == null) {
+            return getResultSetValue(rs, index);
+        }
 
         Object value;
         boolean wasNullCheck = false;
@@ -110,7 +113,8 @@ public class JdbcUtils {
         } else if (java.sql.Clob.class.equals(requiredType)) {
             value = rs.getClob(index);
         } else {
-            throw new UnreachableCodeException();
+            // Some unknown type desired -> rely on getObject.
+            value = getResultSetValue(rs, index);
         }
 
         // Perform was-null check if demanded (for results that the
@@ -119,6 +123,36 @@ public class JdbcUtils {
             value = null;
         }
         return value;
+    }
+
+    public static Object getResultSetValue(ResultSet rs, int index) throws SQLException {
+        Object obj = rs.getObject(index);
+        String className = null;
+        if (obj != null) {
+            className = obj.getClass().getName();
+        }
+        if (obj instanceof Blob) {
+            obj = rs.getBytes(index);
+        } else if (obj instanceof Clob) {
+            obj = rs.getString(index);
+        } else if (className != null &&
+                ("oracle.sql.TIMESTAMP".equals(className) ||
+                        "oracle.sql.TIMESTAMPTZ".equals(className))) {
+            obj = rs.getTimestamp(index);
+        } else if (className != null && className.startsWith("oracle.sql.DATE")) {
+            String metaDataClassName = rs.getMetaData().getColumnClassName(index);
+            if ("java.sql.Timestamp".equals(metaDataClassName) ||
+                    "oracle.sql.TIMESTAMP".equals(metaDataClassName)) {
+                obj = rs.getTimestamp(index);
+            } else {
+                obj = rs.getDate(index);
+            }
+        } else if (obj != null && obj instanceof java.sql.Date) {
+            if ("java.sql.Timestamp".equals(rs.getMetaData().getColumnClassName(index))) {
+                obj = rs.getTimestamp(index);
+            }
+        }
+        return obj;
     }
 
     public static void setParameterValue(PreparedStatement ps, int index, Object value) throws SQLException {
@@ -136,6 +170,7 @@ public class JdbcUtils {
 
         // 特殊类型
         singleColumClassSet.add(java.math.BigDecimal.class);
+        singleColumClassSet.add(java.math.BigInteger.class);
         singleColumClassSet.add(java.util.Date.class);
 
         // jdbc中的类型
