@@ -25,7 +25,7 @@ import org.jfaster.mango.operator.InvocationContext;
  */
 public class ASTIntegerLiteral extends AbstractExpression {
 
-    private Integer value;
+    private Number value;
 
     public ASTIntegerLiteral(int i) {
         super(i);
@@ -33,6 +33,14 @@ public class ASTIntegerLiteral extends AbstractExpression {
 
     public ASTIntegerLiteral(Parser p, int i) {
         super(p, i);
+    }
+
+    public void init(String str) {
+        try {
+            value = new Integer(str);
+        } catch (NumberFormatException E1) {
+            value = new Long(str);
+        }
     }
 
     @Override
@@ -45,18 +53,13 @@ public class ASTIntegerLiteral extends AbstractExpression {
         return value;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
-    }
-
     @Override
     public String toString() {
         return super.toString() + "[" + value + "]";
     }
 
     @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data)
-    {
+    public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }
 

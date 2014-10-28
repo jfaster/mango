@@ -42,15 +42,15 @@ public class ASTJDBCParameter extends AbstractRenderableNode {
         super(p, i);
     }
 
-    public void init(String ss) {
+    public void init(String str) {
         Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
-        Matcher m = p.matcher(ss);
+        Matcher m = p.matcher(str);
         if (!m.matches()) {
             throw new UnreachableCodeException();
         }
-        fullName = ss;
+        fullName = str;
         parameterName = m.group(1);
-        propertyPath = ss.substring(m.end(1));
+        propertyPath = str.substring(m.end(1));
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
         }

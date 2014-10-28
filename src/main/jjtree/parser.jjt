@@ -312,7 +312,7 @@ void IntegerLiteral() :
 {
     t=<INTEGER_LITERAL>
     {
-        jjtThis.setValue(Integer.valueOf(t.image));
+        jjtThis.init(t.image);
     }
 }
 

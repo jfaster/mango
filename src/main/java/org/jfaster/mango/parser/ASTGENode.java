@@ -32,12 +32,12 @@ public class ASTGENode extends AbstractExpression {
     public boolean evaluate(InvocationContext context) {
         Object left = ((AbstractExpression) jjtGetChild(0)).value(context);
         Object right = ((AbstractExpression) jjtGetChild(1)).value(context);
-        if (!(left instanceof Integer)) {
-            throw new ClassCastException(left.getClass() + " cannot be cast to " + Integer.class);
-        } else if (!(right instanceof Integer)) {
-            throw new ClassCastException(right.getClass() + " cannot be cast to " + Integer.class);
+        if (!(left instanceof Number)) {
+            throw new ClassCastException(left.getClass() + " cannot be cast to " + Number.class);
+        } else if (!(right instanceof Number)) {
+            throw new ClassCastException(right.getClass() + " cannot be cast to " + Number.class);
         } else {
-            return MathUtils.compare((Integer) left, (Integer) right) >= 0;
+            return MathUtils.compare((Number) left, (Number) right) >= 0;
         }
     }
 

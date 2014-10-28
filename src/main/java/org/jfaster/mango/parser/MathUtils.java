@@ -21,8 +21,18 @@ package org.jfaster.mango.parser;
  */
 public class MathUtils {
 
-    public static int compare(int a, int b) {
-        return (a < b) ? -1 : ((a > b) ? 1 : 0);
+    public static int compare(Number op1, Number op2) {
+        checkInteger(op1);
+        checkInteger(op2);
+        long l1 = op1.longValue();
+        long l2 = op2.longValue();
+        return (l1 < l2) ? -1 : ((l1 > l2) ? 1 : 0);
+    }
+
+    private static void checkInteger(Number n) {
+        if (!Integer.class.equals(n.getClass()) && !Long.class.equals(n.getClass())) {
+            throw new ClassCastException(n.getClass() + " cannot be cast to " + Integer.class + " or " + Long.class);
+        }
     }
 
 }

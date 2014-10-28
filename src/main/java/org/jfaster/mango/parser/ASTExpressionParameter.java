@@ -42,6 +42,20 @@ public class ASTExpressionParameter extends AbstractExpression {
         super(p, i);
     }
 
+    public void init(String str) {
+        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
+        Matcher m = p.matcher(str);
+        if (!m.matches()) {
+            throw new UnreachableCodeException();
+        }
+        fullName = str;
+        parameterName = m.group(1);
+        propertyPath = str.substring(m.end(1));
+        if (!propertyPath.isEmpty()) {
+            propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
+        }
+    }
+
     @Override
     public boolean evaluate(InvocationContext context) {
         Object obj = context.getNullablePropertyValue(parameterName, propertyPath);
@@ -54,20 +68,6 @@ public class ASTExpressionParameter extends AbstractExpression {
     @Override
     public Object value(InvocationContext context) {
         return context.getNullablePropertyValue(parameterName, propertyPath);
-    }
-
-    public void init(String ss) {
-        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
-        Matcher m = p.matcher(ss);
-        if (!m.matches()) {
-            throw new UnreachableCodeException();
-        }
-        fullName = ss;
-        parameterName = m.group(1);
-        propertyPath = ss.substring(m.end(1));
-        if (!propertyPath.isEmpty()) {
-            propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
-        }
     }
 
     @Override

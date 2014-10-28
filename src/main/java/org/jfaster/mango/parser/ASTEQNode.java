@@ -32,10 +32,11 @@ public class ASTEQNode extends AbstractExpression {
     public boolean evaluate(InvocationContext context) {
         Object left = ((AbstractExpression) jjtGetChild(0)).value(context);
         Object right = ((AbstractExpression) jjtGetChild(1)).value(context);
-        if (left instanceof Integer && right instanceof Integer) {
-            return MathUtils.compare((Integer) left, (Integer) right) == 0;
+        if (left instanceof Number && right instanceof Number) {
+            return MathUtils.compare((Number) left, (Number) right) == 0;
         }
 
+        // 都不为null，一个是另一个的子类，则使用equals操作
         if (left != null && right != null &&
                 (left.getClass().isAssignableFrom(right.getClass()) ||
                         right.getClass().isAssignableFrom(left.getClass()))) {
@@ -45,11 +46,11 @@ public class ASTEQNode extends AbstractExpression {
         left = (left == null) ? null : left.toString();
         right = (right == null) ? null : right.toString();
 
-        if (left == null && right == null) {
+        if (left == null && right == null) { // 都为null
             return true;
-        } else if (left == null || right == null) {
+        } else if (left == null || right == null) { // 一个为null，一个不为null
             return false;
-        } else {
+        } else { // 都不为null
             return left.equals(right);
         }
     }
