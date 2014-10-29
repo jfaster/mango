@@ -17,7 +17,6 @@ public class DataSourceGenerator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceGenerator.class);
 
-
     private DataSourceFactory dataSourceFactory;
     private SQLType sqlType;
 
@@ -26,9 +25,15 @@ public class DataSourceGenerator {
     private String shardPropertyPath; // 为""的时候表示没有属性
     private DataSourceRouter dataSourceRouter; // 分表
 
-    public DataSourceGenerator(DataSourceFactory dataSourceFactory, SQLType sqlType) {
+    public DataSourceGenerator(DataSourceFactory dataSourceFactory, SQLType sqlType,
+                               String dataSourceName, String shardParameterName,
+                               String shardPropertyPath, DataSourceRouter dataSourceRouter) {
         this.dataSourceFactory = dataSourceFactory;
         this.sqlType = sqlType;
+        this.dataSourceName = dataSourceName;
+        this.shardParameterName = shardParameterName;
+        this.shardPropertyPath = shardPropertyPath;
+        this.dataSourceRouter = dataSourceRouter;
     }
 
     public DataSource getDataSource(InvocationContext context) {
@@ -52,22 +57,6 @@ public class DataSourceGenerator {
                 dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardPropertyPath)) :
                 dataSourceName;
         return realDataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
-
-    public void setShardParameterName(String shardParameterName) {
-        this.shardParameterName = shardParameterName;
-    }
-
-    public void setShardPropertyPath(String shardPropertyPath) {
-        this.shardPropertyPath = shardPropertyPath;
-    }
-
-    public void setDataSourceRouter(DataSourceRouter dataSourceRouter) {
-        this.dataSourceRouter = dataSourceRouter;
     }
 
 }

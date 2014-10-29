@@ -35,7 +35,7 @@ public class ASTGlobalTable extends AbstractRenderableNode {
     public boolean render(InvocationContext context) {
         String table = context.getGlobalTable();
         if (table == null) {
-            throw new IllegalStateException(""); // TODO
+            throw new IllegalStateException("global table in InvocationContext can't be null");
         }
         context.writeToSqlBuffer(table);
         return true;

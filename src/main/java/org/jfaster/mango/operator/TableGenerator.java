@@ -12,7 +12,12 @@ public class TableGenerator {
     private String shardPropertyPath; // 为""的时候表示没有属性
     private TablePartition tablePartition; // 分表
 
-    public TableGenerator() {
+    public TableGenerator(String table, String shardParameterName,
+                          String shardPropertyPath, TablePartition tablePartition) {
+        this.table = table;
+        this.shardParameterName = shardParameterName;
+        this.shardPropertyPath = shardPropertyPath;
+        this.tablePartition = tablePartition;
     }
 
     public String getTable(InvocationContext context) {
@@ -28,22 +33,6 @@ public class TableGenerator {
 
     boolean needTablePartition() {
         return tablePartition != null && shardParameterName != null && shardPropertyPath != null;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public void setShardParameterName(String shardParameterName) {
-        this.shardParameterName = shardParameterName;
-    }
-
-    public void setShardPropertyPath(String shardPropertyPath) {
-        this.shardPropertyPath = shardPropertyPath;
-    }
-
-    public void setTablePartition(TablePartition tablePartition) {
-        this.tablePartition = tablePartition;
     }
 
 }

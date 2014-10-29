@@ -91,9 +91,11 @@ public class OperatorFactory {
         NameProvider nameProvider = new NameProvider(md.getParameterDescriptors());
         ParameterContext context = new ParameterContext(md.getParameterDescriptors(), nameProvider, operatorType);
         rootNode.checkType(context);
-        TableGenerator tableGenerator = new TableGenerator();
-        DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType());
-        fill(md, tableGenerator, dataSourceGenerator, nameProvider, context);
+        DbInfo dbInfo = getDbInfo(md, nameProvider, context);
+        TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
+                dbInfo.shardPropertyPath, dbInfo.tablePartition);
+        DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType(),
+               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardPropertyPath, dbInfo.dataSourceRouter);
 
         Operator operator;
         if (useCache) {
@@ -109,7 +111,7 @@ public class OperatorFactory {
                     operator = new CacheableBatchUpdateOperator(rootNode, driver);
                     break;
                 default:
-                    throw new IllegalStateException(); // TODO
+                    throw new IllegalStateException();
             }
         } else {
             switch (operatorType) {
@@ -123,7 +125,7 @@ public class OperatorFactory {
                     operator = new BatchUpdateOperator(rootNode);
                     break;
                 default:
-                    throw new IllegalStateException(); // TODO
+                    throw new IllegalStateException();
             }
         }
 
@@ -138,8 +140,7 @@ public class OperatorFactory {
         return operator;
     }
 
-    void fill(MethodDescriptor md, TableGenerator tableGenerator, DataSourceGenerator dataSourceGenerator,
-              NameProvider nameProvider, ParameterContext context) {
+    DbInfo getDbInfo(MethodDescriptor md, NameProvider nameProvider, ParameterContext context) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IncorrectAnnotationException("need @DB on dao interface");
@@ -200,15 +201,27 @@ public class OperatorFactory {
             }
         }
 
-        tableGenerator.setTable(globalTable);
-        tableGenerator.setShardParameterName(shardParameterName);
-        tableGenerator.setShardPropertyPath(shardPropertyPath);
-        tableGenerator.setTablePartition(tablePartition);
+        return new DbInfo(shardParameterName, shardPropertyPath, globalTable,
+                dataSourceName, tablePartition, dataSourceRouter);
+    }
 
-        dataSourceGenerator.setDataSourceName(dataSourceName);
-        dataSourceGenerator.setShardParameterName(shardParameterName);
-        dataSourceGenerator.setShardPropertyPath(shardPropertyPath);
-        dataSourceGenerator.setDataSourceRouter(dataSourceRouter);
+    static class DbInfo {
+        String shardParameterName;
+        String shardPropertyPath;
+        String globalTable;
+        String dataSourceName;
+        TablePartition tablePartition;
+        DataSourceRouter dataSourceRouter;
+
+        DbInfo(String shardParameterName, String shardPropertyPath, String globalTable,
+               String dataSourceName, TablePartition tablePartition, DataSourceRouter dataSourceRouter) {
+            this.shardParameterName = shardParameterName;
+            this.shardPropertyPath = shardPropertyPath;
+            this.globalTable = globalTable;
+            this.dataSourceName = dataSourceName;
+            this.tablePartition = tablePartition;
+            this.dataSourceRouter = dataSourceRouter;
+        }
     }
 
 }
