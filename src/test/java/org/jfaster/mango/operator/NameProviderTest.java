@@ -17,8 +17,8 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.support.MockRename;
-import org.jfaster.mango.util.reflect.ParameterDescriptor;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
@@ -50,7 +50,7 @@ public class NameProviderTest {
             if (name != null) {
                 annos.add(new MockRename(name));
             }
-            pds.add(new ParameterDescriptor(i, token.getType(), token.getRawType(), annos));
+            pds.add(new ParameterDescriptor(i, token.getType(), token.getRawType(), annos, String.valueOf(i + 1)));
         }
 
         NameProvider np = new NameProvider(pds);

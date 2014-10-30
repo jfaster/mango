@@ -14,7 +14,17 @@
  * under the License.
  */
 
+package org.jfaster.mango.reflect;
+
+import java.lang.reflect.Method;
+
 /**
- * 反射
+ * 参数名探测器
+ *
+ * @author ash
  */
-package org.jfaster.mango.util.reflect;
+public interface ParameterNameDiscover {
+
+    String[] getParameterNames(Method method);
+
+}

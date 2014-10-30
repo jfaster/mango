@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.reflect;
+package org.jfaster.mango.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

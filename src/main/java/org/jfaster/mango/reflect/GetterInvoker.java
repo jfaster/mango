@@ -14,18 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.reflect;
+package org.jfaster.mango.reflect;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public interface SetterInvoker {
+public interface GetterInvoker {
 
-    void invoke(Object object, Object parameter) throws IllegalAccessException, InvocationTargetException;
+    Object invoke(Object object) throws IllegalAccessException, InvocationTargetException;
 
-    Class<?> getParameterRawType();
-
+    Type getReturnType();
 
 }

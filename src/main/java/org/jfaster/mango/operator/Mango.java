@@ -23,16 +23,13 @@ import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
+import org.jfaster.mango.reflect.*;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
 import org.jfaster.mango.util.concurrent.cache.LoadingCache;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.util.reflect.AbstractInvocationHandler;
-import org.jfaster.mango.util.reflect.MethodDescriptor;
-import org.jfaster.mango.util.reflect.Methods;
-import org.jfaster.mango.util.reflect.Reflection;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -55,6 +52,8 @@ public class Mango {
     private final DataSourceFactory dataSourceFactory;
     private final JdbcOperations jdbcOperations;
     private final CacheHandler defaultCacheHandler;
+
+    private ParameterNameDiscover parameterNameDiscover = new SerialNumberParameterNameDiscover();
 
     private final InterceptorChain queryInterceptorChain = new InterceptorChain();
     private final InterceptorChain updateInterceptorChain = new InterceptorChain();
@@ -149,12 +148,14 @@ public class Mango {
         private final JdbcOperations jdbcOperations;
         private final ConcurrentHashMap<Method,StatsCounter> statsCounterMap;
         private final OperatorFactory operatorFactory;
+        private final ParameterNameDiscover parameterNameDiscover;
 
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
             jdbcOperations = mango.jdbcOperations;
             statsCounterMap = mango.statsCounterMap;
             operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
                     mango.queryInterceptorChain, mango.updateInterceptorChain);
+            parameterNameDiscover = mango.parameterNameDiscover;
         }
 
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
@@ -162,7 +163,7 @@ public class Mango {
                     public Operator load(Method method) throws Exception {
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
-                        MethodDescriptor md = Methods.getMethodDescriptor(method);
+                        MethodDescriptor md = Methods.getMethodDescriptor(method, parameterNameDiscover);
                         Operator operator = operatorFactory.getOperator(md);
                         operator.setJdbcOperations(jdbcOperations);
                         operator.setStatsCounter(statsCounter);
@@ -196,6 +197,14 @@ public class Mango {
             return statsCounter;
         }
 
+    }
+
+    public ParameterNameDiscover getParameterNameDiscover() {
+        return parameterNameDiscover;
+    }
+
+    public void setParameterNameDiscover(ParameterNameDiscover parameterNameDiscover) {
+        this.parameterNameDiscover = parameterNameDiscover;
     }
 
 }

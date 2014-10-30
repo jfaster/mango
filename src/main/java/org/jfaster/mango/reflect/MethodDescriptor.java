@@ -14,24 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.reflect;
+package org.jfaster.mango.reflect;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author ash
  */
-public class Parameter {
+public class MethodDescriptor {
 
-    private final ParameterDescriptor descriptor;
-    private final Object value;
+    private final Type returnType;
+    private final Class<?> rawReturnType;
+    private final List<Annotation> annotations;
+    private final List<ParameterDescriptor> parameterDescriptors;
 
-    public Parameter(ParameterDescriptor descriptor, Object value) {
-        this.descriptor = descriptor;
-        this.value = value;
+    public MethodDescriptor(Type returnType, Class<?> rawReturnType, List<Annotation> annotations,
+                            List<ParameterDescriptor> parameterDescriptors) {
+        this.returnType = returnType;
+        this.rawReturnType = rawReturnType;
+        this.annotations = Collections.unmodifiableList(annotations);
+        this.parameterDescriptors = Collections.unmodifiableList(parameterDescriptors);
     }
 
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
@@ -48,20 +54,20 @@ public class Parameter {
         return null;
     }
 
-    public Object getValue() {
-        return value;
+    public Type getReturnType() {
+        return returnType;
     }
 
-    public Type getType() {
-        return descriptor.getType();
-    }
-
-    public Class<?> getRawType() {
-        return descriptor.getRawType();
+    public Class<?> getRawReturnType() {
+        return rawReturnType;
     }
 
     public List<Annotation> getAnnotations() {
-        return descriptor.getAnnotations();
+        return annotations;
+    }
+
+    public List<ParameterDescriptor> getParameterDescriptors() {
+        return parameterDescriptors;
     }
 
 }

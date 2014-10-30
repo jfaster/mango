@@ -28,10 +28,10 @@ import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.util.reflect.MethodDescriptor;
-import org.jfaster.mango.util.reflect.ParameterDescriptor;
-import org.jfaster.mango.util.reflect.Reflection;
-import org.jfaster.mango.util.reflect.TypeWrapper;
+import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.reflect.TypeWrapper;
 
 import java.lang.reflect.Type;
 

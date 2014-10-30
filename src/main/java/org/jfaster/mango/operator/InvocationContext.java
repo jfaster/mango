@@ -19,7 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.util.reflect.Beans;
+import org.jfaster.mango.reflect.Beans;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

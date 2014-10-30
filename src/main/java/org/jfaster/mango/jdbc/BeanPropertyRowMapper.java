@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.util.reflect.Beans;
+import org.jfaster.mango.reflect.Beans;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.util.reflect.BeanInfoCache;
-import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.reflect.BeanInfoCache;
+import org.jfaster.mango.reflect.Reflection;
 
 import java.beans.PropertyDescriptor;
 import java.sql.ResultSet;

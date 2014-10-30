@@ -20,9 +20,9 @@ import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
-import org.jfaster.mango.util.reflect.MethodDescriptor;
-import org.jfaster.mango.util.reflect.ParameterDescriptor;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -173,7 +173,7 @@ public class UpdateOperatorTest {
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
         List<Annotation> empty = Collections.emptyList();
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), empty);
+        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
@@ -191,7 +191,7 @@ public class UpdateOperatorTest {
 
     private Operator getOperatorReturnGeneratedId(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
         List<Annotation> empty = Collections.emptyList();
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), empty);
+        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.reflect;
+package org.jfaster.mango.reflect;
 
 import org.jfaster.mango.util.Objects;
 
@@ -33,12 +33,14 @@ public class ParameterDescriptor {
     private final Type type;
     private final Class<?> rawType;
     private final List<Annotation> annotations;
+    private final String name;
 
-    public ParameterDescriptor(int position, Type type, Class<?> rawType, List<Annotation> annotations) {
+    public ParameterDescriptor(int position, Type type, Class<?> rawType, List<Annotation> annotations, String name) {
         this.position = position;
         this.type = type;
         this.rawType = rawType;
         this.annotations = Collections.unmodifiableList(annotations);
+        this.name = name;
     }
 
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
@@ -69,6 +71,10 @@ public class ParameterDescriptor {
 
     public List<Annotation> getAnnotations() {
         return annotations;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

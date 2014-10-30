@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Rename;
-import org.jfaster.mango.util.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.ParameterDescriptor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,15 +36,21 @@ public class NameProvider {
     public NameProvider(List<ParameterDescriptor> pds) {
         for (ParameterDescriptor pd : pds) {
             Rename renameAnno = pd.getAnnotation(Rename.class);
-            if (renameAnno != null) {
-                names.put(pd.getPosition(), renameAnno.value());
+            int position = pd.getPosition();
+            if (renameAnno != null) { // 优先使用注解中的名字
+                names.put(position, renameAnno.value());
+            } else {
+                names.put(position, pd.getName());
             }
         }
     }
 
-    public String getParameterName(int index) {
-        String name = names.get(index);
-        return name != null ? name : String.valueOf(index + 1);
+    public String getParameterName(int position) {
+        String name = names.get(position);
+        if (name == null) {
+            throw new IllegalStateException("parameter name can not be found by position [" + position + "]");
+        }
+        return name;
     }
 
 }

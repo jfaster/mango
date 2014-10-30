@@ -14,18 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.reflect.Parameter;
-
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author ash
  */
-public interface Interceptor {
+public interface SetterInvoker {
 
-    public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType);
+    void invoke(Object object, Object parameter) throws IllegalAccessException, InvocationTargetException;
+
+    Class<?> getParameterRawType();
+
 
 }

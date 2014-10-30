@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.reflect;
+package org.jfaster.mango.reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -28,7 +28,9 @@ import java.util.List;
  */
 public class Methods {
 
-    public static MethodDescriptor getMethodDescriptor(Method method) {
+    public static MethodDescriptor getMethodDescriptor(
+            Method method, ParameterNameDiscover parameterNameDiscover) {
+
         Type returnType = method.getGenericReturnType();
         Class<?> rawReturnType = method.getReturnType();
         List<Annotation> mas = new LinkedList<Annotation>();
@@ -43,11 +45,13 @@ public class Methods {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        String[] names = parameterNameDiscover.getParameterNames(method);
         for (int i = 0; i < genericParameterTypes.length; i++) {
             Class<?> rawType = parameterTypes[i];
             Type type = genericParameterTypes[i];
             Annotation[] pas = parameterAnnotations[i];
-            pds.add(new ParameterDescriptor(i, type, rawType, Arrays.asList(pas)));
+            String name = names[i];
+            pds.add(new ParameterDescriptor(i, type, rawType, Arrays.asList(pas), name));
         }
 
         return new MethodDescriptor(returnType, rawReturnType, mas, pds);

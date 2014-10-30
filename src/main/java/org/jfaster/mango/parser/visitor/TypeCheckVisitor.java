@@ -20,7 +20,7 @@ import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.operator.ParameterContext;
 import org.jfaster.mango.parser.*;
-import org.jfaster.mango.util.reflect.TypeWrapper;
+import org.jfaster.mango.reflect.TypeWrapper;
 
 import java.lang.reflect.Type;
 

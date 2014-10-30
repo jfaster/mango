@@ -14,18 +14,24 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.reflect.Parameter;
-
-import java.util.List;
+import java.lang.reflect.Method;
 
 /**
+ * 根据参数序号定义参数名字
+ *
  * @author ash
  */
-public interface Interceptor {
+public class SerialNumberParameterNameDiscover implements ParameterNameDiscover {
 
-    public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType);
+    @Override
+    public String[] getParameterNames(Method method) {
+        String[] names = new String[method.getGenericParameterTypes().length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = String.valueOf(i + 1);
+        }
+        return names;
+    }
 
 }

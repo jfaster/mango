@@ -21,7 +21,7 @@ import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.util.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.MethodDescriptor;
 
 import javax.sql.DataSource;
 

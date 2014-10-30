@@ -21,9 +21,9 @@ import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.util.reflect.ParameterDescriptor;
-import org.jfaster.mango.util.reflect.TypeWrapper;
-import org.jfaster.mango.util.reflect.Types;
+import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeWrapper;
+import org.jfaster.mango.reflect.Types;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -52,7 +52,7 @@ public class ParameterContext {
                         "but " + pd.getType()); // 批量更新的参数必须可迭代
             }
             pds = new ArrayList<ParameterDescriptor>(1);
-            pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations()));
+            pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations(), pd.getName()));
         }
         for (int i = 0; i < pds.size(); i++) {
             ParameterDescriptor pd = pds.get(i);

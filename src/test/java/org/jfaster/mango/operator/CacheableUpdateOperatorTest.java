@@ -21,9 +21,9 @@ import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
-import org.jfaster.mango.util.reflect.MethodDescriptor;
-import org.jfaster.mango.util.reflect.ParameterDescriptor;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -109,7 +109,7 @@ public class CacheableUpdateOperatorTest {
                                  CacheHandler ch, MockCacheBy cacheBy) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
         pAnnos.add(cacheBy);
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), pAnnos);
+        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), pAnnos, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();

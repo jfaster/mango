@@ -17,8 +17,8 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.util.reflect.Parameter;
-import org.jfaster.mango.util.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.Parameter;
+import org.jfaster.mango.reflect.ParameterDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
