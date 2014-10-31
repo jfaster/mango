@@ -24,7 +24,9 @@ import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -37,7 +39,7 @@ public class ParameterExpandVisitorTest {
 
     @Test
     public void testVisitJDBCParameter() throws Exception {
-        String sql = "select * from user where id=:id";
+        String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";
         ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
 
         List<Annotation> empty = Collections.emptyList();
@@ -48,23 +50,30 @@ public class ParameterExpandVisitorTest {
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
 
         rootNode.expandParameter(ctx);
-        rootNode.dump("");
+        rootNode.dump(""); // TODO 返回值监测
 
     }
 
-    @Test
-    public void testVisitJDBCIterableParameter() throws Exception {
-
-    }
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void testVisitJoinParameter() throws Exception {
+    public void testVisitJDBCParameter2() throws Exception {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("parameters [1, 2] has the same property 'id', so can't expand");
 
-    }
+        String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";
+        ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
 
-    @Test
-    public void testVisitExpressionParameter() throws Exception {
-
+        List<Annotation> empty = Collections.emptyList();
+        TypeToken<User> t = new TypeToken<User>() {};
+        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty, "1");
+        TypeToken<User2> t2 = new TypeToken<User2>() {};
+        ParameterDescriptor p2 = new ParameterDescriptor(1, t2.getType(), t2.getRawType(), empty, "2");
+        List<ParameterDescriptor> pds = Lists.newArrayList(p, p2);
+        NameProvider np = new NameProvider(pds);
+        ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
+        rootNode.expandParameter(ctx);
     }
 
     static class User {
@@ -78,5 +87,19 @@ public class ParameterExpandVisitorTest {
             this.id = id;
         }
     }
+
+    static class User2 {
+        private int id;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+    }
+
+
 
 }

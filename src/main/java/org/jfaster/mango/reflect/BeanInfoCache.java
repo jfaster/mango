@@ -68,15 +68,17 @@ public class BeanInfoCache {
 
             java.beans.BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
             for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-                pds.add(pd);
-                String name = pd.getName();
-                Method readMethod = pd.getReadMethod();
-                if (readMethod != null) {
-                    gim.put(name, createGetterInvoker(readMethod));
-                }
-                Method writeMethod = pd.getWriteMethod();
-                if (writeMethod != null) {
-                    sim.put(name, createSetterInvoker(writeMethod));
+                if (!Class.class.equals(pd.getPropertyType())) {
+                    pds.add(pd);
+                    String name = pd.getName();
+                    Method readMethod = pd.getReadMethod();
+                    if (readMethod != null) {
+                        gim.put(name, createGetterInvoker(readMethod));
+                    }
+                    Method writeMethod = pd.getWriteMethod();
+                    if (writeMethod != null) {
+                        sim.put(name, createSetterInvoker(writeMethod));
+                    }
                 }
             }
 

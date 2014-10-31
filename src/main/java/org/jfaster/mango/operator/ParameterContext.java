@@ -20,6 +20,7 @@ import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.BeanInfoCache;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.reflect.ParameterDescriptor;
@@ -36,19 +37,19 @@ import java.util.*;
  */
 public class ParameterContext {
 
+    private final List<ParameterDescriptor> parameterDescriptors;
     private final Map<String, Type> typeMap = new HashMap<String, Type>();
-    private final Map<String, String> propertyMap = new HashMap<String, String>();
-    private final List<ParameterDescriptor> parameterDescriptors = new LinkedList<ParameterDescriptor>();
+    private final Map<String, List<String>> propertyMap = new HashMap<String, List<String>>();
     private final Map<String, Type> cache = new HashMap<String, Type>();
 
-    public ParameterContext(List<ParameterDescriptor> pds,
+    public ParameterContext(List<ParameterDescriptor> parameterDescriptors,
                             NameProvider nameProvider, OperatorType operatorType) {
         if (operatorType == OperatorType.BATCHUPDATYPE) {
-            if (pds.size() != 1) {
+            if (parameterDescriptors.size() != 1) {
                 throw new IncorrectParameterCountException("batch update expected one and " +
-                        "only one parameter but " + pds.size()); // 批量更新只能有一个参数
+                        "only one parameter but " + parameterDescriptors.size()); // 批量更新只能有一个参数
             }
-            ParameterDescriptor pd = pds.get(0);
+            ParameterDescriptor pd = parameterDescriptors.get(0);
             TypeWrapper tw = new TypeWrapper(pd.getType());
             Class<?> mappedClass = tw.getMappedClass();
             if (mappedClass == null || !tw.isIterable()) {
@@ -56,21 +57,32 @@ public class ParameterContext {
                         "implementations of java.util.List or implementations of java.util.Set " +
                         "but " + pd.getType()); // 批量更新的参数必须可迭代
             }
-            pds = new ArrayList<ParameterDescriptor>(1);
-            pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations(), pd.getName()));
+            parameterDescriptors = new ArrayList<ParameterDescriptor>(1);
+            parameterDescriptors.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations(), pd.getName()));
         }
-        for (int i = 0; i < pds.size(); i++) {
-            ParameterDescriptor parameterDescriptor = pds.get(i);
+        this.parameterDescriptors = parameterDescriptors;
+        for (int i = 0; i < parameterDescriptors.size(); i++) {
+            ParameterDescriptor parameterDescriptor = parameterDescriptors.get(i);
             String parameterName = nameProvider.getParameterName(i);
             typeMap.put(parameterName, parameterDescriptor.getType());
-            parameterDescriptors.add(parameterDescriptor);
 
-            List<PropertyDescriptor> propertyDescriptors =
-                    BeanInfoCache.getPropertyDescriptors(parameterDescriptor.getRawType());
-
-            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-                propertyMap.put(propertyDescriptor.getName(), parameterName);
+            Class<?> parameterRawType = parameterDescriptor.getRawType();
+            TypeWrapper tw = new TypeWrapper(parameterDescriptor.getType());
+            if (!JdbcUtils.isSingleColumnClass(parameterRawType) // 方法参数不是单列
+                    && !tw.isIterable()) { // 方法参数不可迭代
+                List<PropertyDescriptor> propertyDescriptors =
+                        BeanInfoCache.getPropertyDescriptors(parameterRawType);
+                for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                    String propertyName = propertyDescriptor.getName();
+                    List<String> oldParameterNames = propertyMap.get(propertyName);
+                    if (oldParameterNames == null) {
+                        oldParameterNames = new ArrayList<String>();
+                        propertyMap.put(propertyName, oldParameterNames);
+                    }
+                    oldParameterNames.add(parameterName);
+                }
             }
+
         }
     }
 
@@ -101,7 +113,15 @@ public class ParameterContext {
 
     @Nullable
     public String getParameterNameBySubPropertyName(String propertyName) {
-        return propertyMap.get(propertyName);
+        List<String> parameterNames = propertyMap.get(propertyName);
+        if (parameterNames == null) {
+            return null;
+        }
+        if (parameterNames.size() != 1) {
+            throw new IllegalArgumentException("parameters " + parameterNames +
+                    " has the same property '" + propertyName + "', so can't expand");
+        }
+        return parameterNames.get(0);
     }
 
     public List<ParameterDescriptor> getParameterDescriptors() {
