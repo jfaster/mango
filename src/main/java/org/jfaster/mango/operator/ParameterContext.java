@@ -20,11 +20,14 @@ import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.reflect.BeanInfoCache;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeWrapper;
 import org.jfaster.mango.reflect.Types;
 
+import javax.annotation.Nullable;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -33,11 +36,13 @@ import java.util.*;
  */
 public class ParameterContext {
 
-    private final Map<String, ParameterDescriptor> parameterDescriptorMap = new HashMap<String, ParameterDescriptor>();
+    private final Map<String, Type> typeMap = new HashMap<String, Type>();
+    private final Map<String, String> propertyMap = new HashMap<String, String>();
     private final List<ParameterDescriptor> parameterDescriptors = new LinkedList<ParameterDescriptor>();
     private final Map<String, Type> cache = new HashMap<String, Type>();
 
-    public ParameterContext(List<ParameterDescriptor> pds, NameProvider nameProvider, OperatorType operatorType) {
+    public ParameterContext(List<ParameterDescriptor> pds,
+                            NameProvider nameProvider, OperatorType operatorType) {
         if (operatorType == OperatorType.BATCHUPDATYPE) {
             if (pds.size() != 1) {
                 throw new IncorrectParameterCountException("batch update expected one and " +
@@ -55,9 +60,17 @@ public class ParameterContext {
             pds.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations(), pd.getName()));
         }
         for (int i = 0; i < pds.size(); i++) {
-            ParameterDescriptor pd = pds.get(i);
-            parameterDescriptorMap.put(nameProvider.getParameterName(i), pd);
-            parameterDescriptors.add(pd);
+            ParameterDescriptor parameterDescriptor = pds.get(i);
+            String parameterName = nameProvider.getParameterName(i);
+            typeMap.put(parameterName, parameterDescriptor.getType());
+            parameterDescriptors.add(parameterDescriptor);
+
+            List<PropertyDescriptor> propertyDescriptors =
+                    BeanInfoCache.getPropertyDescriptors(parameterDescriptor.getRawType());
+
+            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                propertyMap.put(propertyDescriptor.getName(), parameterName);
+            }
         }
     }
 
@@ -67,16 +80,12 @@ public class ParameterContext {
         if (cachedType != null) { // 缓存命中，直接返回
             return cachedType;
         }
-        ParameterDescriptor pd = parameterDescriptorMap.get(parameterName);
-        if (pd == null ) {
+        Type type = typeMap.get(parameterName);
+        if (type == null ) {
             throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
         }
-        Type parameterType = pd.getType();
-        Type type;
-        if (Strings.isEmpty(propertyPath)) {
-            type = parameterType;
-        } else {
-            Types.Result tr = Types.getPropertyType(parameterType, propertyPath);
+        if (Strings.isNotEmpty(propertyPath)) {
+            Types.Result tr = Types.getPropertyType(type, propertyPath);
             if (tr.isError()) {
                 String fullName = Strings.getFullName(parameterName, tr.getPath());
                 String parentFullName = Strings.getFullName(parameterName, tr.getParentPath());
@@ -88,6 +97,11 @@ public class ParameterContext {
         }
         cache.put(key, type);
         return type;
+    }
+
+    @Nullable
+    public String getParameterNameBySubPropertyName(String propertyName) {
+        return propertyMap.get(propertyName);
     }
 
     public List<ParameterDescriptor> getParameterDescriptors() {

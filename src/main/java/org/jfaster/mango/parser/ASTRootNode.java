@@ -2,10 +2,7 @@ package org.jfaster.mango.parser;
 
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.ParameterContext;
-import org.jfaster.mango.parser.visitor.InterablePropertyCollectVisitor;
-import org.jfaster.mango.parser.visitor.NodeCollectVisitor;
-import org.jfaster.mango.parser.visitor.TextBlankJoinVisitor;
-import org.jfaster.mango.parser.visitor.TypeCheckVisitor;
+import org.jfaster.mango.parser.visitor.*;
 import org.jfaster.mango.util.SQLType;
 
 import java.util.List;
@@ -50,6 +47,13 @@ public class ASTRootNode extends AbstractRenderableNode {
             throw new IllegalStateException();
         }
         return sqlType;
+    }
+
+    /**
+     * 扩展简化的参数节点
+     */
+    public void expandParameter(ParameterContext context) {
+        getBlock().jjtAccept(new ParameterExpandVisitor(), context);
     }
 
     /**

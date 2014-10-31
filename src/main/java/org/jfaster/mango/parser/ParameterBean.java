@@ -16,16 +16,21 @@
 
 package org.jfaster.mango.parser;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author ash
  */
-public class NodeInfo {
+public interface ParameterBean {
 
-    public List<ASTJDBCParameter> jdbcParameters = new LinkedList<ASTJDBCParameter>();
-    public List<ASTJDBCIterableParameter> jdbcIterableParameters = new LinkedList<ASTJDBCIterableParameter>();
-    public List<ASTGlobalTable> globalTables = new LinkedList<ASTGlobalTable>();
+    public boolean onlyParameterName();
+
+    public String getParameterName();
+
+    public void setParameterName(String parameterName);
+
+    public String getPropertyPath();
+
+    public void setPropertyPath(String propertyPath);
+
+    public String getFullName();
 
 }

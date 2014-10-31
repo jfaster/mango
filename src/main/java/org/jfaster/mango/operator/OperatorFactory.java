@@ -90,7 +90,10 @@ public class OperatorFactory {
 
         NameProvider nameProvider = new NameProvider(md.getParameterDescriptors());
         ParameterContext context = new ParameterContext(md.getParameterDescriptors(), nameProvider, operatorType);
-        rootNode.checkType(context);
+
+        rootNode.expandParameter(context); // 扩展简化的参数节点
+        rootNode.checkType(context); // 检测节点类型
+
         DbInfo dbInfo = getDbInfo(md, nameProvider, context);
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
                 dbInfo.shardPropertyPath, dbInfo.tablePartition);

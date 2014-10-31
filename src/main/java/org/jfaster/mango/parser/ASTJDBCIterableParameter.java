@@ -19,6 +19,7 @@ package org.jfaster.mango.parser;
 import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.Strings;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,11 +29,10 @@ import java.util.regex.Pattern;
  *
  * @author ash
  */
-public class ASTJDBCIterableParameter extends AbstractRenderableNode {
+public class ASTJDBCIterableParameter extends AbstractRenderableNode implements ParameterBean{
 
     private String parameterName;
     private String propertyPath; // 为""的时候表示没有属性
-    private String fullName;
 
     private String interableProperty; // "a in (:1)"中的a
 
@@ -50,7 +50,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode {
         if (!m.matches()) {
             throw new UnreachableCodeException();
         }
-        fullName = m.group(1);
+        String fullName = m.group(1);
         parameterName = m.group(2);
         propertyPath = fullName.substring(parameterName.length() + 1);
         if (!propertyPath.isEmpty()) {
@@ -62,11 +62,13 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode {
     public boolean render(InvocationContext context) {
         Object objs = context.getNullablePropertyValue(parameterName, propertyPath);
         if (objs == null) {
-            throw new NullPointerException("value of " + fullName + " can't be null");
+            throw new NullPointerException("value of " +
+                    Strings.getFullName(parameterName, propertyPath) + " can't be null");
         }
         Iterables iterables = new Iterables(objs);
         if (iterables.isEmpty()) {
-            throw new IllegalArgumentException("value of " + fullName + " can't be empty");
+            throw new IllegalArgumentException("value of " +
+                    Strings.getFullName(parameterName, propertyPath) + " can't be empty");
         }
         context.writeToSqlBuffer("in (");
         int t = 0;
@@ -85,15 +87,46 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode {
 
     @Override
     public String toString() {
-        return super.toString() + "{" + "fullName=" + fullName + ", " +
+        return super.toString() + "{" +
+                "fullName=" + getFullName() + ", " +
                 "parameterName=" + parameterName + ", " +
-                "propertyPath=" + propertyPath + "}";
+                "propertyPath=" + propertyPath +
+                "}";
     }
 
     @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data)
-    {
+    public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
+    }
+
+    @Override
+    public boolean onlyParameterName() {
+        return Strings.isEmpty(propertyPath);
+    }
+
+    @Override
+    public String getParameterName() {
+        return parameterName;
+    }
+
+    @Override
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
+    }
+
+    @Override
+    public String getPropertyPath() {
+        return propertyPath;
+    }
+
+    @Override
+    public void setPropertyPath(String propertyPath) {
+        this.propertyPath = propertyPath;
+    }
+
+    @Override
+    public String getFullName() {
+        return Strings.getFullName(parameterName, propertyPath);
     }
 
     public void setInterableProperty(String interableProperty) {
@@ -102,18 +135,6 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode {
 
     public String getInterableProperty() {
         return interableProperty;
-    }
-
-    public String getParameterName() {
-        return parameterName;
-    }
-
-    public String getPropertyPath() {
-        return propertyPath;
-    }
-
-    public String getFullName() {
-        return fullName;
     }
 
 }

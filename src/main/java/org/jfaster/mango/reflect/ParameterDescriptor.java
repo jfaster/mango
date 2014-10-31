@@ -33,7 +33,7 @@ public class ParameterDescriptor {
     private final Type type;
     private final Class<?> rawType;
     private final List<Annotation> annotations;
-    private final String name;
+    private final String name; // 方法参数名
 
     public ParameterDescriptor(int position, Type type, Class<?> rawType, List<Annotation> annotations, String name) {
         this.position = position;
