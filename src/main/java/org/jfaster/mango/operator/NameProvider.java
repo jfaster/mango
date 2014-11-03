@@ -19,9 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ash
@@ -29,28 +27,37 @@ import java.util.Map;
 public class NameProvider {
 
     /**
-     * 重命名后的变量名
+     * 位置到重命名后的变量名的映射
      */
-    private Map<Integer, String> names = new HashMap<Integer, String>();
+    private Map<Integer, String> namesMap = new HashMap<Integer, String>();
+
+    /**
+     * 重命名后的变量
+     */
+    private Set<String> names = new HashSet<String>();
 
     public NameProvider(List<ParameterDescriptor> pds) {
         for (ParameterDescriptor pd : pds) {
             Rename renameAnno = pd.getAnnotation(Rename.class);
             int position = pd.getPosition();
-            if (renameAnno != null) { // 优先使用注解中的名字
-                names.put(position, renameAnno.value());
-            } else {
-                names.put(position, pd.getName());
-            }
+            String parameterName = renameAnno != null ?
+                    renameAnno.value() : // 优先使用注解中的名字
+                    pd.getName();
+            namesMap.put(position, parameterName);
+            names.add(parameterName);
         }
     }
 
     public String getParameterName(int position) {
-        String name = names.get(position);
+        String name = namesMap.get(position);
         if (name == null) {
             throw new IllegalStateException("parameter name can not be found by position [" + position + "]");
         }
         return name;
+    }
+
+    public boolean isParameterName(String name) {
+        return names.contains(name);
     }
 
 }

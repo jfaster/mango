@@ -74,12 +74,15 @@ public class ParameterContext {
                         BeanInfoCache.getPropertyDescriptors(parameterRawType);
                 for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                     String propertyName = propertyDescriptor.getName();
-                    List<String> oldParameterNames = propertyMap.get(propertyName);
-                    if (oldParameterNames == null) {
-                        oldParameterNames = new ArrayList<String>();
-                        propertyMap.put(propertyName, oldParameterNames);
+                    if (!nameProvider.isParameterName(propertyName)) { // 属性名和参数名相同则不扩展
+                        List<String> oldParameterNames = propertyMap.get(propertyName);
+                        if (oldParameterNames == null) {
+                            oldParameterNames = new ArrayList<String>();
+                            propertyMap.put(propertyName, oldParameterNames);
+                        }
+                        oldParameterNames.add(parameterName);
                     }
-                    oldParameterNames.add(parameterName);
+
                 }
             }
 
