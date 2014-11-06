@@ -36,22 +36,26 @@ public class BeanInfoCache {
 
     @Nullable
     public static GetterInvoker getGetterInvoker(Class<?> clazz, String propertyName) {
-        return cache.getUnchecked(clazz).getGetterInvoker(propertyName);
+        return cache.get(clazz).getGetterInvoker(propertyName);
     }
 
     @Nullable
     public static SetterInvoker getSetterInvoker(Class<?> clazz, String propertyName) {
-        return cache.getUnchecked(clazz).getSetterInvoker(propertyName);
+        return cache.get(clazz).getSetterInvoker(propertyName);
     }
 
     public static List<PropertyDescriptor> getPropertyDescriptors(Class<?> clazz) {
-        return cache.getUnchecked(clazz).getPropertyDescriptors();
+        return cache.get(clazz).getPropertyDescriptors();
     }
 
     private final static LoadingCache<Class<?>, BeanInfo> cache = new DoubleCheckCache<Class<?>, BeanInfo>(
             new CacheLoader<Class<?>, BeanInfo>() {
-                public BeanInfo load(Class<?> clazz) throws Exception {
-                    return new BeanInfo(clazz);
+                public BeanInfo load(Class<?> clazz) {
+                    try {
+                        return new BeanInfo(clazz);
+                    } catch (Exception e) {
+                        throw new RuntimeException(); // TODO
+                    }
                 }
             });
 

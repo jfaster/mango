@@ -22,6 +22,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.Config;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,6 +36,9 @@ import org.junit.rules.ExpectedException;
 public class IncorrectAnnotationExceptionTest {
 
     private final static Mango mango = new Mango(Config.getDataSource());
+    static {
+        mango.setDefaultLazyInit(true);
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -50,7 +54,7 @@ public class IncorrectAnnotationExceptionTest {
     public void test2() {
         thrown.expect(IncorrectAnnotationException.class);
         thrown.expectMessage("each method expected one @SQL annotation but not found");
-        Dao2 dao = mango.create(Dao2.class);
+        Dao2 dao = mango.create(Dao2.class, new CacheHandlerImpl());
         dao.add();
     }
 
@@ -59,7 +63,7 @@ public class IncorrectAnnotationExceptionTest {
         thrown.expect(IncorrectAnnotationException.class);
         thrown.expectMessage("if use cache, each method expected one and only one " +
                 "@CacheBy annotation on parameter but found 0");
-        Dao3 dao = mango.create(Dao3.class);
+        Dao3 dao = mango.create(Dao3.class, new CacheHandlerImpl());
         dao.add();
     }
 
@@ -68,7 +72,7 @@ public class IncorrectAnnotationExceptionTest {
         thrown.expect(IncorrectAnnotationException.class);
         thrown.expectMessage("if use cache, each method expected one and only one " +
                 "@CacheBy annotation on parameter but found 2");
-        Dao3 dao = mango.create(Dao3.class);
+        Dao3 dao = mango.create(Dao3.class, new CacheHandlerImpl());
         dao.add2(1, 2);
     }
 

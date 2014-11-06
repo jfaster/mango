@@ -39,6 +39,9 @@ public class IncorrectResultSetColumnCountExceptionTest {
 
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = new Mango(ds);
+    static {
+        mango.setDefaultLazyInit(true);
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author ash
  */
-public class DoubleCheckCache<K, V> extends AbstractLoadingCache<K, V> {
+public class DoubleCheckCache<K, V> implements LoadingCache<K, V> {
 
     private final CacheLoader<K, V> loader;
     private final ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<K, V>();
@@ -32,7 +32,7 @@ public class DoubleCheckCache<K, V> extends AbstractLoadingCache<K, V> {
     }
 
     @Override
-    public V get(K key) throws Exception {
+    public V get(K key) {
         V value = cache.get(key);
         if (value == null) {
             synchronized (getLock(key)) {

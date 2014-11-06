@@ -23,15 +23,15 @@ import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.*;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.parser.Parser;
+import org.jfaster.mango.parser.SqlParser;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeWrapper;
+import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.util.Strings;
 
 import java.lang.reflect.Type;
 
@@ -48,14 +48,14 @@ public class OperatorFactory {
     private final InterceptorChain updateInterceptorChain;
 
     public OperatorFactory(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
-                               InterceptorChain queryInterceptorChain, InterceptorChain updateInterceptorChain) {
+                           InterceptorChain queryInterceptorChain, InterceptorChain updateInterceptorChain) {
         this.dataSourceFactory = dataSourceFactory;
         this.cacheHandler = cacheHandler;
         this.queryInterceptorChain = queryInterceptorChain;
         this.updateInterceptorChain = updateInterceptorChain;
     }
 
-    public Operator getOperator(MethodDescriptor md) throws Exception {
+    public Operator getOperator(MethodDescriptor md)  {
         SQL sqlAnno = md.getAnnotation(SQL.class);
         if (sqlAnno == null) {
             throw new IncorrectAnnotationException("each method expected one @SQL annotation " +
@@ -65,7 +65,7 @@ public class OperatorFactory {
         if (Strings.isEmpty(sql)) {
             throw new IncorrectSqlException("sql is null or empty");
         }
-        ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
+        ASTRootNode rootNode = SqlParser.parse(sql).init();
         SQLType sqlType = rootNode.getSQLType();
 
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);

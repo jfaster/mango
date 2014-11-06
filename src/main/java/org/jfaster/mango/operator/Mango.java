@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
@@ -49,86 +50,148 @@ public class Mango {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
-    private final DataSourceFactory dataSourceFactory;
-    private final JdbcOperations jdbcOperations;
-    private final CacheHandler defaultCacheHandler;
+    /**
+     * 数据源工厂
+     */
+    private DataSourceFactory dataSourceFactory;
 
-    private ParameterNameDiscover parameterNameDiscover = new SerialNumberParameterNameDiscover();
+    /**
+     * 全局缓存处理器
+     */
+    private CacheHandler defaultCacheHandler;
 
-    private final InterceptorChain queryInterceptorChain = new InterceptorChain();
-    private final InterceptorChain updateInterceptorChain = new InterceptorChain();
+    /**
+     * 全局懒加载，默认为false
+     */
+    private boolean defaultLazyInit = false;
+
+    /**
+     * 查询拦截器链，默认为空
+     */
+    private InterceptorChain queryInterceptorChain;
+
+    /**
+     * 更新拦截器链，默认为空
+     */
+    private InterceptorChain updateInterceptorChain;
+
+    /**
+     * jdbc操作
+     */
+    private JdbcOperations jdbcOperations;
+
+    /**
+     * 参数名发现器
+     */
+    private ParameterNameDiscover parameterNameDiscover;
+
+    /**
+     * 统计map
+     */
     private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap =
             new ConcurrentHashMap<Method, StatsCounter>();
+
+    public Mango() {
+    }
 
     public Mango(DataSource dataSource) {
         this(new SimpleDataSourceFactory(dataSource));
     }
 
     public Mango(DataSourceFactory dataSourceFactory) {
-        this(dataSourceFactory, (CacheHandler) null);
-    }
-
-    public Mango(DataSource dataSource, CacheHandler defaultCacheHandler) {
-        this(new SimpleDataSourceFactory(dataSource), defaultCacheHandler);
-    }
-
-    public Mango(DataSourceFactory dataSourceFactory, CacheHandler defaultCacheHandler) {
         this.dataSourceFactory = dataSourceFactory;
-        this.jdbcOperations = new JdbcTemplate();
-        this.defaultCacheHandler = defaultCacheHandler;
     }
 
-    public Mango(DataSource dataSource, JdbcOperations jdbcOperations) {
-        this(new SimpleDataSourceFactory(dataSource), jdbcOperations);
+    /**
+     * 添加查询拦截器
+     */
+    public Mango addQueryInterceptor(Interceptor interceptor) {
+        if (queryInterceptorChain == null) {
+            queryInterceptorChain = new InterceptorChain();
+        }
+        queryInterceptorChain.addInterceptor(interceptor);
+        return this;
     }
 
-    public Mango(DataSourceFactory dataSourceFactory, JdbcOperations jdbcOperations) {
-        this(dataSourceFactory, jdbcOperations, null);
+    /**
+     * 添加更新拦截器
+     */
+    public Mango addUpdateInterceptor(Interceptor interceptor) {
+        if (updateInterceptorChain == null) {
+            updateInterceptorChain = new InterceptorChain();
+        }
+        updateInterceptorChain.addInterceptor(interceptor);
+        return this;
     }
-
-    public Mango(DataSource dataSource, JdbcOperations jdbcOperations,  CacheHandler defaultCacheHandler) {
-        this(new SimpleDataSourceFactory(dataSource), jdbcOperations, defaultCacheHandler);
-    }
-
-    public Mango(DataSourceFactory dataSourceFactory, JdbcOperations jdbcOperations, CacheHandler defaultCacheHandler) {
-        this.dataSourceFactory = dataSourceFactory;
-        this.jdbcOperations = jdbcOperations;
-        this.defaultCacheHandler = defaultCacheHandler;
-    }
-
 
     /**
      * 创建代理DAO类
      */
     public <T> T create(Class<T> daoClass) {
-        return create(daoClass, null);
+        return create(daoClass, defaultCacheHandler, defaultLazyInit);
     }
 
     /**
-     * 创建代理DAO类，并对该类使用特定的{@link CacheHandler}
+     * 创建代理DAO类，使用特定的{@link CacheHandler}
      */
     public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler) {
+        return create(daoClass, cacheHandler, defaultLazyInit);
+    }
+
+    /**
+     * 创建代理DAO类，自定义是否懒加载
+     */
+    public <T> T create(Class<T> daoClass, boolean lazyInit) {
+        return create(daoClass, defaultCacheHandler, lazyInit);
+    }
+
+    /**
+     * 创建代理DAO类，使用特定的{@link CacheHandler}，自定义是否懒加载
+     */
+    public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler, boolean lazyInit) {
         if (daoClass == null) {
             throw new NullPointerException("dao interface can't be null");
         }
+
         DB dbAnno = daoClass.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IncorrectAnnotationException("dao interface expected one @DB " +
                     "annotation but not found");
         }
+
         if (cacheHandler == null) {
             cacheHandler = defaultCacheHandler;
         }
-        return Reflection.newProxy(daoClass, new MangoInvocationHandler(this, cacheHandler));
-    }
+        Cache cacheAnno = daoClass.getAnnotation(Cache.class);
+        if (cacheAnno != null && cacheHandler == null) {
+            throw new RuntimeException(); // TODO
+        }
 
+        if (dataSourceFactory == null) {
+            throw new RuntimeException(); // TODO
+        }
 
-    public void addQueryInterceptor(Interceptor interceptor) {
-        queryInterceptorChain.addInterceptor(interceptor);
-    }
+        if (queryInterceptorChain == null) {
+            queryInterceptorChain = new InterceptorChain();
+        }
+        if (updateInterceptorChain == null) {
+            updateInterceptorChain = new InterceptorChain();
+        }
+        if (jdbcOperations == null) {
+            jdbcOperations = new JdbcTemplate();
+        }
+        if (parameterNameDiscover == null) {
+            parameterNameDiscover = new SerialNumberParameterNameDiscover();
+        }
 
-    public void addUpdateInterceptor(Interceptor interceptor) {
-        updateInterceptorChain.addInterceptor(interceptor);
+        MangoInvocationHandler handler = new MangoInvocationHandler(this, cacheHandler);
+        if (!lazyInit) { // 不使用懒加载，则提前加载
+            Method[] methods = daoClass.getMethods(); // TODO check
+            for (Method method : methods) {
+                handler.getOperator(method);
+            }
+        }
+        return Reflection.newProxy(daoClass, handler);
     }
 
     /**
@@ -150,17 +213,9 @@ public class Mango {
         private final OperatorFactory operatorFactory;
         private final ParameterNameDiscover parameterNameDiscover;
 
-        private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
-            jdbcOperations = mango.jdbcOperations;
-            statsCounterMap = mango.statsCounterMap;
-            operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
-                    mango.queryInterceptorChain, mango.updateInterceptorChain);
-            parameterNameDiscover = mango.parameterNameDiscover;
-        }
-
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
                 new CacheLoader<Method, Operator>() {
-                    public Operator load(Method method) throws Exception {
+                    public Operator load(Method method) {
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
                         MethodDescriptor md = Methods.getMethodDescriptor(method, parameterNameDiscover);
@@ -172,17 +227,29 @@ public class Mango {
                     }
                 });
 
+        private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
+            jdbcOperations = mango.jdbcOperations;
+            statsCounterMap = mango.statsCounterMap;
+            operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
+                    mango.queryInterceptorChain, mango.updateInterceptorChain);
+            parameterNameDiscover = mango.parameterNameDiscover;
+        }
+
         @Override
         protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #args={}", ToStringHelper.toString(method), args);
             }
-            Operator operator = cache.get(method);
+            Operator operator = getOperator(method);
             Object r = operator.execute(args);
             if (logger.isDebugEnabled()) {
                 logger.debug("{} #result={}", ToStringHelper.toString(method), r);
             }
             return r;
+        }
+
+        Operator getOperator(Method method) {
+            return cache.get(method);
         }
 
         private StatsCounter getStatusCounter(Method method) {
@@ -199,12 +266,67 @@ public class Mango {
 
     }
 
+    public DataSourceFactory getDataSourceFactory() {
+        return dataSourceFactory;
+    }
+
+    public Mango setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
+        return this;
+    }
+
+    public CacheHandler getDefaultCacheHandler() {
+        return defaultCacheHandler;
+    }
+
+    public Mango setDefaultCacheHandler(CacheHandler defaultCacheHandler) {
+        this.defaultCacheHandler = defaultCacheHandler;
+        return this;
+    }
+
+    public boolean isDefaultLazyInit() {
+        return defaultLazyInit;
+    }
+
+    public Mango setDefaultLazyInit(boolean defaultLazyInit) {
+        this.defaultLazyInit = defaultLazyInit;
+        return this;
+    }
+
+    public InterceptorChain getQueryInterceptorChain() {
+        return queryInterceptorChain;
+    }
+
+    public Mango setQueryInterceptorChain(InterceptorChain queryInterceptorChain) {
+        this.queryInterceptorChain = queryInterceptorChain;
+        return this;
+    }
+
+    public InterceptorChain getUpdateInterceptorChain() {
+        return updateInterceptorChain;
+    }
+
+    public Mango setUpdateInterceptorChain(InterceptorChain updateInterceptorChain) {
+        this.updateInterceptorChain = updateInterceptorChain;
+        return this;
+    }
+
+    public JdbcOperations getJdbcOperations() {
+        return jdbcOperations;
+    }
+
+    public Mango setJdbcOperations(JdbcOperations jdbcOperations) {
+        this.jdbcOperations = jdbcOperations;
+        return this;
+    }
+
     public ParameterNameDiscover getParameterNameDiscover() {
         return parameterNameDiscover;
     }
 
-    public void setParameterNameDiscover(ParameterNameDiscover parameterNameDiscover) {
+    public Mango setParameterNameDiscover(ParameterNameDiscover parameterNameDiscover) {
         this.parameterNameDiscover = parameterNameDiscover;
+        return this;
     }
 
 }

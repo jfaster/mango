@@ -14,13 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.concurrent.cache;
+package org.jfaster.mango.parser;
+
+import org.jfaster.mango.exception.SqlParserException;
 
 /**
  * @author ash
  */
-public interface CacheLoader<K, V> {
+public class SqlParser {
 
-    public V load(K key);
+    public static ASTRootNode parse(String sql) {
+        try {
+            return new Parser(sql.trim()).parse();
+        } catch (ParseException e) {
+            throw new SqlParserException(e.getMessage());
+        }
+    }
 
 }

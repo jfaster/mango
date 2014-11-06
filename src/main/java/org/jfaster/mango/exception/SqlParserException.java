@@ -14,22 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.concurrent.cache;
-
-import org.jfaster.mango.exception.UncheckedException;
+package org.jfaster.mango.exception;
 
 /**
+ * 解析sql异常
+ *
  * @author ash
  */
-public abstract class AbstractLoadingCache<K, V> implements LoadingCache<K, V> {
+public class SqlParserException extends RuntimeException {
 
-    @Override
-    public V getUnchecked(K key) {
-        try {
-            return get(key);
-        } catch (Exception e) {
-            throw new UncheckedException(e.getMessage(), e.getCause());
-        }
+    public SqlParserException(String message) {
+        super(message);
     }
 
 }

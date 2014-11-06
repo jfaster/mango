@@ -21,8 +21,6 @@ package org.jfaster.mango.util.concurrent.cache;
  */
 public interface LoadingCache<K, V> {
 
-    public V get(K key) throws Exception;
-
-    public V getUnchecked(K key);
+    public V get(K key);
 
 }

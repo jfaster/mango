@@ -22,6 +22,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.Config;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,6 +39,9 @@ import java.util.List;
 public class NotReadablePropertyExceptionTest {
 
     private final static Mango mango = new Mango(Config.getDataSource());
+    static {
+        mango.setDefaultLazyInit(true).setDefaultCacheHandler(new CacheHandlerImpl());
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
