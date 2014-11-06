@@ -58,7 +58,7 @@ public class OperatorFactory {
     public Operator getOperator(MethodDescriptor md)  {
         SQL sqlAnno = md.getAnnotation(SQL.class);
         if (sqlAnno == null) {
-            throw new IncorrectAnnotationException("each method expected one @SQL annotation " +
+            throw new IllegalStateException("each method expected one @SQL annotation " +
                     "but not found");
         }
         String sql = sqlAnno.value();
@@ -146,7 +146,8 @@ public class OperatorFactory {
     DbInfo getDbInfo(MethodDescriptor md, NameProvider nameProvider, ParameterContext context) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
-            throw new IncorrectAnnotationException("need @DB on dao interface");
+            throw new IllegalStateException("dao interface expected one @DB " +
+                    "annotation but not found");
         }
         String dataSourceName = dbAnno.dataSource();
         String globalTable = null;

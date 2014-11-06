@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
+import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
 import org.jfaster.mango.util.concurrent.cache.LoadingCache;
@@ -54,7 +55,7 @@ public class BeanInfoCache {
                     try {
                         return new BeanInfo(clazz);
                     } catch (Exception e) {
-                        throw new RuntimeException(); // TODO
+                        throw new UncheckedException(e.getMessage(), e);
                     }
                 }
             });

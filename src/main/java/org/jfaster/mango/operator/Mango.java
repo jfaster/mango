@@ -21,7 +21,6 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
-import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.reflect.*;
@@ -155,7 +154,7 @@ public class Mango {
 
         DB dbAnno = daoClass.getAnnotation(DB.class);
         if (dbAnno == null) {
-            throw new IncorrectAnnotationException("dao interface expected one @DB " +
+            throw new IllegalStateException("dao interface expected one @DB " +
                     "annotation but not found");
         }
 
@@ -164,11 +163,12 @@ public class Mango {
         }
         Cache cacheAnno = daoClass.getAnnotation(Cache.class);
         if (cacheAnno != null && cacheHandler == null) {
-            throw new RuntimeException(); // TODO
+            throw new IllegalStateException("if @Cache annotation on dao interface, " +
+                    "cacheHandler can't be null");
         }
 
         if (dataSourceFactory == null) {
-            throw new RuntimeException(); // TODO
+            throw new IllegalArgumentException("DataSourceFactory can't be null");
         }
 
         if (queryInterceptorChain == null) {
@@ -186,7 +186,7 @@ public class Mango {
 
         MangoInvocationHandler handler = new MangoInvocationHandler(this, cacheHandler);
         if (!lazyInit) { // 不使用懒加载，则提前加载
-            Method[] methods = daoClass.getMethods(); // TODO check
+            Method[] methods = daoClass.getMethods(); // TODO log
             for (Method method : methods) {
                 handler.getOperator(method);
             }

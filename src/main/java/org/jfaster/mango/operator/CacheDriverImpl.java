@@ -21,17 +21,16 @@ import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
 import org.jfaster.mango.cache.CacheExpire;
 import org.jfaster.mango.cache.CacheHandler;
-import org.jfaster.mango.exception.IncorrectAnnotationException;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeWrapper;
+import org.jfaster.mango.util.Iterables;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
@@ -201,7 +200,7 @@ public class CacheDriverImpl implements CacheDriver {
         if (cacheAnno != null) { // dao类使用cache
             if (cacheIgnoredAnno == null) { // method不禁用cache
                 if (cacheByNum != 1) {
-                    throw new IncorrectAnnotationException("if use cache, each method " +
+                    throw new IllegalStateException("if use cache, each method " +
                             "expected one and only one @CacheBy annotation on parameter " +
                             "but found " + cacheByNum);
                 }
