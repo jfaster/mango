@@ -249,6 +249,9 @@ public class Mango {
         }
 
         Operator getOperator(Method method) {
+            if (logger.isInfoEnabled()) {
+                logger.info("init operator for {}", ToStringHelper.toString(method));
+            }
             return cache.get(method);
         }
 
