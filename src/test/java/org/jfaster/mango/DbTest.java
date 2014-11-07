@@ -45,7 +45,7 @@ import static org.hamcrest.Matchers.*;
 public class DbTest {
 
     private final static DataSource ds = Config.getDataSource();
-    private final static Mango mango = new Mango(ds);
+    private final static Mango mango = Mango.newInstance(ds);
     private final static UserDao dao = mango.create(UserDao.class);
 
     @Before

@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class NotReadablePropertyExceptionTest {
 
-    private final static Mango mango = new Mango(Config.getDataSource());
+    private final static Mango mango = Mango.newInstance(Config.getDataSource());
     static {
         mango.setDefaultLazyInit(true).setDefaultCacheHandler(new CacheHandlerImpl());
     }

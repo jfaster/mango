@@ -40,7 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ByteTest {
 
     private final static DataSource ds = Config.getDataSource();
-    private final static Mango mango = new Mango(ds);
+    private final static Mango mango = Mango.newInstance(ds);
     private final static ByteInfoDao dao = mango.create(ByteInfoDao.class);
 
     @Before

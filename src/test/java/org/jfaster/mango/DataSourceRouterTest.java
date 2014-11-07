@@ -69,7 +69,7 @@ public class DataSourceRouterTest {
             factories.put(dsns[i], new SimpleDataSourceFactory(ds));
         }
         DataSourceFactory dsf = new MultipleDataSourceFactory(factories);
-        mango = new Mango(dsf);
+        mango = Mango.newInstance(dsf);
     }
 
     @Test

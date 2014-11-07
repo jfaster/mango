@@ -90,18 +90,16 @@ public class Mango {
     private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap =
             new ConcurrentHashMap<Method, StatsCounter>();
 
-    public Mango() {
+    public static Mango newInstance() {
+        return new Mango();
     }
 
-    public Mango(DataSource dataSource) {
-        this(new SimpleDataSourceFactory(dataSource));
+    public static Mango newInstance(DataSource dataSource) {
+        return new Mango().setDataSourceFactory(new SimpleDataSourceFactory(dataSource));
     }
 
-    public Mango(DataSourceFactory dataSourceFactory) {
-        if (dataSourceFactory == null) {
-            throw new NullPointerException("dataSourceFactory can't be null");
-        }
-        this.dataSourceFactory = dataSourceFactory;
+    public static Mango newInstance(DataSourceFactory dataSourceFactory) {
+        return new Mango().setDataSourceFactory(dataSourceFactory);
     }
 
     /**

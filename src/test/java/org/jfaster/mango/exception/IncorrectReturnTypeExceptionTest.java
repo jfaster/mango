@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class IncorrectReturnTypeExceptionTest {
 
-    private final static Mango mango = new Mango(Config.getDataSource());
+    private final static Mango mango = Mango.newInstance(Config.getDataSource());
     static {
         mango.setDefaultLazyInit(true);
     }

@@ -43,7 +43,7 @@ public class GlobalTableTest {
 
 
     private final static DataSource ds = Config.getDataSource();
-    private final static Mango mango = new Mango(ds);
+    private final static Mango mango = Mango.newInstance(ds);
 
     @Before
     public void before() throws Exception {

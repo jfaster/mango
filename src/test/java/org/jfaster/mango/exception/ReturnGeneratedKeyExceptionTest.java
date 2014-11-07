@@ -36,7 +36,7 @@ import java.sql.Connection;
 public class ReturnGeneratedKeyExceptionTest {
 
     private final static DataSource ds = Config.getDataSource();
-    private final static Mango mango = new Mango(ds);
+    private final static Mango mango = Mango.newInstance(ds);
     static {
         mango.setDefaultLazyInit(true);
     }

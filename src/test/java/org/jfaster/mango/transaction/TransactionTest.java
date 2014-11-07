@@ -41,7 +41,7 @@ import static org.hamcrest.Matchers.is;
 public class TransactionTest {
 
     private final static DataSource ds = Config.getDataSource();
-    private final static Mango mango = new Mango(ds);
+    private final static Mango mango = Mango.newInstance(ds);
     private final static AccountDao dao = mango.create(AccountDao.class);
 
     @Before
