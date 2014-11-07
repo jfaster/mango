@@ -21,6 +21,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
+import org.jfaster.mango.exception.InitializationException;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.reflect.*;
@@ -182,7 +183,11 @@ public class Mango {
         if (!lazyInit) { // 不使用懒加载，则提前加载
             Method[] methods = daoClass.getMethods(); // TODO log
             for (Method method : methods) {
-                handler.getOperator(method);
+                try {
+                    handler.getOperator(method);
+                } catch (Exception e) {
+                    throw new InitializationException("initialize " + ToStringHelper.toString(method) + " error", e);
+                }
             }
         }
         return Reflection.newProxy(daoClass, handler);
@@ -210,6 +215,9 @@ public class Mango {
         private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
                 new CacheLoader<Method, Operator>() {
                     public Operator load(Method method) {
+                        if (logger.isInfoEnabled()) {
+                            logger.info("initializing operator for {}", ToStringHelper.toString(method));
+                        }
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
                         MethodDescriptor md = Methods.getMethodDescriptor(method, parameterNameDiscover);
@@ -217,9 +225,6 @@ public class Mango {
                         operator.setJdbcOperations(jdbcOperations);
                         operator.setStatsCounter(statsCounter);
                         statsCounter.recordInit(System.nanoTime() - now);
-                        if (logger.isInfoEnabled()) {
-                            logger.info("init operator for {}", ToStringHelper.toString(method));
-                        }
                         return operator;
                     }
                 });
