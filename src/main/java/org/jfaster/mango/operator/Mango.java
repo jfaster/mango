@@ -67,22 +67,22 @@ public class Mango {
     /**
      * 查询拦截器链，默认为空
      */
-    private InterceptorChain queryInterceptorChain;
+    private InterceptorChain queryInterceptorChain = new InterceptorChain();
 
     /**
      * 更新拦截器链，默认为空
      */
-    private InterceptorChain updateInterceptorChain;
+    private InterceptorChain updateInterceptorChain = new InterceptorChain();
 
     /**
      * jdbc操作
      */
-    private JdbcOperations jdbcOperations;
+    private JdbcOperations jdbcOperations = new JdbcTemplate();
 
     /**
      * 参数名发现器
      */
-    private ParameterNameDiscover parameterNameDiscover;
+    private ParameterNameDiscover parameterNameDiscover = new SerialNumberParameterNameDiscover();
 
     /**
      * 统计map
@@ -98,6 +98,9 @@ public class Mango {
     }
 
     public Mango(DataSourceFactory dataSourceFactory) {
+        if (dataSourceFactory == null) {
+            throw new NullPointerException("dataSourceFactory can't be null");
+        }
         this.dataSourceFactory = dataSourceFactory;
     }
 
@@ -105,6 +108,9 @@ public class Mango {
      * 添加查询拦截器
      */
     public Mango addQueryInterceptor(Interceptor interceptor) {
+        if (interceptor == null) {
+            throw new NullPointerException("interceptor can't be null");
+        }
         if (queryInterceptorChain == null) {
             queryInterceptorChain = new InterceptorChain();
         }
@@ -116,6 +122,9 @@ public class Mango {
      * 添加更新拦截器
      */
     public Mango addUpdateInterceptor(Interceptor interceptor) {
+        if (interceptor == null) {
+            throw new NullPointerException("interceptor can't be null");
+        }
         if (updateInterceptorChain == null) {
             updateInterceptorChain = new InterceptorChain();
         }
@@ -168,20 +177,7 @@ public class Mango {
         }
 
         if (dataSourceFactory == null) {
-            throw new IllegalArgumentException("DataSourceFactory can't be null");
-        }
-
-        if (queryInterceptorChain == null) {
-            queryInterceptorChain = new InterceptorChain();
-        }
-        if (updateInterceptorChain == null) {
-            updateInterceptorChain = new InterceptorChain();
-        }
-        if (jdbcOperations == null) {
-            jdbcOperations = new JdbcTemplate();
-        }
-        if (parameterNameDiscover == null) {
-            parameterNameDiscover = new SerialNumberParameterNameDiscover();
+            throw new IllegalArgumentException("dataSourceFactory can't be null");
         }
 
         MangoInvocationHandler handler = new MangoInvocationHandler(this, cacheHandler);
@@ -223,6 +219,9 @@ public class Mango {
                         operator.setJdbcOperations(jdbcOperations);
                         operator.setStatsCounter(statsCounter);
                         statsCounter.recordInit(System.nanoTime() - now);
+                        if (logger.isInfoEnabled()) {
+                            logger.info("init operator for {}", ToStringHelper.toString(method));
+                        }
                         return operator;
                     }
                 });
@@ -249,9 +248,6 @@ public class Mango {
         }
 
         Operator getOperator(Method method) {
-            if (logger.isInfoEnabled()) {
-                logger.info("init operator for {}", ToStringHelper.toString(method));
-            }
             return cache.get(method);
         }
 
@@ -274,6 +270,9 @@ public class Mango {
     }
 
     public Mango setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        if (dataSourceFactory == null) {
+            throw new NullPointerException("dataSourceFactory can't be null");
+        }
         this.dataSourceFactory = dataSourceFactory;
         return this;
     }
@@ -283,6 +282,9 @@ public class Mango {
     }
 
     public Mango setDefaultCacheHandler(CacheHandler defaultCacheHandler) {
+        if (defaultCacheHandler == null) {
+            throw new NullPointerException("defaultCacheHandler can't be null");
+        }
         this.defaultCacheHandler = defaultCacheHandler;
         return this;
     }
@@ -301,6 +303,9 @@ public class Mango {
     }
 
     public Mango setQueryInterceptorChain(InterceptorChain queryInterceptorChain) {
+        if (queryInterceptorChain == null) {
+            throw new NullPointerException("queryInterceptorChain can't be null");
+        }
         this.queryInterceptorChain = queryInterceptorChain;
         return this;
     }
@@ -310,6 +315,9 @@ public class Mango {
     }
 
     public Mango setUpdateInterceptorChain(InterceptorChain updateInterceptorChain) {
+        if (updateInterceptorChain == null) {
+            throw new NullPointerException("updateInterceptorChain can't be null");
+        }
         this.updateInterceptorChain = updateInterceptorChain;
         return this;
     }
@@ -319,6 +327,9 @@ public class Mango {
     }
 
     public Mango setJdbcOperations(JdbcOperations jdbcOperations) {
+        if (jdbcOperations == null) {
+            throw new NullPointerException("jdbcOperations can't be null");
+        }
         this.jdbcOperations = jdbcOperations;
         return this;
     }
@@ -328,6 +339,9 @@ public class Mango {
     }
 
     public Mango setParameterNameDiscover(ParameterNameDiscover parameterNameDiscover) {
+        if (parameterNameDiscover == null) {
+            throw new NullPointerException("parameterNameDiscover can't be null");
+        }
         this.parameterNameDiscover = parameterNameDiscover;
         return this;
     }
