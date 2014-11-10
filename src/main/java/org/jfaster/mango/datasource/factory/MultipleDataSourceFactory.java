@@ -43,6 +43,10 @@ public class MultipleDataSourceFactory implements DataSourceFactory {
     @Override
     public DataSource getDataSource(String name, SQLType sqlType) {
         DataSourceFactory factory = factories.get(name);
+        if (factory == null) {
+            throw new IllegalArgumentException("can not find the data source factory by name [" + name + "], " +
+                    "available data sources name is " + factories.keySet());
+        }
         return factory.getDataSource(name, sqlType);
     }
 
