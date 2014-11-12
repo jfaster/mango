@@ -57,6 +57,15 @@ public class Types {
         return new Result(parentPath.toString(), parentPathStr, type);
     }
 
+    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+        if (lhsType.isAssignableFrom(rhsType)) {
+            return true;
+        }
+        return lhsType.isPrimitive() ?
+                lhsType.equals(Primitives.unwrap(rhsType)) :
+                lhsType.isAssignableFrom(Primitives.wrap(rhsType));
+    }
+
     private static Class<?> getClassFromType(Type type) {
         Class<?> clazz = null;
         if (type instanceof Class<?>) {

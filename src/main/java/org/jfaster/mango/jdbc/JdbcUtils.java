@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.reflect.Primitives;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -187,22 +188,12 @@ public class JdbcUtils {
         singleColumClassSet.add(java.sql.Clob.class);
 
         // 基本数据类型
-        singleColumClassSet.add(boolean.class);
-        singleColumClassSet.add(byte.class);
-        singleColumClassSet.add(char.class);
-        singleColumClassSet.add(double.class);
-        singleColumClassSet.add(float.class);
-        singleColumClassSet.add(int.class);
-        singleColumClassSet.add(long.class);
-        singleColumClassSet.add(short.class);
-        singleColumClassSet.add(Boolean.class);
-        singleColumClassSet.add(Byte.class);
-        singleColumClassSet.add(Character.class);
-        singleColumClassSet.add(Double.class);
-        singleColumClassSet.add(Float.class);
-        singleColumClassSet.add(Integer.class);
-        singleColumClassSet.add(Long.class);
-        singleColumClassSet.add(Short.class);
+        for (Class<?> type : Primitives.allPrimitiveTypes()) { // int.class等
+            singleColumClassSet.add(type);
+        }
+        for (Class<?> type : Primitives.allWrapperTypes()) { // Integer.class等
+            singleColumClassSet.add(type);
+        }
     }
 
     /**

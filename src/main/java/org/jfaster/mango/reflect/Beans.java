@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
+import org.jfaster.mango.exception.NotWritablePropertyException;
 import org.jfaster.mango.exception.UncheckedException;
 
 import javax.annotation.Nullable;
@@ -30,12 +31,18 @@ public class Beans {
         try {
             SetterInvoker invoker = BeanInfoCache.getSetterInvoker(object.getClass(), propertyName);
             if (invoker == null) {
-                throw new NullPointerException("property " + propertyName + " of " +
-                        object.getClass() + " is not readable");
+                throw new NotWritablePropertyException("property " + propertyName + " of " +
+                        object.getClass() + " is not writable");
             }
-            if (value == null && invoker.getParameterRawType().isPrimitive()) {
+            Class<?> requiredType = invoker.getParameterRawType();
+            if (value == null && requiredType.isPrimitive()) {
                 throw new NullPointerException("property " + propertyName + " of " +
                         object.getClass() + " is primitive, can not be assigned to null");
+            }
+            if (value != null &&  !Types.isAssignable(requiredType, value.getClass())) {
+                throw new ClassCastException("cannot convert value of type [" + value.getClass().getName() +
+                        "] to required type [" + invoker.getParameterRawType().getName() + "] " +
+                        "for property '" + propertyName + "' of " +  object.getClass());
             }
             invoker.invoke(object, value);
         } catch (InvocationTargetException e) {
