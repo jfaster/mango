@@ -180,6 +180,35 @@ public class QueryOperatorTest {
     }
 
     @Test
+    public void testQueryInCount() throws Exception {
+        TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
+        TypeToken<Integer> rt = new TypeToken<Integer>() {};
+        String srcSql = "select count(1) from user where id in (:1)";
+        Operator operator = getOperator(pt, rt, srcSql);
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+                String descSql = "select count(1) from user where id in (?,?,?)";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(3));
+                assertThat(args[0], equalTo((Object) 100));
+                assertThat(args[1], equalTo((Object) 200));
+                assertThat(args[2], equalTo((Object) 300));
+                assertThat(rowMapper.getMappedClass().equals(Integer.class), is(true));
+                //noinspection unchecked
+                return (T) Integer.valueOf(3);
+            }
+        });
+
+        List<Integer> ids = Arrays.asList(100, 200, 300);
+        Integer r = (Integer) operator.execute(new Object[]{ids});
+        assertThat(r, is(3));
+    }
+
+    @Test
     public void testStatsCounter() throws Exception {
         TypeToken<User> t = TypeToken.of(User.class);
         String srcSql = "select * from user where id=:1.id and name=:1.name";
