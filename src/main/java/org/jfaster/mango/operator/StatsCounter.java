@@ -74,8 +74,8 @@ public class StatsCounter {
         }
     }
 
-    public MethodStats snapshot() {
-        return new MethodStats(
+    public OperatorStats snapshot() {
+        return new OperatorStats(
                 initCount.sum(),
                 totalInitTime.sum(),
                 hitCount.sum(),

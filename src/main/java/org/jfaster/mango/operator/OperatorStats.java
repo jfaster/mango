@@ -16,15 +16,16 @@
 
 package org.jfaster.mango.operator;
 
-import javax.annotation.Nullable;
+import java.lang.reflect.Method;
 
 /**
  * db与cache的数据统计
  *
  * @author ash
  */
-public class MethodStats {
+public class OperatorStats {
 
+    private Method method;
     private final long initCount;
     private final long totalInitTime;
     private final long hitCount;
@@ -34,20 +35,9 @@ public class MethodStats {
     private final long totalExecuteTime;
     private final long evictionCount;
 
-    public MethodStats() {
-        initCount = 0;
-        totalInitTime = 0;
-        hitCount = 0;
-        missCount = 0;
-        executeSuccessCount = 0;
-        executeExceptionCount = 0;
-        totalExecuteTime = 0;
-        evictionCount = 0;
-    }
-
-    public MethodStats(long initCount, long totalInitTime, long hitCount, long missCount,
-                       long executeSuccessCount, long executeExceptionCount,
-                       long totalExecuteTime, long evictionCount) {
+    public OperatorStats(long initCount, long totalInitTime, long hitCount, long missCount,
+                         long executeSuccessCount, long executeExceptionCount,
+                         long totalExecuteTime, long evictionCount) {
         this.initCount = initCount;
         this.totalInitTime = totalInitTime;
         this.hitCount = hitCount;
@@ -56,6 +46,14 @@ public class MethodStats {
         this.executeExceptionCount = executeExceptionCount;
         this.totalExecuteTime = totalExecuteTime;
         this.evictionCount = evictionCount;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public Class getDeclaringClass() {
+        return method.getDeclaringClass();
     }
 
     /**
@@ -183,40 +181,8 @@ public class MethodStats {
         return evictionCount;
     }
 
-    public MethodStats plus(MethodStats other) {
-        return new MethodStats(
-                initCount + other.initCount,
-                totalInitTime + other.totalInitTime,
-                hitCount + other.hitCount,
-                missCount + other.missCount,
-                executeSuccessCount + other.executeSuccessCount,
-                executeExceptionCount + other.executeExceptionCount,
-                totalExecuteTime + other.totalExecuteTime,
-                evictionCount + other.evictionCount);
+    void setMethod(Method method) {
+        this.method = method;
     }
 
-
-    @Override
-    public boolean equals(@Nullable Object object) {
-        if (object instanceof MethodStats) {
-            MethodStats other = (MethodStats) object;
-            return hitCount == other.hitCount
-                    && missCount == other.missCount
-                    && executeSuccessCount == other.executeSuccessCount
-                    && executeExceptionCount == other.executeExceptionCount
-                    && totalExecuteTime == other.totalExecuteTime
-                    && evictionCount == other.evictionCount;
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("{averageExecutePenalty=%s, executeSuccessCount=%s, executeExceptionCount=%s, " +
-                "totalExecuteTime=%s, hitCount=%s, missCount=%s, evictionCount=%s, " +
-                "averageInitPenalty=%s, initCount=%s, totalInitTime=%s}",
-                averageExecutePenalty(), executeSuccessCount, executeExceptionCount,
-                totalExecuteTime, hitCount, missCount, evictionCount,
-                averageInitPenalty(), initCount, totalInitTime);
-    }
 }

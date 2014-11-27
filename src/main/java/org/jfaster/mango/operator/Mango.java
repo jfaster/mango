@@ -36,9 +36,7 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -181,7 +179,7 @@ public class Mango {
 
         MangoInvocationHandler handler = new MangoInvocationHandler(this, cacheHandler);
         if (!lazyInit) { // 不使用懒加载，则提前加载
-            Method[] methods = daoClass.getMethods(); // TODO log
+            Method[] methods = daoClass.getMethods();
             for (Method method : methods) {
                 try {
                     handler.getOperator(method);
@@ -196,19 +194,32 @@ public class Mango {
     /**
      * 返回各个方法对应的状态
      */
-    public Map<Method, MethodStats> getStatsMap() {
+    public List<OperatorStats> getAllStats() {
+        List<OperatorStats> oss = new ArrayList<OperatorStats>();
         Set<Map.Entry<Method, StatsCounter>> entrySet = statsCounterMap.entrySet();
-        Map<Method, MethodStats> map = new HashMap<Method, MethodStats>();
         for (Map.Entry<Method, StatsCounter> entry : entrySet) {
-            map.put(entry.getKey(), entry.getValue().snapshot());
+            Method method = entry.getKey();
+            OperatorStats os = entry.getValue().snapshot();
+            os.setMethod(method);
+            oss.add(os);
         }
-        return map;
+
+        // 按照总执行次数从高到低排序
+        Collections.sort(oss, new Comparator<OperatorStats>() {
+            @Override
+            public int compare(OperatorStats o1, OperatorStats o2) {
+                long c1 = o1.executeCount();
+                long c2 = o2.executeCount();
+                return (c1 < c2) ? 1 : ((c1 > c2) ? -1 : 0);
+            }
+        });
+        return oss;
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
         private final JdbcOperations jdbcOperations;
-        private final ConcurrentHashMap<Method,StatsCounter> statsCounterMap;
+        private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
         private final OperatorFactory operatorFactory;
         private final ParameterNameDiscover parameterNameDiscover;
 
