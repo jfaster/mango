@@ -16,18 +16,15 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.jdbc.SingleColumnRowMapper;
-import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.TypeWrapper;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 /**
  * @author ash
@@ -42,23 +39,16 @@ public class QueryOperator extends AbstractOperator {
 
     protected QueryOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
-        init(rootNode, md);
+        init(md);
     }
 
-    private void init(ASTRootNode rootNode, MethodDescriptor md) {
+    private void init(MethodDescriptor md) {
         TypeWrapper tw = new TypeWrapper(md.getReturnType());
         isForList = tw.isList();
         isForSet = tw.isSet();
         isForArray = tw.isArray();
         mappedClass = tw.getMappedClass();
         rowMapper = getRowMapper(mappedClass);
-
-        List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
-        if (!jips.isEmpty() && !isForList && !isForSet && !isForArray) {
-            throw new IncorrectReturnTypeException("if sql has in clause, return type " +
-                    "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                    "but " + md.getReturnType()); // sql中使用了in查询，返回参数必须可迭代
-        }
     }
 
     @Override

@@ -24,7 +24,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,16 +50,6 @@ public class IncorrectReturnTypeExceptionTest {
                 "but void");
         Dao dao = mango.create(Dao.class);
         dao.update();
-    }
-
-    @Test
-    public void test2() {
-        thrown.expect(IncorrectReturnTypeException.class);
-        thrown.expectMessage("if sql has in clause, return type " +
-                "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                "but int");
-        Dao dao = mango.create(Dao.class);
-        dao.gets(new ArrayList<Integer>());
     }
 
     @DB

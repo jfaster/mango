@@ -18,7 +18,6 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
-import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;
@@ -151,7 +150,7 @@ public class CacheableQueryOperator extends QueryOperator {
         private AddableObject(int initialCapacity, Class<T> valueClass) {
             if (isForSet) {
                 hitValueSet = new HashSet<T>(initialCapacity * 2);
-            } else { // 返回List或数组都先使用List
+            } else { // 返回List或数组或单个值都先使用List
                 hitValueList = new ArrayList<T>(initialCapacity);
             }
             this.valueClass = valueClass;
@@ -173,7 +172,7 @@ public class CacheableQueryOperator extends QueryOperator {
             } else if (isForArray) {
                 return org.jfaster.mango.util.Arrays.toArray(hitValueList, valueClass);
             } else {
-                throw new UnreachableCodeException();
+                return !hitValueList.isEmpty() ? hitValueList.get(0) : null;
             }
         }
 

@@ -17,19 +17,16 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
-import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.jdbc.RowMapper;
+import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;
 import org.jfaster.mango.support.MockSQL;
 import org.jfaster.mango.support.model4table.User;
-import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.reflect.TypeToken;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
@@ -216,22 +213,6 @@ public class QueryOperatorTest {
         } catch (UnsupportedOperationException e) {
         }
         assertThat(sc.snapshot().executeExceptionCount(), equalTo(2L));
-    }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Test
-    public void testIncorrectReturnTypeException() throws Exception {
-        thrown.expect(IncorrectReturnTypeException.class);
-        thrown.expectMessage("if sql has in clause, return type expected array " +
-                "or implementations of java.util.List or implementations of java.util.Set " +
-                "but class org.jfaster.mango.support.model4table.User");
-
-        TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
-        TypeToken<User> rt = TypeToken.of(User.class);
-        String srcSql = "select * from user where id in (:1)";
-        getOperator(pt, rt, srcSql);
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
