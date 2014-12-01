@@ -17,6 +17,8 @@
 package org.jfaster.mango.datasource;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DataSourceMonitor {
 
-    private static ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
+    private static final ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
 
     private static volatile boolean forceCheckAutoCommit = false;
 
@@ -41,4 +43,13 @@ public class DataSourceMonitor {
     public static void setForceCheckAutoCommit(boolean forceCheckAutoCommit) {
         DataSourceMonitor.forceCheckAutoCommit = forceCheckAutoCommit;
     }
+
+    public static List<DataSource> getFailedDataSources() {
+        List<DataSource> dss = new ArrayList<DataSource>();
+        for (DataSource ds : map.keySet()) {
+            dss.add(ds);
+        }
+        return dss;
+    }
+
 }
