@@ -17,9 +17,10 @@
 package org.jfaster.mango.datasource;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 监控datasource
@@ -28,7 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DataSourceMonitor {
 
-    private static final ConcurrentHashMap<DataSource, Object> map = new ConcurrentHashMap<DataSource, Object>();
+    private static final ConcurrentHashMap<DataSource, AtomicInteger> map =
+            new ConcurrentHashMap<DataSource, AtomicInteger>();
 
     private static volatile boolean forceCheckAutoCommit = false;
 
@@ -37,19 +39,27 @@ public class DataSourceMonitor {
     }
 
     public static void resetAutoCommitFail(DataSource ds) {
-        map.putIfAbsent(ds, new Object());
+        AtomicInteger val = map.get(ds);
+        if (val == null) {
+            val = new AtomicInteger();
+            AtomicInteger old = map.putIfAbsent(ds, val);
+            if (old != null) {
+                val = old;
+            }
+        }
+        val.incrementAndGet();
     }
 
     public static void setForceCheckAutoCommit(boolean forceCheckAutoCommit) {
         DataSourceMonitor.forceCheckAutoCommit = forceCheckAutoCommit;
     }
 
-    public static List<DataSource> getFailedDataSources() {
-        List<DataSource> dss = new ArrayList<DataSource>();
-        for (DataSource ds : map.keySet()) {
-            dss.add(ds);
+    public static Map<DataSource, Integer> getFailedDataSources() {
+        Map<DataSource, Integer> dsMap = new HashMap<DataSource, Integer>();
+        for (Map.Entry<DataSource, AtomicInteger> entry : map.entrySet()) {
+            dsMap.put(entry.getKey(), entry.getValue().intValue());
         }
-        return dss;
+        return dsMap;
     }
 
 }
