@@ -68,7 +68,7 @@ public class CacheableUpdateOperatorTest {
         user.setId(100);
         user.setName("ash");
         operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().evictionCount(), equalTo(1L));
+        assertThat(sc.snapshot().getEvictionCount(), equalTo(1L));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class CacheableUpdateOperatorTest {
 
         List<Integer> ids = Arrays.asList(100, 200);
         operator.execute(new Object[]{ids});
-        assertThat(sc.snapshot().evictionCount(), equalTo(2L));
+        assertThat(sc.snapshot().getEvictionCount(), equalTo(2L));
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,

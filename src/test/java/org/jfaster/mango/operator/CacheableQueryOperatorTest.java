@@ -59,7 +59,7 @@ public class CacheableQueryOperatorTest {
         operator.setJdbcOperations(new JdbcOperationsAdapter());
 
         operator.execute(new Object[]{1});
-        assertThat(sc.snapshot().hitCount(), equalTo(1L));
+        assertThat(sc.snapshot().getHitCount(), equalTo(1L));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CacheableQueryOperatorTest {
         });
 
         operator.execute(new Object[]{1});
-        assertThat(sc.snapshot().missCount(), equalTo(1L));
+        assertThat(sc.snapshot().getMissCount(), equalTo(1L));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class CacheableQueryOperatorTest {
         operator.setJdbcOperations(new JdbcOperationsAdapter());
 
         operator.execute(new Object[]{Arrays.asList(1, 2, 3)});
-        assertThat(sc.snapshot().hitCount(), equalTo(3L));
+        assertThat(sc.snapshot().getHitCount(), equalTo(3L));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class CacheableQueryOperatorTest {
         });
 
         operator.execute(new Object[]{Arrays.asList(1, 2, 3)});
-        assertThat(sc.snapshot().missCount(), equalTo(3L));
+        assertThat(sc.snapshot().getMissCount(), equalTo(3L));
         assertThat(keys, equalTo(setKeys));
     }
 
@@ -214,8 +214,8 @@ public class CacheableQueryOperatorTest {
         });
 
         operator.execute(new Object[]{Arrays.asList(1, 2, 3)});
-        assertThat(sc.snapshot().hitCount(), equalTo(1L));
-        assertThat(sc.snapshot().missCount(), equalTo(2L));
+        assertThat(sc.snapshot().getHitCount(), equalTo(1L));
+        assertThat(sc.snapshot().getMissCount(), equalTo(2L));
         keys.remove("user_2");
         assertThat(keys, equalTo(setKeys));
     }

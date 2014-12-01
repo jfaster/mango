@@ -48,18 +48,22 @@ public class OperatorStats {
         this.evictionCount = evictionCount;
     }
 
-    public Method getMethod() {
-        return method;
+    public String getMethodName() {
+        return method.getName();
     }
 
-    public Class getDeclaringClass() {
-        return method.getDeclaringClass();
+    public String getClassName() {
+        return method.getDeclaringClass().getName();
+    }
+
+    public String getClassSimpleName() {
+        return method.getDeclaringClass().getSimpleName();
     }
 
     /**
      * 返回平均初始化时间，单位为纳秒
      */
-    public long averageInitPenalty() {
+    public long getAverageInitPenalty() {
         return (initCount == 0)
                 ? 0
                 : totalInitTime / initCount;
@@ -68,72 +72,72 @@ public class OperatorStats {
     /**
      * 初始化次数
      */
-    public long initCount() {
+    public long getInitCount() {
         return initCount;
     }
 
     /**
      * 初始化总时间，单位为纳秒
      */
-    public long totalInitTime() {
+    public long getTotalInitTime() {
         return totalInitTime;
     }
 
     /**
      * 返回缓存命中数加缓存丢失数
      */
-    public long requestCount() {
+    public long getRequestCount() {
         return hitCount + missCount;
     }
 
     /**
      * 返回缓存命中数
      */
-    public long hitCount() {
+    public long getHitCount() {
         return hitCount;
     }
 
     /**
      * 返回缓存命中率
      */
-    public double hitRate() {
-        long requestCount = requestCount();
+    public double getHitRate() {
+        long requestCount = getRequestCount();
         return (requestCount == 0) ? 1.0 : (double) hitCount / requestCount;
     }
 
     /**
      * 返回缓存丢失数
      */
-    public long missCount() {
+    public long getMissCount() {
         return missCount;
     }
 
     /**
      * 返回缓存丢失率
      */
-    public double missRate() {
-        long requestCount = requestCount();
+    public double getMissRate() {
+        long requestCount = getRequestCount();
         return (requestCount == 0) ? 0.0 : (double) missCount / requestCount;
     }
 
     /**
      * 返回db执行总数
      */
-    public long executeCount() {
+    public long getExecuteCount() {
         return executeSuccessCount + executeExceptionCount;
     }
 
     /**
      * 返回db执行成功数
      */
-    public long executeSuccessCount() {
+    public long getExecuteSuccessCount() {
         return executeSuccessCount;
     }
 
     /**
      * 返回db执行成功率
      */
-    public double executeSuccessRate() {
+    public double getExecuteSuccessRate() {
         long totalExecuteCount = executeSuccessCount + executeExceptionCount;
         return (totalExecuteCount == 0)
                 ? 1.0
@@ -143,14 +147,14 @@ public class OperatorStats {
     /**
      * 返回db执行失败数
      */
-    public long executeExceptionCount() {
+    public long getExecuteExceptionCount() {
         return executeExceptionCount;
     }
 
     /**
      * 返回db执行失败率
      */
-    public double executeExceptionRate() {
+    public double getExecuteExceptionRate() {
         long totalExecuteCount = executeSuccessCount + executeExceptionCount;
         return (totalExecuteCount == 0)
                 ? 0.0
@@ -160,14 +164,14 @@ public class OperatorStats {
     /**
      * 返回db执行总时间，单位为纳秒
      */
-    public long totalExecuteTime() {
+    public long getTotalExecuteTime() {
         return totalExecuteTime;
     }
 
     /**
      * 返回平均每次db执行时间，单位为纳秒
      */
-    public long averageExecutePenalty() {
+    public long getAverageExecutePenalty() {
         long totalExecuteCount = executeSuccessCount + executeExceptionCount;
         return (totalExecuteCount == 0)
                 ? 0
@@ -177,7 +181,7 @@ public class OperatorStats {
     /**
      * 删除cache数
      */
-    public long evictionCount() {
+    public long getEvictionCount() {
         return evictionCount;
     }
 

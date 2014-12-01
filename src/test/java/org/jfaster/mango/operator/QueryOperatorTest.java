@@ -227,21 +227,21 @@ public class QueryOperatorTest {
             }
         });
         operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().executeSuccessCount(), equalTo(1L));
+        assertThat(sc.snapshot().getExecuteSuccessCount(), equalTo(1L));
         operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().executeSuccessCount(), equalTo(2L));
+        assertThat(sc.snapshot().getExecuteSuccessCount(), equalTo(2L));
 
         operator.setJdbcOperations(new JdbcOperationsAdapter());
         try {
             operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
-        assertThat(sc.snapshot().executeExceptionCount(), equalTo(1L));
+        assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(1L));
         try {
             operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
-        assertThat(sc.snapshot().executeExceptionCount(), equalTo(2L));
+        assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(2L));
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {

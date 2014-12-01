@@ -71,7 +71,7 @@ public class CacheableBatchUpdateOperatorTest {
 
         List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
         operator.execute(new Object[]{users});
-        assertThat(sc.snapshot().evictionCount(), equalTo(2L));
+        assertThat(sc.snapshot().getEvictionCount(), equalTo(2L));
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
