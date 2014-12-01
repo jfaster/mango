@@ -155,13 +155,6 @@ public class OperatorFactory {
             globalTable = dbAnno.table();
         }
 
-        if (globalTable != null && rootNode.getASTGlobalTables().isEmpty()) {
-            throw new IncorrectDefinitionException("if @DB.table is defined, sql need has one or more #table");
-        }
-        if (globalTable == null && !rootNode.getASTGlobalTables().isEmpty()) {
-            throw new IncorrectDefinitionException("if sql has one or more #table, @DB.table must be defined");
-        }
-
         Class<? extends TablePartition> tpc = dbAnno.tablePartition();
         TablePartition tablePartition = null;
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
@@ -175,6 +168,9 @@ public class OperatorFactory {
 
         if (tablePartition != null && globalTable == null) { // 使用了分表但没有使用全局表名则抛出异常
             throw new IncorrectDefinitionException("if @DB.tablePartition is defined, @DB.table must be defined");
+        }
+        if (tablePartition != null && rootNode.getASTGlobalTables().isEmpty()) {
+            throw new IncorrectDefinitionException("if @DB.tablePartition is defined, sql need has one or more #table");
         }
 
         if (dataSourceRouter != null && tablePartition == null) { // 使用了数据源路由但没有使用分表则抛出异常

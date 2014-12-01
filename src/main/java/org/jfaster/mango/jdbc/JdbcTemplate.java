@@ -68,6 +68,8 @@ public class JdbcTemplate implements JdbcOperations {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Integer r = null;
+        Exception ee = null;
+
         try {
             boolean needGenerateKey = holder != null;
             ps = needGenerateKey ?
@@ -85,13 +87,14 @@ public class JdbcTemplate implements JdbcOperations {
             }
             return r;
         } catch (SQLException e) {
+            ee = e;
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             if (logger.isDebugEnabled()) {
-                if (r != null) { // 执行成功
+                if (ee == null) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, args, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={}", sql, args);
+                    logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, args, ee.getMessage());
                 }
             }
 
@@ -106,12 +109,14 @@ public class JdbcTemplate implements JdbcOperations {
         Connection conn = DataSourceUtils.getConnection(ds);
         PreparedStatement ps = null;
         int[] r = null;
+        Exception ee = null;
         try {
             ps = conn.prepareStatement(sql);
             setBatchValues(ps, batchArgs);
             r = ps.executeBatch();
             return r;
         } catch (SQLException e) {
+            ee = e;
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             if (logger.isDebugEnabled()) {
@@ -119,10 +124,10 @@ public class JdbcTemplate implements JdbcOperations {
                 for (Object[] batchArg : batchArgs) {
                     debugBatchArgs.add(Arrays.asList(batchArg));
                 }
-                if (r != null) { // 执行成功
+                if (ee == null) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, debugBatchArgs, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={}", sql, debugBatchArgs);
+                    logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, debugBatchArgs, ee.getMessage());
                 }
             }
 
@@ -135,26 +140,26 @@ public class JdbcTemplate implements JdbcOperations {
     public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs) {
         int size = Math.min(sqls.size(), batchArgs.size());
         int[] r = new int[size];
-        boolean[] success = new boolean[size];
         Connection conn = DataSourceUtils.getConnection(ds);
         try {
             for (int i = 0; i < size; i++) {
                 String sql = sqls.get(i);
                 Object[] args = batchArgs.get(i);
+                Exception ee = null;
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement(sql);
                     setValues(ps, args);
                     r[i] = ps.executeUpdate();
-                    success[i] = true;
                 } catch (SQLException e) {
+                    ee = e;
                     throw new UncheckedSQLException(e.getMessage(), e);
                 } finally {
                     if (logger.isDebugEnabled()) {
-                        if (success[i]) {
+                        if (ee == null) {
                             logger.debug("\"{}\" #args={} #result={}", sql, args, r[i]);
                         } else {
-                            logger.debug("[error] \"{}\" #args={}", sql, args);
+                            logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, args, ee.getMessage());
                         }
                     }
 
@@ -171,24 +176,23 @@ public class JdbcTemplate implements JdbcOperations {
         Connection conn = DataSourceUtils.getConnection(ds);
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         T r = null;
-        boolean success = false;
+        Exception ee = null;
         try {
             ps = conn.prepareStatement(sql);
             setValues(ps, args);
             rs = ps.executeQuery();
             r = rse.extractData(rs);
-            success = true;
             return r;
         } catch (SQLException e) {
+            ee = e;
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             if (logger.isDebugEnabled()) {
-                if (success) { // 执行成功
+                if (ee == null) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, args, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={}", sql, args);
+                    logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, args, ee.getMessage());
                 }
             }
 
