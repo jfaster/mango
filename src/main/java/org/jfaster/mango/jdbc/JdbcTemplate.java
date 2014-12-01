@@ -94,7 +94,7 @@ public class JdbcTemplate implements JdbcOperations {
                 if (ee == null) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, args, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, args, ee.getMessage());
+                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
                 }
             }
 
@@ -127,7 +127,7 @@ public class JdbcTemplate implements JdbcOperations {
                 if (ee == null) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, debugBatchArgs, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, debugBatchArgs, ee.getMessage());
+                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, debugBatchArgs, ee.getMessage());
                 }
             }
 
@@ -159,7 +159,7 @@ public class JdbcTemplate implements JdbcOperations {
                         if (ee == null) {
                             logger.debug("\"{}\" #args={} #result={}", sql, args, r[i]);
                         } else {
-                            logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, args, ee.getMessage());
+                            logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
                         }
                     }
 
@@ -192,7 +192,7 @@ public class JdbcTemplate implements JdbcOperations {
                 if (ee == null) { // 执行成功
                     logger.debug("\"{}\" #args={} #result={}", sql, args, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg={}", sql, args, ee.getMessage());
+                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
                 }
             }
 
