@@ -94,7 +94,7 @@ public class OperatorFactory {
         rootNode.expandParameter(context); // 扩展简化的参数节点
         rootNode.checkType(context); // 检测节点类型
 
-        DbInfo dbInfo = getDbInfo(md, nameProvider, context);
+        DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
                 dbInfo.shardPropertyPath, dbInfo.tablePartition);
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType(),
@@ -143,7 +143,7 @@ public class OperatorFactory {
         return operator;
     }
 
-    DbInfo getDbInfo(MethodDescriptor md, NameProvider nameProvider, ParameterContext context) {
+    DbInfo getDbInfo(MethodDescriptor md, ASTRootNode rootNode, NameProvider nameProvider, ParameterContext context) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IllegalStateException("dao interface expected one @DB " +
@@ -151,9 +151,17 @@ public class OperatorFactory {
         }
         String dataSourceName = dbAnno.dataSource();
         String globalTable = null;
-        if (!Strings.isEmpty(dbAnno.table())) {
+        if (Strings.isNotEmpty(dbAnno.table())) {
             globalTable = dbAnno.table();
         }
+
+        if (globalTable != null && rootNode.getASTGlobalTables().isEmpty()) {
+            throw new IncorrectDefinitionException("if @DB.table is defined, sql need has one or more #table");
+        }
+        if (globalTable == null && !rootNode.getASTGlobalTables().isEmpty()) {
+            throw new IncorrectDefinitionException("if sql has one or more #table, @DB.table must be defined");
+        }
+
         Class<? extends TablePartition> tpc = dbAnno.tablePartition();
         TablePartition tablePartition = null;
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {

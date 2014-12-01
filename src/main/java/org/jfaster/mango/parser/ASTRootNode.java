@@ -71,6 +71,10 @@ public class ASTRootNode extends AbstractRenderableNode {
         return nodeInfo.jdbcIterableParameters;
     }
 
+    public List<ASTGlobalTable> getASTGlobalTables() {
+        return nodeInfo.globalTables;
+    }
+
     private Node getDDLNode() {
         return jjtGetChild(0);
     }
