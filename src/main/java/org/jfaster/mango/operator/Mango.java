@@ -251,14 +251,12 @@ public class Mango {
         @Override
         protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
             if (logger.isDebugEnabled()) {
-                String tsArgs = ToStringHelper.toStringNoThrow(args);
-                logger.debug("{} #args={}", ToStringHelper.toString(method), tsArgs);
+                logger.debug("{} #args={}", ToStringHelper.toString(method), args);
             }
             Operator operator = getOperator(method);
             Object r = operator.execute(args);
             if (logger.isDebugEnabled()) {
-                String tsR = ToStringHelper.toStringNoThrow(r);
-                logger.debug("{} #result={}", ToStringHelper.toString(method), tsR);
+                logger.debug("{} #result={}", ToStringHelper.toString(method), r);
             }
             return r;
         }
