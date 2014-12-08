@@ -19,6 +19,7 @@ package org.jfaster.mango.jdbc;
 import org.jfaster.mango.exception.ReturnGeneratedKeyException;
 import org.jfaster.mango.exception.UncheckedSQLException;
 import org.jfaster.mango.datasource.DataSourceUtils;
+import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -91,10 +92,11 @@ public class JdbcTemplate implements JdbcOperations {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             if (logger.isDebugEnabled()) {
+                String tsArgs = ToStringHelper.toStringNoThrow(args);
                 if (ee == null) { // 执行成功
-                    logger.debug("\"{}\" #args={} #result={}", sql, args, r);
+                    logger.debug("\"{}\" #args={} #result={}", sql, tsArgs, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
+                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, tsArgs, ee.getMessage());
                 }
             }
 
@@ -124,10 +126,11 @@ public class JdbcTemplate implements JdbcOperations {
                 for (Object[] batchArg : batchArgs) {
                     debugBatchArgs.add(Arrays.asList(batchArg));
                 }
+                String tsDebugBatchArgs = ToStringHelper.toStringNoThrow(debugBatchArgs);
                 if (ee == null) { // 执行成功
-                    logger.debug("\"{}\" #args={} #result={}", sql, debugBatchArgs, r);
+                    logger.debug("\"{}\" #args={} #result={}", sql, tsDebugBatchArgs, r);
                 } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, debugBatchArgs, ee.getMessage());
+                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, tsDebugBatchArgs, ee.getMessage());
                 }
             }
 
@@ -156,10 +159,11 @@ public class JdbcTemplate implements JdbcOperations {
                     throw new UncheckedSQLException(e.getMessage(), e);
                 } finally {
                     if (logger.isDebugEnabled()) {
+                        String tsArgs = ToStringHelper.toStringNoThrow(args);
                         if (ee == null) {
-                            logger.debug("\"{}\" #args={} #result={}", sql, args, r[i]);
+                            logger.debug("\"{}\" #args={} #result={}", sql, tsArgs, r[i]);
                         } else {
-                            logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
+                            logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, tsArgs, ee.getMessage());
                         }
                     }
 
@@ -189,10 +193,12 @@ public class JdbcTemplate implements JdbcOperations {
             throw new UncheckedSQLException(e.getMessage(), e);
         } finally {
             if (logger.isDebugEnabled()) {
+                String tsArgs = ToStringHelper.toStringNoThrow(args);
+                String tsR = ToStringHelper.toStringNoThrow(r);
                 if (ee == null) { // 执行成功
-                    logger.debug("\"{}\" #args={} #result={}", sql, args, r);
+                    logger.debug("\"{}\" #args={} #result={}", sql, tsArgs, tsR);
                 } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
+                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, tsArgs, ee.getMessage());
                 }
             }
 

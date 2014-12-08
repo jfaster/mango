@@ -23,6 +23,19 @@ import java.lang.reflect.*;
  */
 public class ToStringHelper {
 
+    public static String toStringNoThrow(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        String s;
+        try {
+            s = obj.toString();
+        } catch (Exception e) {
+            s = "## toString() error, error message is: " + e.getMessage() + " ##";
+        }
+        return s;
+    }
+
     public static String toString(Method m) {
         StringBuffer sb = new StringBuffer();
         sb.append(m.getDeclaringClass().getSimpleName()).append(".").append(m.getName()).append("(");
