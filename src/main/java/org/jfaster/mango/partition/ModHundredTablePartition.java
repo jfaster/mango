@@ -25,16 +25,22 @@ public class ModHundredTablePartition implements TablePartition {
 
     @Override
     public String getPartitionedTable(String table, Object shardParam) {
-        int tail;
+        int mod;
         if (shardParam instanceof Integer) {
-            tail = ((Integer) shardParam) % 100;
+            mod = ((Integer) shardParam) % 100;
         } else if (shardParam instanceof Long) {
-            tail = (int) (((Long) shardParam) % 100);
-        } else {
+            mod = (int) (((Long) shardParam) % 100);
+        } else if (shardParam instanceof String) {
+            try {
+                mod = (int) (Long.parseLong((String) shardParam) % 100);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("can't convert shard parameter [" + shardParam + "] to digital");
+            }
+        }  else {
             throw new IllegalArgumentException("shard parameter need int or Integer or long or Long but "
                     + shardParam.getClass());
         }
-        return table + "_" + tail;
+        return table + "_" + mod;
     }
 
 }
