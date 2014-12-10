@@ -45,15 +45,13 @@ public class OperatorFactory {
 
     private final DataSourceFactory dataSourceFactory;
     private final CacheHandler cacheHandler;
-    private final InterceptorChain queryInterceptorChain;
-    private final InterceptorChain updateInterceptorChain;
+    private final InterceptorChain interceptorChain;
 
     public OperatorFactory(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
-                           InterceptorChain queryInterceptorChain, InterceptorChain updateInterceptorChain) {
+                           InterceptorChain interceptorChain) {
         this.dataSourceFactory = dataSourceFactory;
         this.cacheHandler = cacheHandler;
-        this.queryInterceptorChain = queryInterceptorChain;
-        this.updateInterceptorChain = updateInterceptorChain;
+        this.interceptorChain = interceptorChain;
     }
 
     public Operator getOperator(MethodDescriptor md)  {
@@ -137,10 +135,7 @@ public class OperatorFactory {
             }
         }
 
-        chain =  sqlType.needChangeData() ?
-                new InvocationInterceptorChain(updateInterceptorChain, context.getParameterDescriptors(), sqlType) :
-                new InvocationInterceptorChain(queryInterceptorChain, context.getParameterDescriptors(), sqlType);
-
+        chain = new InvocationInterceptorChain(interceptorChain, context.getParameterDescriptors(), sqlType);
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
         operator.setInvocationContextFactory(new InvocationContextFactory(nameProvider));

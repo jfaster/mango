@@ -235,8 +235,7 @@ public class CacheableQueryOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()),
-                ch, new InterceptorChain(), new InterceptorChain());
+                new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain());
 
         Operator operator = factory.getOperator(md);
         return operator;

@@ -64,14 +64,9 @@ public class Mango {
     private boolean defaultLazyInit = false;
 
     /**
-     * 查询拦截器链，默认为空
+     * 拦截器链，默认为空
      */
-    private InterceptorChain queryInterceptorChain = new InterceptorChain();
-
-    /**
-     * 更新拦截器链，默认为空
-     */
-    private InterceptorChain updateInterceptorChain = new InterceptorChain();
+    private InterceptorChain interceptorChain = new InterceptorChain();
 
     /**
      * jdbc操作
@@ -102,30 +97,16 @@ public class Mango {
     }
 
     /**
-     * 添加查询拦截器
+     * 添加拦截器
      */
-    public Mango addQueryInterceptor(Interceptor interceptor) {
+    public Mango addInterceptor(Interceptor interceptor) {
         if (interceptor == null) {
             throw new NullPointerException("interceptor can't be null");
         }
-        if (queryInterceptorChain == null) {
-            queryInterceptorChain = new InterceptorChain();
+        if (interceptorChain == null) {
+            interceptorChain = new InterceptorChain();
         }
-        queryInterceptorChain.addInterceptor(interceptor);
-        return this;
-    }
-
-    /**
-     * 添加更新拦截器
-     */
-    public Mango addUpdateInterceptor(Interceptor interceptor) {
-        if (interceptor == null) {
-            throw new NullPointerException("interceptor can't be null");
-        }
-        if (updateInterceptorChain == null) {
-            updateInterceptorChain = new InterceptorChain();
-        }
-        updateInterceptorChain.addInterceptor(interceptor);
+        interceptorChain.addInterceptor(interceptor);
         return this;
     }
 
@@ -243,8 +224,7 @@ public class Mango {
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
             jdbcOperations = mango.jdbcOperations;
             statsCounterMap = mango.statsCounterMap;
-            operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
-                    mango.queryInterceptorChain, mango.updateInterceptorChain);
+            operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler, mango.interceptorChain);
             parameterNameDiscover = mango.parameterNameDiscover;
         }
 
@@ -312,27 +292,11 @@ public class Mango {
         return this;
     }
 
-    public InterceptorChain getQueryInterceptorChain() {
-        return queryInterceptorChain;
-    }
-
-    public Mango setQueryInterceptorChain(InterceptorChain queryInterceptorChain) {
-        if (queryInterceptorChain == null) {
-            throw new NullPointerException("queryInterceptorChain can't be null");
+    public Mango setInterceptorChain(InterceptorChain interceptorChain) {
+        if (interceptorChain == null) {
+            throw new NullPointerException("interceptorChain can't be null");
         }
-        this.queryInterceptorChain = queryInterceptorChain;
-        return this;
-    }
-
-    public InterceptorChain getUpdateInterceptorChain() {
-        return updateInterceptorChain;
-    }
-
-    public Mango setUpdateInterceptorChain(InterceptorChain updateInterceptorChain) {
-        if (updateInterceptorChain == null) {
-            throw new NullPointerException("updateInterceptorChain can't be null");
-        }
-        this.updateInterceptorChain = updateInterceptorChain;
+        this.interceptorChain = interceptorChain;
         return this;
     }
 

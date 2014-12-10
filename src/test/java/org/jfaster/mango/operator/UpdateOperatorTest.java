@@ -182,8 +182,7 @@ public class UpdateOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()),
-                null, new InterceptorChain(), new InterceptorChain());
+                new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain());
 
         Operator operator = factory.getOperator(md);
         return operator;
@@ -201,8 +200,7 @@ public class UpdateOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()),
-                null, new InterceptorChain(), new InterceptorChain());
+                new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain());
 
         Operator operator = factory.getOperator(md);
         return operator;
