@@ -14,40 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.util;
+package org.jfaster.mango.annotation;
+
+import java.lang.annotation.*;
 
 /**
+ * 强制使用主库
+ *
  * @author ash
  */
-public enum SQLType {
-
-    /**
-     * 增
-     */
-    INSERT(true),
-
-    /**
-     * 删
-     */
-    DELETE(true),
-
-    /**
-     * 改
-     */
-    UPDATE(true),
-
-    /**
-     * 查
-     */
-    SELECT(false);
-
-    private boolean needChangeData;
-
-    private SQLType(boolean needChangeData) {
-        this.needChangeData = needChangeData;
-    }
-
-    public boolean needChangeData() {
-        return needChangeData;
-    }
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface UseMaster {
 }

@@ -1,9 +1,10 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
+import org.jfaster.mango.datasource.factory.DataSourceType;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
-import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -17,19 +18,18 @@ public class DataSourceGenerator {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceGenerator.class);
 
-    private DataSourceFactory dataSourceFactory;
-    private SQLType sqlType;
+    private final DataSourceFactory dataSourceFactory;
+    private final DataSourceType dataSourceType;
+    private final String dataSourceName;
+    private final String shardParameterName;
+    private final String shardPropertyPath; // 为""的时候表示没有属性
+    private final DataSourceRouter dataSourceRouter; // 分表
 
-    private String dataSourceName;
-    private String shardParameterName;
-    private String shardPropertyPath; // 为""的时候表示没有属性
-    private DataSourceRouter dataSourceRouter; // 分表
-
-    public DataSourceGenerator(DataSourceFactory dataSourceFactory, SQLType sqlType,
+    public DataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
                                String dataSourceName, String shardParameterName,
                                String shardPropertyPath, DataSourceRouter dataSourceRouter) {
         this.dataSourceFactory = dataSourceFactory;
-        this.sqlType = sqlType;
+        this.dataSourceType = dataSourceType;
         this.dataSourceName = dataSourceName;
         this.shardParameterName = shardParameterName;
         this.shardPropertyPath = shardPropertyPath;
@@ -44,7 +44,11 @@ public class DataSourceGenerator {
         if (logger.isDebugEnabled()) {
             logger.debug("The name of Datasource is [" + dataSourceName + "]");
         }
-        DataSource ds = dataSourceFactory.getDataSource(dataSourceName, sqlType);
+        DataSourceType dst = dataSourceType;
+        if (TransactionSynchronizationManager.inTransaction()) { // 事务使用主数据源
+            dst = DataSourceType.MASTER;
+        }
+        DataSource ds = dataSourceFactory.getDataSource(dataSourceName, dst);
         if (ds == null) {
             throw new IncorrectDefinitionException("can't find datasource for name [" + dataSourceName + "]");
         }

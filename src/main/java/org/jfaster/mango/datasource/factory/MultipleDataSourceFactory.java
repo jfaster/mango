@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.datasource.factory;
 
-import org.jfaster.mango.util.SQLType;
-
 import javax.sql.DataSource;
 import java.util.Map;
 
@@ -41,13 +39,13 @@ public class MultipleDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public DataSource getDataSource(String name, SQLType sqlType) {
+    public DataSource getDataSource(String name, DataSourceType dataSourceType) {
         DataSourceFactory factory = factories.get(name);
         if (factory == null) {
             throw new IllegalArgumentException("can not find the data source factory by name [" + name + "], " +
                     "available data sources name is " + factories.keySet());
         }
-        return factory.getDataSource(name, sqlType);
+        return factory.getDataSource(name, dataSourceType);
     }
 
     public Map<String, DataSourceFactory> getFactories() {

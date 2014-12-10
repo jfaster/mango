@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.datasource.factory;
 
-import org.jfaster.mango.util.SQLType;
-
 import javax.sql.DataSource;
 
 /**
@@ -27,6 +25,6 @@ import javax.sql.DataSource;
  */
 public interface DataSourceFactory {
 
-    public DataSource getDataSource(String name, SQLType sqlType);
+    public DataSource getDataSource(String name, DataSourceType dataSourceType);
 
 }

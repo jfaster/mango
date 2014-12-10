@@ -19,6 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
+import org.jfaster.mango.datasource.factory.DataSourceType;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.*;
@@ -97,7 +98,11 @@ public class OperatorFactory {
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
                 dbInfo.shardPropertyPath, dbInfo.tablePartition);
-        DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, rootNode.getSQLType(),
+        DataSourceType dst = DataSourceType.SLAVE;
+        if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
+            dst = DataSourceType.MASTER;
+        }
+        DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, dst,
                dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardPropertyPath, dbInfo.dataSourceRouter);
 
         Operator operator;
@@ -132,9 +137,9 @@ public class OperatorFactory {
             }
         }
 
-        chain =  sqlType == SQLType.SELECT ?
-                new InvocationInterceptorChain(queryInterceptorChain, context.getParameterDescriptors(), sqlType) :
-                new InvocationInterceptorChain(updateInterceptorChain, context.getParameterDescriptors(), sqlType);
+        chain =  sqlType.needChangeData() ?
+                new InvocationInterceptorChain(updateInterceptorChain, context.getParameterDescriptors(), sqlType) :
+                new InvocationInterceptorChain(queryInterceptorChain, context.getParameterDescriptors(), sqlType);
 
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);

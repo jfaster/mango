@@ -16,9 +16,6 @@
 
 package org.jfaster.mango.datasource.factory;
 
-import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.transaction.TransactionSynchronizationManager;
-
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Random;
@@ -43,11 +40,8 @@ public class MasterSlaveDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public DataSource getDataSource(String name, SQLType sqlType) {
-        if (TransactionSynchronizationManager.inTransaction()) { // 使用事务直接返回主数据源
-            return master;
-        }
-        return sqlType == SQLType.SELECT ? slaves.get(random.nextInt(slaves.size())) : master;
+    public DataSource getDataSource(String name, DataSourceType dataSourceType) {
+        return dataSourceType == DataSourceType.MASTER ? master : slaves.get(random.nextInt(slaves.size()));
     }
 
     public DataSource getMaster() {

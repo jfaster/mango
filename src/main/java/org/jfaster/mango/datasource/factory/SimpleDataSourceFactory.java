@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.datasource.factory;
 
-import org.jfaster.mango.util.SQLType;
-
 import javax.sql.DataSource;
 
 /**
@@ -37,7 +35,7 @@ public class SimpleDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public DataSource getDataSource(String name, SQLType sqlType) {
+    public DataSource getDataSource(String name, DataSourceType dataSourceType) {
         return dataSource;
     }
 
