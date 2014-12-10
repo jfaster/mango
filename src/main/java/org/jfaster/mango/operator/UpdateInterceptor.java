@@ -33,6 +33,6 @@ public abstract class UpdateInterceptor implements Interceptor {
         }
     }
 
-    abstract void interceptUpdate(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType);
+    public abstract void interceptUpdate(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType);
 
 }

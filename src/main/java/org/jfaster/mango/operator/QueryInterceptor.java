@@ -33,6 +33,6 @@ public abstract class QueryInterceptor implements Interceptor {
         }
     }
 
-    abstract void interceptQuery(PreparedSql preparedSql, List<Parameter> parameters);
+    public abstract void interceptQuery(PreparedSql preparedSql, List<Parameter> parameters);
 
 }
