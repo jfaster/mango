@@ -17,6 +17,8 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Mapper;
+import org.jfaster.mango.annotation.Result;
+import org.jfaster.mango.annotation.Results;
 import org.jfaster.mango.mapper.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.mapper.RowMapper;
@@ -27,6 +29,8 @@ import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeWrapper;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ash
@@ -103,9 +107,23 @@ public class QueryOperator extends AbstractOperator {
         if (mapperAnno != null) { // 自定义mapper
             return Reflection.instantiate(mapperAnno.value());
         }
-        return JdbcUtils.isSingleColumnClass(clazz) ?
-                new SingleColumnRowMapper<T>(clazz) :
-                new BeanPropertyRowMapper<T>(clazz);
+        if (JdbcUtils.isSingleColumnClass(clazz)) { // 单列mapper
+            return new SingleColumnRowMapper<T>(clazz);
+        }
+
+        // 类属性mapper
+        Map<String, String> ptc = new HashMap<String, String>();
+        Results resultsAnoo = md.getAnnotation(Results.class);
+        if (resultsAnoo != null) {
+            Result[] resultAnnos = resultsAnoo.value();
+            if (resultAnnos != null) {
+                for (Result resultAnno : resultAnnos) {
+                    ptc.put(resultAnno.property().toLowerCase().trim(),
+                            resultAnno.column().toLowerCase().trim());
+                }
+            }
+        }
+        return new BeanPropertyRowMapper<T>(clazz, ptc);
     }
 
 

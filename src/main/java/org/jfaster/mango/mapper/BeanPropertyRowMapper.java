@@ -43,22 +43,27 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     private Class<T> mappedClass;
 
-    private Map<String, PropertyDescriptor> mappedFields;
+    private Map<String, PropertyDescriptor> mappedPropertis;
 
-    public BeanPropertyRowMapper(Class<T> mappedClass) {
-        initialize(mappedClass);
+    public BeanPropertyRowMapper(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
+        initialize(mappedClass, propertyToColumnMap);
     }
 
-    protected void initialize(Class<T> mappedClass) {
+    protected void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
         this.mappedClass = mappedClass;
-        this.mappedFields = new HashMap<String, PropertyDescriptor>();
+        this.mappedPropertis = new HashMap<String, PropertyDescriptor>();
         List<PropertyDescriptor> pds = BeanInfoCache.getPropertyDescriptors(mappedClass);
         for (PropertyDescriptor pd : pds) {
             if (pd.getWriteMethod() != null) {
-                this.mappedFields.put(pd.getName().toLowerCase(), pd);
-                String underscoredName = underscoreName(pd.getName());
-                if (!pd.getName().toLowerCase().equals(underscoredName)) {
-                    this.mappedFields.put(underscoredName, pd);
+                String column = propertyToColumnMap.get(pd.getName().toLowerCase());
+                if (column != null) {
+                    mappedPropertis.put(column, pd);
+                } else {
+                    mappedPropertis.put(pd.getName().toLowerCase(), pd);
+                    String underscoredName = underscoreName(pd.getName());
+                    if (!pd.getName().toLowerCase().equals(underscoredName)) {
+                        mappedPropertis.put(underscoredName, pd);
+                    }
                 }
             }
         }
@@ -83,14 +88,14 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     }
 
     public T mapRow(ResultSet rs, int rowNumber) throws SQLException {
-        T mappedObject = Reflection.instantiate(this.mappedClass);
+        T mappedObject = Reflection.instantiate(mappedClass);
 
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();
 
         for (int index = 1; index <= columnCount; index++) {
             String column = JdbcUtils.lookupColumnName(rsmd, index);
-            PropertyDescriptor pd = this.mappedFields.get(column.trim().toLowerCase());
+            PropertyDescriptor pd = mappedPropertis.get(column.trim().toLowerCase());
             if (pd != null) {
                 Object value = getColumnValue(rs, index, pd);
                 if (logger.isDebugEnabled() && rowNumber == 0) {

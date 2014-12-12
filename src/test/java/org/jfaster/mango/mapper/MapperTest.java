@@ -71,7 +71,7 @@ public class MapperTest {
         assertThat(dbMsgs, hasSize(msgs.size()));
         assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
         Msg msg = msgs.get(0);
-        assertThat(msg, equalTo(dao.getMsg(msg.getId())));
+        assertThat(dao.getMsg(msg.getId()), equalTo(msg));
     }
 
     @DB(table = "msg")
