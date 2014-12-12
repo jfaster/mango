@@ -14,9 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.mapper;
 
 import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
@@ -28,6 +29,8 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,11 +38,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /**
- * 测试全局表
+ * 自定义RowMapper测试
  *
  * @author ash
  */
-public class GlobalTableTest {
+public class MapperTest {
 
     private final static DataSource ds = Config.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
@@ -64,25 +67,11 @@ public class GlobalTableTest {
             ids.add(id);
         }
 
-        // 插入后数据一致
         List<Msg> dbMsgs = dao.getMsgs(ids);
         assertThat(dbMsgs, hasSize(msgs.size()));
         assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
-
-        // 更新后数据一致
         Msg msg = msgs.get(0);
-        Msg randomMsg = Msg.createRandomMsg();
-        msg.setUid(randomMsg.getUid());
-        msg.setContent(randomMsg.getContent());
-        dao.update(msg);
-        dbMsgs = dao.getMsgs(ids);
-        assertThat(dbMsgs, hasSize(msgs.size()));
-        assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
-
-        // 删除后数据一致
-        dao.deleteMsgs(ids);
-        dbMsgs = dao.getMsgs(ids);
-        assertThat(dbMsgs, hasSize(0));
+        assertThat(msg, equalTo(dao.getMsg(msg.getId())));
     }
 
     @DB(table = "msg")
@@ -92,15 +81,25 @@ public class GlobalTableTest {
         @SQL("insert into #table(uid, content) values(:1, :2)")
         int insert(int uid, String content);
 
-        @SQL("update #table set uid=:1.uid, content=:1.content where id=:1.id")
-        public int update(Msg msg);
-
         @SQL("select id, uid, content from #table where id in (:1) order by id")
+        @Mapper(MsgMapper.class)
         public List<Msg> getMsgs(List<Integer> ids);
 
-        @SQL("delete from #table where id=:1")
-        public int[] deleteMsgs(List<Integer> ids);
+        @SQL("select id, uid, content from #table where id = :1")
+        public Msg getMsg(int id);
 
+    }
+
+    public static class MsgMapper extends AbstractRowMapper<Msg> {
+
+        @Override
+        public Msg mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Msg msg = new Msg();
+            msg.setId(rs.getInt("id"));
+            msg.setUid(rs.getInt("uid"));
+            msg.setContent(rs.getString("content"));
+            return msg;
+        }
     }
 
 }

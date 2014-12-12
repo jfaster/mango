@@ -16,12 +16,14 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
+import org.jfaster.mango.annotation.Mapper;
+import org.jfaster.mango.mapper.BeanPropertyRowMapper;
 import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.jdbc.RowMapper;
-import org.jfaster.mango.jdbc.SingleColumnRowMapper;
+import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeWrapper;
 
 import javax.sql.DataSource;
@@ -48,7 +50,7 @@ public class QueryOperator extends AbstractOperator {
         isForSet = tw.isSet();
         isForArray = tw.isArray();
         mappedClass = tw.getMappedClass();
-        rowMapper = getRowMapper(mappedClass);
+        rowMapper = getRowMapper(mappedClass, md);
     }
 
     @Override
@@ -96,7 +98,11 @@ public class QueryOperator extends AbstractOperator {
         return r;
     }
 
-    private static <T> RowMapper<T> getRowMapper(Class<T> clazz) {
+    private static <T> RowMapper<?> getRowMapper(Class<T> clazz, MethodDescriptor md) {
+        Mapper mapperAnno = md.getAnnotation(Mapper.class);
+        if (mapperAnno != null) { // 自定义mapper
+            return Reflection.instantiate(mapperAnno.value());
+        }
         return JdbcUtils.isSingleColumnClass(clazz) ?
                 new SingleColumnRowMapper<T>(clazz) :
                 new BeanPropertyRowMapper<T>(clazz);

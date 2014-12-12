@@ -14,34 +14,32 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.mapper;
 
-import org.jfaster.mango.mapper.RowMapper;
+import org.junit.Test;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author ash
  */
-public class ListResultSetExtractor<T> implements ResultSetExtractor<List<T>> {
+public class AbstractRowMapperTest {
 
-    private final RowMapper<T> rowMapper;
-
-    public ListResultSetExtractor(RowMapper<T> rowMapper) {
-        this.rowMapper = rowMapper;
-    }
-
-    @Override
-    public List<T> extractData(ResultSet rs) throws SQLException {
-        List<T> results = new LinkedList<T>(); // 这里不能确定结果集的数量，所以用LinkedList
-        int rowNum = 0;
-        while (rs.next()) {
-            results.add(rowMapper.mapRow(rs, rowNum++));
+    @Test
+    public void testInt() throws Exception {
+        class IntegerRowMapper extends AbstractRowMapper<Integer> {
+            @Override
+            public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return rs.getInt(1);
+            }
         }
-        return results;
+        RowMapper mapper = new IntegerRowMapper();
+        Class<?> mappedClass = mapper.getMappedClass();
+        assertThat(mappedClass.equals(Integer.class), is(true));
     }
 
 }

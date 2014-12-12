@@ -14,18 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.mapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public interface RowMapper<T> {
+public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 
-    T mapRow(ResultSet rs, int rowNum) throws SQLException;
+    private Class<T> mappedClass;
 
-    Class<T> getMappedClass();
+    protected AbstractRowMapper() {
+        Type genType = getClass().getGenericSuperclass();
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        //noinspection unchecked
+        mappedClass =  (Class<T>) params[0];
+    }
+
+    @Override
+    public Class<T> getMappedClass() {
+        return mappedClass;
+    }
 
 }

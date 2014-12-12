@@ -20,8 +20,8 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.Table;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -14,9 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.mapper;
 
 import org.jfaster.mango.exception.IncorrectResultSetColumnCountException;
+import org.jfaster.mango.jdbc.JdbcUtils;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

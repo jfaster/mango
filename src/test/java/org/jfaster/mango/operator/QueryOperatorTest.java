@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
-import org.jfaster.mango.jdbc.RowMapper;
+import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;

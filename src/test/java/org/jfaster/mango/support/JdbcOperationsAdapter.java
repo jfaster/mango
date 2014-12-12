@@ -18,7 +18,7 @@ package org.jfaster.mango.support;
 
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.jdbc.JdbcOperations;
-import org.jfaster.mango.jdbc.RowMapper;
+import org.jfaster.mango.mapper.RowMapper;
 
 import javax.sql.DataSource;
 import java.util.List;

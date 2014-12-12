@@ -14,8 +14,9 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.mapper;
 
+import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.Beans;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;

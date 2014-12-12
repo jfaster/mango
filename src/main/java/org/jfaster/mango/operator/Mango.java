@@ -164,7 +164,7 @@ public class Mango {
             for (Method method : methods) {
                 try {
                     handler.getOperator(method);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     throw new InitializationException("initialize " + ToStringHelper.toString(method) + " error", e);
                 }
             }
