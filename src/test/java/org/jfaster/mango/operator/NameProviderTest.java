@@ -50,7 +50,7 @@ public class NameProviderTest {
             if (name != null) {
                 annos.add(new MockRename(name));
             }
-            pds.add(new ParameterDescriptor(i, token.getType(), token.getRawType(), annos, String.valueOf(i + 1)));
+            pds.add(new ParameterDescriptor(i, token.getType(), annos, String.valueOf(i + 1)));
         }
 
         NameProvider np = new NameProvider(pds);

@@ -42,16 +42,14 @@ public class Methods {
         }
 
         List<ParameterDescriptor> pds = new LinkedList<ParameterDescriptor>();
-        Class<?>[] parameterTypes = method.getParameterTypes();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         String[] names = parameterNameDiscover.getParameterNames(method);
         for (int i = 0; i < genericParameterTypes.length; i++) {
-            Class<?> rawType = parameterTypes[i];
             Type type = genericParameterTypes[i];
             Annotation[] pas = parameterAnnotations[i];
             String name = names[i];
-            pds.add(new ParameterDescriptor(i, type, rawType, Arrays.asList(pas), name));
+            pds.add(new ParameterDescriptor(i, type, Arrays.asList(pas), name));
         }
 
         return new MethodDescriptor(returnType, rawReturnType, mas, pds);

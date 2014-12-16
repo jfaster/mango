@@ -65,9 +65,7 @@ public class IncorrectParameterTypeExceptionTest {
     @Test
     public void test5() {
         thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("invalid actual type of :1, actual type of :1 " +
-                "expected a class can be identified by jdbc " +
-                "but java.util.List<java.lang.Integer>");
+        thrown.expectMessage("java.util.List<java.util.List<java.lang.Integer>> is invalid");
         Dao dao = mango.create(Dao.class);
         dao.get2(new ArrayList<List<Integer>>());
     }

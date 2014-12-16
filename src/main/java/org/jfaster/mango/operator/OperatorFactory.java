@@ -67,10 +67,6 @@ public class OperatorFactory {
         ASTRootNode rootNode = SqlParser.parse(sql).init();
         SQLType sqlType = rootNode.getSQLType();
 
-        CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
-        Cache cacheAnno = md.getAnnotation(Cache.class);
-        boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
-
         Class<?> returnType = md.getRawReturnType();
         InvocationInterceptorChain chain;
         OperatorType operatorType;
@@ -104,6 +100,9 @@ public class OperatorFactory {
                dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardPropertyPath, dbInfo.dataSourceRouter);
 
         Operator operator;
+        CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
+        Cache cacheAnno = md.getAnnotation(Cache.class);
+        boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
         if (useCache) {
             CacheDriverImpl driver = new CacheDriverImpl(md, rootNode, cacheHandler, context, nameProvider);
             switch (operatorType) {

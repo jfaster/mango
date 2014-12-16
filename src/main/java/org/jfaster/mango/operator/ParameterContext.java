@@ -58,7 +58,7 @@ public class ParameterContext {
                         "but " + pd.getType()); // 批量更新的参数必须可迭代
             }
             parameterDescriptors = new ArrayList<ParameterDescriptor>(1);
-            parameterDescriptors.add(new ParameterDescriptor(0, mappedClass, mappedClass, pd.getAnnotations(), pd.getName()));
+            parameterDescriptors.add(new ParameterDescriptor(0, mappedClass, pd.getAnnotations(), pd.getName()));
         }
         this.parameterDescriptors = parameterDescriptors;
         for (int i = 0; i < parameterDescriptors.size(); i++) {
