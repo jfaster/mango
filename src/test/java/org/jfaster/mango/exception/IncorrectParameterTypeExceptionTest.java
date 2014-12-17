@@ -43,16 +43,6 @@ public class IncorrectParameterTypeExceptionTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void test3() {
-        thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("parameter of batch update " +
-                "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                "but class java.lang.Integer");
-        Dao dao = mango.create(Dao.class);
-        dao.batchAdd2(1);
-    }
-
-    @Test
     public void test4() {
         thrown.expect(IncorrectParameterTypeException.class);
         thrown.expectMessage("invalid type of :1, " +
@@ -92,9 +82,6 @@ public class IncorrectParameterTypeExceptionTest {
 
     @DB
     static interface Dao {
-
-        @SQL("insert into ...")
-        public int[] batchAdd2(Integer a);
 
         @SQL("select ... where a in (:1)")
         public List<Integer> get(int a);

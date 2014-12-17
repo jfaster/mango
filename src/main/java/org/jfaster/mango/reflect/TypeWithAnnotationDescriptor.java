@@ -32,6 +32,7 @@ public abstract class TypeWithAnnotationDescriptor {
     private final List<Annotation> annotations;
     private final Class<?> rawType;
     private final boolean isIterable;
+    private final Class<?> mappedClass;
 
     public TypeWithAnnotationDescriptor(Type type, List<Annotation> annotations) {
         this.type = type;
@@ -43,6 +44,7 @@ public abstract class TypeWithAnnotationDescriptor {
         }
         rawType = tw.getRawType();
         isIterable = tw.isIterable();
+        mappedClass = tw.getMappedClass();
     }
 
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
@@ -75,4 +77,7 @@ public abstract class TypeWithAnnotationDescriptor {
         return isIterable;
     }
 
+    public Class<?> getMappedClass() {
+        return mappedClass;
+    }
 }

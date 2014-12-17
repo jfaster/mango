@@ -35,6 +35,7 @@ import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.Strings;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Operator工厂
@@ -67,20 +68,19 @@ public class OperatorFactory {
         ASTRootNode rootNode = SqlParser.parse(sql).init();
         SQLType sqlType = rootNode.getSQLType();
 
-        Class<?> returnType = md.getRawReturnType();
-        InvocationInterceptorChain chain;
+        List<ParameterDescriptor> pds = md.getParameterDescriptors();
         OperatorType operatorType;
-        if (sqlType == SQLType.SELECT) { // 查
+        if (sqlType == SQLType.SELECT) {
             operatorType = OperatorType.QUERY;
-        } else if (int.class.equals(returnType) || long.class.equals(returnType)) { // 更新
-            operatorType = OperatorType.UPDATE;
-        } else if (int[].class.equals(returnType)) { // 批量更新
-            operatorType = OperatorType.BATCHUPDATYPE;
         } else {
-            throw new IncorrectReturnTypeException("if sql don't start with select, " +
-                    "update return type expected int, " +
-                    "batch update return type expected int[], " +
-                    "but " + md.getRawReturnType());
+            operatorType = OperatorType.UPDATE;
+            if (pds.size() == 1) { // 只有一个参数
+                ParameterDescriptor pd = pds.get(0);
+                if (pd.isIterable() && rootNode.getJDBCIterableParameters().isEmpty()) {
+                    // 参数可迭代，同时sql中没有in语句
+                    operatorType = OperatorType.BATCHUPDATYPE;
+                }
+            }
         }
 
         NameProvider nameProvider = new NameProvider(md.getParameterDescriptors());
@@ -134,7 +134,8 @@ public class OperatorFactory {
             }
         }
 
-        chain = new InvocationInterceptorChain(interceptorChain, context.getParameterDescriptors(), sqlType);
+        InvocationInterceptorChain chain =
+                new InvocationInterceptorChain(interceptorChain, context.getParameterDescriptors(), sqlType);
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
         operator.setInvocationContextFactory(new InvocationContextFactory(nameProvider));

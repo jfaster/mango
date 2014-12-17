@@ -41,7 +41,8 @@ public class IncorrectReturnTypeExceptionTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @Test
+    // TODO
+    //@Test
     public void test() {
         thrown.expect(IncorrectReturnTypeException.class);
         thrown.expectMessage("if sql don't start with select, " +
