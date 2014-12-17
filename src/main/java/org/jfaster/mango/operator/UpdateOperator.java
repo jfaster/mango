@@ -48,21 +48,21 @@ public class UpdateOperator extends AbstractOperator {
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
 
-        Class<?> wrapRawType = Primitives.wrap(md.getRawReturnType());
+        Class<?> rawType = md.getRawReturnType();
         if (returnGeneratedId) {
-            transformer = GENERATED_TRANSFORMERS.get(wrapRawType);
+            transformer = GENERATED_TRANSFORMERS.get(rawType);
             if (transformer == null) {
                 throw new RuntimeException(); // TODO
             }
-            if (Integer.class.equals(wrapRawType)) {
+            if (Integer.class.equals(Primitives.wrap(rawType))) {
                 rawReturnType = int.class;
-            } else if (Long.class.equals(wrapRawType)) {
+            } else if (Long.class.equals(Primitives.wrap(rawType))) {
                 rawReturnType = long.class;
             } else {
                 throw new IllegalStateException(); // TODO
             }
         } else {
-            transformer = TRANSFORMERS.get(wrapRawType);
+            transformer = TRANSFORMERS.get(rawType);
             if (transformer == null) {
                 throw new RuntimeException(); // TODO
             }
@@ -111,32 +111,37 @@ public class UpdateOperator extends AbstractOperator {
         return r;
     }
 
-    private final static Map<Class, Transformer> TRANSFORMERS = new HashMap<Class, Transformer>() {
-        {
-            put(Integer.class, IntTransformer.INSTANCE);
-            put(Long.class, LongTransformer.INSTANCE);
-            put(Void.class, VoidTransformer.INSTANCE);
-            put(Boolean.class, BooleanTransformer.INSTANCE);
-        }
-    };
-
-    private final static Map<Class, Transformer> GENERATED_TRANSFORMERS = new HashMap<Class, Transformer>() {
-        {
-            put(Integer.class, IntTransformer.INSTANCE);
-            put(Long.class, LongTransformer.INSTANCE);
-        }
-    };
-
-    interface Transformer {
-        Object transform(Number r);
+    private final static Map<Class, Transformer> TRANSFORMERS = new HashMap<Class, Transformer>();
+    static {
+        TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+        TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
+        TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
+        TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
+        TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
+        TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
+        TRANSFORMERS.put(Boolean.class, BooleanTransformer.INSTANCE);
+        TRANSFORMERS.put(boolean.class, BooleanTransformer.INSTANCE);
     }
 
-    enum IntTransformer implements Transformer {
+    private final static Map<Class, Transformer> GENERATED_TRANSFORMERS = new HashMap<Class, Transformer>();
+    static {
+        GENERATED_TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+        GENERATED_TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
+        GENERATED_TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
+        GENERATED_TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
+    }
+
+
+    interface Transformer {
+        Object transform(Number n);
+    }
+
+    enum IntegerTransformer implements Transformer {
         INSTANCE;
 
         @Override
-        public Object transform(Number r) {
-            return r.intValue();
+        public Object transform(Number n) {
+            return n.intValue();
         }
     }
 
@@ -144,8 +149,8 @@ public class UpdateOperator extends AbstractOperator {
         INSTANCE;
 
         @Override
-        public Object transform(Number r) {
-            return r.longValue();
+        public Object transform(Number n) {
+            return n.longValue();
         }
     }
 
@@ -153,7 +158,7 @@ public class UpdateOperator extends AbstractOperator {
         INSTANCE;
 
         @Override
-        public Object transform(Number r) {
+        public Object transform(Number n) {
             return null;
         }
     }
@@ -162,8 +167,8 @@ public class UpdateOperator extends AbstractOperator {
         INSTANCE;
 
         @Override
-        public Object transform(Number r) {
-            return r.intValue() > 0 ? Boolean.TRUE : Boolean.FALSE;
+        public Object transform(Number n) {
+            return n.intValue() > 0 ? Boolean.TRUE : Boolean.FALSE;
         }
     }
 

@@ -16,9 +16,8 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.util.Iterables;
 
 import javax.sql.DataSource;
@@ -32,12 +31,13 @@ import java.util.Map;
  */
 public class BatchUpdateOperator extends AbstractOperator {
 
-    protected BatchUpdateOperator(ASTRootNode rootNode) {
+    protected Transformer transformer;
+
+    protected BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
-        List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
-        if (jips.size() > 0) {
-            throw new IncorrectSqlException("if use batch update, sql's in clause number expected 0 but " +
-                    jips.size()); // sql中不能有in语句
+        transformer = TRANSFORMERS.get(md.getRawReturnType());
+        if (transformer == null) {
+            throw new RuntimeException(); // TODO
         }
     }
 
@@ -58,7 +58,7 @@ public class BatchUpdateOperator extends AbstractOperator {
             group(context, gorupMap);
         }
         int[] ints = executeDb(gorupMap);
-        return ints;
+        return transformer.transform(ints);
     }
 
     protected void group(InvocationContext context, Map<DataSource, Group> groupMap) {
@@ -129,6 +129,35 @@ public class BatchUpdateOperator extends AbstractOperator {
 
         public List<Object[]> getBatchArgs() {
             return batchArgs;
+        }
+    }
+
+    private final static Map<Class, Transformer> TRANSFORMERS = new HashMap<Class, Transformer>();
+    static {
+        TRANSFORMERS.put(int[].class, IntArrayTransformer.INSTANCE);
+        TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
+        TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
+    }
+
+    interface Transformer {
+        Object transform(int[] s);
+    }
+
+    enum IntArrayTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(int[] s) {
+            return s;
+        }
+    }
+
+    enum VoidTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(int[] s) {
+            return null;
         }
     }
 

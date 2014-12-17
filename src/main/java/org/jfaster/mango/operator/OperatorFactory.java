@@ -113,7 +113,7 @@ public class OperatorFactory {
                     operator = new CacheableUpdateOperator(rootNode, md, driver);
                     break;
                 case BATCHUPDATYPE:
-                    operator = new CacheableBatchUpdateOperator(rootNode, driver);
+                    operator = new CacheableBatchUpdateOperator(rootNode, md, driver);
                     break;
                 default:
                     throw new IllegalStateException();
@@ -127,7 +127,7 @@ public class OperatorFactory {
                     operator = new UpdateOperator(rootNode, md);
                     break;
                 case BATCHUPDATYPE:
-                    operator = new BatchUpdateOperator(rootNode);
+                    operator = new BatchUpdateOperator(rootNode, md);
                     break;
                 default:
                     throw new IllegalStateException();
