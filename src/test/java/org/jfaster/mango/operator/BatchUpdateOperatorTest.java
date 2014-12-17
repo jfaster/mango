@@ -48,6 +48,7 @@ public class BatchUpdateOperatorTest {
         String srcSql = "update user set name=:1.name where id=:1.id";
         Operator operator = getOperator(pt, rt, srcSql);
 
+        final int[] expectedInts = new int[] {1, 2};
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
@@ -60,12 +61,13 @@ public class BatchUpdateOperatorTest {
                 assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
                 assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
                 assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return new int[] {1};
+                return expectedInts;
             }
         });
 
         List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        operator.execute(new Object[]{users});
+        int[] actualInts = (int[]) operator.execute(new Object[]{users});
+        assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class BatchUpdateOperatorTest {
                 assertThat(batchArgs.get(0)[1], equalTo((Object) 10));
                 assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
                 assertThat(batchArgs.get(1)[1], equalTo((Object) 20));
-                return new int[] {1};
+                return new int[] {5, 8};
             }
             @Override
             public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
@@ -97,12 +99,13 @@ public class BatchUpdateOperatorTest {
                 assertThat(batchArgs.size(), equalTo(1));
                 assertThat(batchArgs.get(0)[0], equalTo((Object) "lily"));
                 assertThat(batchArgs.get(0)[1], equalTo((Object) 60));
-                return new int[] {1};
+                return new int[] {6};
             }
         });
 
         List<User> users = Arrays.asList(new User(10, "ash"), new User(20, "lucy"), new User(60, "lily"));
-        operator.execute(new Object[]{users});
+        int[] actualInts = (int[]) operator.execute(new Object[]{users});
+        assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(new int[]{5, 8, 6})));
     }
 
     @Test
@@ -124,7 +127,7 @@ public class BatchUpdateOperatorTest {
                 assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
                 assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
                 assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return new int[] {1};
+                return new int[] {9, 7};
             }
         });
         List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
