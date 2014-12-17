@@ -56,12 +56,13 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
         Set<String> keys = new HashSet<String>(iterables.size() * 2);
 
         Map<DataSource, Group> groupMap = new HashMap<DataSource, Group>();
+        int t = 0;
         for (Object obj : iterables) {
             InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
             keys.add(driver.getCacheKey(context));
-            group(context, groupMap);
+            group(context, groupMap, t++);
         }
-        int[] ints = executeDb(groupMap);
+        int[] ints = executeDb(groupMap, t);
         if (logger.isDebugEnabled()) {
             logger.debug("cache delete #keys={}", keys);
         }

@@ -53,15 +53,16 @@ public class BatchUpdateOperator extends AbstractOperator {
         }
 
         Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
+        int t = 0;
         for (Object obj : iterables) {
             InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
-            group(context, gorupMap);
+            group(context, gorupMap, t++);
         }
-        int[] ints = executeDb(gorupMap);
+        int[] ints = executeDb(gorupMap, t);
         return transformer.transform(ints);
     }
 
-    protected void group(InvocationContext context, Map<DataSource, Group> groupMap) {
+    protected void group(InvocationContext context, Map<DataSource, Group> groupMap, int position) {
         context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
         Group group = groupMap.get(ds);
@@ -76,30 +77,36 @@ public class BatchUpdateOperator extends AbstractOperator {
 
         String sql = preparedSql.getSql();
         Object[] args = preparedSql.getArgs().toArray();
-        group.add(sql, args);
+        group.add(sql, args, position);
     }
 
-    protected int[] executeDb(Map<DataSource, Group> groupMap) {
-        int[] ints = null;
+    protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum) {
+        int[] r = new int[batchNum];
         long now = System.nanoTime();
+        int t = 0;
         try {
             for (Map.Entry<DataSource, Group> entry : groupMap.entrySet()) {
                 DataSource ds = entry.getKey();
                 List<String> sqls = entry.getValue().getSqls();
                 List<Object[]> batchArgs = entry.getValue().getBatchArgs();
-                ints = isUniqueSql(sqls) ?
+                List<Integer> positions = entry.getValue().getPositions();
+                int[] ints = isUniqueSql(sqls) ?
                         jdbcOperations.batchUpdate(ds, sqls.get(0), batchArgs) :
                         jdbcOperations.batchUpdate(ds, sqls, batchArgs);
+                for (int i = 0; i < ints.length; i++) {
+                    r[positions.get(i)] = ints[i];
+                }
+                t++;
             }
         } finally {
             long cost = System.nanoTime() - now;
-            if (ints != null) {
+            if (t == groupMap.entrySet().size()) {
                 statsCounter.recordExecuteSuccess(cost);
             } else {
                 statsCounter.recordExecuteException(cost);
             }
         }
-        return ints;
+        return r;
     }
 
     protected boolean isUniqueSql(List<String> sqls) {
@@ -117,10 +124,12 @@ public class BatchUpdateOperator extends AbstractOperator {
     protected static class Group {
         private List<String> sqls = new LinkedList<String>();
         private List<Object[]> batchArgs = new LinkedList<Object[]>();
+        private List<Integer> positions = new LinkedList<Integer>();
 
-        public void add(String sql, Object[] args) {
+        public void add(String sql, Object[] args, int position) {
             sqls.add(sql);
             batchArgs.add(args);
+            positions.add(position);
         }
 
         public List<String> getSqls() {
@@ -129,6 +138,10 @@ public class BatchUpdateOperator extends AbstractOperator {
 
         public List<Object[]> getBatchArgs() {
             return batchArgs;
+        }
+
+        public List<Integer> getPositions() {
+            return positions;
         }
     }
 

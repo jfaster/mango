@@ -32,6 +32,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -54,6 +55,7 @@ public class CacheableBatchUpdateOperatorTest {
             }
         }, new MockCacheBy("id"));
 
+        final int[] expectedInts = new int[] {1, 2};
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
@@ -66,12 +68,12 @@ public class CacheableBatchUpdateOperatorTest {
                 assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
                 assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
                 assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return new int[] {1};
+                return expectedInts;
             }
         });
-
         List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        operator.execute(new Object[]{users});
+        int[] actualInts = (int[]) operator.execute(new Object[]{users});
+        assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
         assertThat(sc.snapshot().getEvictionCount(), equalTo(2L));
     }
 
