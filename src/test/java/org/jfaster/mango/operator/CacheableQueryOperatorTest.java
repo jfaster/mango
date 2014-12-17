@@ -20,6 +20,7 @@ import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.reflect.MethodDescriptor;
@@ -232,7 +233,8 @@ public class CacheableQueryOperatorTest {
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockCache("user_", Day.class));
         methodAnnos.add(new MockSQL(srcSql));
-        MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain());

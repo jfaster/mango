@@ -32,7 +32,6 @@ public class Methods {
             Method method, ParameterNameDiscover parameterNameDiscover) {
 
         Type returnType = method.getGenericReturnType();
-        Class<?> rawReturnType = method.getReturnType();
         List<Annotation> mas = new LinkedList<Annotation>();
         for (Annotation a : method.getAnnotations()) {
             mas.add(a);
@@ -40,6 +39,7 @@ public class Methods {
         for (Annotation a : method.getDeclaringClass().getAnnotations()) {
             mas.add(a);
         }
+        ReturnDescriptor rd = new ReturnDescriptor(returnType, mas);
 
         List<ParameterDescriptor> pds = new LinkedList<ParameterDescriptor>();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
@@ -52,7 +52,7 @@ public class Methods {
             pds.add(new ParameterDescriptor(i, type, Arrays.asList(pas), name));
         }
 
-        return new MethodDescriptor(returnType, rawReturnType, mas, pds);
+        return new MethodDescriptor(rd, pds);
     }
 
 }

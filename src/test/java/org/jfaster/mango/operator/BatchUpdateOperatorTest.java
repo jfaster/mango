@@ -21,6 +21,7 @@ import org.jfaster.mango.datasource.factory.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.partition.ModHundredTablePartition;
+import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.reflect.MethodDescriptor;
@@ -153,7 +154,8 @@ public class BatchUpdateOperatorTest {
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
-        MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()),
@@ -172,7 +174,8 @@ public class BatchUpdateOperatorTest {
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB("", "user", ModHundredTablePartition.class, MyDataSourceRouter.class));
         methodAnnos.add(new MockSQL(srcSql));
-        MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        MethodDescriptor md = new MethodDescriptor(rd, pds);
 
 
         Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();

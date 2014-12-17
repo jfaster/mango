@@ -23,34 +23,14 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * 方法参数描述
+ * 方法返回描述
  *
  * @author ash
  */
-public class ParameterDescriptor extends TypeWithAnnotationDescriptor {
+public class ReturnDescriptor extends TypeWithAnnotationDescriptor {
 
-    /**
-     * 此参数在method参数列表中的位置，从0开始
-     */
-    private final int position;
-
-    /**
-     * 此参数在emthod参数列表中的名字
-     */
-    private final String name;
-
-    public ParameterDescriptor(int position, Type type, List<Annotation> annotations, String name) {
+    public ReturnDescriptor(Type type, List<Annotation> annotations) {
         super(type, annotations);
-        this.position = position;
-        this.name = name;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override
@@ -59,16 +39,14 @@ public class ParameterDescriptor extends TypeWithAnnotationDescriptor {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final ParameterDescriptor other = (ParameterDescriptor) obj;
-        return Objects.equal(this.position, other.position)
-                && Objects.equal(this.name, other.name)
-                && Objects.equal(this.getType(), other.getType())
+        final ReturnDescriptor other = (ReturnDescriptor) obj;
+        return Objects.equal(this.getType(), other.getType())
                 && Objects.equal(this.getAnnotations(), other.getAnnotations());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(position, name, getType(), getAnnotations());
+        return Objects.hashCode(getType(), getAnnotations());
     }
 
 }

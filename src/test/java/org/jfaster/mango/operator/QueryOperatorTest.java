@@ -20,6 +20,7 @@ import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
@@ -252,7 +253,8 @@ public class QueryOperatorTest {
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
-        MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain());

@@ -18,6 +18,7 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
+import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.reflect.MethodDescriptor;
@@ -179,7 +180,8 @@ public class UpdateOperatorTest {
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
-        MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain());
@@ -197,7 +199,8 @@ public class UpdateOperatorTest {
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
         methodAnnos.add(new MockReturnGeneratedId());
-        MethodDescriptor md = new MethodDescriptor(rt.getType(), rt.getRawType(), methodAnnos, pds);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain());

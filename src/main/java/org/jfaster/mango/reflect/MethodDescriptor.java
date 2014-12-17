@@ -23,20 +23,18 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * 方法描述
+ *
  * @author ash
  */
 public class MethodDescriptor {
 
-    private final Type returnType;
-    private final Class<?> rawReturnType;
-    private final List<Annotation> annotations;
+    private final ReturnDescriptor returnDescriptor;
     private final List<ParameterDescriptor> parameterDescriptors;
 
-    public MethodDescriptor(Type returnType, Class<?> rawReturnType, List<Annotation> annotations,
+    public MethodDescriptor(ReturnDescriptor returnDescriptor,
                             List<ParameterDescriptor> parameterDescriptors) {
-        this.returnType = returnType;
-        this.rawReturnType = rawReturnType;
-        this.annotations = Collections.unmodifiableList(annotations);
+        this.returnDescriptor = returnDescriptor;
         this.parameterDescriptors = Collections.unmodifiableList(parameterDescriptors);
     }
 
@@ -46,24 +44,19 @@ public class MethodDescriptor {
 
     @Nullable
     public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
-        for (Annotation annotation : getAnnotations()) {
-            if (annotationType.isInstance(annotation)) {
-                return annotationType.cast(annotation);
-            }
-        }
-        return null;
+        return returnDescriptor.getAnnotation(annotationType);
     }
 
     public Type getReturnType() {
-        return returnType;
+        return returnDescriptor.getType();
     }
 
     public Class<?> getRawReturnType() {
-        return rawReturnType;
+        return returnDescriptor.getRawType();
     }
 
     public List<Annotation> getAnnotations() {
-        return annotations;
+        return returnDescriptor.getAnnotations();
     }
 
     public List<ParameterDescriptor> getParameterDescriptors() {
