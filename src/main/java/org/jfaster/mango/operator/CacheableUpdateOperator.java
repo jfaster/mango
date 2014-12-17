@@ -50,7 +50,7 @@ public class CacheableUpdateOperator extends UpdateOperator {
     @Override
     public Object execute(Object[] values) {
         InvocationContext context = invocationContextFactory.newInvocationContext(values);
-        Number r = execute(context);
+        Object r = execute(context);
         if (driver.isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
             Set<String> keys = driver.getCacheKeys(context);
             if (logger.isDebugEnabled()) {

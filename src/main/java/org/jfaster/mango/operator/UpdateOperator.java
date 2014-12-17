@@ -17,13 +17,15 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.ReturnGeneratedId;
-import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.Primitives;
+import org.jfaster.mango.util.SQLType;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ash
@@ -31,6 +33,8 @@ import javax.sql.DataSource;
 public class UpdateOperator extends AbstractOperator {
 
     private boolean returnGeneratedId;
+
+    private Transformer transformer;
 
     private Class<? extends Number> rawReturnType;
 
@@ -43,12 +47,25 @@ public class UpdateOperator extends AbstractOperator {
         ReturnGeneratedId returnGeneratedIdAnno = md.getAnnotation(ReturnGeneratedId.class);
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
-        if (int.class.equals(md.getRawReturnType())) {
-            rawReturnType = int.class;
-        } else if (long.class.equals(md.getRawReturnType())) {
-            rawReturnType = long.class;
+
+        Class<?> wrapRawType = Primitives.wrap(md.getRawReturnType());
+        if (returnGeneratedId) {
+            transformer = GENERATED_TRANSFORMERS.get(wrapRawType);
+            if (transformer == null) {
+                throw new RuntimeException(); // TODO
+            }
+            if (Integer.class.equals(wrapRawType)) {
+                rawReturnType = int.class;
+            } else if (Long.class.equals(wrapRawType)) {
+                rawReturnType = long.class;
+            } else {
+                throw new IllegalStateException(); // TODO
+            }
         } else {
-            throw new UnreachableCodeException();
+            transformer = TRANSFORMERS.get(wrapRawType);
+            if (transformer == null) {
+                throw new RuntimeException(); // TODO
+            }
         }
     }
 
@@ -58,7 +75,7 @@ public class UpdateOperator extends AbstractOperator {
         return execute(context);
     }
 
-    public Number execute(InvocationContext context) {
+    public Object execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
         DataSource ds = dataSourceGenerator.getDataSource(context);
 
@@ -69,7 +86,7 @@ public class UpdateOperator extends AbstractOperator {
         String sql = preparedSql.getSql();
         Object[] args = preparedSql.getArgs().toArray();
         Number r = executeDb(ds, sql, args);
-        return r;
+        return transformer.transform(r);
     }
 
     private Number executeDb(DataSource ds, String sql, Object[] args) {
@@ -92,6 +109,62 @@ public class UpdateOperator extends AbstractOperator {
             }
         }
         return r;
+    }
+
+    private final static Map<Class, Transformer> TRANSFORMERS = new HashMap<Class, Transformer>() {
+        {
+            put(Integer.class, IntTransformer.INSTANCE);
+            put(Long.class, LongTransformer.INSTANCE);
+            put(Void.class, VoidTransformer.INSTANCE);
+            put(Boolean.class, BooleanTransformer.INSTANCE);
+        }
+    };
+
+    private final static Map<Class, Transformer> GENERATED_TRANSFORMERS = new HashMap<Class, Transformer>() {
+        {
+            put(Integer.class, IntTransformer.INSTANCE);
+            put(Long.class, LongTransformer.INSTANCE);
+        }
+    };
+
+    interface Transformer {
+        Object transform(Number r);
+    }
+
+    enum IntTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(Number r) {
+            return r.intValue();
+        }
+    }
+
+    enum LongTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(Number r) {
+            return r.longValue();
+        }
+    }
+
+    enum VoidTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(Number r) {
+            return null;
+        }
+    }
+
+    enum BooleanTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(Number r) {
+            return r.intValue() > 0 ? Boolean.TRUE : Boolean.FALSE;
+        }
     }
 
 }
