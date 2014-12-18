@@ -16,7 +16,11 @@
 
 package org.jfaster.mango.util;
 
+import org.jfaster.mango.parser.visitor.InterablePropertyCollectVisitor;
+
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
@@ -30,6 +34,13 @@ public class ToStringHelper {
         return sb.append(")").toString();
     }
 
+    public static String toString(Iterable<Class> clazzs) {
+        List<String> ss = new ArrayList<String>();
+        for (Class clazz : clazzs) {
+            ss.add(clazz.getSimpleName());
+        }
+        return ss.toString();
+    }
 
     public static void printTypes(StringBuffer sb, Type[] types, String pre, String sep, String suf) {
         if (types.length > 0) {

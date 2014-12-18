@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
+import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.support.*;
@@ -24,7 +25,9 @@ import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
@@ -34,8 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author ash
@@ -68,6 +70,62 @@ public class UpdateOperatorTest {
         user.setName("ash");
         Object r = operator.execute(new Object[]{user});
         assertThat(r.getClass().equals(Integer.class), is(true));
+    }
+
+    @Test
+    public void testUpdateReturnVoid() throws Exception {
+        TypeToken<User> pt = TypeToken.of(User.class);
+        TypeToken<Void> rt = TypeToken.of(void.class);
+        String srcSql = "update user set name=:1.name where id=:1.id";
+        Operator operator = getOperator(pt, rt, srcSql);
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public int update(DataSource ds, String sql, Object[] args) {
+                String descSql = "update user set name=? where id=?";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(2));
+                assertThat(args[0], equalTo((Object) "ash"));
+                assertThat(args[1], equalTo((Object) 100));
+                return 1;
+            }
+        });
+
+        User user = new User();
+        user.setId(100);
+        user.setName("ash");
+        Object r = operator.execute(new Object[]{user});
+        assertThat(r, nullValue());
+    }
+
+    @Test
+    public void testUpdateReturnBoolean() throws Exception {
+        TypeToken<User> pt = TypeToken.of(User.class);
+        TypeToken<Boolean> rt = TypeToken.of(boolean.class);
+        String srcSql = "update user set name=:1.name where id=:1.id";
+        Operator operator = getOperator(pt, rt, srcSql);
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public int update(DataSource ds, String sql, Object[] args) {
+                String descSql = "update user set name=? where id=?";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(2));
+                assertThat(args[0], equalTo((Object) "ash"));
+                assertThat(args[1], equalTo((Object) 100));
+                return 0;
+            }
+        });
+
+        User user = new User();
+        user.setId(100);
+        user.setName("ash");
+        boolean r = (Boolean) operator.execute(new Object[]{user});
+        assertThat(r, is(false));
     }
 
     @Test
@@ -171,6 +229,74 @@ public class UpdateOperatorTest {
         }
         assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(2L));
     }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void testUpdateReturnTypeError() throws Exception {
+        thrown.expect(IncorrectReturnTypeException.class);
+        thrown.expectMessage("the return type of update expected one of [void, int, long, boolean, " +
+                "Void, Integer, Long, Boolean] but class java.lang.String");
+
+        TypeToken<User> pt = TypeToken.of(User.class);
+        TypeToken<String> rt = TypeToken.of(String.class);
+        String srcSql = "update user set name=:1.name where id=:1.id";
+        Operator operator = getOperator(pt, rt, srcSql);
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public int update(DataSource ds, String sql, Object[] args) {
+                String descSql = "update user set name=? where id=?";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(2));
+                assertThat(args[0], equalTo((Object) "ash"));
+                assertThat(args[1], equalTo((Object) 100));
+                return 1;
+            }
+        });
+
+        User user = new User();
+        user.setId(100);
+        user.setName("ash");
+        operator.execute(new Object[]{user});
+    }
+
+    @Test
+    public void testUpdateReturnGeneratedIdReturnTypeError() throws Exception {
+        thrown.expect(IncorrectReturnTypeException.class);
+        thrown.expectMessage("the return type of update(returnGeneratedId) expected " +
+                "one of [int, long, Integer, Long] but void");
+
+        TypeToken<User> pt = TypeToken.of(User.class);
+        TypeToken<Void> rt = TypeToken.of(void.class);
+        String srcSql = "insert into user(id, name) values(:1.id, :1.name)";
+        Operator operator = getOperatorReturnGeneratedId(pt, rt, srcSql);
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
+                String descSql = "insert into user(id, name) values(?, ?)";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(2));
+                assertThat(args[0], equalTo((Object) 100));
+                assertThat(args[1], equalTo((Object) "ash"));
+                assertThat(holder.getKeyClass().equals(int.class), is(true));
+                holder.setKey(100);
+                return 1;
+            }
+        });
+
+        User user = new User();
+        user.setId(100);
+        user.setName("ash");
+        operator.execute(new Object[]{user});
+    }
+
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
         List<Annotation> empty = Collections.emptyList();

@@ -17,15 +17,17 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.ReturnGeneratedId;
+import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.reflect.Primitives;
 import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.util.ToStringHelper;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author ash
@@ -36,7 +38,7 @@ public class UpdateOperator extends AbstractOperator {
 
     private Transformer transformer;
 
-    private Class<? extends Number> rawReturnType;
+    private Class<? extends Number> numberRawType;
 
     protected UpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
@@ -48,23 +50,22 @@ public class UpdateOperator extends AbstractOperator {
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
 
-        Class<?> rawType = md.getRawReturnType();
+        Class<?> rawReturnType = md.getRawReturnType();
         if (returnGeneratedId) {
-            transformer = GENERATED_TRANSFORMERS.get(rawType);
-            if (transformer == null) {
-                throw new RuntimeException(); // TODO
+            GeneratedTransformer gt = GENERATED_TRANSFORMERS.get(rawReturnType);
+            if (gt == null) {
+                String expected = ToStringHelper.toString(GENERATED_TRANSFORMERS.keySet());
+                throw new IncorrectReturnTypeException("the return type of update(returnGeneratedId) " +
+                        "expected one of " + expected + " but " + rawReturnType);
             }
-            if (Integer.class.equals(Primitives.wrap(rawType))) {
-                rawReturnType = int.class;
-            } else if (Long.class.equals(Primitives.wrap(rawType))) {
-                rawReturnType = long.class;
-            } else {
-                throw new IllegalStateException(); // TODO
-            }
+            numberRawType = gt.getRawType();
+            transformer = gt;
         } else {
-            transformer = TRANSFORMERS.get(rawType);
+            transformer = TRANSFORMERS.get(rawReturnType);
             if (transformer == null) {
-                throw new RuntimeException(); // TODO
+                String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
+                throw new IncorrectReturnTypeException("the return type of update " +
+                        "expected one of " + expected + " but " + rawReturnType);
             }
         }
     }
@@ -94,7 +95,7 @@ public class UpdateOperator extends AbstractOperator {
         long now = System.nanoTime();
         try {
             if (returnGeneratedId) {
-                GeneratedKeyHolder holder = new GeneratedKeyHolder(rawReturnType);
+                GeneratedKeyHolder holder = new GeneratedKeyHolder(numberRawType);
                 jdbcOperations.update(ds, sql, args, holder);
                 r = holder.getKey();
             } else {
@@ -111,46 +112,66 @@ public class UpdateOperator extends AbstractOperator {
         return r;
     }
 
-    private final static Map<Class, Transformer> TRANSFORMERS = new HashMap<Class, Transformer>();
+    /**
+     * 更新操作支持的返回类型
+     */
+    private final static Map<Class, Transformer> TRANSFORMERS = new LinkedHashMap<Class, Transformer>();
     static {
-        TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
-        TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
-        TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
-        TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
-        TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
         TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
-        TRANSFORMERS.put(Boolean.class, BooleanTransformer.INSTANCE);
+        TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
+        TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
         TRANSFORMERS.put(boolean.class, BooleanTransformer.INSTANCE);
+        TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
+        TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+        TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
+        TRANSFORMERS.put(Boolean.class, BooleanTransformer.INSTANCE);
     }
 
-    private final static Map<Class, Transformer> GENERATED_TRANSFORMERS = new HashMap<Class, Transformer>();
+    /**
+     * 生成自增id的更新操作支持的返回类型
+     */
+    private final static Map<Class, GeneratedTransformer> GENERATED_TRANSFORMERS =
+            new LinkedHashMap<Class, GeneratedTransformer>();
     static {
-        GENERATED_TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
         GENERATED_TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
-        GENERATED_TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
         GENERATED_TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
+        GENERATED_TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+        GENERATED_TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
     }
-
 
     interface Transformer {
         Object transform(Number n);
     }
 
-    enum IntegerTransformer implements Transformer {
+    interface GeneratedTransformer extends Transformer {
+        Class<? extends  Number> getRawType();
+    }
+
+    enum IntegerTransformer implements GeneratedTransformer {
         INSTANCE;
 
         @Override
         public Object transform(Number n) {
             return n.intValue();
         }
+
+        @Override
+        public Class<? extends Number> getRawType() {
+            return int.class;
+        }
     }
 
-    enum LongTransformer implements Transformer {
+    enum LongTransformer implements GeneratedTransformer {
         INSTANCE;
 
         @Override
         public Object transform(Number n) {
             return n.longValue();
+        }
+
+        @Override
+        public Class<? extends Number> getRawType() {
+            return long.class;
         }
     }
 

@@ -16,15 +16,14 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.ToStringHelper;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ash
@@ -37,7 +36,9 @@ public class BatchUpdateOperator extends AbstractOperator {
         super(rootNode);
         transformer = TRANSFORMERS.get(md.getRawReturnType());
         if (transformer == null) {
-            throw new RuntimeException(); // TODO
+            String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
+            throw new IncorrectReturnTypeException("the return type of batch update " +
+                    "expected one of " + expected + " but " + md.getRawReturnType());
         }
     }
 
@@ -145,11 +146,14 @@ public class BatchUpdateOperator extends AbstractOperator {
         }
     }
 
-    private final static Map<Class, Transformer> TRANSFORMERS = new HashMap<Class, Transformer>();
+    private final static Map<Class, Transformer> TRANSFORMERS = new LinkedHashMap<Class, Transformer>();
     static {
+        TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
+        TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
         TRANSFORMERS.put(int[].class, IntArrayTransformer.INSTANCE);
         TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
-        TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
+        TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+        TRANSFORMERS.put(Integer[].class, IntegerArrayTransformer.INSTANCE);
     }
 
     interface Transformer {
@@ -162,6 +166,32 @@ public class BatchUpdateOperator extends AbstractOperator {
         @Override
         public Object transform(int[] s) {
             return s;
+        }
+    }
+
+    enum IntegerArrayTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(int[] s) {
+            Integer[] r = new Integer[s.length];
+            for (int i = 0; i < s.length; i++) {
+                r[i] = s[i];
+            }
+            return r;
+        }
+    }
+
+    enum IntegerTransformer implements Transformer {
+        INSTANCE;
+
+        @Override
+        public Object transform(int[] s) {
+            int r = 0;
+            for (int e : s) {
+                r += e;
+            }
+            return r;
         }
     }
 
