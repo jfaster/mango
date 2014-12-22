@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -77,13 +78,20 @@ public class TypeWrapper {
                 }
             }
         } else if (type instanceof Class) { // 没有参数化
-            rawType = (Class<?>) type;
+            rawType = (Class) type;
             if (rawType.isArray()) { // 数组
                 isArray = true;
                 mappedClass = rawType.getComponentType();
                 mappedType = mappedClass;
             } else { // 普通类
                 mappedClass = rawType;
+            }
+        } else if (type instanceof GenericArrayType) {
+            Type componentType = ((GenericArrayType) type).getGenericComponentType();
+            if (componentType instanceof Class) {
+                isArray = true;
+                mappedClass = (Class) componentType;
+                mappedType = mappedClass;
             }
         }
     }
