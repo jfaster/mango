@@ -59,7 +59,7 @@ public class InvocationInterceptorChainTest {
         });
         List<Annotation> empty = Collections.emptyList();
         TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
         InvocationInterceptorChain iic = new InvocationInterceptorChain(ic, pds, SQLType.SELECT);
 

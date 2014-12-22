@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
+import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.util.Objects;
 
 import java.lang.annotation.Annotation;
@@ -39,8 +40,12 @@ public class ParameterDescriptor extends TypeWithAnnotationDescriptor {
      */
     private final String name;
 
-    public ParameterDescriptor(int position, Type type, List<Annotation> annotations, String name) {
-        super(type, annotations);
+    public ParameterDescriptor(int position, Type type, Class<?> rawType,
+                               List<Annotation> annotations, String name) {
+        super(type, rawType, annotations);
+        if (getMappedClass() == null) {
+            throw new IncorrectParameterTypeException(type + " is invalid");
+        }
         this.position = position;
         this.name = name;
     }

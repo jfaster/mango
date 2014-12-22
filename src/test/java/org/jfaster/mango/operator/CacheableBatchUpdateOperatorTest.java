@@ -19,12 +19,12 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
-import org.jfaster.mango.reflect.ReturnDescriptor;
-import org.jfaster.mango.support.*;
-import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.support.*;
+import org.jfaster.mango.support.model4table.User;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -32,7 +32,6 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -81,14 +80,14 @@ public class CacheableBatchUpdateOperatorTest {
                                  CacheHandler ch, MockCacheBy cacheBy) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
         pAnnos.add(cacheBy);
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pAnnos, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), pAnnos, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockCache("user_", Day.class));
         methodAnnos.add(new MockSQL(srcSql));
-        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), rt.getRawType(), methodAnnos);
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(

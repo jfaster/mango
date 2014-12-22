@@ -43,9 +43,9 @@ public class ParameterContextTest {
     public void testSelectAndUpdate() throws Exception {
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t0 = new TypeToken<String>() {};
-        ParameterDescriptor p0 = new ParameterDescriptor(0, t0.getType(), empty, "1");
+        ParameterDescriptor p0 = new ParameterDescriptor(0, t0.getType(), t0.getRawType(), empty, "1");
         TypeToken<Integer> t1 = new TypeToken<Integer>() {};
-        ParameterDescriptor p1 = new ParameterDescriptor(1, t1.getType(), empty, "2");
+        ParameterDescriptor p1 = new ParameterDescriptor(1, t1.getType(), t1.getRawType(), empty, "2");
         List<ParameterDescriptor> pds = Arrays.asList(p0, p1);
         NameProvider np = new NameProvider(pds);
 
@@ -59,13 +59,13 @@ public class ParameterContextTest {
     public void testBatchUpdate() throws Exception {
         List<Annotation> empty = Collections.emptyList();
         TypeToken<List<User>> t = new TypeToken<List<User>>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.BATCHUPDATYPE);
         TypeToken<User> ut = TypeToken.of(User.class);
-        ParameterDescriptor up = new ParameterDescriptor(0, ut.getType(), empty, "1");
+        ParameterDescriptor up = new ParameterDescriptor(0, ut.getType(), t.getRawType(), empty, "1");
         assertThat(ctx.getPropertyType("1", ""), equalTo(ut.getType()));
         assertThat(ctx.getPropertyType("1", ""), equalTo(ut.getType())); // test cache
         assertThat(ctx.getPropertyType("1", "name"), equalTo((new TypeToken<String>() {}).getType()));
@@ -83,9 +83,9 @@ public class ParameterContextTest {
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t0 = new TypeToken<String>() {};
-        ParameterDescriptor p0 = new ParameterDescriptor(0, t0.getType(), empty, "1");
+        ParameterDescriptor p0 = new ParameterDescriptor(0, t0.getType(), t0.getRawType(), empty, "1");
         TypeToken<Integer> t1 = new TypeToken<Integer>() {};
-        ParameterDescriptor p1 = new ParameterDescriptor(1, t1.getType(), empty, "2");
+        ParameterDescriptor p1 = new ParameterDescriptor(1, t1.getType(), t1.getRawType(), empty, "2");
         List<ParameterDescriptor> pds = Arrays.asList(p0, p1);
         NameProvider np = new NameProvider(pds);
 
@@ -101,7 +101,7 @@ public class ParameterContextTest {
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t = new TypeToken<String>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
         NameProvider np = new NameProvider(pds);
 
@@ -115,7 +115,7 @@ public class ParameterContextTest {
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t = new TypeToken<String>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
         NameProvider np = new NameProvider(pds);
 

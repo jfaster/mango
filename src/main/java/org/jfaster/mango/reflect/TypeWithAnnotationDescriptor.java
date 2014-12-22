@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.exception.IncorrectParameterTypeException;
-
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -29,20 +27,17 @@ import java.util.List;
 public abstract class TypeWithAnnotationDescriptor {
 
     private final Type type;
-    private final List<Annotation> annotations;
     private final Class<?> rawType;
+    private final List<Annotation> annotations;
     private final boolean isIterable;
     private final Class<?> mappedClass;
 
-    public TypeWithAnnotationDescriptor(Type type, List<Annotation> annotations) {
+    public TypeWithAnnotationDescriptor(Type type, Class<?> rawType, List<Annotation> annotations) {
         this.type = type;
+        this.rawType = rawType;
         this.annotations = annotations;
 
         TypeWrapper tw = new TypeWrapper(type);
-        if (tw.getMappedClass() == null) {
-            throw new IncorrectParameterTypeException(type + " is invalid");
-        }
-        rawType = tw.getRawType();
         isIterable = tw.isIterable();
         mappedClass = tw.getMappedClass();
     }

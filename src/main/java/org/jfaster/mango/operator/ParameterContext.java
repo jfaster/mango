@@ -59,7 +59,8 @@ public class ParameterContext {
             }
             parameterDescriptors = new ArrayList<ParameterDescriptor>(1);
             parameterDescriptors.add(
-                    new ParameterDescriptor(0, pd.getMappedClass(), pd.getAnnotations(), pd.getName()));
+                    new ParameterDescriptor(0, pd.getMappedClass(), pd.getMappedClass(),
+                            pd.getAnnotations(), pd.getName()));
         }
         this.parameterDescriptors = parameterDescriptors;
         for (int i = 0; i < parameterDescriptors.size(); i++) {

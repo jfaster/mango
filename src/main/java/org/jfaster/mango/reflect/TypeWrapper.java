@@ -37,14 +37,6 @@ public class TypeWrapper {
     private Class<?> mappedClass;
 
     /**
-     * type原始类型
-     * <p>
-     * 如果type为{@code Integer}，它的值为{@code Integer.class}，
-     * 如果type为{@code List<Integer>}，它的值为{@code List.class}
-     */
-    private Class<?> rawType;
-
-    /**
      * type映射的原始类型，抛出异常时需要用到
      */
     private Type mappedType;
@@ -55,30 +47,27 @@ public class TypeWrapper {
 
     public TypeWrapper(Type type) {
         if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
-            rawType = mappedClass = byte[].class;
+            mappedClass = byte[].class;
         } else if (type instanceof ParameterizedType) { // 参数化类型
             ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type pRawType = parameterizedType.getRawType();
-            if (pRawType instanceof Class) {
-                rawType = (Class<?>) pRawType;
-                if (List.class.equals(rawType)) {
-                    isList = true;
-                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                    if (typeArgument instanceof Class) {
-                        mappedClass = (Class<?>) typeArgument;
-                    }
-                    mappedType = typeArgument;
-                } else if (Set.class.equals(rawType)) {
-                    isSet = true;
-                    Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                    if (typeArgument instanceof Class) {
-                        mappedClass = (Class<?>) typeArgument;
-                    }
-                    mappedType = typeArgument;
+            Type rawType = parameterizedType.getRawType();
+            if (List.class.equals(rawType)) {
+                isList = true;
+                Type typeArgument = parameterizedType.getActualTypeArguments()[0];
+                if (typeArgument instanceof Class) {
+                    mappedClass = (Class<?>) typeArgument;
                 }
+                mappedType = typeArgument;
+            } else if (Set.class.equals(rawType)) {
+                isSet = true;
+                Type typeArgument = parameterizedType.getActualTypeArguments()[0];
+                if (typeArgument instanceof Class) {
+                    mappedClass = (Class<?>) typeArgument;
+                }
+                mappedType = typeArgument;
             }
         } else if (type instanceof Class) { // 没有参数化
-            rawType = (Class) type;
+            Class rawType = (Class) type;
             if (rawType.isArray()) { // 数组
                 isArray = true;
                 mappedClass = rawType.getComponentType();
@@ -86,7 +75,7 @@ public class TypeWrapper {
             } else { // 普通类
                 mappedClass = rawType;
             }
-        } else if (type instanceof GenericArrayType) {
+        } else if (type instanceof GenericArrayType) { // 范型数组
             Type componentType = ((GenericArrayType) type).getGenericComponentType();
             if (componentType instanceof Class) {
                 isArray = true;
@@ -124,9 +113,6 @@ public class TypeWrapper {
         return mappedType;
     }
 
-    public Class<?> getRawType() {
-        return rawType;
-    }
 }
 
 

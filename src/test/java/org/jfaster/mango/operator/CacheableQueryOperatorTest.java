@@ -226,14 +226,14 @@ public class CacheableQueryOperatorTest {
                                  CacheHandler ch, MockCacheBy cacheBy) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
         pAnnos.add(cacheBy);
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pAnnos, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), pAnnos, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockCache("user_", Day.class));
         methodAnnos.add(new MockSQL(srcSql));
-        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), rt.getRawType(), methodAnnos);
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(

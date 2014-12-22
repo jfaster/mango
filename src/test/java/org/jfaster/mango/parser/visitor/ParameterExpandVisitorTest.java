@@ -44,7 +44,7 @@ public class ParameterExpandVisitorTest {
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty, "1");
         List<ParameterDescriptor> pds = Lists.newArrayList(p);
         NameProvider np = new NameProvider(pds);
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
@@ -67,9 +67,9 @@ public class ParameterExpandVisitorTest {
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), t.getRawType(), empty, "1");
         TypeToken<User2> t2 = new TypeToken<User2>() {};
-        ParameterDescriptor p2 = new ParameterDescriptor(1, t2.getType(), empty, "2");
+        ParameterDescriptor p2 = new ParameterDescriptor(1, t2.getType(), t.getRawType(), empty, "2");
         List<ParameterDescriptor> pds = Lists.newArrayList(p, p2);
         NameProvider np = new NameProvider(pds);
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
