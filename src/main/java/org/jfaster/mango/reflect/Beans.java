@@ -18,6 +18,8 @@ package org.jfaster.mango.reflect;
 
 import org.jfaster.mango.exception.NotWritablePropertyException;
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.SetterInvoker;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;

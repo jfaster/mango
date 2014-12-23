@@ -17,6 +17,10 @@
 package org.jfaster.mango.reflect;
 
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.invoker.FunctionalGetterInvoker;
+import org.jfaster.mango.invoker.FunctionalSetterInvoker;
+import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
 import org.jfaster.mango.util.concurrent.cache.LoadingCache;
@@ -24,10 +28,7 @@ import org.jfaster.mango.util.concurrent.cache.LoadingCache;
 import javax.annotation.Nullable;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -78,11 +79,11 @@ public class BeanInfoCache {
                     String name = pd.getName();
                     Method readMethod = pd.getReadMethod();
                     if (readMethod != null) {
-                        gim.put(name, createGetterInvoker(readMethod));
+                        gim.put(name, FunctionalGetterInvoker.create(readMethod));
                     }
                     Method writeMethod = pd.getWriteMethod();
                     if (writeMethod != null) {
-                        sim.put(name, createSetterInvoker(writeMethod));
+                        sim.put(name, FunctionalSetterInvoker.create(writeMethod));
                     }
                 }
             }
@@ -102,47 +103,6 @@ public class BeanInfoCache {
 
         public List<PropertyDescriptor> getPropertyDescriptors() {
             return propertyDescriptors;
-        }
-
-        private GetterInvoker createGetterInvoker(final Method method) {
-            handleModifier(method);
-
-            return new GetterInvoker() {
-                @Override
-                public Object invoke(Object object) throws IllegalAccessException, InvocationTargetException {
-                    return method.invoke(object);
-                }
-
-                @Override
-                public Type getReturnType() {
-                    return method.getGenericReturnType();
-                }
-            };
-        }
-
-        private SetterInvoker createSetterInvoker(final Method method) {
-            handleModifier(method);
-
-            return new SetterInvoker() {
-                @Override
-                public void invoke(Object object, Object parameter)
-                        throws IllegalAccessException, InvocationTargetException {
-                    method.invoke(object, parameter);
-                }
-
-                @Override
-                public Class<?> getParameterRawType() {
-                    return method.getParameterTypes()[0];
-                }
-            };
-        }
-
-        private void handleModifier(Method method) {
-            int modifiers = method.getModifiers();
-            if (!Modifier.isPublic(modifiers) ||
-                    !Modifier.isPublic(method.getDeclaringClass().getModifiers())) {
-                method.setAccessible(true);
-            }
         }
 
     }

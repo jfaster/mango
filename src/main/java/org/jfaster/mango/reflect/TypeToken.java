@@ -42,6 +42,10 @@ public abstract class TypeToken<T> extends TypeCapture {
         return new SimpleTypeToken<T>(type);
     }
 
+    public static TypeToken<?> of(Type type) {
+        return new SimpleTypeToken<Object>(type);
+    }
+
     public final Type getType() {
         return runtimeType;
     }

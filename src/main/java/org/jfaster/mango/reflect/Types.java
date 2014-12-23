@@ -16,6 +16,9 @@
 
 package org.jfaster.mango.reflect;
 
+import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.util.Primitives;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -64,6 +67,18 @@ public class Types {
         return lhsType.isPrimitive() ?
                 lhsType.equals(Primitives.unwrap(rhsType)) :
                 lhsType.isAssignableFrom(Primitives.wrap(rhsType));
+    }
+
+    public static boolean isTypeAssignable(Type lhsType, Type rhsType) {
+        if (lhsType instanceof ParameterizedType
+                && rhsType instanceof ParameterizedType) {
+            return lhsType.equals(rhsType);
+        }
+        if (lhsType instanceof Class
+                && rhsType instanceof Class) {
+            return isAssignable((Class) lhsType, (Class) rhsType);
+        }
+        return false;
     }
 
     private static Class<?> getClassFromType(Type type) {

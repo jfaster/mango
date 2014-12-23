@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.invoker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;

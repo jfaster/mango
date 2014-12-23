@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.util;
 
 import java.util.Collections;
 import java.util.HashMap;

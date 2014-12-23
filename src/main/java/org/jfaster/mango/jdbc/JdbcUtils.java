@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.reflect.Primitives;
+import org.jfaster.mango.util.Primitives;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 

@@ -14,18 +14,16 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.invoker;
 
-import java.lang.reflect.InvocationTargetException;
+import javax.annotation.Nullable;
 
 /**
  * @author ash
  */
-public interface SetterInvoker {
+public abstract class Function<I, O> {
 
-    void invoke(Object object, Object parameter) throws IllegalAccessException, InvocationTargetException;
-
-    Class<?> getParameterRawType();
-
+    @Nullable
+    public abstract O apply(@Nullable I input);
 
 }
