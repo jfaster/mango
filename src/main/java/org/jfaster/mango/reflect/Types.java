@@ -36,7 +36,7 @@ public class Types {
             if (clazz != null) {
                 GetterInvoker invoker = BeanInfoCache.getGetterInvoker(clazz, propertyName);
                 if (invoker != null) {
-                    type = invoker.getReturnType();
+                    type = invoker.getPropertyType();
                     propertyPath = propertyPath.substring(pos + 1);
                     pos = propertyPath.indexOf('.');
                     appendParentPath(parentPath, propertyName);
@@ -51,7 +51,7 @@ public class Types {
         if (clazz != null) {
             GetterInvoker invoker = BeanInfoCache.getGetterInvoker(clazz, propertyPath);
             if (invoker != null) {
-                type = invoker.getReturnType();
+                type = invoker.getPropertyType();
                 return new Result(type);
             }
         }

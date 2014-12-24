@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.invoker;
 
+import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.Types;
 
@@ -26,36 +27,48 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public class FunctionalSetterInvoker extends FunctionalMethod implements SetterInvoker {
+public class FunctionalSetterInvoker extends FunctionalInvoker implements SetterInvoker {
 
+    private Type parameterType;
     private Class<?> parameterRawType;
 
-    private FunctionalSetterInvoker(Method method) {
-        super(method);
+    private FunctionalSetterInvoker(String name, Method method) {
+        super(name, method);
+        parameterType = method.getGenericParameterTypes()[0];
         parameterRawType = method.getParameterTypes()[0];
         if (functional) {
-            Type parameterType = method.getGenericParameterTypes()[0];
             if (!Types.isTypeAssignable(parameterType, outputType)) {
                 throw new RuntimeException(); // TODO;
             }
-            parameterRawType = TypeToken.of(parameterRawType).getRawType();
+            parameterType = inputType;
+            parameterRawType = TypeToken.of(parameterType).getRawType();
         }
     }
 
-    public static FunctionalSetterInvoker create(Method method) {
-        return new FunctionalSetterInvoker(method);
+    public static FunctionalSetterInvoker create(String name, Method method) {
+        return new FunctionalSetterInvoker(name, method);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void invoke(Object object, Object parameter) {
+        try {
+            Object output = function.apply(parameter);
+            method.invoke(object, output);
+        } catch (IllegalAccessException e) {
+            throw new UncheckedException(e.getMessage(), e.getCause());
+        } catch (InvocationTargetException e) {
+            throw new UncheckedException(e.getMessage(), e.getCause());
+        }
     }
 
     @Override
-    public void invoke(Object object, Object parameter)
-            throws IllegalAccessException, InvocationTargetException {
-        //noinspection unchecked
-        Object output = function.apply(parameter);
-        method.invoke(object, output);
+    public Type getPropertyType() {
+        return parameterType;
     }
 
     @Override
-    public Class<?> getParameterRawType() {
+    public Class<?> getPropertyRawType() {
         return parameterRawType;
     }
 

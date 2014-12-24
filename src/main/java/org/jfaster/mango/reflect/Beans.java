@@ -29,30 +29,30 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class Beans {
 
-    public static void setPropertyValue(Object object, String propertyName, @Nullable Object value) {
-        try {
-            SetterInvoker invoker = BeanInfoCache.getSetterInvoker(object.getClass(), propertyName);
-            if (invoker == null) {
-                throw new NotWritablePropertyException("property " + propertyName + " of " +
-                        object.getClass() + " is not writable");
-            }
-            Class<?> requiredType = invoker.getParameterRawType();
-            if (value == null && requiredType.isPrimitive()) {
-                throw new NullPointerException("property " + propertyName + " of " +
-                        object.getClass() + " is primitive, can not be assigned to null");
-            }
-            if (value != null &&  !Types.isAssignable(requiredType, value.getClass())) {
-                throw new ClassCastException("cannot convert value of type [" + value.getClass().getName() +
-                        "] to required type [" + invoker.getParameterRawType().getName() + "] " +
-                        "for property '" + propertyName + "' of " +  object.getClass());
-            }
-            invoker.invoke(object, value);
-        } catch (InvocationTargetException e) {
-            throw new UncheckedException(e.getMessage(), e.getCause());
-        } catch (IllegalAccessException e) {
-            throw new UncheckedException(e.getMessage(), e.getCause());
-        }
-    }
+//    public static void setPropertyValue(Object object, String propertyName, @Nullable Object value) {
+//        try {
+//            SetterInvoker invoker = BeanInfoCache.getSetterInvoker(object.getClass(), propertyName);
+//            if (invoker == null) {
+//                throw new NotWritablePropertyException("property " + propertyName + " of " +
+//                        object.getClass() + " is not writable");
+//            }
+//            Class<?> requiredType = invoker.getParameterRawType();
+//            if (value == null && requiredType.isPrimitive()) {
+//                throw new NullPointerException("property " + propertyName + " of " +
+//                        object.getClass() + " is primitive, can not be assigned to null");
+//            }
+//            if (value != null &&  !Types.isAssignable(requiredType, value.getClass())) {
+//                throw new ClassCastException("cannot convert value of type [" + value.getClass().getName() +
+//                        "] to required type [" + invoker.getParameterRawType().getName() + "] " +
+//                        "for property '" + propertyName + "' of " +  object.getClass());
+//            }
+//            invoker.invoke(object, value);
+//        } catch (InvocationTargetException e) {
+//            throw new UncheckedException(e.getMessage(), e.getCause());
+//        } catch (IllegalAccessException e) {
+//            throw new UncheckedException(e.getMessage(), e.getCause());
+//        }
+//    }
 
     public static Result getPropertyValue(Object object, String propertyPath) {
         try {

@@ -16,16 +16,11 @@
 
 package org.jfaster.mango.invoker;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * @author ash
  */
-public interface SetterInvoker {
+public interface SetterInvoker extends Invoker {
 
-    void invoke(Object object, Object parameter) throws IllegalAccessException, InvocationTargetException;
-
-    Class<?> getParameterRawType();
-
+    void invoke(Object object, Object parameter);
 
 }

@@ -20,6 +20,7 @@ import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.BeanInfoCache;
 import org.jfaster.mango.reflect.ParameterDescriptor;
@@ -27,7 +28,6 @@ import org.jfaster.mango.reflect.Types;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,10 +71,10 @@ public class ParameterContext {
             Class<?> parameterRawType = pd.getRawType();
             if (!JdbcUtils.isSingleColumnClass(parameterRawType) // 方法参数不是单列
                     && !pd.isIterable()) { // 方法参数不可迭代
-                List<PropertyDescriptor> propertyDescriptors =
-                        BeanInfoCache.getPropertyDescriptors(parameterRawType);
-                for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-                    String propertyName = propertyDescriptor.getName();
+                List<GetterInvoker> invokers =
+                        BeanInfoCache.getGetterInvokers(parameterRawType);
+                for (GetterInvoker invoker : invokers) {
+                    String propertyName = invoker.getName();
                     if (!nameProvider.isParameterName(propertyName)) { // 属性名和参数名相同则不扩展
                         List<String> oldParameterNames = propertyMap.get(propertyName);
                         if (oldParameterNames == null) {

@@ -16,15 +16,14 @@
 
 package org.jfaster.mango.mapper;
 
+import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.reflect.Beans;
+import org.jfaster.mango.reflect.BeanInfoCache;
+import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.reflect.BeanInfoCache;
-import org.jfaster.mango.reflect.Reflection;
 
-import java.beans.PropertyDescriptor;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -43,7 +42,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     private Class<T> mappedClass;
 
-    private Map<String, PropertyDescriptor> mappedPropertis;
+    private Map<String, SetterInvoker> invokerMap;
 
     public BeanPropertyRowMapper(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
         initialize(mappedClass, propertyToColumnMap);
@@ -51,19 +50,17 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     protected void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
         this.mappedClass = mappedClass;
-        this.mappedPropertis = new HashMap<String, PropertyDescriptor>();
-        List<PropertyDescriptor> pds = BeanInfoCache.getPropertyDescriptors(mappedClass);
-        for (PropertyDescriptor pd : pds) {
-            if (pd.getWriteMethod() != null) {
-                String column = propertyToColumnMap.get(pd.getName().toLowerCase());
-                if (column != null) {
-                    mappedPropertis.put(column, pd);
-                } else {
-                    mappedPropertis.put(pd.getName().toLowerCase(), pd);
-                    String underscoredName = underscoreName(pd.getName());
-                    if (!pd.getName().toLowerCase().equals(underscoredName)) {
-                        mappedPropertis.put(underscoredName, pd);
-                    }
+        this.invokerMap = new HashMap<String, SetterInvoker>();
+        List<SetterInvoker> invokers = BeanInfoCache.getSetterInvokers(mappedClass);
+        for (SetterInvoker invoker : invokers) {
+            String column = propertyToColumnMap.get(invoker.getName().toLowerCase());
+            if (column != null) {
+                invokerMap.put(column, invoker);
+            } else {
+                invokerMap.put(invoker.getName().toLowerCase(), invoker);
+                String underscoredName = underscoreName(invoker.getName());
+                if (!invoker.getName().toLowerCase().equals(underscoredName)) {
+                    invokerMap.put(underscoredName, invoker);
                 }
             }
         }
@@ -95,13 +92,14 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
         for (int index = 1; index <= columnCount; index++) {
             String column = JdbcUtils.lookupColumnName(rsmd, index);
-            PropertyDescriptor pd = mappedPropertis.get(column.trim().toLowerCase());
-            if (pd != null) {
-                Object value = getColumnValue(rs, index, pd);
+            SetterInvoker invoker = invokerMap.get(column.trim().toLowerCase());
+            if (invoker != null) {
+                Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getPropertyRawType());
                 if (logger.isDebugEnabled() && rowNumber == 0) {
-                    logger.debug("Mapping column '" + column + "' to property '" + pd.getName() + "' of type " + pd.getPropertyType());
+                    logger.debug("Mapping column '" + column + "' to property '" +
+                            invoker.getName() + "' of type " + invoker.getPropertyRawType());
                 }
-                Beans.setPropertyValue(mappedObject, pd.getName(), value);
+                invoker.invoke(mappedObject, value);
             }
         }
         return mappedObject;
@@ -110,11 +108,6 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     @Override
     public Class<T> getMappedClass() {
         return mappedClass;
-    }
-
-
-    protected Object getColumnValue(ResultSet rs, int index, PropertyDescriptor pd) throws SQLException {
-        return JdbcUtils.getResultSetValue(rs, index, pd.getPropertyType());
     }
 
 }

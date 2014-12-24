@@ -27,15 +27,17 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public abstract class FunctionalMethod {
+public abstract class FunctionalInvoker implements Invoker {
 
+    protected String name;
     protected Method method;
     protected Function function;
     protected boolean functional;
     protected Type inputType;
     protected Type outputType;
 
-    protected FunctionalMethod(Method method) {
+    protected FunctionalInvoker(String name, Method method) {
+        this.name = name;
         this.method = method;
         handleModifier(method);
         Functional funcAnno = method.getAnnotation(Functional.class);
@@ -50,6 +52,11 @@ public abstract class FunctionalMethod {
         } else {
             function = new IdentityFunction();
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     private void handleModifier(Method method) {

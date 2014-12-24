@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.invoker;
 
+import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.Types;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,36 +27,50 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public class FunctionalGetterInvoker extends FunctionalMethod implements GetterInvoker {
+public class FunctionalGetterInvoker extends FunctionalInvoker implements GetterInvoker {
 
     private Type returnType;
+    private Class<?> returnRawType;
 
-    private FunctionalGetterInvoker(Method method) {
-        super(method);
+    private FunctionalGetterInvoker(String name, Method method) {
+        super(name, method);
         returnType = method.getGenericReturnType();
+        returnRawType = method.getReturnType();
         if (functional) {
             if (!Types.isTypeAssignable(inputType, returnType)) {
                 throw new RuntimeException(); // TODO;
             }
             returnType = outputType;
+            returnRawType = TypeToken.of(returnType).getRawType();
         }
     }
 
-    public static FunctionalGetterInvoker create(Method method) {
-        return new FunctionalGetterInvoker(method);
+    public static FunctionalGetterInvoker create(String name, Method method) {
+        return new FunctionalGetterInvoker(name, method);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object invoke(Object object) {
+        try {
+            Object input = method.invoke(object);
+            Object r = function.apply(input);
+            return r;
+        } catch (IllegalAccessException e) {
+            throw new UncheckedException(e.getMessage(), e.getCause());
+        } catch (InvocationTargetException e) {
+            throw new UncheckedException(e.getMessage(), e.getCause());
+        }
     }
 
     @Override
-    public Object invoke(Object object) throws IllegalAccessException, InvocationTargetException {
-        Object input = method.invoke(object);
-        //noinspection unchecked
-        Object r = function.apply(input);
-        return r;
-    }
-
-    @Override
-    public Type getReturnType() {
+    public Type getPropertyType() {
         return returnType;
+    }
+
+    @Override
+    public Class<?> getPropertyRawType() {
+        return returnRawType;
     }
 
 }

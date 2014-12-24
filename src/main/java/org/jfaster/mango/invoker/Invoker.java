@@ -16,13 +16,17 @@
 
 package org.jfaster.mango.invoker;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public interface GetterInvoker extends Invoker {
+public interface Invoker {
 
-    Object invoke(Object object) throws IllegalAccessException, InvocationTargetException;
+    String getName();
+
+    Type getPropertyType();
+
+    Class<?> getPropertyRawType();
 
 }

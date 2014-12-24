@@ -46,8 +46,12 @@ public class BeanInfoCache {
         return cache.get(clazz).getSetterInvoker(propertyName);
     }
 
-    public static List<PropertyDescriptor> getPropertyDescriptors(Class<?> clazz) {
-        return cache.get(clazz).getPropertyDescriptors();
+    public static List<GetterInvoker> getGetterInvokers(Class<?> clazz) {
+        return cache.get(clazz).getGetterInvokers();
+    }
+
+    public static List<SetterInvoker> getSetterInvokers(Class<?> clazz) {
+        return cache.get(clazz).getSetterInvokers();
     }
 
     private final static LoadingCache<Class<?>, BeanInfo> cache = new DoubleCheckCache<Class<?>, BeanInfo>(
@@ -63,48 +67,57 @@ public class BeanInfoCache {
 
     private static class BeanInfo {
 
-        final List<PropertyDescriptor> propertyDescriptors;
-        final Map<String, GetterInvoker> getterInvokerMap;
-        final Map<String, SetterInvoker> setterInvokerMap;
+        private final Map<String, GetterInvoker> getterInvokerMap;
+        private final Map<String, SetterInvoker> setterInvokerMap;
+        private final List<GetterInvoker> getterInvokers;
+        private final List<SetterInvoker> setterInvokers;
 
         public BeanInfo(Class<?> clazz) throws Exception {
             Map<String, GetterInvoker> gim = new HashMap<String, GetterInvoker>();
             Map<String, SetterInvoker> sim = new HashMap<String, SetterInvoker>();
-            List<PropertyDescriptor> pds = new ArrayList<PropertyDescriptor>();
+            List<GetterInvoker> gis = new ArrayList<GetterInvoker>();
+            List<SetterInvoker> sis = new ArrayList<SetterInvoker>();
 
             java.beans.BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
             for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
                 if (!Class.class.equals(pd.getPropertyType())) {
-                    pds.add(pd);
                     String name = pd.getName();
                     Method readMethod = pd.getReadMethod();
                     if (readMethod != null) {
-                        gim.put(name, FunctionalGetterInvoker.create(readMethod));
+                        FunctionalGetterInvoker gi = FunctionalGetterInvoker.create(name, readMethod);
+                        gim.put(name, gi);
+                        gis.add(gi);
                     }
                     Method writeMethod = pd.getWriteMethod();
                     if (writeMethod != null) {
-                        sim.put(name, FunctionalSetterInvoker.create(writeMethod));
+                        FunctionalSetterInvoker si = FunctionalSetterInvoker.create(name, writeMethod);
+                        sim.put(name, si);
+                        sis.add(si);
                     }
                 }
             }
 
-            propertyDescriptors = Collections.unmodifiableList(pds);
             getterInvokerMap = Collections.unmodifiableMap(gim);
             setterInvokerMap = Collections.unmodifiableMap(sim);
+            getterInvokers = Collections.unmodifiableList(gis);
+            setterInvokers = Collections.unmodifiableList(sis);
         }
 
-        public GetterInvoker getGetterInvoker(String propertyName) {
+        GetterInvoker getGetterInvoker(String propertyName) {
             return getterInvokerMap.get(propertyName);
         }
 
-        public SetterInvoker getSetterInvoker(String propertyName) {
+        SetterInvoker getSetterInvoker(String propertyName) {
             return setterInvokerMap.get(propertyName);
         }
 
-        public List<PropertyDescriptor> getPropertyDescriptors() {
-            return propertyDescriptors;
+        private List<GetterInvoker> getGetterInvokers() {
+            return getterInvokers;
         }
 
+        private List<SetterInvoker> getSetterInvokers() {
+            return setterInvokers;
+        }
     }
 
 }
