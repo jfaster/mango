@@ -38,7 +38,9 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
         parameterRawType = method.getParameterTypes()[0];
         if (functional) {
             if (!Types.isTypeAssignable(parameterType, outputType)) {
-                throw new RuntimeException(); // TODO;
+                throw new ClassCastException("function[" + function.getClass() + "] " +
+                        "on method[" + method + "] error, method's parameterType[" + parameterType + "] " +
+                        "must be assignable from function's outputType[" + outputType + "]");
             }
             parameterType = inputType;
             parameterRawType = TypeToken.of(parameterType).getRawType();

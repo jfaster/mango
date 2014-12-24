@@ -41,8 +41,8 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
         if (functional) {
             if (!Types.isTypeAssignable(inputType, returnType)) {
                 throw new ClassCastException("function[" + function.getClass() + "] " +
-                        "on method[" + method + "] error, method's returnType[" + returnType + "] " +
-                        "must be assignable from function's inputType[" + inputType + "]");
+                        "on method[" + method + "] error, function's inputType[" + inputType + "] " +
+                        "must be assignable from method's returnType[" + returnType + "]");
             }
             returnType = outputType;
             returnRawType = TypeToken.of(returnType).getRawType();

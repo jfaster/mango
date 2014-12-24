@@ -268,12 +268,7 @@ public class FunctionalGetterInvokerTest {
     @Test
     public void testException() throws Exception {
         thrown.expect(ClassCastException.class);
-        thrown.expectMessage("function[class org.jfaster.mango.invoker." +
-                "FunctionalGetterInvokerTest$IntegerToStringFunction] " +
-                "on method[java.lang.String org.jfaster.mango.invoker." +
-                "FunctionalGetterInvokerTest$E.getX()] error, method's " +
-                "returnType[class java.lang.String] must be assignable " +
-                "from function's inputType[class java.lang.Integer]");
+        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerToStringFunction] on method[java.lang.String org.jfaster.mango.invoker.FunctionalGetterInvokerTest$E.getX()] error, function's inputType[class java.lang.Integer] must be assignable from method's returnType[class java.lang.String]");
         Method method = E.class.getDeclaredMethod("getX");
         E e = new E();
         e.setX("9527");
@@ -296,13 +291,7 @@ public class FunctionalGetterInvokerTest {
     @Test
     public void testException2() throws Exception {
         thrown.expect(ClassCastException.class);
-        thrown.expectMessage("function[class org.jfaster.mango.invoker." +
-                "FunctionalGetterInvokerTest$IntegerListToStringFunction] " +
-                "on method[java.util.List org.jfaster.mango.invoker." +
-                "FunctionalGetterInvokerTest$F.getX()] error, " +
-                "method's returnType[java.util.List<java.lang.String>] " +
-                "must be assignable from function's " +
-                "inputType[java.util.List<java.lang.Integer>]");
+        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerListToStringFunction] on method[java.util.List org.jfaster.mango.invoker.FunctionalGetterInvokerTest$F.getX()] error, function's inputType[java.util.List<java.lang.Integer>] must be assignable from method's returnType[java.util.List<java.lang.String>]");
         Method method = F.class.getDeclaredMethod("getX");
         F e = new F();
         ArrayList<String> x = Lists.newArrayList("xxx");
