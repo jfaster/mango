@@ -14,13 +14,9 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.exception.UncheckedException;
-import org.jfaster.mango.invoker.FunctionalGetterInvoker;
-import org.jfaster.mango.invoker.FunctionalSetterInvoker;
-import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
 import org.jfaster.mango.util.concurrent.cache.LoadingCache;
@@ -34,7 +30,7 @@ import java.util.*;
 /**
  * @author ash
  */
-public class BeanInfoCache {
+public class InvokerCache {
 
     @Nullable
     public static GetterInvoker getGetterInvoker(Class<?> clazz, String propertyName) {

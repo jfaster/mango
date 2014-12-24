@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
+import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.util.Primitives;
 
@@ -34,7 +35,7 @@ public class Types {
             String propertyName = propertyPath.substring(0, pos);
             Class<?> clazz = getClassFromType(type);
             if (clazz != null) {
-                GetterInvoker invoker = BeanInfoCache.getGetterInvoker(clazz, propertyName);
+                GetterInvoker invoker = InvokerCache.getGetterInvoker(clazz, propertyName);
                 if (invoker != null) {
                     type = invoker.getPropertyType();
                     propertyPath = propertyPath.substring(pos + 1);
@@ -49,7 +50,7 @@ public class Types {
         }
         Class<?> clazz = getClassFromType(type);
         if (clazz != null) {
-            GetterInvoker invoker = BeanInfoCache.getGetterInvoker(clazz, propertyPath);
+            GetterInvoker invoker = InvokerCache.getGetterInvoker(clazz, propertyPath);
             if (invoker != null) {
                 type = invoker.getPropertyType();
                 return new Result(type);

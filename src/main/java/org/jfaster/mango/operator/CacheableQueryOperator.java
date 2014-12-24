@@ -18,12 +18,12 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.reflect.BeanInfoCache;
 import org.jfaster.mango.reflect.Beans;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.reflect.MethodDescriptor;
@@ -54,7 +54,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
         if (driver.isUseMultipleKeys()) {
             interableProperty = driver.getInterableProperty();
-            GetterInvoker invoker = BeanInfoCache.getGetterInvoker(mappedClass, interableProperty);
+            GetterInvoker invoker = InvokerCache.getGetterInvoker(mappedClass, interableProperty);
             if (invoker == null) {
                 // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
                 throw new NotReadablePropertyException("if use cache and sql has one in clause, property "

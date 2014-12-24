@@ -21,8 +21,8 @@ import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.reflect.BeanInfoCache;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.Types;
 import org.jfaster.mango.util.Strings;
@@ -72,7 +72,7 @@ public class ParameterContext {
             if (!JdbcUtils.isSingleColumnClass(parameterRawType) // 方法参数不是单列
                     && !pd.isIterable()) { // 方法参数不可迭代
                 List<GetterInvoker> invokers =
-                        BeanInfoCache.getGetterInvokers(parameterRawType);
+                        InvokerCache.getGetterInvokers(parameterRawType);
                 for (GetterInvoker invoker : invokers) {
                     String propertyName = invoker.getName();
                     if (!nameProvider.isParameterName(propertyName)) { // 属性名和参数名相同则不扩展

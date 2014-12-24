@@ -16,43 +16,16 @@
 
 package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.exception.NotWritablePropertyException;
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.SetterInvoker;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author ash
  */
 public class Beans {
-
-//    public static void setPropertyValue(Object object, String propertyName, @Nullable Object value) {
-//        try {
-//            SetterInvoker invoker = BeanInfoCache.getSetterInvoker(object.getClass(), propertyName);
-//            if (invoker == null) {
-//                throw new NotWritablePropertyException("property " + propertyName + " of " +
-//                        object.getClass() + " is not writable");
-//            }
-//            Class<?> requiredType = invoker.getParameterRawType();
-//            if (value == null && requiredType.isPrimitive()) {
-//                throw new NullPointerException("property " + propertyName + " of " +
-//                        object.getClass() + " is primitive, can not be assigned to null");
-//            }
-//            if (value != null &&  !Types.isAssignable(requiredType, value.getClass())) {
-//                throw new ClassCastException("cannot convert value of type [" + value.getClass().getName() +
-//                        "] to required type [" + invoker.getParameterRawType().getName() + "] " +
-//                        "for property '" + propertyName + "' of " +  object.getClass());
-//            }
-//            invoker.invoke(object, value);
-//        } catch (InvocationTargetException e) {
-//            throw new UncheckedException(e.getMessage(), e.getCause());
-//        } catch (IllegalAccessException e) {
-//            throw new UncheckedException(e.getMessage(), e.getCause());
-//        }
-//    }
 
     public static Result getPropertyValue(Object object, String propertyPath) {
         try {
@@ -69,7 +42,7 @@ public class Beans {
                     nestedPath.append(".");
                 }
                 nestedPath.append(propertyName);
-                GetterInvoker invoker = BeanInfoCache.getGetterInvoker(value.getClass(), propertyName);
+                GetterInvoker invoker = InvokerCache.getGetterInvoker(value.getClass(), propertyName);
                 if (invoker == null) {
                     return new Result(ErrorType.NO_PROPERTY, nestedPath.toString());
                 }
@@ -81,7 +54,7 @@ public class Beans {
             if (value == null) {
                 return new Result(ErrorType.NULL, nestedPath.toString());
             }
-            GetterInvoker invoker = BeanInfoCache.getGetterInvoker(value.getClass(), propertyPath);
+            GetterInvoker invoker = InvokerCache.getGetterInvoker(value.getClass(), propertyPath);
             if (invoker == null) {
                 return new Result(ErrorType.NO_PROPERTY, nestedPath.append(".").append(propertyPath).toString());
             }

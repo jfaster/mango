@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.mapper;
 
+import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.reflect.BeanInfoCache;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -51,7 +51,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     protected void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
         this.mappedClass = mappedClass;
         this.invokerMap = new HashMap<String, SetterInvoker>();
-        List<SetterInvoker> invokers = BeanInfoCache.getSetterInvokers(mappedClass);
+        List<SetterInvoker> invokers = InvokerCache.getSetterInvokers(mappedClass);
         for (SetterInvoker invoker : invokers) {
             String column = propertyToColumnMap.get(invoker.getName().toLowerCase());
             if (column != null) {

@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
+ * 函数式getter方法调用器
+ *
  * @author ash
  */
 public class FunctionalGetterInvoker extends FunctionalInvoker implements GetterInvoker {
@@ -38,7 +40,9 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
         returnRawType = method.getReturnType();
         if (functional) {
             if (!Types.isTypeAssignable(inputType, returnType)) {
-                throw new RuntimeException(); // TODO;
+                throw new ClassCastException("function[" + function.getClass() + "] " +
+                        "on method[" + method + "] error, method's returnType[" + returnType + "] " +
+                        "must be assignable from function's inputType[" + inputType + "]");
             }
             returnType = outputType;
             returnRawType = TypeToken.of(returnType).getRawType();
