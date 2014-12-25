@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
  */
 public class ASTJoinParameter extends AbstractRenderableNode implements ParameterBean {
 
-    private String parameterName;
-    private String propertyPath; // 为""的时候表示没有属性
+    private String name;
+    private String property; // 为""的时候表示没有属性
 
     public ASTJoinParameter(int id) {
         super(id);
@@ -40,22 +40,22 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     }
 
     public void init(String str) {
-        Pattern p = Pattern.compile("#\\{\\s*(:(\\w+)(\\.\\w+)*)\\s*\\}", Pattern.CASE_INSENSITIVE);
+        Pattern p = Pattern.compile("#\\{\\s*(:(\\w+)(\\.\\w+)?)\\s*\\}", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(str);
         if (!m.matches()) {
             throw new UnreachableCodeException();
         }
         String fullName = m.group(1);
-        parameterName = m.group(2);
-        propertyPath = fullName.substring(parameterName.length() + 1);
-        if (!propertyPath.isEmpty()) {
-            propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
+        name = m.group(2);
+        property = fullName.substring(name.length() + 1);
+        if (!property.isEmpty()) {
+            property = property.substring(1);  // .property变为property
         }
     }
 
     @Override
     public boolean render(InvocationContext context) {
-        Object obj = context.getPropertyValue(parameterName, propertyPath);
+        Object obj = context.getPropertyValue(name, property);
         context.writeToSqlBuffer(obj.toString());
         return true;
     }
@@ -64,8 +64,8 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     public String toString() {
         return super.toString() + "{" +
                 "fullName=" + getFullName() + ", " +
-                "parameterName=" + parameterName + ", " +
-                "propertyPath=" + propertyPath +
+                "name=" + name + ", " +
+                "property=" + property +
                 "}";
     }
 
@@ -75,33 +75,33 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     }
 
     @Override
-    public boolean onlyParameterName() {
-        return Strings.isEmpty(propertyPath);
+    public boolean onlyName() {
+        return Strings.isEmpty(property);
     }
 
     @Override
-    public String getParameterName() {
-        return parameterName;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
-    public String getPropertyPath() {
-        return propertyPath;
+    public String getProperty() {
+        return property;
     }
 
     @Override
-    public void setPropertyPath(String propertyPath) {
-        this.propertyPath = propertyPath;
+    public void setProperty(String property) {
+        this.property = property;
     }
 
     @Override
     public String getFullName() {
-        return Strings.getFullName(parameterName, propertyPath);
+        return Strings.getFullName(name, property);
     }
 
 }

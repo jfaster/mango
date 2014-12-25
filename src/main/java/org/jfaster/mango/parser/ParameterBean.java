@@ -21,15 +21,15 @@ package org.jfaster.mango.parser;
  */
 public interface ParameterBean {
 
-    public boolean onlyParameterName();
+    public boolean onlyName();
 
-    public String getParameterName();
+    public String getName();
 
-    public void setParameterName(String parameterName);
+    public void setName(String parameterName);
 
-    public String getPropertyPath();
+    public String getProperty();
 
-    public void setPropertyPath(String propertyPath);
+    public void setProperty(String propertyName);
 
     public String getFullName();
 

@@ -29,12 +29,12 @@ import java.util.regex.Pattern;
  *
  * @author ash
  */
-public class ASTJDBCIterableParameter extends AbstractRenderableNode implements ParameterBean{
+public class ASTJDBCIterableParameter extends AbstractRenderableNode implements ParameterBean {
 
-    private String parameterName;
-    private String propertyPath; // 为""的时候表示没有属性
+    private String name;
+    private String property; // 为""的时候表示没有属性
 
-    private String interableProperty; // "a in (:1)"中的a
+    private String propertyOfMapper; // "a in (:1)"中的a
 
     public ASTJDBCIterableParameter(int i) {
         super(i);
@@ -45,30 +45,30 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
 
     public void init(String str) {
-        Pattern p = Pattern.compile("in\\s*\\(\\s*(:(\\w+)(\\.\\w+)*)\\s*\\)", Pattern.CASE_INSENSITIVE);
+        Pattern p = Pattern.compile("in\\s*\\(\\s*(:(\\w+)(\\.\\w+)?)\\s*\\)", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(str);
         if (!m.matches()) {
             throw new UnreachableCodeException();
         }
         String fullName = m.group(1);
-        parameterName = m.group(2);
-        propertyPath = fullName.substring(parameterName.length() + 1);
-        if (!propertyPath.isEmpty()) {
-            propertyPath = propertyPath.substring(1);  // .a.b.c变为a.b.c
+        name = m.group(2);
+        property = fullName.substring(name.length() + 1);
+        if (!property.isEmpty()) {
+            property = property.substring(1);  // .property变为property
         }
     }
 
     @Override
     public boolean render(InvocationContext context) {
-        Object objs = context.getNullablePropertyValue(parameterName, propertyPath);
+        Object objs = context.getNullablePropertyValue(name, property);
         if (objs == null) {
             throw new NullPointerException("value of " +
-                    Strings.getFullName(parameterName, propertyPath) + " can't be null");
+                    Strings.getFullName(name, property) + " can't be null");
         }
         Iterables iterables = new Iterables(objs);
         if (iterables.isEmpty()) {
             throw new IllegalArgumentException("value of " +
-                    Strings.getFullName(parameterName, propertyPath) + " can't be empty");
+                    Strings.getFullName(name, property) + " can't be empty");
         }
         context.writeToSqlBuffer("in (");
         int t = 0;
@@ -89,8 +89,8 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     public String toString() {
         return super.toString() + "{" +
                 "fullName=" + getFullName() + ", " +
-                "parameterName=" + parameterName + ", " +
-                "propertyPath=" + propertyPath +
+                "name=" + name + ", " +
+                "property=" + property +
                 "}";
     }
 
@@ -100,41 +100,41 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
 
     @Override
-    public boolean onlyParameterName() {
-        return Strings.isEmpty(propertyPath);
+    public boolean onlyName() {
+        return Strings.isEmpty(property);
     }
 
     @Override
-    public String getParameterName() {
-        return parameterName;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
+    public void setName(String parameterName) {
+        this.name = parameterName;
     }
 
     @Override
-    public String getPropertyPath() {
-        return propertyPath;
+    public String getProperty() {
+        return property;
     }
 
     @Override
-    public void setPropertyPath(String propertyPath) {
-        this.propertyPath = propertyPath;
+    public void setProperty(String property) {
+        this.property = property;
     }
 
     @Override
     public String getFullName() {
-        return Strings.getFullName(parameterName, propertyPath);
+        return Strings.getFullName(name, property);
     }
 
-    public void setInterableProperty(String interableProperty) {
-        this.interableProperty = interableProperty;
+    public String getPropertyOfMapper() {
+        return propertyOfMapper;
     }
 
-    public String getInterableProperty() {
-        return interableProperty;
+    public void setPropertyOfMapper(String propertyOfMapper) {
+        this.propertyOfMapper = propertyOfMapper;
     }
 
 }

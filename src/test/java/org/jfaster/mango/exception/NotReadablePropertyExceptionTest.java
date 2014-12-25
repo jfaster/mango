@@ -47,16 +47,6 @@ public class NotReadablePropertyExceptionTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void test() {
-        thrown.expect(NotReadablePropertyException.class);
-        thrown.expectMessage("property :1.b.d is not readable, " +
-                "the type of :1.b is class org.jfaster.mango.exception.NotReadablePropertyExceptionTest$B, " +
-                "please check it's get method");
-        Dao dao = mango.create(Dao.class);
-        dao.add(new A());
-    }
-
-    @Test
     public void test2() {
         thrown.expect(NotReadablePropertyException.class);
         thrown.expectMessage("property :1.c is not readable, " +

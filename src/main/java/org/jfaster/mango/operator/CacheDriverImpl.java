@@ -31,6 +31,7 @@ import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeWrapper;
 import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.Strings;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
@@ -73,7 +74,7 @@ public class CacheDriverImpl implements CacheDriver {
     /**
      * 缓存后缀属性路径
      */
-    private String suffixPropertyPath;
+    private String suffixPropertyName;
 
     /**
      * 缓存前缀全名
@@ -167,7 +168,7 @@ public class CacheDriverImpl implements CacheDriver {
 
     @Override
     public Object getSuffixObj(InvocationContext context) {
-        Object obj = context.getPropertyValue(suffixParameterName, suffixPropertyPath);
+        Object obj = context.getPropertyValue(suffixParameterName, suffixPropertyName);
         if (obj == null) {
             throw new NullPointerException("value of " + suffixFullName + " can't be null");
         }
@@ -176,7 +177,7 @@ public class CacheDriverImpl implements CacheDriver {
 
     @Override
     public void setSuffixObj(InvocationContext context, Object obj) {
-        context.setPropertyValue(suffixParameterName, suffixPropertyPath, obj);
+        context.setPropertyValue(suffixParameterName, suffixPropertyName, obj);
     }
 
     @Override
@@ -190,7 +191,7 @@ public class CacheDriverImpl implements CacheDriver {
             CacheBy cacheByAnno = pd.getAnnotation(CacheBy.class);
             if (cacheByAnno != null) {
                 suffixParameterName = nameProvider.getParameterName(pd.getPosition());
-                suffixPropertyPath = cacheByAnno.value();
+                suffixPropertyName = cacheByAnno.value();
                 cacheByNum++;
             }
         }
@@ -208,7 +209,7 @@ public class CacheDriverImpl implements CacheDriver {
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
                 checkCacheBy(rootNode);
-                Type suffixType = context.getPropertyType(suffixParameterName, suffixPropertyPath);
+                Type suffixType = context.getPropertyType(suffixParameterName, suffixPropertyName);
                 TypeWrapper tw = new TypeWrapper(suffixType);
                 useMultipleKeys = tw.isIterable();
                 suffixClass = tw.getMappedClass();
@@ -230,9 +231,9 @@ public class CacheDriverImpl implements CacheDriver {
         }
 
         for (ASTJDBCIterableParameter jip : rootNode.getJDBCIterableParameters()) {
-            if (jip.getParameterName().equals(suffixParameterName)
-                    && jip.getPropertyPath().equals(suffixPropertyPath)) {
-                interableProperty = jip.getInterableProperty();
+            if (jip.getName().equals(suffixParameterName)
+                    && jip.getProperty().equals(suffixPropertyName)) {
+                interableProperty = jip.getPropertyOfMapper();
                 break;
             }
         }
@@ -244,26 +245,22 @@ public class CacheDriverImpl implements CacheDriver {
     private void checkCacheBy(ASTRootNode rootNode) {
         List<ASTJDBCParameter> jps = rootNode.getJDBCParameters();
         for (ASTJDBCParameter jp : jps) {
-            if (jp.getParameterName().equals(suffixParameterName) &&
-                    jp.getPropertyPath().equals(suffixPropertyPath)) {
+            if (jp.getName().equals(suffixParameterName) &&
+                    jp.getProperty().equals(suffixPropertyName)) {
                 suffixFullName = jp.getFullName();
                 return;
             }
         }
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         for (ASTJDBCIterableParameter jip : jips) {
-            if (jip.getParameterName().equals(suffixParameterName) &&
-                    jip.getPropertyPath().equals(suffixPropertyPath)) {
+            if (jip.getName().equals(suffixParameterName) &&
+                    jip.getProperty().equals(suffixPropertyName)) {
                 suffixFullName = jip.getFullName();
                 return;
             }
         }
-        String fullName = getFullName(suffixParameterName, suffixPropertyPath);
+        String fullName = Strings.getFullName(suffixParameterName, suffixPropertyName);
         throw new IncorrectCacheByException("CacheBy " + fullName + " can't match any db parameter");
-    }
-
-    private String getFullName(String parameterName, String propertyPath) {
-        return ":" + (!propertyPath.isEmpty() ? parameterName + "." + propertyPath : parameterName);
     }
 
 }

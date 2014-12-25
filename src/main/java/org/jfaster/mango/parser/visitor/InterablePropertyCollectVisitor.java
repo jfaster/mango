@@ -65,7 +65,7 @@ public class InterablePropertyCollectVisitor implements ParserVisitor {
                     && father.jjtGetChild(i + 1) instanceof ASTBlank
                     && father.jjtGetChild(i + 2) instanceof ASTJDBCIterableParameter) {
                 String p = ((ASTText) father.jjtGetChild(i)).getValue();
-                ((ASTJDBCIterableParameter) father.jjtGetChild(i + 2)).setInterableProperty(p);
+                ((ASTJDBCIterableParameter) father.jjtGetChild(i + 2)).setPropertyOfMapper(p);
             }
         }
         return father.childrenAccept(this, data);

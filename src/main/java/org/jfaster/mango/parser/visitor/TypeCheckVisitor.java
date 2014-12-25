@@ -69,7 +69,7 @@ public class TypeCheckVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
         ParameterContext context = getTypeContext(data);
-        Type type = context.getPropertyType(node.getParameterName(), node.getPropertyPath());
+        Type type = context.getPropertyType(node.getName(), node.getProperty());
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
         if (mappedClass == null || tw.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
@@ -82,7 +82,7 @@ public class TypeCheckVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
         ParameterContext context = getTypeContext(data);
-        Type type = context.getPropertyType(node.getParameterName(), node.getPropertyPath());
+        Type type = context.getPropertyType(node.getName(), node.getProperty());
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
         if (!tw.isIterable()) { // 不是集合或数组抛出异常
@@ -107,7 +107,7 @@ public class TypeCheckVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
         ParameterContext context = getTypeContext(data);
-        context.getPropertyType(node.getParameterName(), node.getPropertyPath()); // 保证能取到即可
+        context.getPropertyType(node.getName(), node.getProperty()); // 保证能取到即可
         return node.childrenAccept(this, data);
     }
 
@@ -189,7 +189,7 @@ public class TypeCheckVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
         ParameterContext context = getTypeContext(data);
-        context.getPropertyType(node.getParameterName(), node.getPropertyPath()); // 保证能取到即可
+        context.getPropertyType(node.getName(), node.getProperty()); // 保证能取到即可
         return node.childrenAccept(this, data);
     }
 

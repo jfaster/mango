@@ -190,12 +190,12 @@ public class ParameterExpandVisitor implements ParserVisitor {
     }
 
     private void expandParameter(ParameterBean node, ParameterContext context) {
-        if (node.onlyParameterName()) {
-            String currentParameterName = node.getParameterName();
+        if (node.onlyName()) {
+            String currentParameterName = node.getName();
             String expandParameterName = context.getParameterNameBySubPropertyName(currentParameterName);
             if (expandParameterName != null) { // 需要扩展
-                node.setParameterName(expandParameterName);
-                node.setPropertyPath(currentParameterName);
+                node.setName(expandParameterName);
+                node.setProperty(currentParameterName);
             }
         }
     }
