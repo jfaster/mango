@@ -62,7 +62,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
     @Override
     public boolean render(InvocationContext context) {
-        Object objs = context.getNullablePropertyValue(name, property);
+        Object objs = context.getNullablePropertyValue(name, invoker);
         if (objs == null) {
             throw new NullPointerException("value of " +
                     Strings.getFullName(name, property) + " can't be null");

@@ -17,9 +17,8 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.NotReadableParameterException;
-import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.reflect.Beans;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -46,19 +45,20 @@ public class InvocationContext {
         parameterValues.add(parameterValue);
     }
 
-    public Object getPropertyValue(String parameterName, String propertyPath) {
-        Object value = getNullablePropertyValue(parameterName, propertyPath);
+    public Object getPropertyValue(String parameterName, GetterInvoker invoker) {
+        Object value = getNullablePropertyValue(parameterName, invoker);
         if (value == null) {
-            String fullName = Strings.getFullName(parameterName, propertyPath);
-            String key = Strings.isEmpty(propertyPath) ? "parameter" : "property";
+            // TODO
+            String fullName = Strings.getFullName(parameterName, invoker.getPropertyName());
+            String key = Strings.isEmpty(invoker.getPropertyName()) ? "parameter" : "property";
             throw new NullPointerException(key + " " + fullName + " need a non-null value");
         }
         return value;
     }
 
     @Nullable
-    public Object getNullablePropertyValue(String parameterName, String propertyPath) {
-        String key = getCacheKey(parameterName, propertyPath);
+    public Object getNullablePropertyValue(String parameterName, @Nullable GetterInvoker invoker) {
+        String key = getCacheKey(parameterName, invoker);
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);
         }
@@ -67,38 +67,22 @@ public class InvocationContext {
         }
         Object obj = parameterMap.get(parameterName);
         Object value;
-        if (Strings.isEmpty(propertyPath)) {
+        if (invoker == null) {
             value = obj;
         } else {
             if (obj == null) { // 传入参数为null，但需要取该参数上的属性
-                String fullName = Strings.getFullName(parameterName, propertyPath);
+                String fullName = Strings.getFullName(parameterName, invoker.getPropertyName());
                 throw new NullPointerException("parameter :" + parameterName + " is null, " +
                         "so can't get value from " + fullName);
             }
-            Beans.Result br = Beans.getPropertyValue(obj, propertyPath);
-            if (br.isError()) {
-                Beans.ErrorType errorType = br.getErrorType();
-                String fullName = Strings.getFullName(parameterName, propertyPath);
-                String errorFullName = Strings.getFullName(parameterName, br.getPath());
-                switch (errorType) {
-                    case NO_PROPERTY:
-                        throw new NotReadablePropertyException("property " + errorFullName + " is not readable, " +
-                                "so can't get value from " + fullName);
-                    case NULL:
-                        throw new NullPointerException("property " + errorFullName + " is null, " +
-                                "so can't get value from " + fullName);
-                    default:
-                        throw new IllegalStateException();
-                }
-            }
-            value = br.getValue();
+            value = invoker.invoke(obj);
         }
         cache.put(key, value);
         return value;
     }
 
-    public void setPropertyValue(String parameterName, String propertyPath, Object propertyValue) {
-        String key = getCacheKey(parameterName, propertyPath);
+    public void setPropertyValue(String parameterName, GetterInvoker invoker, Object propertyValue) {
+        String key = getCacheKey(parameterName, invoker);
         cache.put(key, propertyValue);
     }
 
@@ -126,8 +110,8 @@ public class InvocationContext {
         return parameterValues;
     }
 
-    private String getCacheKey(String parameterName, String propertyPath) {
-        return propertyPath.isEmpty() ? parameterName : parameterName + "." + propertyPath;
+    private String getCacheKey(String parameterName, GetterInvoker invoker) {
+        return invoker == null ? parameterName : parameterName + "." + invoker.getPropertyName();
     }
 
 }

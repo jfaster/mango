@@ -24,7 +24,7 @@ import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.reflect.Types;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
@@ -42,7 +42,6 @@ public class ParameterContext {
     private final List<ParameterDescriptor> parameterDescriptors;
     private final Map<String, Type> typeMap = new HashMap<String, Type>();
     private final Map<String, List<String>> propertyMap = new HashMap<String, List<String>>();
-    private final Map<String, Type> cache = new HashMap<String, Type>();
 
     public ParameterContext(List<ParameterDescriptor> parameterDescriptors,
                             NameProvider nameProvider, OperatorType operatorType) {
@@ -97,29 +96,30 @@ public class ParameterContext {
         return type;
     }
 
-    public Type getPropertyType(String parameterName, String propertyPath) {
-        String key = getCacheKey(parameterName, propertyPath);
-        Type cachedType = cache.get(key);
-        if (cachedType != null) { // 缓存命中，直接返回
-            return cachedType;
-        }
-        Type type = typeMap.get(parameterName);
-        if (type == null ) {
-            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
-        }
-        if (Strings.isNotEmpty(propertyPath)) {
-            Types.Result tr = Types.getPropertyType(type, propertyPath);
-            if (tr.isError()) {
-                String fullName = Strings.getFullName(parameterName, tr.getPath());
-                String parentFullName = Strings.getFullName(parameterName, tr.getParentPath());
-                Type parentType = tr.getParentType();
-                throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
-                        "the type of " + parentFullName + " is " + parentType + ", please check it's get method");
+    public Type getPropertyType(String parameterName, String parameterProperty) {
+        Type type = getParameterType(parameterName);
+        if (Strings.isNotEmpty(parameterProperty)) {
+            TypeToken token = TypeToken.of(type);
+            GetterInvoker invoker = InvokerCache.getGetterInvoker(token.getRawType(), parameterProperty);
+            if (invoker == null) {
+                String fullName = Strings.getFullName(parameterName, parameterProperty);
+                throw new NotReadablePropertyException("property " + fullName + " " +
+                        "is not readable, the type of :" + parameterName +
+                        " is " + type + ", please check it's get method");
             }
-            type = tr.getType();
+            type = invoker.getPropertyType();
         }
-        cache.put(key, type);
         return type;
+    }
+
+    public GetterInvoker getPropertyInvoker(String parameterName, String parameterProperty) {
+        Type type = getParameterType(parameterName);
+        GetterInvoker invoker = null;
+        if (Strings.isNotEmpty(parameterProperty)) {
+            TypeToken token = TypeToken.of(type);
+            invoker = InvokerCache.getGetterInvoker(token.getRawType(), parameterProperty);
+        }
+        return invoker;
     }
 
     @Nullable
@@ -137,10 +137,6 @@ public class ParameterContext {
 
     public List<ParameterDescriptor> getParameterDescriptors() {
         return parameterDescriptors;
-    }
-
-    private String getCacheKey(String parameterName, String propertyPath) {
-        return propertyPath.isEmpty() ? parameterName : parameterName + "." + propertyPath;
     }
 
 }

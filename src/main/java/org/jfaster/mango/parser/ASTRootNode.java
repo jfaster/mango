@@ -57,9 +57,9 @@ public class ASTRootNode extends AbstractRenderableNode {
     }
 
     /**
-     * 检测节点类型
+     * 绑定GetterInvoker
      */
-    public void checkType(ParameterContext context) {
+    public void bindInvoker(ParameterContext context) {
         getBlock().jjtAccept(InvokerBindVisitor.INSTANCE, context);
     }
 

@@ -4,6 +4,7 @@ import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.DataSourceType;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -22,17 +23,17 @@ public class DataSourceGenerator {
     private final DataSourceType dataSourceType;
     private final String dataSourceName;
     private final String shardParameterName;
-    private final String shardParameterProperty; // 为""的时候表示没有属性
+    private final GetterInvoker invoker;
     private final DataSourceRouter dataSourceRouter; // 分表
 
     public DataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
                                String dataSourceName, String shardParameterName,
-                               String shardParameterProperty, DataSourceRouter dataSourceRouter) {
+                               GetterInvoker invoker, DataSourceRouter dataSourceRouter) {
         this.dataSourceFactory = dataSourceFactory;
         this.dataSourceType = dataSourceType;
         this.dataSourceName = dataSourceName;
         this.shardParameterName = shardParameterName;
-        this.shardParameterProperty = shardParameterProperty;
+        this.invoker = invoker;
         this.dataSourceRouter = dataSourceRouter;
     }
 
@@ -58,7 +59,7 @@ public class DataSourceGenerator {
     @Nullable
     public String getDataSourceName(InvocationContext context) {
         String realDataSourceName = dataSourceRouter != null ?
-                dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardParameterProperty)) :
+                dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, invoker)) :
                 dataSourceName;
         return realDataSourceName;
     }

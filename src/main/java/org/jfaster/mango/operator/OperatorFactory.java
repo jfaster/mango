@@ -23,6 +23,7 @@ import org.jfaster.mango.datasource.factory.DataSourceType;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.*;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
 import org.jfaster.mango.partition.IgnoreTablePartition;
@@ -87,17 +88,21 @@ public class OperatorFactory {
         ParameterContext context = new ParameterContext(md.getParameterDescriptors(), nameProvider, operatorType);
 
         rootNode.expandParameter(context); // 扩展简化的参数节点
-        rootNode.checkType(context); // 检测节点类型
+        rootNode.bindInvoker(context); // 绑定GetterInvoker
 
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
+        GetterInvoker invoker = null;
+        if (dbInfo.shardParameterName != null) {
+            invoker = context.getPropertyInvoker(dbInfo.shardParameterName, dbInfo.shardParameterProperty);
+        }
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
-                dbInfo.shardParameterProperty, dbInfo.tablePartition);
+                invoker, dbInfo.tablePartition);
         DataSourceType dst = DataSourceType.SLAVE;
         if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
             dst = DataSourceType.MASTER;
         }
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, dst,
-               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardParameterProperty, dbInfo.dataSourceRouter);
+               dbInfo.dataSourceName, dbInfo.shardParameterName, invoker, dbInfo.dataSourceRouter);
 
         Operator operator;
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);

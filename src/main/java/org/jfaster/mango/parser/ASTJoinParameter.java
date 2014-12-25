@@ -57,7 +57,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
 
     @Override
     public boolean render(InvocationContext context) {
-        Object obj = context.getPropertyValue(name, property);
+        Object obj = context.getPropertyValue(name, invoker);
         context.writeToSqlBuffer(obj.toString());
         return true;
     }

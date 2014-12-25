@@ -59,7 +59,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     @Override
     public boolean evaluate(InvocationContext context) {
-        Object obj = context.getNullablePropertyValue(name, property);
+        Object obj = context.getNullablePropertyValue(name, invoker);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         }
@@ -68,7 +68,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     @Override
     public Object value(InvocationContext context) {
-        return context.getNullablePropertyValue(name, property);
+        return context.getNullablePropertyValue(name, invoker);
     }
 
     @Override

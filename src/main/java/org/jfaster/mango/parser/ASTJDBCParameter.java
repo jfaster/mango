@@ -60,7 +60,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
     @Override
     public boolean render(InvocationContext context) {
         context.writeToSqlBuffer("?");
-        Object obj = context.getNullablePropertyValue(name, property);
+        Object obj = context.getNullablePropertyValue(name, invoker);
         context.appendToArgs(obj);
         return true;
     }
