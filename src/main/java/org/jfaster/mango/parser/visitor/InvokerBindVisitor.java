@@ -17,9 +17,13 @@
 package org.jfaster.mango.parser.visitor;
 
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
+import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.operator.ParameterContext;
 import org.jfaster.mango.parser.*;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.TypeWrapper;
 
 import java.lang.reflect.Type;
@@ -70,27 +74,25 @@ public enum InvokerBindVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
-        Type type = context.getPropertyType(node.getName(), node.getProperty());
-        TypeWrapper tw = new TypeWrapper(type);
+        Type targetType = getTargetType(node, data);
+        TypeWrapper tw = new TypeWrapper(targetType);
         Class<?> mappedClass = tw.getMappedClass();
         if (mappedClass == null || tw.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
             throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
-                    "expected a class can be identified by jdbc but " + type);
+                    "expected a class can be identified by jdbc but " + targetType);
         }
         return node.childrenAccept(this, data);
     }
 
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
-        Type type = context.getPropertyType(node.getName(), node.getProperty());
-        TypeWrapper tw = new TypeWrapper(type);
+        Type targetType = getTargetType(node, data);
+        TypeWrapper tw = new TypeWrapper(targetType);
         Class<?> mappedClass = tw.getMappedClass();
         if (!tw.isIterable()) { // 不是集合或数组抛出异常
             throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
                     "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                    "but " + type);
+                    "but " + targetType);
         }
         if (mappedClass == null || !JdbcUtils.isSingleColumnClass(mappedClass)) {
             String s = tw.isArray() ? "component" : "actual";
@@ -108,8 +110,7 @@ public enum InvokerBindVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
-        context.getPropertyType(node.getName(), node.getProperty()); // 保证能取到即可
+        getTargetType(node, data); // 保证能取到即可
         return node.childrenAccept(this, data);
     }
 
@@ -190,8 +191,7 @@ public enum InvokerBindVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
-        context.getPropertyType(node.getName(), node.getProperty()); // 保证能取到即可
+        getTargetType(node, data); // 保证能取到即可
         return node.childrenAccept(this, data);
     }
 
@@ -215,8 +215,21 @@ public enum InvokerBindVisitor implements ParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    private ParameterContext getTypeContext(Object data) {
-        return (ParameterContext) data;
+    private Type getTargetType(ParameterBean node, Object data) {
+        ParameterContext context = (ParameterContext) data;
+        Type type = context.getParameterType(node.getName());
+        if (node.hasProperty()) {
+            TypeToken token = TypeToken.of(type);
+            GetterInvoker invoker = InvokerCache.getGetterInvoker(token.getRawType(), node.getProperty());
+            if (invoker == null) {
+                throw new NotReadablePropertyException("property " + node.getFullName() + " " +
+                        "is not readable, the type of :" + node.getName() +
+                        " is " + type + ", please check it's get method");
+            }
+            type = invoker.getPropertyType();
+            node.setInvoker(invoker);
+        }
+        return type;
     }
 
 }

@@ -89,6 +89,14 @@ public class ParameterContext {
         }
     }
 
+    public Type getParameterType(String parameterName) {
+        Type type = typeMap.get(parameterName);
+        if (type == null) {
+            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
+        }
+        return type;
+    }
+
     public Type getPropertyType(String parameterName, String propertyPath) {
         String key = getCacheKey(parameterName, propertyPath);
         Type cachedType = cache.get(key);

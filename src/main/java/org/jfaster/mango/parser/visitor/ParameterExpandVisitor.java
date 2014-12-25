@@ -192,7 +192,7 @@ public enum ParameterExpandVisitor implements ParserVisitor {
     }
 
     private void expandParameter(ParameterBean node, ParameterContext context) {
-        if (node.onlyName()) {
+        if (!node.hasProperty()) {
             String currentParameterName = node.getName();
             String expandParameterName = context.getParameterNameBySubPropertyName(currentParameterName);
             if (expandParameterName != null) { // 需要扩展

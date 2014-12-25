@@ -16,12 +16,14 @@
 
 package org.jfaster.mango.parser;
 
+import org.jfaster.mango.invoker.GetterInvoker;
+
 /**
  * @author ash
  */
 public interface ParameterBean {
 
-    public boolean onlyName();
+    public boolean hasProperty();
 
     public String getName();
 
@@ -32,5 +34,9 @@ public interface ParameterBean {
     public void setProperty(String propertyName);
 
     public String getFullName();
+
+    public GetterInvoker getInvoker();
+
+    public void setInvoker(GetterInvoker invoker);
 
 }

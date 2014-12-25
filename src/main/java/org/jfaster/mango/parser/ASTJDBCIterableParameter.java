@@ -17,6 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.Strings;
@@ -33,6 +34,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
     private String name;
     private String property; // 为""的时候表示没有属性
+    private GetterInvoker invoker;
 
     private String propertyOfMapper; // "a in (:1)"中的a
 
@@ -100,8 +102,8 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
 
     @Override
-    public boolean onlyName() {
-        return Strings.isEmpty(property);
+    public boolean hasProperty() {
+        return Strings.isNotEmpty(property);
     }
 
     @Override
@@ -127,6 +129,16 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     @Override
     public String getFullName() {
         return Strings.getFullName(name, property);
+    }
+
+    @Override
+    public GetterInvoker getInvoker() {
+        return invoker;
+    }
+
+    @Override
+    public void setInvoker(GetterInvoker invoker) {
+        this.invoker = invoker;
     }
 
     public String getPropertyOfMapper() {

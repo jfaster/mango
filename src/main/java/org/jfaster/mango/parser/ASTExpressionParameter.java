@@ -17,6 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Strings;
 
@@ -33,6 +34,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     private String name;
     private String property; // 为""的时候表示没有属性
+    private GetterInvoker invoker;
 
     public ASTExpressionParameter(int i) {
         super(i);
@@ -84,8 +86,8 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
     }
 
     @Override
-    public boolean onlyName() {
-        return Strings.isEmpty(property);
+    public boolean hasProperty() {
+        return Strings.isNotEmpty(property);
     }
 
     @Override
@@ -113,4 +115,13 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         return Strings.getFullName(name, property);
     }
 
+    @Override
+    public GetterInvoker getInvoker() {
+        return invoker;
+    }
+
+    @Override
+    public void setInvoker(GetterInvoker invoker) {
+        this.invoker = invoker;
+    }
 }

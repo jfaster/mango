@@ -17,6 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Strings;
 
@@ -30,6 +31,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
 
     private String name;
     private String property; // 为""的时候表示没有属性
+    private GetterInvoker invoker;
 
     public ASTJoinParameter(int id) {
         super(id);
@@ -75,8 +77,8 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     }
 
     @Override
-    public boolean onlyName() {
-        return Strings.isEmpty(property);
+    public boolean hasProperty() {
+        return Strings.isNotEmpty(property);
     }
 
     @Override
@@ -104,4 +106,13 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
         return Strings.getFullName(name, property);
     }
 
+    @Override
+    public GetterInvoker getInvoker() {
+        return invoker;
+    }
+
+    @Override
+    public void setInvoker(GetterInvoker invoker) {
+        this.invoker = invoker;
+    }
 }
