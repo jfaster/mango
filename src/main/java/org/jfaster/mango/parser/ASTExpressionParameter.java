@@ -61,7 +61,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         }
-        return context.getNullablePropertyValue(parameterName, propertyPath) != null;
+        return obj != null;
     }
 
     @Override
