@@ -22,17 +22,17 @@ public class DataSourceGenerator {
     private final DataSourceType dataSourceType;
     private final String dataSourceName;
     private final String shardParameterName;
-    private final String shardPropertyPath; // 为""的时候表示没有属性
+    private final String shardParameterProperty; // 为""的时候表示没有属性
     private final DataSourceRouter dataSourceRouter; // 分表
 
     public DataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
                                String dataSourceName, String shardParameterName,
-                               String shardPropertyPath, DataSourceRouter dataSourceRouter) {
+                               String shardParameterProperty, DataSourceRouter dataSourceRouter) {
         this.dataSourceFactory = dataSourceFactory;
         this.dataSourceType = dataSourceType;
         this.dataSourceName = dataSourceName;
         this.shardParameterName = shardParameterName;
-        this.shardPropertyPath = shardPropertyPath;
+        this.shardParameterProperty = shardParameterProperty;
         this.dataSourceRouter = dataSourceRouter;
     }
 
@@ -58,7 +58,7 @@ public class DataSourceGenerator {
     @Nullable
     public String getDataSourceName(InvocationContext context) {
         String realDataSourceName = dataSourceRouter != null ?
-                dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardPropertyPath)) :
+                dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardParameterProperty)) :
                 dataSourceName;
         return realDataSourceName;
     }
