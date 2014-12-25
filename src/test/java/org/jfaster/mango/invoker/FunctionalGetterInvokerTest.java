@@ -78,7 +78,7 @@ public class FunctionalGetterInvokerTest {
         A a = new A();
         a.setX(100);
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
+        assertThat(invoker.getPropertyName(), is("x"));
         assertThat(int.class.equals(invoker.getPropertyType()), is(true));
         assertThat(int.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((Integer) invoker.invoke(a), is(100));
@@ -87,7 +87,7 @@ public class FunctionalGetterInvokerTest {
         a = new A();
         a.setY(100);
         invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
+        assertThat(invoker.getPropertyName(), is("y"));
         assertThat(String.class.equals(invoker.getPropertyType()), is(true));
         assertThat(String.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((String) invoker.invoke(a), is("string100"));
@@ -121,7 +121,7 @@ public class FunctionalGetterInvokerTest {
         B b = new B();
         b.setX(100);
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
+        assertThat(invoker.getPropertyName(), is("x"));
         assertThat(Integer.class.equals(invoker.getPropertyType()), is(true));
         assertThat(Integer.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((Integer) invoker.invoke(b), is(100));
@@ -130,7 +130,7 @@ public class FunctionalGetterInvokerTest {
         b = new B();
         b.setY(100);
         invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
+        assertThat(invoker.getPropertyName(), is("y"));
         assertThat(String.class.equals(invoker.getPropertyType()), is(true));
         assertThat(String.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((String) invoker.invoke(b), is("string100"));
@@ -174,7 +174,7 @@ public class FunctionalGetterInvokerTest {
         C c = new C();
         c.setX("9527");
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
+        assertThat(invoker.getPropertyName(), is("x"));
         assertThat(String.class.equals(invoker.getPropertyType()), is(true));
         assertThat(String.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((String) invoker.invoke(c), is("9527"));
@@ -183,7 +183,7 @@ public class FunctionalGetterInvokerTest {
         c = new C();
         c.setY("9527");
         invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
+        assertThat(invoker.getPropertyName(), is("y"));
         assertThat(Integer.class.equals(invoker.getPropertyType()), is(true));
         assertThat(Integer.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((Integer) invoker.invoke(c), is(952700));
@@ -229,7 +229,7 @@ public class FunctionalGetterInvokerTest {
         List<Integer> x = Lists.newArrayList(1, 2);
         d.setX(x);
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
+        assertThat(invoker.getPropertyName(), is("x"));
         Type type = new TypeToken<List<Integer>>() {}.getType();
         assertThat(type.equals(invoker.getPropertyType()), is(true));
         assertThat(List.class.equals(invoker.getPropertyRawType()), is(true));
@@ -240,7 +240,7 @@ public class FunctionalGetterInvokerTest {
         List<Integer> y = Lists.newArrayList(1, 2);
         d.setY(y);
         invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
+        assertThat(invoker.getPropertyName(), is("y"));
         assertThat(String.class.equals(invoker.getPropertyType()), is(true));
         assertThat(String.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((String) invoker.invoke(d), is("1,2"));
@@ -337,7 +337,7 @@ public class FunctionalGetterInvokerTest {
         int[] x = new int[]{1, 2, 3};
         g.setX(x);
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
+        assertThat(invoker.getPropertyName(), is("x"));
         assertThat(int[].class.equals(invoker.getPropertyType()), is(true));
         assertThat(int[].class.equals(invoker.getPropertyRawType()), is(true));
         assertThat(Arrays.toString((int[]) invoker.invoke(g)).equals(Arrays.toString(x)), is(true));
@@ -347,7 +347,7 @@ public class FunctionalGetterInvokerTest {
         int[] y = new int[]{1, 2, 3};
         g.setY(y);
         invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
+        assertThat(invoker.getPropertyName(), is("y"));
         assertThat(String.class.equals(invoker.getPropertyType()), is(true));
         assertThat(String.class.equals(invoker.getPropertyRawType()), is(true));
         assertThat((String) invoker.invoke(g), is("1,2,3"));

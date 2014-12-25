@@ -18,15 +18,14 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.reflect.Beans;
-import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.reflect.MethodDescriptor;
 
 import java.util.*;
 
@@ -39,7 +38,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private CacheDriver driver;
 
-    private String interableProperty;
+    private GetterInvoker suffixInvoker;
 
     public CacheableQueryOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver) {
         super(rootNode, md);
@@ -53,12 +52,12 @@ public class CacheableQueryOperator extends QueryOperator {
         }
 
         if (driver.isUseMultipleKeys()) {
-            interableProperty = driver.getInterableProperty();
-            GetterInvoker invoker = InvokerCache.getGetterInvoker(mappedClass, interableProperty);
-            if (invoker == null) {
+            String suffixProperty = driver.getInterableProperty();
+            suffixInvoker = InvokerCache.getGetterInvoker(mappedClass, suffixProperty);
+            if (suffixInvoker == null) {
                 // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
                 throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
-                        + interableProperty + " of " + mappedClass + " expected readable but not");
+                        + suffixProperty + " of " + mappedClass + " expected readable but not");
             }
         }
     }
@@ -104,12 +103,11 @@ public class CacheableQueryOperator extends QueryOperator {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
                 // 添加入缓存
-                Beans.Result br = Beans.getPropertyValue(dbValue, interableProperty);
-                if (br.isError()) {
-                    throw new NullPointerException("property " + interableProperty + " of " +
+                Object suffix = suffixInvoker.invoke(dbValue);
+                if (suffix == null) {
+                    throw new NullPointerException("property " + suffixInvoker.getPropertyName() + " of " +
                             mappedClass + " is null, please check return type");
                 }
-                Object suffix = br.getValue();
                 String key = driver.getCacheKey(suffix);
                 driver.setToCache(key, dbValue);
             }

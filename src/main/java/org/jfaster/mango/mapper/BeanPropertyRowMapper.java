@@ -53,13 +53,13 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
         this.invokerMap = new HashMap<String, SetterInvoker>();
         List<SetterInvoker> invokers = InvokerCache.getSetterInvokers(mappedClass);
         for (SetterInvoker invoker : invokers) {
-            String column = propertyToColumnMap.get(invoker.getName().toLowerCase());
+            String column = propertyToColumnMap.get(invoker.getPropertyName().toLowerCase());
             if (column != null) {
                 invokerMap.put(column, invoker);
             } else {
-                invokerMap.put(invoker.getName().toLowerCase(), invoker);
-                String underscoredName = underscoreName(invoker.getName());
-                if (!invoker.getName().toLowerCase().equals(underscoredName)) {
+                invokerMap.put(invoker.getPropertyName().toLowerCase(), invoker);
+                String underscoredName = underscoreName(invoker.getPropertyName());
+                if (!invoker.getPropertyName().toLowerCase().equals(underscoredName)) {
                     invokerMap.put(underscoredName, invoker);
                 }
             }
@@ -97,7 +97,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
                 Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getPropertyRawType());
                 if (logger.isDebugEnabled() && rowNumber == 0) {
                     logger.debug("Mapping column '" + column + "' to property '" +
-                            invoker.getName() + "' of type " + invoker.getPropertyRawType());
+                            invoker.getPropertyName() + "' of type " + invoker.getPropertyRawType());
                 }
                 invoker.invoke(mappedObject, value);
             }

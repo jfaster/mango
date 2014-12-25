@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
  */
 public interface Invoker {
 
-    String getName();
+    String getPropertyName();
 
     Type getPropertyType();
 

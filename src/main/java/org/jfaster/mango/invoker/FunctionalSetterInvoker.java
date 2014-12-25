@@ -58,13 +58,13 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
         try {
             Object output = function.apply(parameter);
             if (output == null && realParameterRawType.isPrimitive()) {
-                throw new NullPointerException("property " + getName() + " of " +
+                throw new NullPointerException("property " + getPropertyName() + " of " +
                         object.getClass() + " is primitive, can not be assigned to null");
             }
             if (output != null &&  !Types.isAssignable(realParameterRawType, output.getClass())) {
                 throw new ClassCastException("cannot convert value of type [" + output.getClass().getName() +
                         "] to required type [" + realParameterRawType.getName() + "] " +
-                        "for property '" + getName() + "' of " +  object.getClass());
+                        "for property '" + getPropertyName() + "' of " +  object.getClass());
             }
             method.invoke(object, output);
         } catch (IllegalAccessException e) {

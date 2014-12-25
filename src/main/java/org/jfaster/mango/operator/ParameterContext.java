@@ -74,7 +74,7 @@ public class ParameterContext {
                 List<GetterInvoker> invokers =
                         InvokerCache.getGetterInvokers(parameterRawType);
                 for (GetterInvoker invoker : invokers) {
-                    String propertyName = invoker.getName();
+                    String propertyName = invoker.getPropertyName();
                     if (!nameProvider.isParameterName(propertyName)) { // 属性名和参数名相同则不扩展
                         List<String> oldParameterNames = propertyMap.get(propertyName);
                         if (oldParameterNames == null) {
