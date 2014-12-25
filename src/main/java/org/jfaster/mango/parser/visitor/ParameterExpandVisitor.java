@@ -24,7 +24,9 @@ import org.jfaster.mango.parser.*;
  *
  * @author ash
  */
-public class ParameterExpandVisitor implements ParserVisitor {
+public enum ParameterExpandVisitor implements ParserVisitor {
+
+    INSTANCE;
 
     @Override
     public Object visit(SimpleNode node, Object data) {

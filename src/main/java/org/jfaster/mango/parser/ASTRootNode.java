@@ -20,9 +20,9 @@ public class ASTRootNode extends AbstractRenderableNode {
     }
 
     public ASTRootNode init() {
-        getBlock().jjtAccept(new TextBlankJoinVisitor(), null);
-        getBlock().jjtAccept(new InterablePropertyCollectVisitor(), null);
-        getBlock().jjtAccept(new NodeCollectVisitor(), nodeInfo);
+        getBlock().jjtAccept(TextBlankJoinVisitor.INSTANCE, null);
+        getBlock().jjtAccept(InterablePropertyCollectVisitor.INSTANCE, null);
+        getBlock().jjtAccept(NodeCollectVisitor.INSTANCE, nodeInfo);
         return this;
     }
 
@@ -53,14 +53,14 @@ public class ASTRootNode extends AbstractRenderableNode {
      * 扩展简化的参数节点
      */
     public void expandParameter(ParameterContext context) {
-        getBlock().jjtAccept(new ParameterExpandVisitor(), context);
+        getBlock().jjtAccept(ParameterExpandVisitor.INSTANCE, context);
     }
 
     /**
      * 检测节点类型
      */
     public void checkType(ParameterContext context) {
-        getBlock().jjtAccept(new TypeCheckVisitor(), context);
+        getBlock().jjtAccept(InvokerBindVisitor.INSTANCE, context);
     }
 
     public List<ASTJDBCParameter> getJDBCParameters() {

@@ -24,7 +24,9 @@ import org.jfaster.mango.parser.*;
  *
  * @author ash
  */
-public class TextBlankJoinVisitor implements ParserVisitor {
+public enum TextBlankJoinVisitor implements ParserVisitor {
+
+    INSTANCE;
 
     @Override
     public Object visit(SimpleNode node, Object data) {

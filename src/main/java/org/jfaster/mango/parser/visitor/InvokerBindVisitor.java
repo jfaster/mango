@@ -29,7 +29,9 @@ import java.lang.reflect.Type;
  *
  * @author ash
  */
-public class TypeCheckVisitor implements ParserVisitor {
+public enum InvokerBindVisitor implements ParserVisitor {
+
+    INSTANCE;
 
     @Override
     public Object visit(SimpleNode node, Object data) {

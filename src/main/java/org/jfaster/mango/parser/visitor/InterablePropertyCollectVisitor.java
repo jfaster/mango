@@ -24,7 +24,9 @@ import org.jfaster.mango.parser.*;
  *
  * @author ash
  */
-public class InterablePropertyCollectVisitor implements ParserVisitor {
+public enum InterablePropertyCollectVisitor implements ParserVisitor {
+
+    INSTANCE;
 
     @Override
     public Object visit(SimpleNode node, Object data) {
