@@ -17,13 +17,9 @@
 package org.jfaster.mango.parser.visitor;
 
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.exception.NotReadablePropertyException;
-import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.operator.ParameterContext;
 import org.jfaster.mango.parser.*;
-import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.TypeWrapper;
 
 import java.lang.reflect.Type;
@@ -74,7 +70,9 @@ public enum InvokerBindVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
-        Type targetType = getTargetType(node, data);
+        ParameterContext context = getParameterContext(data);
+        Type targetType = context.getTargetType(node.getName(), node.getProperty());
+        node.setInvoker(context.getPropertyInvoker(node.getName(), node.getProperty()));
         TypeWrapper tw = new TypeWrapper(targetType);
         Class<?> mappedClass = tw.getMappedClass();
         if (mappedClass == null || tw.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
@@ -86,7 +84,8 @@ public enum InvokerBindVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
-        Type targetType = getTargetType(node, data);
+        ParameterContext context = getParameterContext(data);
+        Type targetType = context.getTargetType(node.getName(), node.getProperty());
         TypeWrapper tw = new TypeWrapper(targetType);
         Class<?> mappedClass = tw.getMappedClass();
         if (!tw.isIterable()) { // 不是集合或数组抛出异常
@@ -110,7 +109,8 @@ public enum InvokerBindVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
-        getTargetType(node, data); // 保证能取到即可
+        ParameterContext context = getParameterContext(data);
+        context.getTargetType(node.getName(), node.getProperty()); // 保证能取道即可
         return node.childrenAccept(this, data);
     }
 
@@ -191,7 +191,8 @@ public enum InvokerBindVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
-        getTargetType(node, data); // 保证能取到即可
+        ParameterContext context = getParameterContext(data);
+        context.getTargetType(node.getName(), node.getProperty()); // 保证能取到即可
         return node.childrenAccept(this, data);
     }
 
@@ -215,21 +216,9 @@ public enum InvokerBindVisitor implements ParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    private Type getTargetType(ParameterBean node, Object data) {
+    private ParameterContext getParameterContext(Object data) {
         ParameterContext context = (ParameterContext) data;
-        Type type = context.getParameterType(node.getName());
-        if (node.hasProperty()) {
-            TypeToken token = TypeToken.of(type);
-            GetterInvoker invoker = InvokerCache.getGetterInvoker(token.getRawType(), node.getProperty());
-            if (invoker == null) {
-                throw new NotReadablePropertyException("property " + node.getFullName() + " " +
-                        "is not readable, the type of :" + node.getName() +
-                        " is " + type + ", please check it's get method");
-            }
-            type = invoker.getPropertyType();
-            node.setInvoker(invoker);
-        }
-        return type;
+        return context;
     }
 
 }

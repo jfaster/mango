@@ -88,15 +88,10 @@ public class ParameterContext {
         }
     }
 
-    public Type getParameterType(String parameterName) {
-        Type type = typeMap.get(parameterName);
-        if (type == null) {
-            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
-        }
-        return type;
-    }
-
-    public Type getPropertyType(String parameterName, String parameterProperty) {
+    /**
+     * 获得目标类型
+     */
+    public Type getTargetType(String parameterName, String parameterProperty) {
         Type type = getParameterType(parameterName);
         if (Strings.isNotEmpty(parameterProperty)) {
             TypeToken token = TypeToken.of(type);
@@ -112,18 +107,28 @@ public class ParameterContext {
         return type;
     }
 
+    /**
+     * 获得属性调用器
+     */
+    @Nullable
     public GetterInvoker getPropertyInvoker(String parameterName, String parameterProperty) {
         Type type = getParameterType(parameterName);
         GetterInvoker invoker = null;
         if (Strings.isNotEmpty(parameterProperty)) {
             TypeToken token = TypeToken.of(type);
             invoker = InvokerCache.getGetterInvoker(token.getRawType(), parameterProperty);
+            if (invoker == null) {
+                String fullName = Strings.getFullName(parameterName, parameterProperty);
+                throw new NotReadablePropertyException("property " + fullName + " " +
+                        "is not readable, the type of :" + parameterName +
+                        " is " + type + ", please check it's get method");
+            }
         }
         return invoker;
     }
 
     @Nullable
-    public String getParameterNameBySubPropertyName(String propertyName) {
+    public String getParameterNameByPropertyName(String propertyName) {
         List<String> parameterNames = propertyMap.get(propertyName);
         if (parameterNames == null) {
             return null;
@@ -137,6 +142,14 @@ public class ParameterContext {
 
     public List<ParameterDescriptor> getParameterDescriptors() {
         return parameterDescriptors;
+    }
+
+    private Type getParameterType(String parameterName) {
+        Type type = typeMap.get(parameterName);
+        if (type == null) {
+            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
+        }
+        return type;
     }
 
 }

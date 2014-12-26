@@ -196,7 +196,7 @@ public class OperatorFactory {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
-                Type shardType = context.getPropertyType(shardParameterName, shardParameterProperty);
+                Type shardType = context.getTargetType(shardParameterName, shardParameterProperty);
                 TypeWrapper tw = new TypeWrapper(shardType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {

@@ -212,7 +212,7 @@ public class CacheDriverImpl implements CacheDriver {
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
                 checkCacheBy(rootNode);
-                Type suffixType = context.getPropertyType(suffixParameterName, suffixParameterProperty);
+                Type suffixType = context.getTargetType(suffixParameterName, suffixParameterProperty);
                 invoker = context.getPropertyInvoker(suffixParameterName, suffixParameterProperty);
                 TypeWrapper tw = new TypeWrapper(suffixType);
                 useMultipleKeys = tw.isIterable();
