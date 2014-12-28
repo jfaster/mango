@@ -33,7 +33,7 @@ public class TableGenerator {
     }
 
     boolean needTablePartition() {
-        return tablePartition != null && shardParameterName != null;
+        return tablePartition != null && shardParameterName != null && invoker != null;
     }
 
 }

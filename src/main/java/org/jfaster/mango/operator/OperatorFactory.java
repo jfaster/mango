@@ -91,18 +91,14 @@ public class OperatorFactory {
         rootNode.checkAndBind(context); // 绑定GetterInvoker
 
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
-        GetterInvoker invoker = null;
-        if (dbInfo.shardParameterName != null) {
-            invoker = context.getTargetInvoker(dbInfo.shardParameterName, dbInfo.shardParameterProperty);
-        }
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
-                invoker, dbInfo.tablePartition);
+                dbInfo.invoker, dbInfo.tablePartition);
         DataSourceType dst = DataSourceType.SLAVE;
         if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
             dst = DataSourceType.MASTER;
         }
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, dst,
-               dbInfo.dataSourceName, dbInfo.shardParameterName, invoker, dbInfo.dataSourceRouter);
+               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.invoker, dbInfo.dataSourceRouter);
 
         Operator operator;
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
@@ -185,6 +181,7 @@ public class OperatorFactory {
 
         int shardByNum = 0;
         String shardParameterName = null;
+        GetterInvoker invoker = null;
         String shardParameterProperty = null;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
@@ -196,7 +193,8 @@ public class OperatorFactory {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
-                Type shardType = context.getTargetInvoker(shardParameterName, shardParameterProperty).getType();
+                invoker = context.getTargetInvoker(shardParameterName, shardParameterProperty);
+                Type shardType = invoker.getType();
                 TypeWrapper tw = new TypeWrapper(shardType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {
@@ -214,22 +212,22 @@ public class OperatorFactory {
             }
         }
 
-        return new DbInfo(shardParameterName, shardParameterProperty, globalTable,
+        return new DbInfo(shardParameterName, invoker, globalTable,
                 dataSourceName, tablePartition, dataSourceRouter);
     }
 
     static class DbInfo {
         String shardParameterName;
-        String shardParameterProperty;
+        GetterInvoker invoker;
         String globalTable;
         String dataSourceName;
         TablePartition tablePartition;
         DataSourceRouter dataSourceRouter;
 
-        DbInfo(String shardParameterName, String shardParameterProperty, String globalTable,
+        DbInfo(String shardParameterName, GetterInvoker invoker, String globalTable,
                String dataSourceName, TablePartition tablePartition, DataSourceRouter dataSourceRouter) {
             this.shardParameterName = shardParameterName;
-            this.shardParameterProperty = shardParameterProperty;
+            this.invoker = invoker;
             this.globalTable = globalTable;
             this.dataSourceName = dataSourceName;
             this.tablePartition = tablePartition;

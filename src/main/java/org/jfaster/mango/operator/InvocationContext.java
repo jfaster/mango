@@ -85,6 +85,7 @@ public class InvocationContext {
         cache.put(key, propertyValue);
     }
 
+    @Nullable
     public String getGlobalTable() {
         return globalTable;
     }
