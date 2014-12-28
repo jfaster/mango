@@ -68,12 +68,17 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
     }
 
     @Override
-    public Type getPropertyType() {
+    public boolean isIdentity() {
+        return false;
+    }
+
+    @Override
+    public Type getType() {
         return returnType;
     }
 
     @Override
-    public Class<?> getPropertyRawType() {
+    public Class<?> getRawType() {
         return returnRawType;
     }
 

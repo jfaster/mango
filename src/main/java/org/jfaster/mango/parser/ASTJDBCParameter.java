@@ -59,6 +59,9 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
 
     @Override
     public boolean render(InvocationContext context) {
+        if (invoker == null) {
+            throw new NullPointerException("invoker must set");
+        }
         context.writeToSqlBuffer("?");
         Object obj = context.getNullablePropertyValue(name, invoker);
         context.appendToArgs(obj);
@@ -107,11 +110,6 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
     @Override
     public String getFullName() {
         return Strings.getFullName(name, property);
-    }
-
-    @Override
-    public GetterInvoker getInvoker() {
-        return invoker;
     }
 
     @Override

@@ -55,7 +55,7 @@ public abstract class FunctionalInvoker implements Invoker {
     }
 
     @Override
-    public String getPropertyName() {
+    public String getName() {
         return name;
     }
 

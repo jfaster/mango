@@ -105,7 +105,7 @@ public class CacheableQueryOperator extends QueryOperator {
                 // 添加入缓存
                 Object suffix = suffixInvoker.invoke(dbValue);
                 if (suffix == null) {
-                    throw new NullPointerException("property " + suffixInvoker.getPropertyName() + " of " +
+                    throw new NullPointerException("property " + suffixInvoker.getName() + " of " +
                             mappedClass + " is null, please check return type");
                 }
                 String key = driver.getCacheKey(suffix);

@@ -17,6 +17,7 @@
 package org.jfaster.mango.parser.visitor;
 
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
+import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.operator.ParameterContext;
 import org.jfaster.mango.parser.*;
@@ -29,7 +30,7 @@ import java.lang.reflect.Type;
  *
  * @author ash
  */
-public enum InvokerBindVisitor implements ParserVisitor {
+public enum CheckAndBindVisitor implements ParserVisitor {
 
     INSTANCE;
 
@@ -71,27 +72,29 @@ public enum InvokerBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        Type targetType = context.getTargetType(node.getName(), node.getProperty());
-        node.setInvoker(context.getPropertyInvoker(node.getName(), node.getProperty()));
-        TypeWrapper tw = new TypeWrapper(targetType);
+        GetterInvoker invoker = context.getTargetInvoker(node.getName(), node.getProperty());
+        Type type = invoker.getType();
+        TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
         if (mappedClass == null || tw.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
             throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
-                    "expected a class can be identified by jdbc but " + targetType);
+                    "expected a class can be identified by jdbc but " + type);
         }
+        node.setInvoker(invoker);
         return node.childrenAccept(this, data);
     }
 
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        Type targetType = context.getTargetType(node.getName(), node.getProperty());
-        TypeWrapper tw = new TypeWrapper(targetType);
+        GetterInvoker invoker = context.getTargetInvoker(node.getName(), node.getProperty());
+        Type type = invoker.getType();
+        TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
         if (!tw.isIterable()) { // 不是集合或数组抛出异常
             throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
                     "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                    "but " + targetType);
+                    "but " + type);
         }
         if (mappedClass == null || !JdbcUtils.isSingleColumnClass(mappedClass)) {
             String s = tw.isArray() ? "component" : "actual";
@@ -99,6 +102,7 @@ public enum InvokerBindVisitor implements ParserVisitor {
                     s + " type of " + node.getFullName() + " expected a class can be identified by jdbc " +
                     "but " + tw.getMappedType());
         }
+        node.setInvoker(invoker);
         return node.childrenAccept(this, data);
     }
 
@@ -110,7 +114,8 @@ public enum InvokerBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        context.getTargetType(node.getName(), node.getProperty()); // 保证能取道即可
+        GetterInvoker invoker = context.getTargetInvoker(node.getName(), node.getProperty());
+        node.setInvoker(invoker);
         return node.childrenAccept(this, data);
     }
 
@@ -192,7 +197,8 @@ public enum InvokerBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        context.getTargetType(node.getName(), node.getProperty()); // 保证能取到即可
+        GetterInvoker invoker = context.getTargetInvoker(node.getName(), node.getProperty());
+        node.setInvoker(invoker);
         return node.childrenAccept(this, data);
     }
 

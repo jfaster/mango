@@ -35,8 +35,6 @@ public interface ParameterBean {
 
     public String getFullName();
 
-    public GetterInvoker getInvoker();
-
     public void setInvoker(GetterInvoker invoker);
 
 }

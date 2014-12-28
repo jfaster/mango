@@ -57,6 +57,9 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
 
     @Override
     public boolean render(InvocationContext context) {
+        if (invoker == null) {
+            throw new NullPointerException("invoker must set");
+        }
         Object obj = context.getPropertyValue(name, invoker);
         context.writeToSqlBuffer(obj.toString());
         return true;
@@ -104,11 +107,6 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     @Override
     public String getFullName() {
         return Strings.getFullName(name, property);
-    }
-
-    @Override
-    public GetterInvoker getInvoker() {
-        return invoker;
     }
 
     @Override

@@ -59,6 +59,9 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     @Override
     public boolean evaluate(InvocationContext context) {
+        if (invoker == null) {
+            throw new NullPointerException("invoker must set");
+        }
         Object obj = context.getNullablePropertyValue(name, invoker);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
@@ -68,6 +71,9 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     @Override
     public Object value(InvocationContext context) {
+        if (invoker == null) {
+            throw new NullPointerException("invoker must set");
+        }
         return context.getNullablePropertyValue(name, invoker);
     }
 
@@ -113,11 +119,6 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
     @Override
     public String getFullName() {
         return Strings.getFullName(name, property);
-    }
-
-    @Override
-    public GetterInvoker getInvoker() {
-        return invoker;
     }
 
     @Override

@@ -93,7 +93,7 @@ public class OperatorFactory {
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
         GetterInvoker invoker = null;
         if (dbInfo.shardParameterName != null) {
-            invoker = context.getPropertyInvoker(dbInfo.shardParameterName, dbInfo.shardParameterProperty);
+            invoker = context.getTargetInvoker(dbInfo.shardParameterName, dbInfo.shardParameterProperty);
         }
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
                 invoker, dbInfo.tablePartition);
@@ -196,7 +196,7 @@ public class OperatorFactory {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
-                Type shardType = context.getTargetType(shardParameterName, shardParameterProperty);
+                Type shardType = context.getTargetInvoker(shardParameterName, shardParameterProperty).getType();
                 TypeWrapper tw = new TypeWrapper(shardType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {

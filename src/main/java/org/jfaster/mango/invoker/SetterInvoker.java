@@ -21,6 +21,6 @@ package org.jfaster.mango.invoker;
  */
 public interface SetterInvoker extends Invoker {
 
-    void invoke(Object object, Object parameter);
+    public void invoke(Object object, Object parameter);
 
 }

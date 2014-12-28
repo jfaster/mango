@@ -23,10 +23,10 @@ import java.lang.reflect.Type;
  */
 public interface Invoker {
 
-    String getPropertyName();
+    public String getName();
 
-    Type getPropertyType();
+    public Type getType();
 
-    Class<?> getPropertyRawType();
+    public Class<?> getRawType();
 
 }

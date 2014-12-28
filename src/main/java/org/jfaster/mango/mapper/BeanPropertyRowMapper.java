@@ -53,13 +53,13 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
         this.invokerMap = new HashMap<String, SetterInvoker>();
         List<SetterInvoker> invokers = InvokerCache.getSetterInvokers(mappedClass);
         for (SetterInvoker invoker : invokers) {
-            String column = propertyToColumnMap.get(invoker.getPropertyName().toLowerCase());
+            String column = propertyToColumnMap.get(invoker.getName().toLowerCase());
             if (column != null) {
                 invokerMap.put(column, invoker);
             } else {
-                invokerMap.put(invoker.getPropertyName().toLowerCase(), invoker);
-                String underscoredName = underscoreName(invoker.getPropertyName());
-                if (!invoker.getPropertyName().toLowerCase().equals(underscoredName)) {
+                invokerMap.put(invoker.getName().toLowerCase(), invoker);
+                String underscoredName = underscoreName(invoker.getName());
+                if (!invoker.getName().toLowerCase().equals(underscoredName)) {
                     invokerMap.put(underscoredName, invoker);
                 }
             }
@@ -94,10 +94,10 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
             String column = JdbcUtils.lookupColumnName(rsmd, index);
             SetterInvoker invoker = invokerMap.get(column.trim().toLowerCase());
             if (invoker != null) {
-                Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getPropertyRawType());
+                Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getRawType());
                 if (logger.isDebugEnabled() && rowNumber == 0) {
                     logger.debug("Mapping column '" + column + "' to property '" +
-                            invoker.getPropertyName() + "' of type " + invoker.getPropertyRawType());
+                            invoker.getName() + "' of type " + invoker.getRawType());
                 }
                 invoker.invoke(mappedObject, value);
             }

@@ -21,6 +21,7 @@ import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.IdentityGetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.ParameterDescriptor;
@@ -73,7 +74,7 @@ public class ParameterContext {
                 List<GetterInvoker> invokers =
                         InvokerCache.getGetterInvokers(parameterRawType);
                 for (GetterInvoker invoker : invokers) {
-                    String propertyName = invoker.getPropertyName();
+                    String propertyName = invoker.getName();
                     if (!nameProvider.isParameterName(propertyName)) { // 属性名和参数名相同则不扩展
                         List<String> oldParameterNames = propertyMap.get(propertyName);
                         if (oldParameterNames == null) {
@@ -89,32 +90,14 @@ public class ParameterContext {
     }
 
     /**
-     * 获得目标类型
+     * 获得getter调用器
      */
-    public Type getTargetType(String parameterName, String parameterProperty) {
+    public GetterInvoker getTargetInvoker(String parameterName, String parameterProperty) {
         Type type = getParameterType(parameterName);
-        if (Strings.isNotEmpty(parameterProperty)) {
-            TypeToken token = TypeToken.of(type);
-            GetterInvoker invoker = InvokerCache.getGetterInvoker(token.getRawType(), parameterProperty);
-            if (invoker == null) {
-                String fullName = Strings.getFullName(parameterName, parameterProperty);
-                throw new NotReadablePropertyException("property " + fullName + " " +
-                        "is not readable, the type of :" + parameterName +
-                        " is " + type + ", please check it's get method");
-            }
-            type = invoker.getPropertyType();
-        }
-        return type;
-    }
-
-    /**
-     * 获得属性调用器
-     */
-    @Nullable
-    public GetterInvoker getPropertyInvoker(String parameterName, String parameterProperty) {
-        Type type = getParameterType(parameterName);
-        GetterInvoker invoker = null;
-        if (Strings.isNotEmpty(parameterProperty)) {
+        GetterInvoker invoker;
+        if (Strings.isEmpty(parameterProperty)) {
+            invoker = new IdentityGetterInvoker(type);
+        } else {
             TypeToken token = TypeToken.of(type);
             invoker = InvokerCache.getGetterInvoker(token.getRawType(), parameterProperty);
             if (invoker == null) {

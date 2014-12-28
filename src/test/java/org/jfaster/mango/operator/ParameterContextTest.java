@@ -50,8 +50,8 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
-        assertThat(ctx.getTargetType("1", ""), equalTo(t0.getType()));
-        assertThat(ctx.getTargetType("2", ""), equalTo(t1.getType()));
+        assertThat(ctx.getTargetInvoker("1", "").getType(), equalTo(t0.getType()));
+        assertThat(ctx.getTargetInvoker("2", "").getType(), equalTo(t1.getType()));
         assertThat(ctx.getParameterDescriptors(), equalTo(pds));
     }
 
@@ -66,10 +66,10 @@ public class ParameterContextTest {
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.BATCHUPDATYPE);
         TypeToken<User> ut = TypeToken.of(User.class);
         ParameterDescriptor up = new ParameterDescriptor(0, ut.getType(), t.getRawType(), empty, "1");
-        assertThat(ctx.getTargetType("1", ""), equalTo(ut.getType()));
-        assertThat(ctx.getTargetType("1", ""), equalTo(ut.getType())); // test cache
-        assertThat(ctx.getTargetType("1", "name"), equalTo((new TypeToken<String>() {}).getType()));
-        assertThat(ctx.getTargetType("1", "name"), equalTo((new TypeToken<String>() {}).getType())); // test cache
+        assertThat(ctx.getTargetInvoker("1", "").getType(), equalTo(ut.getType()));
+        assertThat(ctx.getTargetInvoker("1", "").getType(), equalTo(ut.getType())); // test cache
+        assertThat(ctx.getTargetInvoker("1", "name").getType(), equalTo((new TypeToken<String>() {}).getType()));
+        assertThat(ctx.getTargetInvoker("1", "name").getType(), equalTo((new TypeToken<String>() {}).getType())); // test cache
         assertThat(ctx.getParameterDescriptors(), equalTo(Arrays.asList(up)));
     }
 
@@ -120,7 +120,7 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.UPDATE);
-        ctx.getTargetType("2", "");
+        ctx.getTargetInvoker("2", "");
     }
 
 }

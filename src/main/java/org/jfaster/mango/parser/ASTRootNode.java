@@ -60,7 +60,7 @@ public class ASTRootNode extends AbstractRenderableNode {
      * 绑定GetterInvoker
      */
     public void bindInvoker(ParameterContext context) {
-        getBlock().jjtAccept(InvokerBindVisitor.INSTANCE, context);
+        getBlock().jjtAccept(CheckAndBindVisitor.INSTANCE, context);
     }
 
     public List<ASTJDBCParameter> getJDBCParameters() {

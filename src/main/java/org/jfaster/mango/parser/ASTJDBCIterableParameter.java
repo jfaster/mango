@@ -62,6 +62,9 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
     @Override
     public boolean render(InvocationContext context) {
+        if (invoker == null) {
+            throw new NullPointerException("invoker must set");
+        }
         Object objs = context.getNullablePropertyValue(name, invoker);
         if (objs == null) {
             throw new NullPointerException("value of " +
@@ -129,11 +132,6 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     @Override
     public String getFullName() {
         return Strings.getFullName(name, property);
-    }
-
-    @Override
-    public GetterInvoker getInvoker() {
-        return invoker;
     }
 
     @Override

@@ -48,16 +48,15 @@ public class InvocationContext {
     public Object getPropertyValue(String parameterName, GetterInvoker invoker) {
         Object value = getNullablePropertyValue(parameterName, invoker);
         if (value == null) {
-            // TODO
-            String fullName = Strings.getFullName(parameterName, invoker.getPropertyName());
-            String key = Strings.isEmpty(invoker.getPropertyName()) ? "parameter" : "property";
+            String fullName = Strings.getFullName(parameterName, invoker.getName());
+            String key = Strings.isEmpty(invoker.getName()) ? "parameter" : "property";
             throw new NullPointerException(key + " " + fullName + " need a non-null value");
         }
         return value;
     }
 
     @Nullable
-    public Object getNullablePropertyValue(String parameterName, @Nullable GetterInvoker invoker) {
+    public Object getNullablePropertyValue(String parameterName, GetterInvoker invoker) {
         String key = getCacheKey(parameterName, invoker);
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);
@@ -67,11 +66,11 @@ public class InvocationContext {
         }
         Object obj = parameterMap.get(parameterName);
         Object value;
-        if (invoker == null) {
+        if (invoker.isIdentity()) {
             value = obj;
         } else {
             if (obj == null) { // 传入参数为null，但需要取该参数上的属性
-                String fullName = Strings.getFullName(parameterName, invoker.getPropertyName());
+                String fullName = Strings.getFullName(parameterName, invoker.getName());
                 throw new NullPointerException("parameter :" + parameterName + " is null, " +
                         "so can't get value from " + fullName);
             }
@@ -111,7 +110,7 @@ public class InvocationContext {
     }
 
     private String getCacheKey(String parameterName, GetterInvoker invoker) {
-        return invoker == null ? parameterName : parameterName + "." + invoker.getPropertyName();
+        return invoker == null ? parameterName : parameterName + "." + invoker.getName();
     }
 
 }

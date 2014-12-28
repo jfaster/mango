@@ -21,6 +21,8 @@ package org.jfaster.mango.invoker;
  */
 public interface GetterInvoker extends Invoker {
 
-    Object invoke(Object object);
+    public Object invoke(Object object);
+
+    public boolean isIdentity();
 
 }
