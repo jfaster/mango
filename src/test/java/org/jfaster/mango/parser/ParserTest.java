@@ -16,12 +16,18 @@
 
 package org.jfaster.mango.parser;
 
+import com.google.common.collect.Lists;
 import org.hamcrest.Matchers;
-import org.jfaster.mango.operator.InvocationContext;
-import org.jfaster.mango.operator.PreparedSql;
+import org.jfaster.mango.operator.*;
+import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Test;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,6 +42,9 @@ public class ParserTest {
     public void testBase() throws Exception {
         String sql = "select #{:1} from user where id in (:2) and name=:3";
         ASTRootNode n = new Parser(sql).parse().init();
+        Type listType = new TypeToken<List<Integer>>() {}.getType();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList(String.class, listType, String.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", "id");
         context.addParameter("2", Arrays.asList(9, 5, 2, 7));
@@ -50,6 +59,8 @@ public class ParserTest {
     public void testIf() throws Exception {
         String sql = "select where 1=1 #if(:1) and id>:1 #end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
@@ -62,6 +73,8 @@ public class ParserTest {
     public void testIf2() throws Exception {
         String sql = "select where 1=1 #if(!:1) and id>:1 #end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
@@ -79,6 +92,8 @@ public class ParserTest {
                     " and id<:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
@@ -96,6 +111,8 @@ public class ParserTest {
                     " and id<:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", -100);
         n.render(context);
@@ -115,6 +132,8 @@ public class ParserTest {
                     " and id=:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
@@ -134,6 +153,8 @@ public class ParserTest {
                     " and id=:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", -100);
         n.render(context);
@@ -153,6 +174,8 @@ public class ParserTest {
                     " and id=:1" +
                 "#end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 0);
         n.render(context);
@@ -165,6 +188,9 @@ public class ParserTest {
     public void testExpression() throws Exception {
         String sql = "select where 1=1 #if(:1==false && :2!=null && :3==true) and id>10 #end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Boolean.class,
+                Object.class, Boolean.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", false);
         context.addParameter("2", new Object());
@@ -188,6 +214,8 @@ public class ParserTest {
     public void testIntegerLiteral() throws Exception {
         String sql = "select #if (:1 > 9223372036854775800) ok #end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", Long.MAX_VALUE);
         n.render(context);
@@ -199,6 +227,8 @@ public class ParserTest {
     public void testIntegerLiteral2() throws Exception {
         String sql = "select #if (:1 > 10) ok #end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", Long.MAX_VALUE);
         n.render(context);
@@ -210,11 +240,27 @@ public class ParserTest {
     public void testIntegerLiteral3() throws Exception {
         String sql = "select #if (:1 > 9223372036854775800) ok #end";
         ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) Integer.class));
+        n.checkAndBind(ctx);
         InvocationContext context = new InvocationContext();
         context.addParameter("1", 100);
         n.render(context);
         PreparedSql preparedSql = context.getPreparedSql();
         assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    }
+
+    private ParameterContext getParameterContext(List<Type> types) {
+        List<Annotation> empty = Collections.emptyList();
+        List<ParameterDescriptor> pds = Lists.newArrayList();
+        int pos = 0;
+        for (Type type : types) {
+            ParameterDescriptor pd = new ParameterDescriptor(pos++, type,
+                    TypeToken.of(type).getRawType(), empty, String.valueOf(pos));
+            pds.add(pd);
+        }
+        NameProvider np = new NameProvider(pds);
+        ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
+        return ctx;
     }
 
 }

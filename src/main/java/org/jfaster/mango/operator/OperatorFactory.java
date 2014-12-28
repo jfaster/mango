@@ -88,7 +88,7 @@ public class OperatorFactory {
         ParameterContext context = new ParameterContext(md.getParameterDescriptors(), nameProvider, operatorType);
 
         rootNode.expandParameter(context); // 扩展简化的参数节点
-        rootNode.bindInvoker(context); // 绑定GetterInvoker
+        rootNode.checkAndBind(context); // 绑定GetterInvoker
 
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
         GetterInvoker invoker = null;
