@@ -14,21 +14,31 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
-
-import org.jfaster.mango.invoker.function.Function;
+package org.jfaster.mango.invoker.function;
 
 import javax.annotation.Nullable;
 
 /**
+ * long[] --> String
+ *
  * @author ash
  */
-public class IdentityFunction extends Function<Object, Object> {
+public class LongArrayToStringFunction extends Function<long[], String> {
+
+    private final static String SEPARATOR = ",";
 
     @Nullable
     @Override
-    public Object apply(@Nullable Object o) {
-        return o;
+    public String apply(@Nullable long[] input) {
+        if (input == null || input.length == 0) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder(input.length * 5);
+        builder.append(input[0]);
+        for (int i = 1; i < input.length; i++) {
+            builder.append(SEPARATOR).append(input[i]);
+        }
+        return builder.toString();
     }
 
 }

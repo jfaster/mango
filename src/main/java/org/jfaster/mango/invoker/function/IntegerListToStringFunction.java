@@ -14,16 +14,32 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.invoker.function;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
+ * List<Integer> --> String
+ *
  * @author ash
  */
-public abstract class Function<I, O> {
+public class IntegerListToStringFunction extends Function<List<Integer>, String> {
+
+    private final static String SEPARATOR = ",";
 
     @Nullable
-    public abstract O apply(@Nullable I input);
+    @Override
+    public String apply(@Nullable List<Integer> input) {
+        if (input == null || input.size() == 0) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder(input.size() * 5);
+        builder.append(input.get(0));
+        for (int i = 1; i < input.size(); i++) {
+            builder.append(SEPARATOR).append(input.get(i));
+        }
+        return builder.toString();
+    }
 
 }

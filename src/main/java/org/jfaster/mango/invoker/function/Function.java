@@ -14,21 +14,16 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
-
-import org.jfaster.mango.invoker.function.Function;
+package org.jfaster.mango.invoker.function;
 
 import javax.annotation.Nullable;
 
 /**
  * @author ash
  */
-public class IdentityFunction extends Function<Object, Object> {
+public abstract class Function<I, O> {
 
     @Nullable
-    @Override
-    public Object apply(@Nullable Object o) {
-        return o;
-    }
+    public abstract O apply(@Nullable I input);
 
 }

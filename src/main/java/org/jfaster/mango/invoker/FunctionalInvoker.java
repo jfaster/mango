@@ -17,6 +17,7 @@
 package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.invoker.function.Function;
 import org.jfaster.mango.reflect.Reflection;
 
 import java.lang.reflect.Method;

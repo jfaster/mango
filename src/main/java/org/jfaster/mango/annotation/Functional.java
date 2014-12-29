@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.invoker.Function;
+import org.jfaster.mango.invoker.function.Function;
 
 import java.lang.annotation.*;
 

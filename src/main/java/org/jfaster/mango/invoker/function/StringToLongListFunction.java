@@ -14,21 +14,35 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.invoker.function.Function;
+import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * String --> List<Long>
+ *
  * @author ash
  */
-public class IdentityFunction extends Function<Object, Object> {
+public class StringToLongListFunction extends Function<String, List<Long>> {
+
+    private final static String SEPARATOR = ",";
 
     @Nullable
     @Override
-    public Object apply(@Nullable Object o) {
-        return o;
+    public List<Long> apply(@Nullable String input) {
+        if (Strings.isEmpty(input)) {
+            return new ArrayList<Long>();
+        }
+        String[] ss = input.split(SEPARATOR);
+        List<Long> r = new ArrayList<Long>();
+        for (int i = 0; i < ss.length; i++) {
+            r.add(Long.parseLong(ss[i]));
+        }
+        return r;
     }
 
 }

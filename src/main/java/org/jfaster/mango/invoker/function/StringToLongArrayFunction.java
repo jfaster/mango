@@ -14,21 +14,33 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.invoker.function.Function;
+import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 
 /**
+ * String --> long[]
+ *
  * @author ash
  */
-public class IdentityFunction extends Function<Object, Object> {
+public class StringToLongArrayFunction extends Function<String, long[]> {
+
+    private final static String SEPARATOR = ",";
 
     @Nullable
     @Override
-    public Object apply(@Nullable Object o) {
-        return o;
+    public long[] apply(@Nullable String input) {
+        if (Strings.isEmpty(input)) {
+            return new long[0];
+        }
+        String[] ss = input.split(SEPARATOR);
+        long[] r = new long[ss.length];
+        for (int i = 0; i < ss.length; i++) {
+            r[i] = Long.parseLong(ss[i]);
+        }
+        return r;
     }
 
 }
