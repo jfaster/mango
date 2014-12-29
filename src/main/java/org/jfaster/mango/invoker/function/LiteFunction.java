@@ -16,33 +16,27 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.reflect.TypeToken;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * String --> List<Long>
- *
  * @author ash
  */
-public class StringToLongListFunction extends LiteFunction<String, List<Long>> {
-
-    private final static String SEPARATOR = ",";
+public abstract class LiteFunction<I, O> extends Function<I, O> {
 
     @Nullable
     @Override
-    public List<Long> apply(@Nullable String input) {
-        if (Strings.isEmpty(input)) {
-            return new ArrayList<Long>();
-        }
-        String[] ss = input.split(SEPARATOR);
-        List<Long> r = new ArrayList<Long>();
-        for (int i = 0; i < ss.length; i++) {
-            r.add(Long.parseLong(ss[i]));
-        }
-        return r;
+    public O apply(@Nullable I input, TypeToken<?> invokerToken) {
+        return apply(input);
     }
+
+    @Override
+    public boolean checkType() {
+        return true;
+    }
+
+    @Nullable
+    public abstract O apply(@Nullable I input);
 
 }

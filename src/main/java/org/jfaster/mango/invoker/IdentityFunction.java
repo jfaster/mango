@@ -17,6 +17,8 @@
 package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.invoker.function.Function;
+import org.jfaster.mango.invoker.function.LiteFunction;
+import org.jfaster.mango.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 
@@ -27,8 +29,13 @@ public class IdentityFunction extends Function<Object, Object> {
 
     @Nullable
     @Override
-    public Object apply(@Nullable Object o) {
-        return o;
+    public Object apply(@Nullable Object input, TypeToken<?> invokerToken) {
+        return input;
+    }
+
+    @Override
+    public boolean checkType() {
+        return false;
     }
 
 }

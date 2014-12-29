@@ -17,6 +17,7 @@
 package org.jfaster.mango.annotation;
 
 import org.jfaster.mango.invoker.function.Function;
+import org.jfaster.mango.invoker.function.LiteFunction;
 
 import java.lang.annotation.*;
 

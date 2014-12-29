@@ -16,33 +16,26 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.reflect.TypeToken;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * String --> List<Long>
+ * Enum --> Integer
  *
  * @author ash
  */
-public class StringToLongListFunction extends LiteFunction<String, List<Long>> {
-
-    private final static String SEPARATOR = ",";
+public class EnumToIntegerFunction extends Function<Enum<?>, Integer> {
 
     @Nullable
     @Override
-    public List<Long> apply(@Nullable String input) {
-        if (Strings.isEmpty(input)) {
-            return new ArrayList<Long>();
-        }
-        String[] ss = input.split(SEPARATOR);
-        List<Long> r = new ArrayList<Long>();
-        for (int i = 0; i < ss.length; i++) {
-            r.add(Long.parseLong(ss[i]));
-        }
-        return r;
+    public Integer apply(@Nullable Enum<?> input, TypeToken<?> invokerToken) {
+        return input == null ? null : input.ordinal();
+    }
+
+    @Override
+    public boolean checkType() {
+        return false;
     }
 
 }

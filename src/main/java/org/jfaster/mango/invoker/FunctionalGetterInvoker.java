@@ -31,21 +31,20 @@ import java.lang.reflect.Type;
  */
 public class FunctionalGetterInvoker extends FunctionalInvoker implements GetterInvoker {
 
-    private Type returnType;
-    private Class<?> returnRawType;
+    private TypeToken<?> returnToken;
+    private TypeToken<?> realReturnToken;
 
     private FunctionalGetterInvoker(String name, Method method) {
         super(name, method);
-        returnType = method.getGenericReturnType();
-        returnRawType = method.getReturnType();
+        returnToken = realReturnToken = TypeToken.of(method.getGenericReturnType());
         if (functional) {
-            if (!Types.isTypeAssignable(inputType, returnType)) {
+            if (function.checkType() && // 需要检测type
+                    !Types.isTypeAssignable(inputToken.getType(), returnToken.getType())) {
                 throw new ClassCastException("function[" + function.getClass() + "] " +
-                        "on method[" + method + "] error, function's inputType[" + inputType + "] " +
-                        "must be assignable from method's returnType[" + returnType + "]");
+                        "on method[" + method + "] error, function's inputType[" + inputToken.getType() + "] " +
+                        "must be assignable from method's returnType[" + returnToken.getType() + "]");
             }
-            returnType = outputType;
-            returnRawType = TypeToken.of(returnType).getRawType();
+            returnToken = outputToken;
         }
     }
 
@@ -58,7 +57,7 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
     public Object invoke(Object object) {
         try {
             Object input = method.invoke(object);
-            Object r = function.apply(input);
+            Object r = function.apply(input, realReturnToken);
             return r;
         } catch (IllegalAccessException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
@@ -74,12 +73,12 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
 
     @Override
     public Type getType() {
-        return returnType;
+        return returnToken.getType();
     }
 
     @Override
     public Class<?> getRawType() {
-        return returnRawType;
+        return returnToken.getRawType();
     }
 
 }

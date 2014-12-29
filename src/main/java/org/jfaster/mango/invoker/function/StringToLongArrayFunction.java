@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class StringToLongArrayFunction extends Function<String, long[]> {
+public class StringToLongArrayFunction extends LiteFunction<String, long[]> {
 
     private final static String SEPARATOR = ",";
 

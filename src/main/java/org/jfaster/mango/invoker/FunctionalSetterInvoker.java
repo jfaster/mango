@@ -29,22 +29,22 @@ import java.lang.reflect.Type;
  */
 public class FunctionalSetterInvoker extends FunctionalInvoker implements SetterInvoker {
 
-    private Type parameterType;
-    private Class<?> parameterRawType;
+    private TypeToken<?> parameterToken;
+    private TypeToken<?> realParameterToken;
     private Class<?> realParameterRawType;
 
     private FunctionalSetterInvoker(String name, Method method) {
         super(name, method);
-        parameterType = method.getGenericParameterTypes()[0];
-        parameterRawType = realParameterRawType = method.getParameterTypes()[0];
+        parameterToken = realParameterToken = TypeToken.of(method.getGenericParameterTypes()[0]);
+        realParameterRawType = realParameterToken.getRawType();
         if (functional) {
-            if (!Types.isTypeAssignable(parameterType, outputType)) {
+            if (function.checkType() && // 需要检测type
+                    !Types.isTypeAssignable(parameterToken.getType(), outputToken.getType())) {
                 throw new ClassCastException("function[" + function.getClass() + "] " +
-                        "on method[" + method + "] error, method's parameterType[" + parameterType + "] " +
-                        "must be assignable from function's outputType[" + outputType + "]");
+                        "on method[" + method + "] error, method's parameterType[" + parameterToken.getType() + "] " +
+                        "must be assignable from function's outputType[" + outputToken.getType() + "]");
             }
-            parameterType = inputType;
-            parameterRawType = TypeToken.of(parameterType).getRawType();
+            parameterToken = inputToken;
         }
     }
 
@@ -56,7 +56,7 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
     @Override
     public void invoke(Object object, Object parameter) {
         try {
-            Object output = function.apply(parameter);
+            Object output = function.apply(parameter, realParameterToken);
             if (output == null && realParameterRawType.isPrimitive()) {
                 throw new NullPointerException("property " + getName() + " of " +
                         object.getClass() + " is primitive, can not be assigned to null");
@@ -76,12 +76,12 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
 
     @Override
     public Type getType() {
-        return parameterType;
+        return parameterToken.getType();
     }
 
     @Override
     public Class<?> getRawType() {
-        return parameterRawType;
+        return parameterToken.getRawType();
     }
 
 }

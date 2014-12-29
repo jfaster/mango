@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.annotation.Functional;
-import org.jfaster.mango.invoker.function.Function;
+import org.jfaster.mango.invoker.function.LiteFunction;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -41,7 +41,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FunctionalGetterInvokerTest {
 
-    public static class IntegerToStringFunction extends Function<Integer, String> {
+    public static class IntegerToStringFunction extends LiteFunction<Integer, String> {
 
         @Nullable
         @Override
@@ -137,7 +137,7 @@ public class FunctionalGetterInvokerTest {
         assertThat((String) invoker.invoke(b), is("string100"));
     }
 
-    public static class StringToIntegerFunction extends Function<String, Integer> {
+    public static class StringToIntegerFunction extends LiteFunction<String, Integer> {
 
         @Nullable
         @Override
@@ -190,7 +190,7 @@ public class FunctionalGetterInvokerTest {
         assertThat((Integer) invoker.invoke(c), is(952700));
     }
 
-    public static class IntegerListToStringFunction extends Function<List<Integer>, String> {
+    public static class IntegerListToStringFunction extends LiteFunction<List<Integer>, String> {
 
         @Nullable
         @Override
@@ -300,7 +300,7 @@ public class FunctionalGetterInvokerTest {
         FunctionalGetterInvoker.create("x", method);
     }
 
-    public static class IntArrayToStringFunction extends Function<int[], String> {
+    public static class IntArrayToStringFunction extends LiteFunction<int[], String> {
 
         @Nullable
         @Override

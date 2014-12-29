@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author ash
  */
-public class IntegerListToStringFunction extends Function<List<Integer>, String> {
+public class IntegerListToStringFunction extends LiteFunction<List<Integer>, String> {
 
     private final static String SEPARATOR = ",";
 
