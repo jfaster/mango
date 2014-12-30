@@ -16,19 +16,26 @@
 
 package org.jfaster.mango.invoker.function;
 
+import com.google.common.reflect.TypeToken;
+
+import javax.annotation.Nullable;
+
 /**
+ * String --> Enum
+ *
  * @author ash
  */
-public abstract class GenericFunction<I, O> implements Function<I, O> {
+public class StringToEnumFunction extends GenericFunction<String, Enum> {
 
+    @Nullable
     @Override
-    public boolean inverseCheck() {
-        return true;
-    }
-
-    @Override
-    public boolean isIdentity() {
-        return false;
+    public Enum apply(@Nullable String input, TypeToken<?> token) {
+        if (input == null) {
+            return null;
+        }
+        Class clazz = token.getRawType();
+        Enum r = Enum.valueOf(clazz, input);
+        return r;
     }
 
 }
