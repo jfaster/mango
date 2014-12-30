@@ -95,6 +95,14 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- json序列化 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.46</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- 测试 -->
         <dependency>
             <groupId>junit</groupId>

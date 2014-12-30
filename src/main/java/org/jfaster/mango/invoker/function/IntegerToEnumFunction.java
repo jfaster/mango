@@ -42,7 +42,7 @@ public class IntegerToEnumFunction extends GenericFunction<Integer, Enum> {
                 return e;
             }
         }
-        return null;
+        throw new RuntimeException(); // TODO
     }
 
     private static EnumSet getEnumSet(Class enumType) {
