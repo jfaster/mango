@@ -49,6 +49,12 @@
     </developers>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+
         <!-- findbug相关 -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -112,12 +118,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.29</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>17.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

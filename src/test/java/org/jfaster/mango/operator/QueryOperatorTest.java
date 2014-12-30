@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.operator;
 
+import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
-import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;

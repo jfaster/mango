@@ -16,18 +16,18 @@
 
 package org.jfaster.mango.operator;
 
+import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.datasource.router.DataSourceRouter;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.partition.ModHundredTablePartition;
+import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
-import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -37,9 +37,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author ash

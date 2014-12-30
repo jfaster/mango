@@ -16,18 +16,20 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.reflect.TypeToken;
+import com.google.common.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 
 /**
  * @author ash
  */
-public abstract class Function<I, O> {
+public interface Function<I, O> {
 
     @Nullable
-    public abstract O apply(@Nullable I input, TypeToken<?> invokerToken);
+    public O apply(@Nullable I input, TypeToken<?> token);
 
-    public abstract boolean checkType();
+    public boolean inverseCheck();
+
+    public boolean isIdentity();
 
 }

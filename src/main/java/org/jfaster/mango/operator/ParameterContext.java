@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
@@ -25,7 +26,6 @@ import org.jfaster.mango.invoker.IdentityGetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;

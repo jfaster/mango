@@ -16,10 +16,11 @@
 
 package org.jfaster.mango.invoker;
 
+import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.annotation.Functional;
 import org.jfaster.mango.invoker.function.Function;
+import org.jfaster.mango.invoker.function.IdentityFunction;
 import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.TypeToken;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -34,7 +35,6 @@ public abstract class FunctionalInvoker implements Invoker {
     protected String name;
     protected Method method;
     protected Function function;
-    protected boolean functional;
     protected TypeToken<?> inputToken;
     protected TypeToken<?> outputToken;
 
@@ -50,7 +50,6 @@ public abstract class FunctionalInvoker implements Invoker {
             Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
             inputToken = TypeToken.of(params[0]);
             outputToken = TypeToken.of(params[1]);
-            functional = true;
         } else {
             function = new IdentityFunction();
         }
@@ -59,6 +58,10 @@ public abstract class FunctionalInvoker implements Invoker {
     @Override
     public String getName() {
         return name;
+    }
+
+    protected boolean needCheckAndChange() {
+        return !function.isIdentity();
     }
 
     private void handleModifier(Method method) {

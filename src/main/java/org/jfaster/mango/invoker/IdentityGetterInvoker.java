@@ -1,6 +1,6 @@
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.reflect.TypeToken;
+import com.google.common.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 

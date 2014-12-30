@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.reflect.TypeToken;
-
 import javax.annotation.Nullable;
 
 /**
@@ -25,17 +23,12 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class EnumToStringFunction extends Function<Enum<?>, String> {
+public class EnumToStringFunction extends LiteFunction<Enum<?>, String> {
 
     @Nullable
     @Override
-    public String apply(@Nullable Enum<?> input, TypeToken<?> invokerToken) {
+    public String apply(@Nullable Enum<?> input) {
         return input == null ? null : input.name();
-    }
-
-    @Override
-    public boolean checkType() {
-        return false;
     }
 
 }

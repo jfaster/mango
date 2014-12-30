@@ -14,18 +14,16 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.invoker.function.Function;
-import org.jfaster.mango.invoker.function.LiteFunction;
-import org.jfaster.mango.reflect.TypeToken;
+import com.google.common.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 
 /**
  * @author ash
  */
-public class IdentityFunction extends Function<Object, Object> {
+public class IdentityFunction implements Function<Object, Object> {
 
     @Nullable
     @Override
@@ -34,8 +32,13 @@ public class IdentityFunction extends Function<Object, Object> {
     }
 
     @Override
-    public boolean checkType() {
+    public boolean inverseCheck() {
         return false;
+    }
+
+    @Override
+    public boolean isIdentity() {
+        return true;
     }
 
 }

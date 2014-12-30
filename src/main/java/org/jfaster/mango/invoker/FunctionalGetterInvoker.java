@@ -16,9 +16,8 @@
 
 package org.jfaster.mango.invoker;
 
+import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.UncheckedException;
-import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.reflect.Types;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,12 +36,16 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
     private FunctionalGetterInvoker(String name, Method method) {
         super(name, method);
         returnToken = realReturnToken = TypeToken.of(method.getGenericReturnType());
-        if (functional) {
-            if (function.checkType() && // 需要检测type
-                    !Types.isTypeAssignable(inputToken.getType(), returnToken.getType())) {
-                throw new ClassCastException("function[" + function.getClass() + "] " +
-                        "on method[" + method + "] error, function's inputType[" + inputToken.getType() + "] " +
-                        "must be assignable from method's returnType[" + returnToken.getType() + "]");
+        if (needCheckAndChange()) {
+            if (function.inverseCheck()) { // 针对继承GenericFunction的
+                throw new RuntimeException(); // TODO
+            } else { // 针对继承LiteFunction的
+                TypeToken<?> wrapReturnToken = returnToken.wrap();
+                if (!inputToken.isAssignableFrom(wrapReturnToken)) {
+                    throw new ClassCastException("function[" + function.getClass() + "] " +
+                            "on method[" + method + "] error, function's inputType[" + inputToken.getType() + "] " +
+                            "must be assignable from method's returnType[" + returnToken.getType() + "]");
+                }
             }
             returnToken = outputToken;
         }

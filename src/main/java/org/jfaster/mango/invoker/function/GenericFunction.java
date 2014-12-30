@@ -16,19 +16,19 @@
 
 package org.jfaster.mango.invoker.function;
 
-import javax.annotation.Nullable;
-
 /**
- * Enum --> Integer
- *
  * @author ash
  */
-public class EnumToIntegerFunction extends LiteFunction<Enum<?>, Integer> {
+public abstract class GenericFunction implements Function {
 
-    @Nullable
     @Override
-    public Integer apply(@Nullable Enum<?> input) {
-        return input == null ? null : input.ordinal();
+    public boolean inverseCheck() {
+        return true;
+    }
+
+    @Override
+    public boolean isIdentity() {
+        return false;
     }
 
 }

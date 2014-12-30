@@ -16,24 +16,29 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.reflect.TypeToken;
+import com.google.common.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 
 /**
  * @author ash
  */
-public abstract class LiteFunction<I, O> extends Function<I, O> {
+public abstract class LiteFunction<I, O> implements Function<I, O> {
 
     @Nullable
     @Override
-    public O apply(@Nullable I input, TypeToken<?> invokerToken) {
+    public O apply(@Nullable I input, TypeToken<?> token) {
         return apply(input);
     }
 
     @Override
-    public boolean checkType() {
-        return true;
+    public boolean inverseCheck() {
+        return false;
+    }
+
+    @Override
+    public boolean isIdentity() {
+        return false;
     }
 
     @Nullable

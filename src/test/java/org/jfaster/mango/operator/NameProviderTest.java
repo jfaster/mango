@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.support.MockRename;
+import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.support.MockRename;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
