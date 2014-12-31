@@ -16,9 +16,8 @@
 
 package org.jfaster.mango.invoker.function;
 
-import com.google.common.reflect.TypeToken;
-
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
@@ -27,7 +26,7 @@ public abstract class LiteFunction<I, O> implements Function<I, O> {
 
     @Nullable
     @Override
-    public O apply(@Nullable I input, TypeToken<?> token) {
+    public O apply(@Nullable I input, Type type) {
         return apply(input);
     }
 

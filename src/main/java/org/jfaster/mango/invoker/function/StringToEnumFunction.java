@@ -19,6 +19,7 @@ package org.jfaster.mango.invoker.function;
 import com.google.common.reflect.TypeToken;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
  * String --> Enum
@@ -29,12 +30,12 @@ public class StringToEnumFunction extends GenericFunction<String, Enum> {
 
     @Nullable
     @Override
-    public Enum apply(@Nullable String input, TypeToken<?> token) {
+    public Enum apply(@Nullable String input, Type type) {
         if (input == null) {
             return null;
         }
-        Class clazz = token.getRawType();
-        Enum r = Enum.valueOf(clazz, input);
+        Class rawType = TypeToken.of(type).getRawType();
+        Enum r = Enum.valueOf(rawType, input);
         return r;
     }
 

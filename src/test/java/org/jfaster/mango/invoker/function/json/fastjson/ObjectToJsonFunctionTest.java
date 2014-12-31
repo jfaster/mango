@@ -101,4 +101,64 @@ public class ObjectToJsonFunctionTest {
         }
     }
 
+
+    @Test
+    public void testApplyArray() throws Exception {
+        G g = new G();
+
+        int[] a = new int[] {2, 3, 4};
+        g.setA(a);
+        Method m = G.class.getDeclaredMethod("getA");
+        GetterInvoker invoker = FunctionalGetterInvoker.create("a", m);
+        String r = (String) invoker.invoke(g);
+        assertThat(r, is(JSON.toJSONString(a)));
+
+        B[] b = new B[] {new B(4, 5), new B(7, 8)};
+        g.setB(b);
+        Method m2 = G.class.getDeclaredMethod("getB");
+        GetterInvoker invoker2 = FunctionalGetterInvoker.create("b", m2);
+        String r2 = (String) invoker2.invoke(g);
+        assertThat(r2, is(JSON.toJSONString(b)));
+
+        Integer[] c = new Integer[] {1, 9, 5};
+        g.setC(c);
+        Method m3 = G.class.getDeclaredMethod("getC");
+        GetterInvoker invoker3 = FunctionalGetterInvoker.create("c", m3);
+        String r3 = (String) invoker3.invoke(g);
+        assertThat(r3, is(JSON.toJSONString(c)));
+    }
+
+    static class G {
+        private int[] a;
+        private B[] b;
+        private Integer[] c;
+
+        @Functional(ObjectToJsonFunction.class)
+        int[] getA() {
+            return a;
+        }
+
+        void setA(int[] a) {
+            this.a = a;
+        }
+
+        @Functional(ObjectToJsonFunction.class)
+        B[] getB() {
+            return b;
+        }
+
+        void setB(B[] b) {
+            this.b = b;
+        }
+
+        @Functional(ObjectToJsonFunction.class)
+        Integer[] getC() {
+            return c;
+        }
+
+        void setC(Integer[] c) {
+            this.c = c;
+        }
+    }
+
 }

@@ -24,6 +24,7 @@ import org.jfaster.mango.invoker.SetterInvoker;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,6 +52,33 @@ public class JsonToObjectFunctionTest {
         invoker2.invoke(a, json2);
         assertThat(a.getB(), equalTo(b));
     }
+
+    @Test
+    public void testApplyArray() throws Exception {
+        G g = new G();
+
+        int[] a = new int[] {2, 3, 4};
+        String jsonA = JSON.toJSONString(a);
+        Method m = G.class.getDeclaredMethod("setA", int[].class);
+        SetterInvoker invoker = FunctionalSetterInvoker.create("a", m);
+        invoker.invoke(g, jsonA);
+        assertThat(Arrays.toString(g.getA()), equalTo(Arrays.toString(a)));
+
+        B[] b = new B[] {new B(4, 5), new B(7, 8)};
+        String jsonB = JSON.toJSONString(b);
+        Method m2 = G.class.getDeclaredMethod("setB", B[].class);
+        SetterInvoker invoker2 = FunctionalSetterInvoker.create("b", m2);
+        invoker2.invoke(g, jsonB);
+        assertThat(Arrays.toString(g.getB()), equalTo(Arrays.toString(b)));
+
+        Integer[] c = new Integer[] {1, 4, 7};
+        String jsonC = JSON.toJSONString(c);
+        Method m3 = G.class.getDeclaredMethod("setC", Integer[].class);
+        SetterInvoker invoker3 = FunctionalSetterInvoker.create("c", m3);
+        invoker3.invoke(g, jsonC);
+        assertThat(Arrays.toString(g.getC()), equalTo(Arrays.toString(c)));
+    }
+
 
     static class A {
         private List<Integer> list;
@@ -111,6 +139,45 @@ public class JsonToObjectFunctionTest {
             }
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "x=" + x + ", y=" + y;
+        }
     }
+
+    static class G {
+        private int[] a;
+        private B[] b;
+        private Integer[] c;
+
+        int[] getA() {
+            return a;
+        }
+
+        @Functional(JsonToObjectFunction.class)
+        void setA(int[] a) {
+            this.a = a;
+        }
+
+        B[] getB() {
+            return b;
+        }
+
+        @Functional(JsonToObjectFunction.class)
+        void setB(B[] b) {
+            this.b = b;
+        }
+
+        Integer[] getC() {
+            return c;
+        }
+
+        @Functional(JsonToObjectFunction.class)
+        void setC(Integer[] c) {
+            this.c = c;
+        }
+    }
+
 
 }

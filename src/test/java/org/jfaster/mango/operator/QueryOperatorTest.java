@@ -190,6 +190,7 @@ public class QueryOperatorTest {
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @SuppressWarnings("unchecked")
             @Override
             public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select count(1) from user where id in (?,?,?)";
@@ -199,7 +200,6 @@ public class QueryOperatorTest {
                 assertThat(args[1], equalTo((Object) 200));
                 assertThat(args[2], equalTo((Object) 300));
                 assertThat(rowMapper.getMappedClass().equals(Integer.class), is(true));
-                //noinspection unchecked
                 return (T) Integer.valueOf(3);
             }
         });

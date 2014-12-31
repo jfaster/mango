@@ -30,15 +30,17 @@ import java.lang.reflect.Type;
  */
 public class FunctionalGetterInvoker extends FunctionalInvoker implements GetterInvoker {
 
-    private TypeToken<?> returnToken;
-    private TypeToken<?> realReturnToken;
+    private Type realReturnType;
+    private Type returnType;
+    private Class<?> rawReturnType;
 
     private FunctionalGetterInvoker(String name, Method method) {
         super(name, method);
-        returnToken = realReturnToken = TypeToken.of(method.getGenericReturnType());
+        TypeToken<?> returnToken = TypeToken.of(method.getGenericReturnType());
+        realReturnType = returnToken.getType();
         if (needCheckAndChange()) {
             if (function.inverseCheck()) { // 针对继承GenericFunction的
-                throw new RuntimeException(); // TODO
+                throw new IllegalStateException("generic function can't be use in getter");
             } else { // 针对继承LiteFunction的
                 TypeToken<?> wrapReturnToken = returnToken.wrap();
                 if (!inputToken.isAssignableFrom(wrapReturnToken)) {
@@ -49,6 +51,8 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
             }
             returnToken = outputToken;
         }
+        returnType = returnToken.getType();
+        rawReturnType = returnToken.getRawType();
     }
 
     public static FunctionalGetterInvoker create(String name, Method method) {
@@ -60,7 +64,7 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
     public Object invoke(Object object) {
         try {
             Object input = method.invoke(object);
-            Object r = function.apply(input, realReturnToken);
+            Object r = function.apply(input, realReturnType);
             return r;
         } catch (IllegalAccessException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
@@ -76,12 +80,12 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
 
     @Override
     public Type getType() {
-        return returnToken.getType();
+        return returnType;
     }
 
     @Override
     public Class<?> getRawType() {
-        return returnToken.getRawType();
+        return rawReturnType;
     }
 
 }

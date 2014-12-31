@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.support.model4table;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import java.util.Date;
@@ -68,7 +69,7 @@ public class User {
     @Override
     public String toString() {
         Long thisUpdateTime = this.updateTime != null ? this.updateTime.getTime() : null;
-        return Objects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
+        return MoreObjects.toStringHelper(this).add("id", id).add("name", name).add("age", age).
                 add("gender", gender).add("money", money).add("updateTime", thisUpdateTime).toString();
     }
 

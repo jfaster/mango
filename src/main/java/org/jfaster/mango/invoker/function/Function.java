@@ -16,9 +16,8 @@
 
 package org.jfaster.mango.invoker.function;
 
-import com.google.common.reflect.TypeToken;
-
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
@@ -26,7 +25,7 @@ import javax.annotation.Nullable;
 public interface Function<I, O> {
 
     @Nullable
-    public O apply(@Nullable I input, TypeToken<?> token);
+    public O apply(@Nullable I input, Type type);
 
     public boolean inverseCheck();
 

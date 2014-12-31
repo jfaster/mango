@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.mapper;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
@@ -126,7 +127,7 @@ public class BeanPropertyRowMapperTest {
 
         @Override
         public String toString() {
-            return Objects.toStringHelper(this).add("idxx", idxx)
+            return MoreObjects.toStringHelper(this).add("idxx", idxx)
                     .add("uid", uid).add("yyCon", yyCon).toString();
         }
 

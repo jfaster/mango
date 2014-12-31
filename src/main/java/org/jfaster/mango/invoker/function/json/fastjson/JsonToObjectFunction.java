@@ -17,10 +17,10 @@
 package org.jfaster.mango.invoker.function.json.fastjson;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.invoker.function.GenericFunction;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
  * json --> Object
@@ -31,8 +31,8 @@ public class JsonToObjectFunction extends GenericFunction<String, Object> {
 
     @Nullable
     @Override
-    public Object apply(@Nullable String input, TypeToken<?> token) {
-        return input == null ? null : JSON.parseObject(input, token.getType());
+    public Object apply(@Nullable String input, Type type) {
+        return input == null ? null : JSON.parseObject(input, type);
     }
 
 }

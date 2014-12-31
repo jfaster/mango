@@ -19,6 +19,7 @@ package org.jfaster.mango.invoker.function;
 import com.google.common.reflect.TypeToken;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 import java.util.EnumSet;
 
 /**
@@ -32,17 +33,18 @@ public class IntegerToEnumFunction extends GenericFunction<Integer, Enum> {
 
     @Nullable
     @Override
-    public Enum apply(@Nullable Integer input, TypeToken<?> token) {
+    public Enum apply(@Nullable Integer input, Type type) {
         if (input == null) {
             return null;
         }
-        EnumSet<?> es = getEnumSet(token.getRawType());
+        Class<?> rawType = TypeToken.of(type).getRawType();
+        EnumSet<?> es = getEnumSet(rawType);
         for (Enum<?> e : es) {
             if (e.ordinal() == input) {
                 return e;
             }
         }
-        throw new RuntimeException(); // TODO
+        throw new IllegalStateException("cant' trans Integer(" + input + ") to " + type);
     }
 
     private static EnumSet getEnumSet(Class enumType) {

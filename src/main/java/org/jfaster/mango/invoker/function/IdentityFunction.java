@@ -16,9 +16,8 @@
 
 package org.jfaster.mango.invoker.function;
 
-import com.google.common.reflect.TypeToken;
-
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
@@ -27,7 +26,7 @@ public class IdentityFunction implements Function<Object, Object> {
 
     @Nullable
     @Override
-    public Object apply(@Nullable Object input, TypeToken<?> invokerToken) {
+    public Object apply(@Nullable Object input, Type type) {
         return input;
     }
 
