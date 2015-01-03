@@ -18,8 +18,6 @@ package org.jfaster.mango.invoker;
 
 import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.annotation.Functional;
-import org.jfaster.mango.invoker.function.Function;
-import org.jfaster.mango.invoker.function.IdentityFunction;
 import org.jfaster.mango.reflect.Reflection;
 
 import java.lang.reflect.Method;

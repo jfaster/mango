@@ -19,6 +19,7 @@ package org.jfaster.mango.invoker.function;
 import org.jfaster.mango.annotation.Functional;
 import org.jfaster.mango.invoker.FunctionalGetterInvoker;
 import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.function.enums.EnumToIntegerFunction;
 import org.junit.Test;
 
 import java.lang.reflect.Method;

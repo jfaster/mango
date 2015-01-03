@@ -18,6 +18,7 @@ package org.jfaster.mango.invoker;
 
 import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.reflect.Types;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -73,12 +74,11 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
                 throw new NullPointerException("property " + getName() + " of " +
                         object.getClass() + " is primitive, can not be assigned to null");
             }
-            // TODO
-//            if (output != null &&  !Types.isAssignable(realParameterRawType, output.getClass())) {
-//                throw new ClassCastException("cannot convert value of type [" + output.getClass().getName() +
-//                        "] to required type [" + realParameterRawType.getName() + "] " +
-//                        "for property '" + getName() + "' of " +  object.getClass());
-//            }
+            if (output != null &&  !Types.isAssignable(realRawParameterType, output.getClass())) {
+                throw new ClassCastException("cannot convert value of type [" + output.getClass().getName() +
+                        "] to required type [" + realRawParameterType.getName() + "] " +
+                        "for property '" + getName() + "' of " +  object.getClass());
+            }
             method.invoke(object, output);
         } catch (IllegalAccessException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());

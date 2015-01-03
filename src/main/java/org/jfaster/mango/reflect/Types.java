@@ -14,20 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.annotation;
+package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.invoker.Function;
-
-import java.lang.annotation.*;
+import org.jfaster.mango.util.Primitives;
 
 /**
  * @author ash
  */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Functional {
+public class Types {
 
-    Class<? extends Function<?, ?>> value();
+    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+        if (lhsType.isAssignableFrom(rhsType)) {
+            return true;
+        }
+        return lhsType.isPrimitive() ?
+                lhsType.equals(Primitives.unwrap(rhsType)) :
+                lhsType.isAssignableFrom(Primitives.wrap(rhsType));
+    }
 
 }

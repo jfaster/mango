@@ -14,21 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function;
+package org.jfaster.mango.invoker;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
- * Enum --> String
- *
  * @author ash
  */
-public class EnumToStringFunction extends LiteFunction<Enum<?>, String> {
+public interface Function<I, O> {
 
     @Nullable
-    @Override
-    public String apply(@Nullable Enum<?> input) {
-        return input == null ? null : input.name();
-    }
+    public O apply(@Nullable I input, Type type);
+
+    public boolean inverseCheck();
+
+    public boolean isIdentity();
 
 }

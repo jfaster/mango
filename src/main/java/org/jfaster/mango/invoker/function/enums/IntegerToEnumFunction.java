@@ -14,9 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function;
+package org.jfaster.mango.invoker.function.enums;
 
 import com.google.common.reflect.TypeToken;
+import org.jfaster.mango.invoker.function.GenericFunction;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;

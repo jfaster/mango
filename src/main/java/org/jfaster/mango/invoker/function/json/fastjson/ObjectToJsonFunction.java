@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function.json.fastjson;
 
 import com.alibaba.fastjson.JSON;
-import org.jfaster.mango.invoker.function.LiteFunction;
+import org.jfaster.mango.invoker.LiteFunction;
 
 import javax.annotation.Nullable;
 

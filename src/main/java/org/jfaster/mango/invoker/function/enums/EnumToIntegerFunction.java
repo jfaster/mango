@@ -14,30 +14,23 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function;
+package org.jfaster.mango.invoker.function.enums;
+
+import org.jfaster.mango.invoker.LiteFunction;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
 
 /**
+ * Enum --> Integer
+ *
  * @author ash
  */
-public class IdentityFunction implements Function<Object, Object> {
+public class EnumToIntegerFunction extends LiteFunction<Enum<?>, Integer> {
 
     @Nullable
     @Override
-    public Object apply(@Nullable Object input, Type type) {
-        return input;
-    }
-
-    @Override
-    public boolean inverseCheck() {
-        return false;
-    }
-
-    @Override
-    public boolean isIdentity() {
-        return true;
+    public Integer apply(@Nullable Enum<?> input) {
+        return input == null ? null : input.ordinal();
     }
 
 }

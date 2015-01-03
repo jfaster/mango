@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.invoker.function;
 
+import org.jfaster.mango.invoker.LiteFunction;
+
 import javax.annotation.Nullable;
 import java.util.List;
 

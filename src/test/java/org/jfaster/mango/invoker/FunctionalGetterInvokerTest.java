@@ -21,7 +21,6 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.annotation.Functional;
-import org.jfaster.mango.invoker.function.LiteFunction;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

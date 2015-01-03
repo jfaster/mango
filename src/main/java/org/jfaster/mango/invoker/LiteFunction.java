@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function;
+package org.jfaster.mango.invoker;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -22,13 +22,25 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public interface Function<I, O> {
+public abstract class LiteFunction<I, O> implements Function<I, O> {
 
     @Nullable
-    public O apply(@Nullable I input, Type type);
+    @Override
+    public O apply(@Nullable I input, Type type) {
+        return apply(input);
+    }
 
-    public boolean inverseCheck();
+    @Override
+    public boolean inverseCheck() {
+        return false;
+    }
 
-    public boolean isIdentity();
+    @Override
+    public boolean isIdentity() {
+        return false;
+    }
+
+    @Nullable
+    public abstract O apply(@Nullable I input);
 
 }

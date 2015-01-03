@@ -14,29 +14,23 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function;
+package org.jfaster.mango.invoker.function.enums;
 
-import com.google.common.reflect.TypeToken;
+import org.jfaster.mango.invoker.LiteFunction;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
 
 /**
- * String --> Enum
+ * Enum --> String
  *
  * @author ash
  */
-public class StringToEnumFunction extends GenericFunction<String, Enum> {
+public class EnumToStringFunction extends LiteFunction<Enum<?>, String> {
 
     @Nullable
     @Override
-    public Enum apply(@Nullable String input, Type type) {
-        if (input == null) {
-            return null;
-        }
-        Class rawType = TypeToken.of(type).getRawType();
-        Enum r = Enum.valueOf(rawType, input);
-        return r;
+    public String apply(@Nullable Enum<?> input) {
+        return input == null ? null : input.name();
     }
 
 }
