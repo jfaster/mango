@@ -40,9 +40,8 @@ public class ParameterDescriptor extends TypeWithAnnotationDescriptor {
      */
     private final String name;
 
-    public ParameterDescriptor(int position, Type type, Class<?> rawType,
-                               List<Annotation> annotations, String name) {
-        super(type, rawType, annotations);
+    public ParameterDescriptor(int position, Type type, List<Annotation> annotations, String name) {
+        super(type, annotations);
         if (getMappedClass() == null) {
             throw new IncorrectParameterTypeException(type + " is invalid");
         }

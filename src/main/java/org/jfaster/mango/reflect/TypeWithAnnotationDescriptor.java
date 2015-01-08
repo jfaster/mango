@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.reflect;
 
+import com.google.common.reflect.TypeToken;
+
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -32,9 +34,9 @@ public abstract class TypeWithAnnotationDescriptor {
     private final boolean isIterable;
     private final Class<?> mappedClass;
 
-    public TypeWithAnnotationDescriptor(Type type, Class<?> rawType, List<Annotation> annotations) {
+    public TypeWithAnnotationDescriptor(Type type, List<Annotation> annotations) {
         this.type = type;
-        this.rawType = rawType;
+        this.rawType = TypeToken.of(type).getRawType();
         this.annotations = annotations;
 
         TypeWrapper tw = new TypeWrapper(type);

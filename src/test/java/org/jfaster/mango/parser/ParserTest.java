@@ -254,8 +254,7 @@ public class ParserTest {
         List<ParameterDescriptor> pds = Lists.newArrayList();
         int pos = 0;
         for (Type type : types) {
-            ParameterDescriptor pd = new ParameterDescriptor(pos++, type,
-                    TypeToken.of(type).getRawType(), empty, String.valueOf(pos));
+            ParameterDescriptor pd = new ParameterDescriptor(pos++, type, empty, String.valueOf(pos));
             pds.add(pd);
         }
         NameProvider np = new NameProvider(pds);

@@ -247,13 +247,13 @@ public class QueryOperatorTest {
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
         List<Annotation> empty = Collections.emptyList();
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pt.getRawType(), empty, "1");
+        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
-        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), rt.getRawType(), methodAnnos);
+        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(

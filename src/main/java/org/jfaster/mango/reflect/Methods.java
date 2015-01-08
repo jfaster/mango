@@ -38,19 +38,17 @@ public class Methods {
         for (Annotation a : method.getDeclaringClass().getAnnotations()) {
             mas.add(a);
         }
-        ReturnDescriptor rd = new ReturnDescriptor(method.getGenericReturnType(), method.getReturnType(), mas);
+        ReturnDescriptor rd = new ReturnDescriptor(method.getGenericReturnType(), mas);
 
         List<ParameterDescriptor> pds = new LinkedList<ParameterDescriptor>();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         String[] names = parameterNameDiscover.getParameterNames(method);
         for (int i = 0; i < genericParameterTypes.length; i++) {
             Type type = genericParameterTypes[i];
-            Class<?> rawType = parameterTypes[i];
             Annotation[] pas = parameterAnnotations[i];
             String name = names[i];
-            pds.add(new ParameterDescriptor(i, type, rawType, Arrays.asList(pas), name));
+            pds.add(new ParameterDescriptor(i, type, Arrays.asList(pas), name));
         }
 
         return new MethodDescriptor(rd, pds);

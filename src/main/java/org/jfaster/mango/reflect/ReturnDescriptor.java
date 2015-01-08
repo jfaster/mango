@@ -30,8 +30,8 @@ import java.util.List;
  */
 public class ReturnDescriptor extends TypeWithAnnotationDescriptor {
 
-    public ReturnDescriptor(Type type, Class<?> rawType, List<Annotation> annotations) {
-        super(type, rawType, annotations);
+    public ReturnDescriptor(Type type, List<Annotation> annotations) {
+        super(type, annotations);
         if (getMappedClass() == null) {
             throw new IncorrectReturnTypeException(type + " is invalid");
         }
