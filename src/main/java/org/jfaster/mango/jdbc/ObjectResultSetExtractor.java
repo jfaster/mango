@@ -36,14 +36,14 @@ public class ObjectResultSetExtractor<T> implements ResultSetExtractor<T> {
     public T extractData(ResultSet rs) throws SQLException {
         Class<T> mappedClass = rowMapper.getMappedClass();
         if (!mappedClass.isPrimitive()) {
-            return rs.next() ? rowMapper.mapRow(rs, 1) : null;
+            return rs.next() ? rowMapper.mapRow(rs, 0) : null;
         }
 
         // 原生类型
         if (!rs.next()) {
             throw new NullPointerException("no data, can't cast null to primitive type " + mappedClass);
         }
-        T r = rowMapper.mapRow(rs, 1);
+        T r = rowMapper.mapRow(rs, 0);
         if (r == null) {
             throw new NullPointerException("data is null, can't cast null to primitive type " + mappedClass);
         }
