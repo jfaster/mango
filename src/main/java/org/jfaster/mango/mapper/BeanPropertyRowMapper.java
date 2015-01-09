@@ -90,6 +90,9 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();
 
+        if (logger.isDebugEnabled() && rowNumber == 0) {
+            logger.debug("Mapping [" + mappedClass + "] begin");
+        }
         for (int index = 1; index <= columnCount; index++) {
             String column = JdbcUtils.lookupColumnName(rsmd, index);
             SetterInvoker invoker = invokerMap.get(column.trim().toLowerCase());
@@ -101,6 +104,9 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
                 }
                 invoker.invoke(mappedObject, value);
             }
+        }
+        if (logger.isDebugEnabled() && rowNumber == 0) {
+            logger.debug("Mapping [" + mappedClass + "] end");
         }
         return mappedObject;
     }
