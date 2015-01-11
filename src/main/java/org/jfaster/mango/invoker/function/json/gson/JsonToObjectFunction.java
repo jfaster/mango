@@ -14,9 +14,9 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function.json.fastjson;
+package org.jfaster.mango.invoker.function.json.gson;
 
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import org.jfaster.mango.invoker.GenericFunction;
 
 import javax.annotation.Nullable;
@@ -32,7 +32,7 @@ public class JsonToObjectFunction extends GenericFunction<String, Object> {
     @Nullable
     @Override
     public Object apply(@Nullable String input, Type type) {
-        return input == null ? null : JSON.parseObject(input, type);
+        return input == null ? null : new Gson().fromJson(input, type);
     }
 
 }

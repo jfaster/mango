@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function.enums;
 
 import com.google.common.reflect.TypeToken;
-import org.jfaster.mango.invoker.function.GenericFunction;
+import org.jfaster.mango.invoker.GenericFunction;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function;
+package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.invoker.Function;
 

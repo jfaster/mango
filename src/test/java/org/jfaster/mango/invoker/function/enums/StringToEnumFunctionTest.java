@@ -14,12 +14,11 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function;
+package org.jfaster.mango.invoker.function.enums;
 
 import org.jfaster.mango.annotation.Functional;
-import org.jfaster.mango.invoker.FunctionalGetterInvoker;
-import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.function.enums.EnumToIntegerFunction;
+import org.jfaster.mango.invoker.FunctionalSetterInvoker;
+import org.jfaster.mango.invoker.SetterInvoker;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -30,26 +29,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author ash
  */
-public class EnumToIntegerFunctionTest {
+public class StringToEnumFunctionTest {
 
     @Test
     public void testApply() throws Exception {
         A a = new A();
-        a.setE(E.Y);
-        Method m = A.class.getDeclaredMethod("getE");
-        GetterInvoker invoker = FunctionalGetterInvoker.create("e", m);
-        Integer r = (Integer) invoker.invoke(a);
-        assertThat(r, is(1));
+        Method m = A.class.getDeclaredMethod("setE", E.class);
+        SetterInvoker invoker = FunctionalSetterInvoker.create("e", m);
+        invoker.invoke(a, "Y");
+        assertThat(a.getE(), is(E.Y));
     }
 
     static class A {
         private E e;
 
-        @Functional(EnumToIntegerFunction.class)
         E getE() {
             return e;
         }
 
+        @Functional(StringToEnumFunction.class)
         void setE(E e) {
             this.e = e;
         }
