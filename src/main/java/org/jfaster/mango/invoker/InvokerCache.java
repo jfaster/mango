@@ -37,11 +37,6 @@ public class InvokerCache {
         return cache.get(clazz).getGetterInvoker(propertyName);
     }
 
-    @Nullable
-    public static SetterInvoker getSetterInvoker(Class<?> clazz, String propertyName) {
-        return cache.get(clazz).getSetterInvoker(propertyName);
-    }
-
     public static List<GetterInvoker> getGetterInvokers(Class<?> clazz) {
         return cache.get(clazz).getGetterInvokers();
     }

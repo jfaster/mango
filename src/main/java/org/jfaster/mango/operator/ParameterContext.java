@@ -16,17 +16,14 @@
 
 package org.jfaster.mango.operator;
 
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
-import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.IdentityGetterInvoker;
+import org.jfaster.mango.invoker.HierarchyGetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -91,21 +88,21 @@ public class ParameterContext {
     /**
      * 获得getter调用器
      */
-    public GetterInvoker getTargetInvoker(String parameterName, String parameterProperty) {
+    public HierarchyGetterInvoker getInvoker(String parameterName, String propertyPath) {
         Type type = getParameterType(parameterName);
-        GetterInvoker invoker;
-        if (Strings.isEmpty(parameterProperty)) {
-            invoker = new IdentityGetterInvoker(type);
-        } else {
-            TypeToken token = TypeToken.of(type);
-            invoker = InvokerCache.getGetterInvoker(token.getRawType(), parameterProperty);
-            if (invoker == null) {
-                String fullName = Strings.getFullName(parameterName, parameterProperty);
-                throw new NotReadablePropertyException("property " + fullName + " " +
-                        "is not readable, the type of :" + parameterName +
-                        " is " + type + ", please check it's get method");
-            }
-        }
+        HierarchyGetterInvoker invoker = HierarchyGetterInvoker.create(type, propertyPath);
+//        if (Strings.isEmpty(propertyPath)) {
+//            invoker = new IdentityGetterInvoker(type);
+//        } else {
+//            TypeToken token = TypeToken.of(type);
+//            invoker = InvokerCache.getGetterInvoker(token.getRawType(), propertyPath);
+//            if (invoker == null) {
+//                String fullName = Strings.getFullName(parameterName, propertyPath);
+//                throw new NotReadablePropertyException("property " + fullName + " " +
+//                        "is not readable, the type of :" + parameterName +
+//                        " is " + type + ", please check it's get method");
+//            }
+//        }
         return invoker;
     }
 

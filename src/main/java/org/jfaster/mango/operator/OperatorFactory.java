@@ -193,7 +193,7 @@ public class OperatorFactory {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
-                invoker = context.getTargetInvoker(shardParameterName, shardParameterProperty);
+                invoker = context.getInvoker(shardParameterName, shardParameterProperty);
                 Type shardType = invoker.getType();
                 TypeWrapper tw = new TypeWrapper(shardType);
                 Class<?> mappedClass = tw.getMappedClass();

@@ -61,9 +61,9 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object invoke(Object object) {
+    public Object invoke(Object obj) {
         try {
-            Object input = method.invoke(object);
+            Object input = method.invoke(obj);
             Object r = function.apply(input, realReturnType);
             return r;
         } catch (IllegalAccessException e) {
@@ -71,11 +71,6 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
         } catch (InvocationTargetException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
         }
-    }
-
-    @Override
-    public boolean isIdentity() {
-        return false;
     }
 
     @Override
