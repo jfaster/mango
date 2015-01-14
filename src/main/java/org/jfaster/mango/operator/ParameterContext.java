@@ -89,20 +89,11 @@ public class ParameterContext {
      * 获得getter调用器
      */
     public HierarchyGetterInvoker getInvoker(String parameterName, String propertyPath) {
-        Type type = getParameterType(parameterName);
-        HierarchyGetterInvoker invoker = HierarchyGetterInvoker.create(type, propertyPath);
-//        if (Strings.isEmpty(propertyPath)) {
-//            invoker = new IdentityGetterInvoker(type);
-//        } else {
-//            TypeToken token = TypeToken.of(type);
-//            invoker = InvokerCache.getGetterInvoker(token.getRawType(), propertyPath);
-//            if (invoker == null) {
-//                String fullName = Strings.getFullName(parameterName, propertyPath);
-//                throw new NotReadablePropertyException("property " + fullName + " " +
-//                        "is not readable, the type of :" + parameterName +
-//                        " is " + type + ", please check it's get method");
-//            }
-//        }
+        Type type = typeMap.get(parameterName);
+        if (type == null) {
+            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
+        }
+        HierarchyGetterInvoker invoker = HierarchyGetterInvoker.create(type, parameterName, propertyPath);
         return invoker;
     }
 
@@ -121,14 +112,6 @@ public class ParameterContext {
 
     public List<ParameterDescriptor> getParameterDescriptors() {
         return parameterDescriptors;
-    }
-
-    private Type getParameterType(String parameterName) {
-        Type type = typeMap.get(parameterName);
-        if (type == null) {
-            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
-        }
-        return type;
     }
 
 }

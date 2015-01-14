@@ -45,7 +45,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
     }
 
     public void init(String str) {
-        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)?");
+        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
         Matcher m = p.matcher(str);
         if (!m.matches()) {
             throw new UnreachableCodeException();

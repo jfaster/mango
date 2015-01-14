@@ -42,7 +42,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     }
 
     public void init(String str) {
-        Pattern p = Pattern.compile("#\\{\\s*(:(\\w+)(\\.\\w+)?)\\s*\\}", Pattern.CASE_INSENSITIVE);
+        Pattern p = Pattern.compile("#\\{\\s*(:(\\w+)(\\.\\w+)*)\\s*\\}", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(str);
         if (!m.matches()) {
             throw new UnreachableCodeException();

@@ -47,7 +47,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
 
     public void init(String str) {
-        Pattern p = Pattern.compile("in\\s*\\(\\s*(:(\\w+)(\\.\\w+)?)\\s*\\)", Pattern.CASE_INSENSITIVE);
+        Pattern p = Pattern.compile("in\\s*\\(\\s*(:(\\w+)(\\.\\w+)*)\\s*\\)", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(str);
         if (!m.matches()) {
             throw new UnreachableCodeException();

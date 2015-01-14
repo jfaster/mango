@@ -20,6 +20,7 @@ import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.reflect.Types;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -67,7 +68,7 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
 
     @SuppressWarnings("unchecked")
     @Override
-    public void invoke(Object object, Object parameter) {
+    public void invoke(Object object, @Nullable Object parameter) {
         try {
             Object output = function.apply(parameter, realParameterType);
             if (output == null && realRawParameterType.isPrimitive()) {

@@ -66,17 +66,6 @@ public class InvocationContext {
         }
         Object obj = parameterMap.get(parameterName);
         Object value = invoker.invoke(obj);
-//        Object value;
-//        if (invoker.isIdentity()) {
-//            value = obj;
-//        } else {
-//            if (obj == null) { // 传入参数为null，但需要取该参数上的属性
-//                String fullName = Strings.getFullName(parameterName, invoker.getName());
-//                throw new NullPointerException("parameter :" + parameterName + " is null, " +
-//                        "so can't get value from " + fullName);
-//            }
-//            value = invoker.invoke(obj);
-//        }
         cache.put(key, value);
         return value;
     }
