@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
  */
 public class ASTJoinParameter extends AbstractRenderableNode implements ParameterBean {
 
-    private String name;
-    private String property; // 为""的时候表示没有属性
+    private String parameterName;
+    private String propertyPath; // 为""的时候表示没有属性
     private GetterInvoker invoker;
 
     public ASTJoinParameter(int id) {
@@ -48,10 +48,10 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
             throw new UnreachableCodeException();
         }
         String fullName = m.group(1);
-        name = m.group(2);
-        property = fullName.substring(name.length() + 1);
-        if (!property.isEmpty()) {
-            property = property.substring(1);  // .property变为property
+        parameterName = m.group(2);
+        propertyPath = fullName.substring(parameterName.length() + 1);
+        if (!propertyPath.isEmpty()) {
+            propertyPath = propertyPath.substring(1);  // .property变为property
         }
     }
 
@@ -60,7 +60,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
         if (invoker == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object obj = context.getPropertyValue(name, invoker);
+        Object obj = context.getPropertyValue(parameterName, invoker);
         context.writeToSqlBuffer(obj.toString());
         return true;
     }
@@ -69,8 +69,8 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     public String toString() {
         return super.toString() + "{" +
                 "fullName=" + getFullName() + ", " +
-                "name=" + name + ", " +
-                "property=" + property +
+                "parameterName=" + parameterName + ", " +
+                "propertyPath=" + propertyPath +
                 "}";
     }
 
@@ -81,32 +81,32 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
 
     @Override
     public boolean hasProperty() {
-        return Strings.isNotEmpty(property);
+        return Strings.isNotEmpty(propertyPath);
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getParameterName() {
+        return parameterName;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
     }
 
     @Override
-    public String getProperty() {
-        return property;
+    public String getPropertyPath() {
+        return propertyPath;
     }
 
     @Override
-    public void setProperty(String property) {
-        this.property = property;
+    public void setPropertyPath(String propertyPath) {
+        this.propertyPath = propertyPath;
     }
 
     @Override
     public String getFullName() {
-        return Strings.getFullName(name, property);
+        return Strings.getFullName(parameterName, propertyPath);
     }
 
     @Override

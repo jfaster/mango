@@ -88,7 +88,7 @@ public class ParameterContext {
     /**
      * 获得getter调用器
      */
-    public HierarchyGetterInvoker getInvoker(String parameterName, String propertyPath) {
+    public GetterInvoker getInvoker(String parameterName, String propertyPath) {
         Type type = typeMap.get(parameterName);
         if (type == null) {
             throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");

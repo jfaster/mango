@@ -25,13 +25,13 @@ public interface ParameterBean {
 
     public boolean hasProperty();
 
-    public String getName();
+    public String getParameterName();
 
-    public void setName(String parameterName);
+    public void setParameterName(String parameterName);
 
-    public String getProperty();
+    public String getPropertyPath();
 
-    public void setProperty(String propertyName);
+    public void setPropertyPath(String propertyPath);
 
     public String getFullName();
 

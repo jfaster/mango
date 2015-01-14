@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
  */
 public class ASTExpressionParameter extends AbstractExpression implements ParameterBean {
 
-    private String name;
-    private String property; // 为""的时候表示没有属性
+    private String parameterName;
+    private String propertyPath; // 为""的时候表示没有属性
     private GetterInvoker invoker;
 
     public ASTExpressionParameter(int i) {
@@ -50,10 +50,10 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (!m.matches()) {
             throw new UnreachableCodeException();
         }
-        name = m.group(1);
-        property = str.substring(m.end(1));
-        if (!property.isEmpty()) {
-            property = property.substring(1);  // .property变为property
+        parameterName = m.group(1);
+        propertyPath = str.substring(m.end(1));
+        if (!propertyPath.isEmpty()) {
+            propertyPath = propertyPath.substring(1);  // .property变为property
         }
     }
 
@@ -62,7 +62,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (invoker == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object obj = context.getNullablePropertyValue(name, invoker);
+        Object obj = context.getNullablePropertyValue(parameterName, invoker);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         }
@@ -74,15 +74,15 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (invoker == null) {
             throw new NullPointerException("invoker must set");
         }
-        return context.getNullablePropertyValue(name, invoker);
+        return context.getNullablePropertyValue(parameterName, invoker);
     }
 
     @Override
     public String toString() {
         return super.toString() + "{" +
                 "fullName=" + getFullName() + ", " +
-                "name=" + name + ", " +
-                "property=" + property +
+                "parameterName=" + parameterName + ", " +
+                "propertyPath=" + propertyPath +
                 "}";
     }
 
@@ -93,32 +93,32 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     @Override
     public boolean hasProperty() {
-        return Strings.isNotEmpty(property);
+        return Strings.isNotEmpty(propertyPath);
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getParameterName() {
+        return parameterName;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
     }
 
     @Override
-    public String getProperty() {
-        return property;
+    public String getPropertyPath() {
+        return propertyPath;
     }
 
     @Override
-    public void setProperty(String property) {
-        this.property = property;
+    public void setPropertyPath(String propertyPath) {
+        this.propertyPath = propertyPath;
     }
 
     @Override
     public String getFullName() {
-        return Strings.getFullName(name, property);
+        return Strings.getFullName(parameterName, propertyPath);
     }
 
     @Override

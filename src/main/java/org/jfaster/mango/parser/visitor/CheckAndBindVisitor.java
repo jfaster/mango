@@ -72,7 +72,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvoker invoker = context.getInvoker(node.getName(), node.getProperty());
+        GetterInvoker invoker = context.getInvoker(node.getParameterName(), node.getPropertyPath());
         Type type = invoker.getType();
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
@@ -87,7 +87,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvoker invoker = context.getInvoker(node.getName(), node.getProperty());
+        GetterInvoker invoker = context.getInvoker(node.getParameterName(), node.getPropertyPath());
         Type type = invoker.getType();
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
@@ -114,7 +114,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvoker invoker = context.getInvoker(node.getName(), node.getProperty());
+        GetterInvoker invoker = context.getInvoker(node.getParameterName(), node.getPropertyPath());
         node.setInvoker(invoker);
         return node.childrenAccept(this, data);
     }
@@ -197,7 +197,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvoker invoker = context.getInvoker(node.getName(), node.getProperty());
+        GetterInvoker invoker = context.getInvoker(node.getParameterName(), node.getPropertyPath());
         node.setInvoker(invoker);
         return node.childrenAccept(this, data);
     }

@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
  */
 public class ASTJDBCIterableParameter extends AbstractRenderableNode implements ParameterBean {
 
-    private String name;
-    private String property; // 为""的时候表示没有属性
+    private String parameterName;
+    private String propertyPath; // 为""的时候表示没有属性
     private GetterInvoker invoker;
 
     private String propertyOfMapper; // "a in (:1)"中的a
@@ -53,10 +53,10 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
             throw new UnreachableCodeException();
         }
         String fullName = m.group(1);
-        name = m.group(2);
-        property = fullName.substring(name.length() + 1);
-        if (!property.isEmpty()) {
-            property = property.substring(1);  // .property变为property
+        parameterName = m.group(2);
+        propertyPath = fullName.substring(parameterName.length() + 1);
+        if (!propertyPath.isEmpty()) {
+            propertyPath = propertyPath.substring(1);  // .property变为property
         }
     }
 
@@ -65,15 +65,15 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
         if (invoker == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object objs = context.getNullablePropertyValue(name, invoker);
+        Object objs = context.getNullablePropertyValue(parameterName, invoker);
         if (objs == null) {
             throw new NullPointerException("value of " +
-                    Strings.getFullName(name, property) + " can't be null");
+                    Strings.getFullName(parameterName, propertyPath) + " can't be null");
         }
         Iterables iterables = new Iterables(objs);
         if (iterables.isEmpty()) {
             throw new IllegalArgumentException("value of " +
-                    Strings.getFullName(name, property) + " can't be empty");
+                    Strings.getFullName(parameterName, propertyPath) + " can't be empty");
         }
         context.writeToSqlBuffer("in (");
         int t = 0;
@@ -94,8 +94,8 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     public String toString() {
         return super.toString() + "{" +
                 "fullName=" + getFullName() + ", " +
-                "name=" + name + ", " +
-                "property=" + property +
+                "parameterName=" + parameterName + ", " +
+                "propertyPath=" + propertyPath +
                 "}";
     }
 
@@ -106,32 +106,32 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
     @Override
     public boolean hasProperty() {
-        return Strings.isNotEmpty(property);
+        return Strings.isNotEmpty(propertyPath);
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getParameterName() {
+        return parameterName;
     }
 
     @Override
-    public void setName(String parameterName) {
-        this.name = parameterName;
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
     }
 
     @Override
-    public String getProperty() {
-        return property;
+    public String getPropertyPath() {
+        return propertyPath;
     }
 
     @Override
-    public void setProperty(String property) {
-        this.property = property;
+    public void setPropertyPath(String propertyPath) {
+        this.propertyPath = propertyPath;
     }
 
     @Override
     public String getFullName() {
-        return Strings.getFullName(name, property);
+        return Strings.getFullName(parameterName, propertyPath);
     }
 
     @Override

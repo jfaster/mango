@@ -75,7 +75,7 @@ public class CacheDriverImpl implements CacheDriver {
     /**
      * 缓存后缀属性路径
      */
-    private String suffixParameterProperty;
+    private String suffixPropertyPath;
 
     private GetterInvoker invoker;
 
@@ -194,7 +194,7 @@ public class CacheDriverImpl implements CacheDriver {
             CacheBy cacheByAnno = pd.getAnnotation(CacheBy.class);
             if (cacheByAnno != null) {
                 suffixParameterName = nameProvider.getParameterName(pd.getPosition());
-                suffixParameterProperty = cacheByAnno.value();
+                suffixPropertyPath = cacheByAnno.value();
                 cacheByNum++;
             }
         }
@@ -212,7 +212,7 @@ public class CacheDriverImpl implements CacheDriver {
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
                 checkCacheBy(rootNode);
-                invoker = context.getInvoker(suffixParameterName, suffixParameterProperty);
+                invoker = context.getInvoker(suffixParameterName, suffixPropertyPath);
                 Type suffixType = invoker.getType();
                 TypeWrapper tw = new TypeWrapper(suffixType);
                 useMultipleKeys = tw.isIterable();
@@ -235,8 +235,8 @@ public class CacheDriverImpl implements CacheDriver {
         }
 
         for (ASTJDBCIterableParameter jip : rootNode.getJDBCIterableParameters()) {
-            if (jip.getName().equals(suffixParameterName)
-                    && jip.getProperty().equals(suffixParameterProperty)) {
+            if (jip.getParameterName().equals(suffixParameterName)
+                    && jip.getPropertyPath().equals(suffixPropertyPath)) {
                 interableProperty = jip.getPropertyOfMapper();
                 break;
             }
@@ -249,21 +249,21 @@ public class CacheDriverImpl implements CacheDriver {
     private void checkCacheBy(ASTRootNode rootNode) {
         List<ASTJDBCParameter> jps = rootNode.getJDBCParameters();
         for (ASTJDBCParameter jp : jps) {
-            if (jp.getName().equals(suffixParameterName) &&
-                    jp.getProperty().equals(suffixParameterProperty)) {
+            if (jp.getParameterName().equals(suffixParameterName) &&
+                    jp.getPropertyPath().equals(suffixPropertyPath)) {
                 suffixFullName = jp.getFullName();
                 return;
             }
         }
         List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
         for (ASTJDBCIterableParameter jip : jips) {
-            if (jip.getName().equals(suffixParameterName) &&
-                    jip.getProperty().equals(suffixParameterProperty)) {
+            if (jip.getParameterName().equals(suffixParameterName) &&
+                    jip.getPropertyPath().equals(suffixPropertyPath)) {
                 suffixFullName = jip.getFullName();
                 return;
             }
         }
-        String fullName = Strings.getFullName(suffixParameterName, suffixParameterProperty);
+        String fullName = Strings.getFullName(suffixParameterName, suffixPropertyPath);
         throw new IncorrectCacheByException("CacheBy " + fullName + " can't match any db parameter");
     }
 
