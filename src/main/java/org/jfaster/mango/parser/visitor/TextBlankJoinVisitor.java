@@ -72,7 +72,7 @@ public enum TextBlankJoinVisitor implements ParserVisitor {
             }
             prev = node;
             if (node instanceof AbstractStringNode) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 while (node instanceof AbstractStringNode) {
                     AbstractStringNode str = (AbstractStringNode) node;
                     sb.append(str.getValue());

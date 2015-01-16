@@ -35,7 +35,7 @@ public class InvocationContext {
     private final List<Object> parameterValues = new LinkedList<Object>();
     private final Map<String, Object> cache = new HashMap<String, Object>();
 
-    private final StringBuffer sql = new StringBuffer();
+    private final StringBuilder sql = new StringBuilder();
     private final List<Object> args = new LinkedList<Object>();
 
     private String globalTable;
