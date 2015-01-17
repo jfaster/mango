@@ -19,7 +19,6 @@ package org.jfaster.mango.reflect;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,38 +29,32 @@ import static org.hamcrest.Matchers.is;
  */
 public class TypeTokenTest {
 
-//    private abstract static class StringList implements List<String> {}
-//
-//    @Test
-//    public void testGetType() throws Exception {
-//        TypeToken<List<String>> token = new TypeToken<List<String>>() {};
-//        assertThat(token.getType(), equalTo(StringList.class.getGenericInterfaces()[0]));
-//
-//        TypeToken<String> token2 = new TypeToken<String>() {};
-//        assertThat(token2.getType().equals(String.class), is(true));
-//    }
-//
-//    @Test
-//    public void testGetRawType() throws Exception {
-//        TypeToken<List<String>> token = new TypeToken<List<String>>() {};
-//        assertThat(token.getRawType().equals(List.class), is(true));
-//
-//        TypeToken<String> token2 = new TypeToken<String>() {};
-//        assertThat(token2.getRawType().equals(String.class), is(true));
-//    }
-//
-//    @Test
-//    public void testOf() throws Exception {
-//        TypeToken<String> token = TypeToken.of(String.class);
-//        assertThat(token.getType().equals(String.class), is(true));
-//        assertThat(token.getRawType().equals(String.class), is(true));
-//    }
-//
-//    @Test
-//    public void test() {
-//        TypeToken<Map<String, Integer>> token = new TypeToken<Map<String, Integer>>() {};
-//        System.out.println(token.getRawType());
-//    }
+    private abstract static class StringList implements List<String> {}
+
+    @Test
+    public void testGetType() throws Exception {
+        TypeToken<List<String>> token = new TypeToken<List<String>>() {};
+        assertThat(token.getType(), equalTo(StringList.class.getGenericInterfaces()[0]));
+
+        TypeToken<String> token2 = new TypeToken<String>() {};
+        assertThat(token2.getType().equals(String.class), is(true));
+    }
+
+    @Test
+    public void testGetRawType() throws Exception {
+        TypeToken<List<String>> token = new TypeToken<List<String>>() {};
+        assertThat(token.getRawType().equals(List.class), is(true));
+
+        TypeToken<String> token2 = new TypeToken<String>() {};
+        assertThat(token2.getRawType().equals(String.class), is(true));
+    }
+
+    @Test
+    public void testOf() throws Exception {
+        TypeToken<String> token = TypeToken.of(String.class);
+        assertThat(token.getType().equals(String.class), is(true));
+        assertThat(token.getRawType().equals(String.class), is(true));
+    }
 
 
 }

@@ -33,10 +33,10 @@ public class Reflection {
         }
         try {
             return clazz.newInstance();
-        } catch (InstantiationException ex) {
-            throw new BeanInstantiationException(clazz, "Is it an abstract class?", ex);
-        } catch (IllegalAccessException ex) {
-            throw new BeanInstantiationException(clazz, "Is the constructor accessible?", ex);
+        } catch (InstantiationException e) {
+            throw new BeanInstantiationException(clazz, "Is it an abstract class?", e);
+        } catch (IllegalAccessException e) {
+            throw new BeanInstantiationException(clazz, "Is the constructor accessible?", e);
         }
     }
 
