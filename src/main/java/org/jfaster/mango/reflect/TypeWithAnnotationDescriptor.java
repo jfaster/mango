@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.reflect;
 
-import com.google.common.reflect.TypeToken;
-
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.invoker.Function;
-
 /**
  * @author ash
  */

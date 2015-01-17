@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.invoker;
 
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.reflect.TypeToken;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

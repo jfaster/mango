@@ -16,13 +16,13 @@
 
 package org.jfaster.mango.operator;
 
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Rule;

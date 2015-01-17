@@ -17,13 +17,13 @@
 package org.jfaster.mango.parser.visitor;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.operator.NameProvider;
 import org.jfaster.mango.operator.OperatorType;
 import org.jfaster.mango.operator.ParameterContext;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
 import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

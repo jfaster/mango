@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.operator;
 
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.reflect.Parameter;
 import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.SQLType;
 import org.junit.Test;

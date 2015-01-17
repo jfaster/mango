@@ -16,11 +16,11 @@
 
 package org.jfaster.mango.operator;
 
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Rule;
 import org.junit.Test;

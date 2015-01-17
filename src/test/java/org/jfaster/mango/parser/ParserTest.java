@@ -17,10 +17,10 @@
 package org.jfaster.mango.parser;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
 import org.hamcrest.Matchers;
 import org.jfaster.mango.operator.*;
 import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;

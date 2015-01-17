@@ -1,7 +1,7 @@
 package org.jfaster.mango.invoker;
 
-import com.google.common.reflect.TypeToken;
 import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
