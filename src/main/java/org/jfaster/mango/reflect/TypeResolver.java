@@ -1,17 +1,17 @@
 /*
- * Copyright (C) 2009 The Guava Authors
+ * Copyright 2014 mango.jfaster.org
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * The Mango Project licenses this file to you under the Apache License,
+ * version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
  */
 
 package org.jfaster.mango.reflect;
@@ -26,20 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * An object of this class encapsulates type mappings from type variables. Mappings are established
- * with {@link #where} and types are resolved using {@link #resolveType}.
- * <p/>
- * <p>Note that usually type mappings are already implied by the static type hierarchy (for example,
- * the {@code E} type variable declared by class {@code List} naturally maps to {@code String} in
- * the context of {@code class MyStringList implements List<String>}. In such case, prefer to use
- * {@link TypeToken#resolveType} since it's simpler and more type safe. This class should only be
- * used when the type mapping isn't implied by the static type hierarchy, but provided through other
- * means such as an annotation or external configuration file.
- *
- * @author Ben Yu
- * @since 15.0
- */
 public final class TypeResolver {
 
     private final TypeTable typeTable;

@@ -25,11 +25,11 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class EnumToStringFunction extends LiteFunction<Enum<?>, String> {
+public class EnumToStringFunction extends LiteFunction<Enum, String> {
 
     @Nullable
     @Override
-    public String apply(@Nullable Enum<?> input) {
+    public String apply(@Nullable Enum input) {
         return input == null ? null : input.name();
     }
 

@@ -38,14 +38,16 @@ public class Types {
         if (componentType instanceof WildcardType) {
             WildcardType wildcard = (WildcardType) componentType;
             Type[] lowerBounds = wildcard.getLowerBounds();
-            //TODO
-            //checkArgument(lowerBounds.length <= 1, "Wildcard cannot have more than one lower bounds.");
+            if (lowerBounds.length > 1) {
+                throw new IllegalArgumentException("Wildcard cannot have more than one lower bounds.");
+            }
             if (lowerBounds.length == 1) {
                 return supertypeOf(newArrayType(lowerBounds[0]));
             } else {
                 Type[] upperBounds = wildcard.getUpperBounds();
-                //TODO
-                //checkArgument(upperBounds.length == 1, "Wildcard should have only one upper bound.");
+                if (upperBounds.length != 1) {
+                    throw new IllegalArgumentException("Wildcard should have only one upper bound.");
+                }
                 return subtypeOf(newArrayType(upperBounds[0]));
             }
         }
@@ -62,9 +64,9 @@ public class Types {
             return newParameterizedType(rawType, arguments);
         }
         // ParameterizedTypeImpl constructor already checks, but we want to throw NPE before IAE
-        // TODO
-//        checkNotNull(arguments);
-//        checkArgument(rawType.getEnclosingClass() != null, "Owner type for unenclosed %s", rawType);
+        if (rawType.getEnclosingClass() == null) {
+            throw new IllegalArgumentException(String.format("Owner type for unenclosed %s", rawType));
+        }
         return new ParameterizedTypeImpl(ownerType, rawType, arguments);
     }
 
@@ -261,9 +263,9 @@ public class Types {
 
         ParameterizedTypeImpl(
                 @Nullable Type ownerType, Class<?> rawType, Type[] typeArguments) {
-            //TODO
-//            checkNotNull(rawType);
-//            checkArgument(typeArguments.length == rawType.getTypeParameters().length);
+            if (typeArguments.length != rawType.getTypeParameters().length) {
+                throw new IllegalArgumentException();
+            }
             disallowPrimitiveType(typeArguments, "type parameter");
             this.ownerType = ownerType;
             this.rawType = rawType;

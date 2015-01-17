@@ -25,11 +25,11 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class EnumToIntegerFunction extends LiteFunction<Enum<?>, Integer> {
+public class EnumToIntegerFunction extends LiteFunction<Enum, Integer> {
 
     @Nullable
     @Override
-    public Integer apply(@Nullable Enum<?> input) {
+    public Integer apply(@Nullable Enum input) {
         return input == null ? null : input.ordinal();
     }
 
