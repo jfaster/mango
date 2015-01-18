@@ -2,17 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <!--<parent>-->
-        <!--<groupId>org.sonatype.oss</groupId>-->
-        <!--<artifactId>oss-parent</artifactId>-->
-        <!--<version>7</version>-->
-    <!--</parent>-->
-
     <parent>
-        <groupId>jmind</groupId>
-        <artifactId>jmind-parent-pom</artifactId>
-        <version>2.0.2-SNAPSHOT</version>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
     </parent>
+
+    <!--<parent>-->
+        <!--<groupId>jmind</groupId>-->
+        <!--<artifactId>jmind-parent-pom</artifactId>-->
+        <!--<version>2.0.2-SNAPSHOT</version>-->
+    <!--</parent>-->
 
 
     <groupId>org.jfaster</groupId>
@@ -49,6 +49,20 @@
     </developers>
 
     <dependencies>
+
+        <!-- 通过jarjar嵌入 -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>5.0.3</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.1</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- findbug相关 -->
         <dependency>
@@ -151,7 +165,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>javacc-maven-plugin</artifactId>
@@ -183,6 +196,49 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>jarjar-maven-plugin</artifactId>
+                <version>1.9</version>
+                <executions>
+                    <execution>
+                        <id>jarjar</id>
+                        <goals><goal>jarjar</goal></goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <overwrite>true</overwrite>
+                    <includes>
+                        <include>*:asm*</include>
+                        <include>*:cglib</include>
+                    </includes>
+                    <rules>
+                        <rule>
+                            <pattern>net.sf.cglib.**</pattern>
+                            <result>org.jfaster.mango.invoker.cglib.@1</result>
+                        </rule>
+                        <rule>
+                            <pattern>org.objectweb.asm.**</pattern>
+                            <result>org.jfaster.mango.invoker.asm.@1</result>
+                        </rule>
+                        <keep>
+                            <pattern>org.jfaster.mango.**</pattern>
+                        </keep>
+                    </rules>
+                </configuration>
+            </plugin>
+
+            <!-- Remove duplicate jarjar'd LICENSE and NOTICE -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>LICENSE</exclude>
+                        <exclude>NOTICE</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -221,6 +277,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 

@@ -80,7 +80,7 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
                         "] to required type [" + realRawParameterType.getName() + "] " +
                         "for property '" + getName() + "' of " +  object.getClass());
             }
-            method.invoke(object, output);
+            methodInvoker.invoke(object, output);
         } catch (IllegalAccessException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
         } catch (InvocationTargetException e) {
