@@ -20,7 +20,9 @@ import org.jfaster.mango.annotation.Functional;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeToken;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
@@ -28,14 +30,15 @@ import java.lang.reflect.*;
 public abstract class FunctionalInvoker implements Invoker {
 
     protected String name;
-    protected MethodInvoker methodInvoker;
+    protected Method method;
     protected Function function;
     protected TypeToken<?> inputToken;
     protected TypeToken<?> outputToken;
 
     protected FunctionalInvoker(String name, Method method) {
         this.name = name;
-        this.methodInvoker = createMethodInvoker(method);
+        this.method = method;
+        handleMethod(method);
         Functional funcAnno = method.getAnnotation(Functional.class);
         if (funcAnno != null) {
             Class<? extends Function<?, ?>> funcClass = funcAnno.value();
@@ -58,43 +61,8 @@ public abstract class FunctionalInvoker implements Invoker {
         return !function.isIdentity();
     }
 
-    private MethodInvoker createMethodInvoker(final Method method) {
-
-        // We can't use FastMethod if the method is private.
-        int modifiers = method.getModifiers();
-        if (!Modifier.isPrivate(modifiers) && !Modifier.isProtected(modifiers)) {
-            /*if[AOP]*/
-            try {
-                final net.sf.cglib.reflect.FastMethod fastMethod =
-                        BytecodeGen.newFastClass(method.getDeclaringClass(),
-                                BytecodeGen.Visibility.forMember(method)).getMethod(method);
-
-                return new MethodInvoker() {
-                    public Object invoke(Object target, Object... parameters)
-                            throws IllegalAccessException, InvocationTargetException {
-                        return fastMethod.invoke(target, parameters);
-                    }
-                };
-            } catch (net.sf.cglib.core.CodeGenerationException e) {/* fall-through */}
-            /*end[AOP]*/
-        }
-
-        if (!Modifier.isPublic(modifiers) ||
-                !Modifier.isPublic(method.getDeclaringClass().getModifiers())) {
-            method.setAccessible(true);
-        }
-
-        return new MethodInvoker() {
-            public Object invoke(Object target, Object... parameters)
-                    throws IllegalAccessException, InvocationTargetException {
-                return method.invoke(target, parameters);
-            }
-        };
-    }
-
-    interface MethodInvoker {
-        Object invoke(Object target, Object... parameters)
-                throws IllegalAccessException, InvocationTargetException;
+    private void handleMethod(Method method) {
+        method.setAccessible(true); // 提高反射速度
     }
 
 }

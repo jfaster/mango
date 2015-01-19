@@ -50,20 +50,6 @@
 
     <dependencies>
 
-        <!-- 通过jarjar嵌入 -->
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>5.0.3</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.1</version>
-            <optional>true</optional>
-        </dependency>
-
         <!-- findbug相关 -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -196,38 +182,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>jarjar-maven-plugin</artifactId>
-                <version>1.9</version>
-                <executions>
-                    <execution>
-                        <id>jarjar</id>
-                        <goals><goal>jarjar</goal></goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <overwrite>true</overwrite>
-                    <includes>
-                        <include>*:asm*</include>
-                        <include>*:cglib</include>
-                    </includes>
-                    <rules>
-                        <rule>
-                            <pattern>net.sf.cglib.**</pattern>
-                            <result>org.jfaster.mango.invoker.cglib.@1</result>
-                        </rule>
-                        <rule>
-                            <pattern>org.objectweb.asm.**</pattern>
-                            <result>org.jfaster.mango.invoker.asm.@1</result>
-                        </rule>
-                        <keep>
-                            <pattern>org.jfaster.mango.**</pattern>
-                        </keep>
-                    </rules>
-                </configuration>
             </plugin>
 
             <plugin>

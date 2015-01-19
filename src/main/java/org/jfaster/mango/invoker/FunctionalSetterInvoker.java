@@ -30,7 +30,6 @@ import java.lang.reflect.Type;
  */
 public class FunctionalSetterInvoker extends FunctionalInvoker implements SetterInvoker {
 
-
     private Type realParameterType;
     private Class<?> realRawParameterType;
     private Type parameterType;
@@ -80,7 +79,7 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
                         "] to required type [" + realRawParameterType.getName() + "] " +
                         "for property '" + getName() + "' of " +  object.getClass());
             }
-            methodInvoker.invoke(object, output);
+            method.invoke(object, output);
         } catch (IllegalAccessException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
         } catch (InvocationTargetException e) {

@@ -63,7 +63,7 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
     @Override
     public Object invoke(Object obj) {
         try {
-            Object input = methodInvoker.invoke(obj);
+            Object input = method.invoke(obj);
             Object r = function.apply(input, realReturnType);
             return r;
         } catch (IllegalAccessException e) {
