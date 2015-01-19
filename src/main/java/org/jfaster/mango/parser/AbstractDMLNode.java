@@ -16,26 +16,39 @@
 
 package org.jfaster.mango.parser;
 
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.SQLType;
 
-public class ASTUpdate extends AbstractDMLNode {
+/**
+ * @author ash
+ */
+public abstract class AbstractDMLNode extends AbstractRenderableNode {
 
-    public ASTUpdate(int id) {
-        super(id);
+    private String value;
+
+    public AbstractDMLNode(int i) {
+        super(i);
     }
 
-    public ASTUpdate(Parser p, int id) {
-        super(p, id);
+    public AbstractDMLNode(Parser p, int i) {
+        super(p, i);
     }
 
     @Override
-    public SQLType getSQLType() {
-        return SQLType.UPDATE;
+    public boolean render(InvocationContext context) {
+        context.writeToSqlBuffer(value);
+        return true;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
+    public String toString() {
+        return super.toString() + "[" + value + "]";
     }
+
+    public abstract SQLType getSQLType();
 
 }

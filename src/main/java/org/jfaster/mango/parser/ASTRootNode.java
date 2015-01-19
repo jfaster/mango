@@ -28,25 +28,13 @@ public class ASTRootNode extends AbstractRenderableNode {
 
     @Override
     public boolean render(InvocationContext context) {
-        ((AbstractRenderableNode) getDDLNode()).render(context);
-        ((AbstractRenderableNode) getBlock()).render(context);
+        getDMLNode().render(context);
+        getBlock().render(context);
         return true;
     }
 
     public SQLType getSQLType() {
-        SQLType sqlType;
-        if (getDDLNode() instanceof ASTInsert) {
-            sqlType = SQLType.INSERT;
-        } else if (getDDLNode() instanceof ASTDelete) {
-            sqlType = SQLType.DELETE;
-        } else if (getDDLNode() instanceof ASTUpdate) {
-            sqlType = SQLType.UPDATE;
-        } else if (getDDLNode() instanceof ASTSelect) {
-            sqlType = SQLType.SELECT;
-        } else {
-            throw new IllegalStateException();
-        }
-        return sqlType;
+        return getDMLNode().getSQLType();
     }
 
     /**
@@ -75,12 +63,12 @@ public class ASTRootNode extends AbstractRenderableNode {
         return nodeInfo.globalTables;
     }
 
-    private Node getDDLNode() {
-        return jjtGetChild(0);
+    private AbstractDMLNode getDMLNode() {
+        return (AbstractDMLNode) jjtGetChild(0);
     }
 
-    private Node getBlock() {
-        return jjtGetChild(1);
+    private ASTBlock getBlock() {
+        return (ASTBlock) jjtGetChild(1);
     }
 
 }

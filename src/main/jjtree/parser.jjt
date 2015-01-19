@@ -58,6 +58,7 @@ TOKEN:
     |   <DELETE: "delete" >
     |   <UPDATE: "update" >
     |   <SELECT: "select" >
+    |   <REPLACE: "replace" >
     |   <TEXT: (~[":", "#", " "])+ >
 }
 
@@ -96,11 +97,17 @@ TOKEN:
 
 ASTRootNode parse()  #RootNode : {}
 {
-    ( Insert() | Delete() | Update() | Select() ) ( Statement() )+ #Block <EOF>
+    DML() ( Statement() )+ #Block <EOF>
     {
         return jjtThis;
     }
 }
+
+void DML() #void : {}
+{
+    Insert() | Delete() | Update() | Select() | Replace()
+}
+
 
 void Insert() :
 {
@@ -145,6 +152,18 @@ void Select() :
         jjtThis.setValue(t.image);
     }
 }
+
+void Replace() :
+{
+    Token t;
+}
+{
+    t=<REPLACE>
+    {
+        jjtThis.setValue(t.image);
+    }
+}
+
 
 void Statement() #void : {}
 {
@@ -201,7 +220,7 @@ void Text() :
     Token t;
 }
 {
-    ( t=<TEXT> | t=<INSERT> | t=<DELETE> | t=<UPDATE> | t=<SELECT> )
+    ( t=<TEXT> | t=<INSERT> | t=<DELETE> | t=<UPDATE> | t=<SELECT> | t=<REPLACE> )
     {
         jjtThis.setValue(t.image);
     }

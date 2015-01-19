@@ -16,10 +16,12 @@
 
 package org.jfaster.mango.parser;
 
+import org.jfaster.mango.util.SQLType;
+
 /**
  * @author ash
  */
-public class ASTDelete extends AbstractDDLNode {
+public class ASTDelete extends AbstractDMLNode {
 
     public ASTDelete(int id) {
         super(id);
@@ -29,6 +31,12 @@ public class ASTDelete extends AbstractDDLNode {
         super(p, id);
     }
 
+    @Override
+    public SQLType getSQLType() {
+        return SQLType.DELETE;
+    }
+
+    @Override
     public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }

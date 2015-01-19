@@ -16,7 +16,9 @@
 
 package org.jfaster.mango.parser;
 
-public class ASTSelect extends AbstractDDLNode {
+import org.jfaster.mango.util.SQLType;
+
+public class ASTSelect extends AbstractDMLNode {
 
     public ASTSelect(int id) {
         super(id);
@@ -26,6 +28,12 @@ public class ASTSelect extends AbstractDDLNode {
         super(p, id);
     }
 
+    @Override
+    public SQLType getSQLType() {
+        return SQLType.SELECT;
+    }
+
+    @Override
     public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }

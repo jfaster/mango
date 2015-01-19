@@ -16,7 +16,9 @@
 
 package org.jfaster.mango.parser;
 
-public class ASTInsert extends AbstractDDLNode {
+import org.jfaster.mango.util.SQLType;
+
+public class ASTInsert extends AbstractDMLNode {
 
     public ASTInsert(int id) {
         super(id);
@@ -26,6 +28,12 @@ public class ASTInsert extends AbstractDDLNode {
         super(p, id);
     }
 
+    @Override
+    public SQLType getSQLType() {
+        return SQLType.INSERT;
+    }
+
+    @Override
     public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }
