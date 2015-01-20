@@ -249,6 +249,21 @@ public class ParserTest {
         assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
     }
 
+    @Test
+    public void testReplace() throws Exception {
+        String sql = "replace xxx into xxx";
+        ASTRootNode n = new Parser(sql).parse().init();
+        List<Type> types = Lists.newArrayList();
+        ParameterContext ctx = getParameterContext(types);
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("replace xxx into xxx"));
+    }
+
+
+
     private ParameterContext getParameterContext(List<Type> types) {
         List<Annotation> empty = Collections.emptyList();
         List<ParameterDescriptor> pds = Lists.newArrayList();
