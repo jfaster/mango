@@ -65,6 +65,11 @@ public enum InterablePropertyCollectVisitor implements ParserVisitor {
     }
 
     @Override
+    public Object visit(ASTMerge node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Object visit(ASTBlock father, Object data) {
         int num = father.jjtGetNumChildren();
         for (int i = 0; i < num - 2; i++) {

@@ -21,6 +21,7 @@ import org.hamcrest.Matchers;
 import org.jfaster.mango.operator.*;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.SQLType;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
@@ -30,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
@@ -260,6 +262,21 @@ public class ParserTest {
         n.render(context);
         PreparedSql preparedSql = context.getPreparedSql();
         assertThat(preparedSql.getSql(), Matchers.equalTo("replace xxx into replace xxx"));
+        assertThat(n.getSQLType(), is(SQLType.REPLACE));
+    }
+
+    @Test
+    public void testMerge() throws Exception {
+        String sql = "merge xxx into merge xxx";
+        ASTRootNode n = new Parser(sql).parse().init();
+        List<Type> types = Lists.newArrayList();
+        ParameterContext ctx = getParameterContext(types);
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("merge xxx into merge xxx"));
+        assertThat(n.getSQLType(), is(SQLType.MERGE));
     }
 
 
