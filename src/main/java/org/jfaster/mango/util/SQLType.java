@@ -39,7 +39,12 @@ public enum SQLType {
     /**
      * 查
      */
-    SELECT(false);
+    SELECT(false),
+
+    /**
+     * mysql中的replace
+     */
+    REPLACE(true);
 
     private boolean needChangeData;
 

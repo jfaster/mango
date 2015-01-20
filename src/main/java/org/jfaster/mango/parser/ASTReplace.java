@@ -30,7 +30,7 @@ public class ASTReplace extends AbstractDMLNode {
 
     @Override
     public SQLType getSQLType() {
-        return SQLType.UPDATE;
+        return SQLType.REPLACE;
     }
 
     @Override
