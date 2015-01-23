@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.reflect;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
@@ -48,39 +46,32 @@ public class TypeWrapper {
     public TypeWrapper(Type type) {
         if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
             mappedClass = byte[].class;
-        } else if (type instanceof ParameterizedType) { // 参数化类型
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type rawType = parameterizedType.getRawType();
-            if (List.class.equals(rawType)) {
-                isList = true;
-                Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                if (typeArgument instanceof Class) {
-                    mappedClass = (Class<?>) typeArgument;
-                }
-                mappedType = typeArgument;
-            } else if (Set.class.equals(rawType)) {
-                isSet = true;
-                Type typeArgument = parameterizedType.getActualTypeArguments()[0];
-                if (typeArgument instanceof Class) {
-                    mappedClass = (Class<?>) typeArgument;
-                }
-                mappedType = typeArgument;
-            }
-        } else if (type instanceof Class) { // 没有参数化
-            Class rawType = (Class) type;
-            if (rawType.isArray()) { // 数组
+        } else {
+            TypeToken token = TypeToken.of(type);
+            if (token.isArray()) { // 数组，也能处理泛型数组
                 isArray = true;
-                mappedClass = rawType.getComponentType();
-                mappedType = mappedClass;
-            } else { // 普通类
-                mappedClass = rawType;
-            }
-        } else if (type instanceof GenericArrayType) { // 范型数组
-            Type componentType = ((GenericArrayType) type).getGenericComponentType();
-            if (componentType instanceof Class) {
-                isArray = true;
-                mappedClass = (Class) componentType;
-                mappedType = mappedClass;
+                TypeToken componentToken = token.getComponentType();
+                if (componentToken == null) {
+                    throw new IllegalStateException();
+                }
+                mappedType = componentToken.getType();
+                mappedClass = componentToken.getRawType();
+            } else {
+                Class<?> rawType = token.getRawType();
+                if (List.class.equals(rawType)) { // 列表
+                    isList = true;
+                    TypeToken<?> mappedToken = token.resolveType(List.class.getTypeParameters()[0]);
+                    mappedType = mappedToken.getType();
+                    mappedClass = mappedToken.getRawType();
+                } else if (Set.class.equals(rawType)) { // 集合
+                    isSet = true;
+                    TypeToken<?> mappedToken = token.resolveType(Set.class.getTypeParameters()[0]);
+                    mappedType = mappedToken.getType();
+                    mappedClass = mappedToken.getRawType();
+                } else { // 普通类
+                    mappedType = type;
+                    mappedClass = rawType;
+                }
             }
         }
     }

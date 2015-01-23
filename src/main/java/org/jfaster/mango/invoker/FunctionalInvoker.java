@@ -21,8 +21,6 @@ import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeToken;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /**
  * @author ash
@@ -43,10 +41,9 @@ public abstract class FunctionalInvoker implements Invoker {
         if (funcAnno != null) {
             Class<? extends Function<?, ?>> funcClass = funcAnno.value();
             function = Reflection.instantiate(funcClass);
-            Type genType = funcClass.getGenericSuperclass();
-            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-            inputToken = TypeToken.of(params[0]);
-            outputToken = TypeToken.of(params[1]);
+            TypeToken<? extends Function<?, ?>> funcToken = TypeToken.of(funcClass);
+            inputToken = funcToken.resolveType(Function.class.getTypeParameters()[0]);
+            outputToken = funcToken.resolveType(Function.class.getTypeParameters()[1]);
         } else {
             function = new IdentityFunction();
         }

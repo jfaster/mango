@@ -19,16 +19,22 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
-import org.jfaster.mango.mapper.BeanPropertyRowMapper;
+import org.jfaster.mango.annotation.SingleColumnFunctional;
+import org.jfaster.mango.exception.IncorrectDefinitionException;
+import org.jfaster.mango.invoker.Function;
 import org.jfaster.mango.jdbc.JdbcUtils;
+import org.jfaster.mango.mapper.BeanPropertyRowMapper;
+import org.jfaster.mango.mapper.FunctionalSingleColumnRowMapper;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.TypeWrapper;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,12 +55,20 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private void init(MethodDescriptor md) {
-        TypeWrapper tw = new TypeWrapper(md.getReturnType());
-        isForList = tw.isList();
-        isForSet = tw.isSet();
-        isForArray = tw.isArray();
-        mappedClass = tw.getMappedClass();
-        rowMapper = getRowMapper(mappedClass, md);
+        SingleColumnFunctional funcAnno = md.getAnnotation(SingleColumnFunctional.class);
+        Mapper mapperAnno = md.getAnnotation(Mapper.class);
+        Results resultsAnoo = md.getAnnotation(Results.class);
+        checkAnno(funcAnno, mapperAnno, resultsAnoo);
+        if (funcAnno == null) {
+            TypeWrapper tw = new TypeWrapper(md.getReturnType());
+            isForList = tw.isList();
+            isForSet = tw.isSet();
+            isForArray = tw.isArray();
+            mappedClass = tw.getMappedClass();
+            rowMapper = getRowMapper(mappedClass, mapperAnno, resultsAnoo);
+        } else {
+            initFunctionalSingleColumnRowMapper(funcAnno, md.getReturnType());
+        }
     }
 
     @Override
@@ -102,8 +116,7 @@ public class QueryOperator extends AbstractOperator {
         return r;
     }
 
-    private static <T> RowMapper<?> getRowMapper(Class<T> clazz, MethodDescriptor md) {
-        Mapper mapperAnno = md.getAnnotation(Mapper.class);
+    private <T> RowMapper<?> getRowMapper(Class<T> clazz, Mapper mapperAnno, Results resultsAnoo) {
         if (mapperAnno != null) { // 自定义mapper
             return Reflection.instantiate(mapperAnno.value());
         }
@@ -113,7 +126,6 @@ public class QueryOperator extends AbstractOperator {
 
         // 类属性mapper
         Map<String, String> ptc = new HashMap<String, String>();
-        Results resultsAnoo = md.getAnnotation(Results.class);
         if (resultsAnoo != null) {
             Result[] resultAnnos = resultsAnoo.value();
             if (resultAnnos != null) {
@@ -126,5 +138,68 @@ public class QueryOperator extends AbstractOperator {
         return new BeanPropertyRowMapper<T>(clazz, ptc);
     }
 
+    private void checkAnno(SingleColumnFunctional funcAnno, Mapper mapperAnno, Results resultsAnoo) {
+        int t = 0;
+        if (funcAnno != null) {
+            t++;
+        }
+        if (mapperAnno != null) {
+            t++;
+        }
+        if (resultsAnoo != null) {
+            t++;
+        }
+        if (t > 1) {
+            throw new IncorrectDefinitionException(""); // TODO
+        }
+    }
+
+    private void initFunctionalSingleColumnRowMapper(SingleColumnFunctional funcAnno, Type returnType) {
+        Class<? extends Function<?, ?>> funcClass = funcAnno.value();
+        Function<?,?> function = Reflection.instantiate(funcClass);
+        TypeToken<? extends Function<?, ?>> funcToken = TypeToken.of(funcClass);
+        TypeToken<?> inputToken = funcToken.resolveType(Function.class.getTypeParameters()[0]);
+        TypeToken<?> outputToken = funcToken.resolveType(Function.class.getTypeParameters()[1]);
+
+        Class<?> fromDbClass = inputToken.getRawType();
+        if (!JdbcUtils.isSingleColumnClass(fromDbClass)) {
+            throw new RuntimeException(); // TODO
+        }
+
+        boolean fetchMultiData = funcAnno.fetchMultiData();
+        Type mappedType;
+        if (fetchMultiData) {
+            TypeWrapper tw = new TypeWrapper(returnType);
+            if (!tw.isIterable()) {
+                throw new RuntimeException(); // TODO
+            }
+            isForList = tw.isList();
+            isForSet = tw.isSet();
+            isForArray = tw.isArray();
+            mappedType = tw.getMappedType();
+            mappedClass = tw.getMappedClass();
+        } else {
+            mappedType = returnType;
+            mappedClass = TypeToken.of(mappedType).getRawType();
+        }
+
+        // 类型检查
+        TypeToken<?> wrapMappedToken = TypeToken.of(mappedType).wrap();
+        if (function.inverseCheck()) { // 针对继承GenericFunction的
+            if (!outputToken.isAssignableFrom(wrapMappedToken)) {
+                throw new ClassCastException(); // TODO
+            }
+        } else { // 针对继承LiteFunction的
+            if (!wrapMappedToken.isAssignableFrom(outputToken)) {
+                throw new ClassCastException(); // TODO
+            }
+        }
+        rowMapper = getFunctionalSingleColumnRowMapper(function, fromDbClass, mappedClass, mappedType);
+    }
+
+    private <T> RowMapper<?> getFunctionalSingleColumnRowMapper(
+            Function function, Class<?> fromDbClass, Class<T> mappedClass, Type mappedType) {
+        return new FunctionalSingleColumnRowMapper<T>(function, fromDbClass, mappedClass, mappedType);
+    }
 
 }

@@ -16,16 +16,17 @@
 
 package org.jfaster.mango.operator;
 
+import com.google.common.collect.Lists;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
+import org.jfaster.mango.invoker.function.StringToIntegerListFunction;
+import org.jfaster.mango.invoker.function.json.fastjson.JsonToObjectFunction;
+import org.jfaster.mango.mapper.FunctionalSingleColumnRowMapper;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.support.Config;
-import org.jfaster.mango.support.JdbcOperationsAdapter;
-import org.jfaster.mango.support.MockDB;
-import org.jfaster.mango.support.MockSQL;
+import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class QueryOperatorTest {
     public void testQueryObject() throws Exception {
         TypeToken<User> t = TypeToken.of(User.class);
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(t, t, srcSql);
+        Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
 
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
@@ -74,7 +75,7 @@ public class QueryOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<List<User>> rt = new TypeToken<List<User>>() {};
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
@@ -102,7 +103,7 @@ public class QueryOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<Set<User>> rt = new TypeToken<Set<User>>() {};
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
@@ -130,7 +131,7 @@ public class QueryOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<User[]> rt = new TypeToken<User[]>() {};
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
@@ -158,7 +159,7 @@ public class QueryOperatorTest {
         TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
         TypeToken<List<User>> rt = new TypeToken<List<User>>() {};
         String srcSql = "select * from user where id in (:1)";
-        Operator operator = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
@@ -185,7 +186,7 @@ public class QueryOperatorTest {
         TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
         TypeToken<Integer> rt = new TypeToken<Integer>() {};
         String srcSql = "select count(1) from user where id in (:1)";
-        Operator operator = getOperator(pt, rt, srcSql);
+        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
@@ -213,7 +214,7 @@ public class QueryOperatorTest {
     public void testStatsCounter() throws Exception {
         TypeToken<User> t = TypeToken.of(User.class);
         String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(t, t, srcSql);
+        Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
 
         StatsCounter sc = new StatsCounter();
         operator.setStatsCounter(sc);
@@ -245,7 +246,97 @@ public class QueryOperatorTest {
         assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(2L));
     }
 
-    private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSingleColumnFunctional() throws Exception {
+        TypeToken<Integer> pt = new TypeToken<Integer>() {};
+        TypeToken<List<Integer>> rt = new TypeToken<List<Integer>>() {};
+        String srcSql = "select type from user where id=:1";
+        List<Annotation> annos = Lists.newArrayList();
+        annos.add(new MockSingleColumnFunctional(StringToIntegerListFunction.class));
+        Operator operator = getOperator(pt, rt, srcSql, Lists.newArrayList(annos));
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        final int id = 9527;
+        final List<Integer> list = Lists.newArrayList(1, 2, 3);
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+                String descSql = "select type from user where id=?";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(1));
+                assertThat((Integer) args[0], equalTo(id));
+                assertThat(rowMapper.getClass().equals(FunctionalSingleColumnRowMapper.class), is(true));
+                assertThat(rowMapper.getMappedClass().equals(List.class), is(true));
+                return (T) list;
+            }
+        });
+
+        List<Integer> r = (List<Integer>) operator.execute(new Object[]{id});
+        assertThat(r.toString(), equalTo(list.toString()));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSingleColumnFunctionalMultiData() throws Exception {
+        TypeToken<Integer> pt = new TypeToken<Integer>() {};
+        TypeToken<Set<List<Integer>>> rt = new TypeToken<Set<List<Integer>>>() {};
+        String srcSql = "select type from user where id=:1";
+        List<Annotation> annos = Lists.newArrayList();
+        annos.add(new MockSingleColumnFunctional(StringToIntegerListFunction.class, true));
+        Operator operator = getOperator(pt, rt, srcSql, Lists.newArrayList(annos));
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        final int id = 9527;
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+                String descSql = "select type from user where id=?";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(1));
+                assertThat((Integer) args[0], equalTo(id));
+                assertThat(rowMapper.getClass().equals(FunctionalSingleColumnRowMapper.class), is(true));
+                assertThat(rowMapper.getMappedClass().equals(List.class), is(true));
+                return null;
+            }
+        });
+
+        operator.execute(new Object[]{id});
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSingleColumnFunctionalMultiDataGeneric() throws Exception {
+        TypeToken<Integer> pt = new TypeToken<Integer>() {};
+        TypeToken<Set<List<Integer>>> rt = new TypeToken<Set<List<Integer>>>() {};
+        String srcSql = "select type from user where id=:1";
+        List<Annotation> annos = Lists.newArrayList();
+        annos.add(new MockSingleColumnFunctional(JsonToObjectFunction.class, true));
+        Operator operator = getOperator(pt, rt, srcSql, Lists.newArrayList(annos));
+
+        StatsCounter sc = new StatsCounter();
+        operator.setStatsCounter(sc);
+        final int id = 9527;
+        operator.setJdbcOperations(new JdbcOperationsAdapter() {
+            @Override
+            public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+                String descSql = "select type from user where id=?";
+                assertThat(sql, equalTo(descSql));
+                assertThat(args.length, equalTo(1));
+                assertThat((Integer) args[0], equalTo(id));
+                assertThat(rowMapper.getClass().equals(FunctionalSingleColumnRowMapper.class), is(true));
+                assertThat(rowMapper.getMappedClass().equals(List.class), is(true));
+                return null;
+            }
+        });
+
+        operator.execute(new Object[]{id});
+    }
+
+    private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
+            throws Exception {
         List<Annotation> empty = Collections.emptyList();
         ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
@@ -253,6 +344,9 @@ public class QueryOperatorTest {
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
+        for (Annotation anno : annos) {
+            methodAnnos.add(anno);
+        }
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 

@@ -80,6 +80,10 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
         return isAssignable(type, runtimeType);
     }
 
+    public final boolean isArray() {
+        return getComponentType() != null;
+    }
+
     public final boolean isPrimitive() {
         return (runtimeType instanceof Class) && ((Class<?>) runtimeType).isPrimitive();
     }
@@ -91,6 +95,15 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
             return TypeToken.of(Primitives.wrap(type));
         }
         return this;
+    }
+
+    @Nullable
+    public final TypeToken<?> getComponentType() {
+        Type componentType = Types.getComponentType(runtimeType);
+        if (componentType == null) {
+            return null;
+        }
+        return of(componentType);
     }
 
     @Override
