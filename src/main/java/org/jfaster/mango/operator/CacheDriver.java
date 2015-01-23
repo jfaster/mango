@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ public interface CacheDriver {
 
     public Object getFromCache(String key);
 
+    @Nullable
     public Map<String, Object> getBulkFromCache(Set<String> keys);
 
     public Class<?> getSuffixClass();

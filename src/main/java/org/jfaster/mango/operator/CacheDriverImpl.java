@@ -34,6 +34,7 @@ import org.jfaster.mango.reflect.TypeWrapper;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.Strings;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
@@ -131,6 +132,7 @@ public class CacheDriverImpl implements CacheDriver {
         return value;
     }
 
+    @Nullable
     @Override
     public Map<String, Object> getBulkFromCache(Set<String> keys) {
         if (keys.size() > 0) {
