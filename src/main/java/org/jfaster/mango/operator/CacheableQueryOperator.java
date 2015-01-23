@@ -141,15 +141,15 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private class AddableObject<T> {
 
-        List<T> hitValueList = null;
-        Set<T> hitValueSet = null;
+        List<T> hitValueList;
+        Set<T> hitValueSet;
         Class<T> valueClass;
 
         private AddableObject(int initialCapacity, Class<T> valueClass) {
             if (isForSet) {
                 hitValueSet = new HashSet<T>(initialCapacity * 2);
             } else { // 返回List或数组或单个值都先使用List
-                hitValueList = new ArrayList<T>(initialCapacity);
+                hitValueList = new LinkedList<T>();
             }
             this.valueClass = valueClass;
         }

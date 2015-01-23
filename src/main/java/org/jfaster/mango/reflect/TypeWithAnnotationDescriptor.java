@@ -31,7 +31,9 @@ public abstract class TypeWithAnnotationDescriptor {
     private final Type type;
     private final Class<?> rawType;
     private final List<Annotation> annotations;
-    private final boolean isIterable;
+    private final boolean isList;
+    private final boolean isSet;
+    private final boolean isArray;
     private final Class<?> mappedClass;
 
     public TypeWithAnnotationDescriptor(Type type, List<Annotation> annotations) {
@@ -63,7 +65,9 @@ public abstract class TypeWithAnnotationDescriptor {
         }.visit(type);
 
         TypeWrapper tw = new TypeWrapper(type);
-        isIterable = tw.isIterable();
+        isList = tw.isList();
+        isSet = tw.isSet();
+        isArray = tw.isArray();
         mappedClass = tw.getMappedClass();
     }
 
@@ -94,7 +98,19 @@ public abstract class TypeWithAnnotationDescriptor {
     }
 
     public boolean isIterable() {
-        return isIterable;
+        return isList || isSet || isArray;
+    }
+
+    public boolean isList() {
+        return isList;
+    }
+
+    public boolean isSet() {
+        return isSet;
+    }
+
+    public boolean isArray() {
+        return isArray;
     }
 
     public Class<?> getMappedClass() {

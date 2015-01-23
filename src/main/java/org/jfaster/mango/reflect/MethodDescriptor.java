@@ -59,6 +59,10 @@ public class MethodDescriptor {
         return returnDescriptor.getAnnotations();
     }
 
+    public ReturnDescriptor getReturnDescriptor() {
+        return returnDescriptor;
+    }
+
     public List<ParameterDescriptor> getParameterDescriptors() {
         return parameterDescriptors;
     }

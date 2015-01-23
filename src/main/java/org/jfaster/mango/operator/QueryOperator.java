@@ -19,7 +19,6 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
-import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.mapper.BeanPropertyRowMapper;
 import org.jfaster.mango.mapper.RowMapper;
@@ -27,7 +26,7 @@ import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.TypeWrapper;
+import org.jfaster.mango.reflect.ReturnDescriptor;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -50,15 +49,12 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private void init(MethodDescriptor md) {
-        Mapper mapperAnno = md.getAnnotation(Mapper.class);
-        Results resultsAnoo = md.getAnnotation(Results.class);
-        checkAnno(mapperAnno, resultsAnoo);
-        TypeWrapper tw = new TypeWrapper(md.getReturnType());
-        isForList = tw.isList();
-        isForSet = tw.isSet();
-        isForArray = tw.isArray();
-        mappedClass = tw.getMappedClass();
-        rowMapper = getRowMapper(mappedClass, mapperAnno, resultsAnoo);
+        ReturnDescriptor rd = md.getReturnDescriptor();
+        isForList = rd.isList();
+        isForSet = rd.isSet();
+        isForArray = rd.isArray();
+        mappedClass = rd.getMappedClass();
+        rowMapper = getRowMapper(mappedClass, rd);
     }
 
     @Override
@@ -106,7 +102,9 @@ public class QueryOperator extends AbstractOperator {
         return r;
     }
 
-    private <T> RowMapper<?> getRowMapper(Class<T> clazz, Mapper mapperAnno, Results resultsAnoo) {
+    private <T> RowMapper<?> getRowMapper(Class<T> clazz, ReturnDescriptor rd) {
+        Mapper mapperAnno = rd.getAnnotation(Mapper.class);
+        Results resultsAnoo = rd.getAnnotation(Results.class);
         if (mapperAnno != null) { // 自定义mapper
             return Reflection.instantiate(mapperAnno.value());
         }
@@ -126,19 +124,6 @@ public class QueryOperator extends AbstractOperator {
             }
         }
         return new BeanPropertyRowMapper<T>(clazz, ptc);
-    }
-
-    private void checkAnno(Mapper mapperAnno, Results resultsAnoo) {
-        int t = 0;
-        if (mapperAnno != null) {
-            t++;
-        }
-        if (resultsAnoo != null) {
-            t++;
-        }
-        if (t > 1) {
-            throw new IncorrectDefinitionException(""); // TODO
-        }
     }
 
 }
