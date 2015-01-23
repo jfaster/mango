@@ -16,9 +16,11 @@
 
 package org.jfaster.mango.reflect;
 
+import org.jfaster.mango.exception.IncorrectTypeException;
+
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.List;
 
 /**
@@ -36,6 +38,29 @@ public abstract class TypeWithAnnotationDescriptor {
         this.type = type;
         this.rawType = TypeToken.of(type).getRawType();
         this.annotations = annotations;
+
+        new TypeVisitor() {
+            @Override
+            void visitGenericArrayType(GenericArrayType t) {
+                visit(t.getGenericComponentType());
+            }
+
+            @Override
+            void visitParameterizedType(ParameterizedType t) {
+                visit(t.getOwnerType());
+                visit(t.getActualTypeArguments());
+            }
+
+            @Override
+            void visitTypeVariable(TypeVariable<?> t) {
+                throw new IncorrectTypeException("Cannot contain type variable.");
+            }
+
+            @Override
+            void visitWildcardType(WildcardType t) {
+                throw new IncorrectTypeException("Cannot contain wildcard type.");
+            }
+        }.visit(type);
 
         TypeWrapper tw = new TypeWrapper(type);
         isIterable = tw.isIterable();

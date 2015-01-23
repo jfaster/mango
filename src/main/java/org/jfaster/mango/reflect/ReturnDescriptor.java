@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.util.Objects;
 
 import java.lang.annotation.Annotation;
@@ -32,9 +31,6 @@ public class ReturnDescriptor extends TypeWithAnnotationDescriptor {
 
     public ReturnDescriptor(Type type, List<Annotation> annotations) {
         super(type, annotations);
-        if (getMappedClass() == null) {
-            throw new IncorrectReturnTypeException(type + " is invalid");
-        }
     }
 
     @Override
