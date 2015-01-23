@@ -16,17 +16,16 @@
 
 package org.jfaster.mango.operator;
 
-import com.google.common.collect.Lists;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
-import org.jfaster.mango.invoker.function.StringToIntegerListFunction;
-import org.jfaster.mango.invoker.function.json.fastjson.JsonToObjectFunction;
-import org.jfaster.mango.mapper.FunctionalSingleColumnRowMapper;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.support.*;
+import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.JdbcOperationsAdapter;
+import org.jfaster.mango.support.MockDB;
+import org.jfaster.mango.support.MockSQL;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Test;
 
@@ -244,95 +243,6 @@ public class QueryOperatorTest {
         } catch (UnsupportedOperationException e) {
         }
         assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(2L));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testSingleColumnFunctional() throws Exception {
-        TypeToken<Integer> pt = new TypeToken<Integer>() {};
-        TypeToken<List<Integer>> rt = new TypeToken<List<Integer>>() {};
-        String srcSql = "select type from user where id=:1";
-        List<Annotation> annos = Lists.newArrayList();
-        annos.add(new MockSingleColumnFunctional(StringToIntegerListFunction.class));
-        Operator operator = getOperator(pt, rt, srcSql, Lists.newArrayList(annos));
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        final int id = 9527;
-        final List<Integer> list = Lists.newArrayList(1, 2, 3);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-                String descSql = "select type from user where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(1));
-                assertThat((Integer) args[0], equalTo(id));
-                assertThat(rowMapper.getClass().equals(FunctionalSingleColumnRowMapper.class), is(true));
-                assertThat(rowMapper.getMappedClass().equals(List.class), is(true));
-                return (T) list;
-            }
-        });
-
-        List<Integer> r = (List<Integer>) operator.execute(new Object[]{id});
-        assertThat(r.toString(), equalTo(list.toString()));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testSingleColumnFunctionalMultiData() throws Exception {
-        TypeToken<Integer> pt = new TypeToken<Integer>() {};
-        TypeToken<Set<List<Integer>>> rt = new TypeToken<Set<List<Integer>>>() {};
-        String srcSql = "select type from user where id=:1";
-        List<Annotation> annos = Lists.newArrayList();
-        annos.add(new MockSingleColumnFunctional(StringToIntegerListFunction.class, true));
-        Operator operator = getOperator(pt, rt, srcSql, Lists.newArrayList(annos));
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        final int id = 9527;
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-                String descSql = "select type from user where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(1));
-                assertThat((Integer) args[0], equalTo(id));
-                assertThat(rowMapper.getClass().equals(FunctionalSingleColumnRowMapper.class), is(true));
-                assertThat(rowMapper.getMappedClass().equals(List.class), is(true));
-                return null;
-            }
-        });
-
-        operator.execute(new Object[]{id});
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testSingleColumnFunctionalMultiDataGeneric() throws Exception {
-        TypeToken<Integer> pt = new TypeToken<Integer>() {};
-        TypeToken<Set<List<Integer>>> rt = new TypeToken<Set<List<Integer>>>() {};
-        String srcSql = "select type from user where id=:1";
-        List<Annotation> annos = Lists.newArrayList();
-        annos.add(new MockSingleColumnFunctional(JsonToObjectFunction.class, true));
-        Operator operator = getOperator(pt, rt, srcSql, Lists.newArrayList(annos));
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        final int id = 9527;
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-                String descSql = "select type from user where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(1));
-                assertThat((Integer) args[0], equalTo(id));
-                assertThat(rowMapper.getClass().equals(FunctionalSingleColumnRowMapper.class), is(true));
-                assertThat(rowMapper.getMappedClass().equals(List.class), is(true));
-                return null;
-            }
-        });
-
-        operator.execute(new Object[]{id});
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)

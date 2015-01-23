@@ -24,7 +24,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,15 +49,6 @@ public class IncorrectParameterTypeExceptionTest {
                 "but int");
         Dao dao = mango.create(Dao.class);
         dao.get(1);
-    }
-
-    // TODO 暂时去掉
-    @Test
-    public void test5() {
-//        thrown.expect(IncorrectParameterTypeException.class);
-//        thrown.expectMessage("java.util.List<java.util.List<java.lang.Integer>> is invalid");
-//        Dao dao = mango.create(Dao.class);
-//        dao.get2(new ArrayList<List<Integer>>());
     }
 
     @Test

@@ -64,7 +64,7 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
         return runtimeType;
     }
 
-    public final TypeToken<?> resolveType(Type type) {
+    private final TypeToken<?> resolveType(Type type) {
         TypeResolver resolver = typeResolver;
         if (resolver == null) {
             resolver = (typeResolver = TypeResolver.accordingTo(runtimeType));

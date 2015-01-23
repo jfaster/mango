@@ -288,16 +288,15 @@ public class FunctionalGetterInvokerTest {
         }
     }
 
-    // TODO
     @Test
     public void testException2() throws Exception {
-//        thrown.expect(ClassCastException.class);
-//        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerListToStringFunction] on method[java.util.List org.jfaster.mango.invoker.FunctionalGetterInvokerTest$F.getX()] error, function's inputType[java.util.List<java.lang.Integer>] must be assignable from method's returnType[java.util.List<java.lang.String>]");
-//        Method method = F.class.getDeclaredMethod("getX");
-//        F e = new F();
-//        ArrayList<String> x = Lists.newArrayList("xxx");
-//        e.setX(x);
-//        FunctionalGetterInvoker.create("x", method);
+        thrown.expect(ClassCastException.class);
+        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerListToStringFunction] on method[java.util.List org.jfaster.mango.invoker.FunctionalGetterInvokerTest$F.getX()] error, function's inputType[java.util.List<java.lang.Integer>] must be assignable from method's returnType[java.util.List<java.lang.String>]");
+        Method method = F.class.getDeclaredMethod("getX");
+        F e = new F();
+        ArrayList<String> x = Lists.newArrayList("xxx");
+        e.setX(x);
+        FunctionalGetterInvoker.create("x", method);
     }
 
     public static class IntArrayToStringFunction extends LiteFunction<int[], String> {

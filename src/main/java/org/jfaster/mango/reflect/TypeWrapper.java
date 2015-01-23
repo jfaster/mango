@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Set;
 
@@ -43,36 +43,50 @@ public class TypeWrapper {
     private boolean isSet;
     private boolean isArray;
 
-    public TypeWrapper(Type type) {
+    public TypeWrapper(final Type type) {
         if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
-            mappedClass = byte[].class;
+            mappedType = mappedClass = byte[].class;
         } else {
-            TypeToken token = TypeToken.of(type);
-            if (token.isArray()) { // 数组，也能处理泛型数组
-                isArray = true;
-                TypeToken componentToken = token.getComponentType();
-                if (componentToken == null) {
-                    throw new IllegalStateException();
+            new TypeVisitor() {
+                @Override
+                void visitClass(Class<?> t) {
+                    mappedType = t;
+                    if (t.isArray()) { // 数组
+                        isArray = true;
+                        mappedType = t.getComponentType();
+                    }
                 }
-                mappedType = componentToken.getType();
-                mappedClass = componentToken.getRawType();
-            } else {
-                Class<?> rawType = token.getRawType();
-                if (List.class.equals(rawType)) { // 列表
-                    isList = true;
-                    TypeToken<?> mappedToken = token.resolveType(List.class.getTypeParameters()[0]);
-                    mappedType = mappedToken.getType();
-                    mappedClass = mappedToken.getRawType();
-                } else if (Set.class.equals(rawType)) { // 集合
-                    isSet = true;
-                    TypeToken<?> mappedToken = token.resolveType(Set.class.getTypeParameters()[0]);
-                    mappedType = mappedToken.getType();
-                    mappedClass = mappedToken.getRawType();
-                } else { // 普通类
-                    mappedType = type;
-                    mappedClass = rawType;
+
+                @Override
+                void visitGenericArrayType(GenericArrayType t) {
+                    mappedType = t.getGenericComponentType();
                 }
-            }
+
+                @Override
+                void visitParameterizedType(ParameterizedType t) {
+                    Type rawType = t.getRawType();
+                    if (List.class.equals(rawType)) {
+                        isList = true;
+                        mappedType = t.getActualTypeArguments()[0];
+                    } else if (Set.class.equals(rawType)) {
+                        isSet = true;
+                        mappedType = t.getActualTypeArguments()[0];
+                    } else {
+                        throw new RuntimeException(); // TODO
+                    }
+                }
+
+                @Override
+                void visitTypeVariable(TypeVariable<?> t) {
+                    throw new IllegalStateException("Does not support the type " + type);
+                }
+
+                @Override
+                void visitWildcardType(WildcardType t) {
+                    throw new IllegalStateException("Does not support the type " + type);
+                }
+            }.visit(type);
+            mappedClass = TypeToken.of(mappedType).getRawType();
         }
     }
 
