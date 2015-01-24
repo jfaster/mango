@@ -105,7 +105,7 @@ public class OperatorFactory {
         Cache cacheAnno = md.getAnnotation(Cache.class);
         boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
         if (useCache) {
-            CacheDriverImpl driver = new CacheDriverImpl(md, rootNode, cacheHandler, context, nameProvider);
+            CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, nameProvider);
             switch (operatorType) {
                 case QUERY:
                     operator = new CacheableQueryOperator(rootNode, md, driver);
