@@ -25,6 +25,4 @@ public interface CacheSingleKey {
 
     public String getCacheKey(InvocationContext context);
 
-    public String getCacheKey(Object... objs);
-
 }

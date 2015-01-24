@@ -126,30 +126,26 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
-    public Class<?> getOnlyCacheByClassForMulti() {
-        return getOnlyCacheByItem(cacheByItems).getClazz();
-    }
-
-    @Override
     public String getCacheKey(InvocationContext context) {
-        return getCacheKey(getCacheByObjs(context));
-    }
-
-    @Override
-    public String getCacheKey(Object... objs) {
-        if (objs.length == 0) {
-            throw new RuntimeException(); // TODO
-        }
         StringBuilder key = new StringBuilder(prefix);
-        for (Object obj : objs) {
+        for (CacheByItem item : cacheByItems) {
+            Object obj = context.getPropertyValue(item.getParameterName(), item.getInvoker());
+            if (obj == null) {
+                throw new NullPointerException("value of " + item.getFullName() + " can't be null");
+            }
             key.append("_").append(obj);
         }
         return key.toString();
     }
 
     @Override
-    public Set<String> getCacheKeysForMulti(InvocationContext context) {
-        Iterables iterables = new Iterables(getOnlyCacheByObjForMulti(context));
+    public Class<?> getOnlyCacheByClass() {
+        return getOnlyCacheByItem(cacheByItems).getClazz();
+    }
+
+    @Override
+    public Set<String> getCacheKeys(InvocationContext context) {
+        Iterables iterables = new Iterables(getOnlyCacheByObj(context));
         if (iterables.isEmpty()) {
             CacheByItem item = getOnlyCacheByItem(cacheByItems);
             throw new IllegalArgumentException("value of " + item.getFullName() + " can't be empty");
@@ -163,7 +159,12 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
-    public Object getOnlyCacheByObjForMulti(InvocationContext context) {
+    public String getCacheKey(Object obj) {
+        return prefix + "_" + obj;
+    }
+
+    @Override
+    public Object getOnlyCacheByObj(InvocationContext context) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
         Object obj = context.getPropertyValue(item.getParameterName(), item.getInvoker());
         if (obj == null) {
@@ -173,7 +174,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
-    public void setOnlyCacheByObjForMulti(InvocationContext context, Object obj) {
+    public void setOnlyCacheByObj(InvocationContext context, Object obj) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
         context.setPropertyValue(item.getParameterName(), item.getInvoker(), obj);
     }
@@ -243,19 +244,6 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                 }
             }
         }
-    }
-
-    private Object[] getCacheByObjs(InvocationContext context) {
-        Object[] cacheByObjs = new Object[cacheByItems.size()];
-        for (int i = 0; i < cacheByItems.size(); i++) {
-            CacheByItem item = cacheByItems.get(i);
-            Object obj = context.getPropertyValue(item.getParameterName(), item.getInvoker());
-            if (obj == null) {
-                throw new NullPointerException("value of " + item.getFullName() + " can't be null");
-            }
-            cacheByObjs[i] = obj;
-        }
-        return cacheByObjs;
     }
 
     private static CacheByItem getOnlyCacheByItem(List<CacheByItem> cacheByItems) {

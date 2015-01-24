@@ -28,13 +28,15 @@ public interface CacheMultiKey {
     /**
      * 获得唯一的缓存
      */
-    public Class<?> getOnlyCacheByClassForMulti();
+    public Class<?> getOnlyCacheByClass();
 
-    public Set<String> getCacheKeysForMulti(InvocationContext context);
+    public Set<String> getCacheKeys(InvocationContext context);
 
-    public Object getOnlyCacheByObjForMulti(InvocationContext context);
+    public String getCacheKey(Object obj);
 
-    public void setOnlyCacheByObjForMulti(InvocationContext context, Object obj);
+    public Object getOnlyCacheByObj(InvocationContext context);
+
+    public void setOnlyCacheByObj(InvocationContext context, Object obj);
 
     /**
      * 获得使用in语句的字段，需要通过这个字段将从db中取出的数据放入缓存
