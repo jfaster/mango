@@ -17,7 +17,6 @@
 package org.jfaster.mango.exception;
 
 import org.jfaster.mango.annotation.Cache;
-import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.cache.Day;
@@ -61,21 +60,11 @@ public class IllegalStateExceptionTest {
     @Test
     public void test3() {
         thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("if use cache, each method expected one and only one " +
+        thrown.expectMessage("if use cache, each method expected one or more " +
                 "@CacheBy annotation on parameter but found 0");
         Dao3 dao = mango.create(Dao3.class, new CacheHandlerImpl());
         dao.add();
     }
-
-    @Test
-    public void test4() {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("if use cache, each method expected one and only one " +
-                "@CacheBy annotation on parameter but found 2");
-        Dao3 dao = mango.create(Dao3.class, new CacheHandlerImpl());
-        dao.add2(1, 2);
-    }
-
 
     static interface Dao {
     }
@@ -90,9 +79,6 @@ public class IllegalStateExceptionTest {
     static interface Dao3 {
         @SQL("insert into ...")
         public int add();
-
-        @SQL("insert into ...")
-        public int add2(@CacheBy int x, @CacheBy int y);
     }
 
 }

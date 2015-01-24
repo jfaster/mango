@@ -324,7 +324,7 @@ public class CacheTest {
 
 
     @DB
-    @Cache(prefix = "user_", expire = Day.class)
+    @Cache(prefix = "user", expire = Day.class)
     interface UserDao {
 
         @ReturnGeneratedId
@@ -359,7 +359,7 @@ public class CacheTest {
     }
 
     @DB
-    @Cache(prefix = "msg_", expire = Day.class)
+    @Cache(prefix = "msg", expire = Day.class)
     interface MsgDao {
 
         @ReturnGeneratedId

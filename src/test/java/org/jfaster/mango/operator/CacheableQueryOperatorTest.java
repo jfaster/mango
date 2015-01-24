@@ -231,7 +231,7 @@ public class CacheableQueryOperatorTest {
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
-        methodAnnos.add(new MockCache("user_", Day.class));
+        methodAnnos.add(new MockCache("user", Day.class));
         methodAnnos.add(new MockSQL(srcSql));
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
         MethodDescriptor md = new MethodDescriptor(rd, pds);

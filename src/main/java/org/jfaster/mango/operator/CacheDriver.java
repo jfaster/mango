@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,31 +26,55 @@ import java.util.Set;
  */
 public interface CacheDriver {
 
+    /**
+     * 是否是多个key
+     */
     public boolean isUseMultipleKeys();
 
+    /**
+     * 存入缓存
+     */
     public void setToCache(String key, Object value);
 
+    /**
+     * 从缓存删除单个key
+     */
     public void deleteFromCache(String key);
 
+    /**
+     * 从缓存删除多个key
+     */
     public void deleteFromCache(Set<String> keys);
 
+    /**
+     * 从缓存读取单个key
+     */
     public Object getFromCache(String key);
 
+    /**
+     * 从缓存读取多个key
+     */
     @Nullable
     public Map<String, Object> getBulkFromCache(Set<String> keys);
 
-    public Class<?> getSuffixClass();
+    /**
+     * 获得唯一的缓存
+     */
+    public Class<?> getOnlyCacheByClassForMulti();
 
     public String getCacheKey(InvocationContext context);
 
-    public String getCacheKey(Object suffix);
+    public String getCacheKey(Object... objs);
 
-    public Set<String> getCacheKeys(InvocationContext context);
+    public Set<String> getCacheKeysForMulti(InvocationContext context);
 
-    public Object getSuffixObj(InvocationContext context);
+    public Object getOnlyCacheByObjForMulti(InvocationContext context);
 
-    public void setSuffixObj(InvocationContext context, Object obj);
+    public void setOnlyCacheByObjForMulti(InvocationContext context, Object obj);
 
+    /**
+     * 获得使用in语句的字段，需要通过这个字段将从db中取出的数据放入缓存
+     */
     public String getInterableProperty();
 
 }

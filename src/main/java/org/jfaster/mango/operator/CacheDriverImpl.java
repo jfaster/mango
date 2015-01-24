@@ -36,10 +36,7 @@ import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ash
@@ -69,31 +66,14 @@ public class CacheDriverImpl implements CacheDriver {
     private int expireNum;
 
     /**
-     * 缓存后缀参数名
+     * cacheBy相关信息
      */
-    private String suffixParameterName;
-
-    /**
-     * 缓存后缀属性路径
-     */
-    private String suffixPropertyPath;
-
-    private GetterInvoker invoker;
-
-    /**
-     * 缓存前缀全名
-     */
-    private String suffixFullName;
+    private List<CacheByItem> cacheByItems = new ArrayList<CacheByItem>();
 
     /**
      * 是否使用多key缓存
      */
     private boolean useMultipleKeys;
-
-    /**
-     * 缓存后缀Class
-     */
-    private Class<?> suffixClass;
 
     private String interableProperty;
 
@@ -143,46 +123,56 @@ public class CacheDriverImpl implements CacheDriver {
     }
 
     @Override
-    public Class<?> getSuffixClass() {
-        return suffixClass;
+    public Class<?> getOnlyCacheByClassForMulti() {
+        return getOnlyCacheByItem(cacheByItems).getClazz();
     }
 
     @Override
     public String getCacheKey(InvocationContext context) {
-        return getCacheKey(getSuffixObj(context));
+        return getCacheKey(getCacheByObjs(context));
     }
 
     @Override
-    public String getCacheKey(Object suffix) {
-        return prefix + suffix;
+    public String getCacheKey(Object... objs) {
+        if (objs.length == 0) {
+            throw new RuntimeException(); // TODO
+        }
+        StringBuilder key = new StringBuilder(prefix);
+        for (Object obj : objs) {
+            key.append("_").append(obj);
+        }
+        return key.toString();
     }
 
     @Override
-    public Set<String> getCacheKeys(InvocationContext context) {
-        Iterables iterables = new Iterables(getSuffixObj(context));
+    public Set<String> getCacheKeysForMulti(InvocationContext context) {
+        Iterables iterables = new Iterables(getOnlyCacheByObjForMulti(context));
         if (iterables.isEmpty()) {
-            throw new IllegalArgumentException("value of " + suffixFullName + " can't be empty");
+            CacheByItem item = getOnlyCacheByItem(cacheByItems);
+            throw new IllegalArgumentException("value of " + item.getFullName() + " can't be empty");
         }
         Set<String> keys = new HashSet<String>(iterables.size() * 2);
-        for (Object suffix : iterables) {
-            String key = getCacheKey(suffix);
+        for (Object obj : iterables) {
+            String key = getCacheKey(obj);
             keys.add(key);
         }
         return keys;
     }
 
     @Override
-    public Object getSuffixObj(InvocationContext context) {
-        Object obj = context.getPropertyValue(suffixParameterName, invoker);
+    public Object getOnlyCacheByObjForMulti(InvocationContext context) {
+        CacheByItem item = getOnlyCacheByItem(cacheByItems);
+        Object obj = context.getPropertyValue(item.getParameterName(), item.getInvoker());
         if (obj == null) {
-            throw new NullPointerException("value of " + suffixFullName + " can't be null");
+            throw new NullPointerException("value of " + item.getFullName() + " can't be null");
         }
         return obj;
     }
 
     @Override
-    public void setSuffixObj(InvocationContext context, Object obj) {
-        context.setPropertyValue(suffixParameterName, invoker, obj);
+    public void setOnlyCacheByObjForMulti(InvocationContext context, Object obj) {
+        CacheByItem item = getOnlyCacheByItem(cacheByItems);
+        context.setPropertyValue(item.getParameterName(), item.getInvoker(), obj);
     }
 
     @Override
@@ -191,34 +181,38 @@ public class CacheDriverImpl implements CacheDriver {
     }
 
     private void init(MethodDescriptor md, ASTRootNode rootNode, ParameterContext context) {
-        int cacheByNum = 0;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             CacheBy cacheByAnno = pd.getAnnotation(CacheBy.class);
             if (cacheByAnno != null) {
-                suffixParameterName = nameProvider.getParameterName(pd.getPosition());
-                suffixPropertyPath = cacheByAnno.value();
-                cacheByNum++;
+                String parameterName = nameProvider.getParameterName(pd.getPosition());
+                String propertyPaths = cacheByAnno.value();
+                for (String propertyPath : propertyPaths.split("\\.")) {
+                    GetterInvoker invoker = context.getInvoker(parameterName, propertyPath);
+                    Type cacheByType = invoker.getType();
+                    TypeWrapper tw = new TypeWrapper(cacheByType);
+                    cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invoker));
+                    useMultipleKeys = useMultipleKeys || tw.isIterable();
+                }
             }
         }
+        int cacheByNum = cacheByItems.size();
+        if (useMultipleKeys && cacheByNum > 1) { // 当@CacheBy修饰in语句时，只能有1个@CacheBy
+            throw new RuntimeException(); // TODO
+        }
 
-        CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
         Cache cacheAnno = md.getAnnotation(Cache.class);
+        CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
         if (cacheAnno != null) { // dao类使用cache
             if (cacheIgnoredAnno == null) { // method不禁用cache
-                if (cacheByNum != 1) {
+                if (cacheByNum == 0) {
                     throw new IllegalStateException("if use cache, each method " +
-                            "expected one and only one @CacheBy annotation on parameter " +
-                            "but found " + cacheByNum);
+                            "expected one or more @CacheBy annotation on parameter " +
+                            "but found 0");
                 }
                 prefix = cacheAnno.prefix();
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
-                checkCacheBy(rootNode);
-                invoker = context.getInvoker(suffixParameterName, suffixPropertyPath);
-                Type suffixType = invoker.getType();
-                TypeWrapper tw = new TypeWrapper(suffixType);
-                useMultipleKeys = tw.isIterable();
-                suffixClass = tw.getMappedClass();
+                checkCacheBy(rootNode, cacheByItems);
             } else {
                 if (cacheByNum > 0) {
                     throw new IncorrectDefinitionException("if @CacheIgnored is on method, " +
@@ -236,37 +230,107 @@ public class CacheDriverImpl implements CacheDriver {
             }
         }
 
-        for (ASTJDBCIterableParameter jip : rootNode.getJDBCIterableParameters()) {
-            if (jip.getParameterName().equals(suffixParameterName)
-                    && jip.getPropertyPath().equals(suffixPropertyPath)) {
-                interableProperty = jip.getPropertyOfMapper();
-                break;
+        if (useMultipleKeys) {
+            CacheByItem cacheByItem = getOnlyCacheByItem(cacheByItems);
+            for (ASTJDBCIterableParameter jip : rootNode.getJDBCIterableParameters()) {
+                if (jip.getParameterName().equals(cacheByItem.getParameterName())
+                        && jip.getPropertyPath().equals(cacheByItem.getPropertyPath())) {
+                    interableProperty = jip.getPropertyOfMapper();
+                    break;
+                }
             }
         }
     }
 
+    private Object[] getCacheByObjs(InvocationContext context) {
+        Object[] cacheByObjs = new Object[cacheByItems.size()];
+        for (int i = 0; i < cacheByItems.size(); i++) {
+            CacheByItem item = cacheByItems.get(i);
+            Object obj = context.getPropertyValue(item.getParameterName(), item.getInvoker());
+            if (obj == null) {
+                throw new NullPointerException("value of " + item.getFullName() + " can't be null");
+            }
+            cacheByObjs[i] = obj;
+        }
+        return cacheByObjs;
+    }
+
+    private static CacheByItem getOnlyCacheByItem(List<CacheByItem> cacheByItems) {
+        if (cacheByItems.size() != 1) {
+            throw new RuntimeException(); // TODO
+        }
+        return cacheByItems.get(0);
+    }
+
     /**
-     * 检测{@link CacheBy}定位到的参数db中是否有用到，如果db中没有用到，则抛出{@link org.jfaster.mango.exception.IncorrectCacheByException}
+     * 检测{@link CacheBy}定位到的参数db中是否有用到，如果db中没有用到，
+     * 则抛出{@link org.jfaster.mango.exception.IncorrectCacheByException}
      */
-    private void checkCacheBy(ASTRootNode rootNode) {
+    private static void checkCacheBy(ASTRootNode rootNode, List<CacheByItem> cacheByItems) {
         List<ASTJDBCParameter> jps = rootNode.getJDBCParameters();
-        for (ASTJDBCParameter jp : jps) {
-            if (jp.getParameterName().equals(suffixParameterName) &&
-                    jp.getPropertyPath().equals(suffixPropertyPath)) {
-                suffixFullName = jp.getFullName();
-                return;
+        for (CacheByItem cacheByItem : cacheByItems) {
+            String parameterName = cacheByItem.getParameterName();
+            String propertyPath = cacheByItem.getPropertyPath();
+            boolean pass = false;
+            for (ASTJDBCParameter jp : jps) {
+                if (jp.getParameterName().equals(parameterName) &&
+                        jp.getPropertyPath().equals(propertyPath)) {
+                    pass = true;
+                    break;
+                }
+            }
+            List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
+            for (ASTJDBCIterableParameter jip : jips) {
+                if (jip.getParameterName().equals(parameterName) &&
+                        jip.getPropertyPath().equals(propertyPath)) {
+                    pass = true;
+                    break;
+                }
+            }
+            if (!pass) {
+                throw new IncorrectCacheByException("CacheBy " +
+                        cacheByItem.getFullName() + " can't match any db parameter");
             }
         }
-        List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
-        for (ASTJDBCIterableParameter jip : jips) {
-            if (jip.getParameterName().equals(suffixParameterName) &&
-                    jip.getPropertyPath().equals(suffixPropertyPath)) {
-                suffixFullName = jip.getFullName();
-                return;
-            }
+    }
+
+    private static class CacheByItem {
+
+        private final String parameterName;
+
+        private final String propertyPath;
+
+        private final Class<?> clazz;
+
+        private final GetterInvoker invoker;
+
+        public CacheByItem(String parameterName, String propertyPath, Class<?> clazz, GetterInvoker invoker) {
+            this.parameterName = parameterName;
+            this.propertyPath = propertyPath;
+            this.clazz = clazz;
+            this.invoker = invoker;
         }
-        String fullName = Strings.getFullName(suffixParameterName, suffixPropertyPath);
-        throw new IncorrectCacheByException("CacheBy " + fullName + " can't match any db parameter");
+
+        public String getParameterName() {
+            return parameterName;
+        }
+
+        public String getPropertyPath() {
+            return propertyPath;
+        }
+
+        public Class<?> getClazz() {
+            return clazz;
+        }
+
+        private GetterInvoker getInvoker() {
+            return invoker;
+        }
+
+        public String getFullName() {
+            return Strings.getFullName(parameterName, propertyPath);
+        }
+
     }
 
 }

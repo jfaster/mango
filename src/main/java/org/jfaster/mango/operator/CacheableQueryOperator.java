@@ -66,19 +66,19 @@ public class CacheableQueryOperator extends QueryOperator {
     public Object execute(Object[] values) {
         InvocationContext context = invocationContextFactory.newInvocationContext(values);
         return driver.isUseMultipleKeys() ?
-                multipleKeysCache(context, rowMapper.getMappedClass(), driver.getSuffixClass()) :
+                multipleKeysCache(context, rowMapper.getMappedClass(), driver.getOnlyCacheByClassForMulti()) :
                 singleKeyCache(context);
     }
 
     private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass, Class<U> suffixClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
-        Set<String> keys = driver.getCacheKeys(context);
+        Set<String> keys = driver.getCacheKeysForMulti(context);
         Map<String, Object> cacheResults = driver.getBulkFromCache(keys);
         AddableObject<T> addableObj = new AddableObject<T>(keys.size(), mappedClass);
         int hitCapacity = cacheResults != null ? cacheResults.size() : 0;
         List<U> hitSuffix = new ArrayList<U>(hitCapacity); // 用于debug
         Set<U> missSuffix = new HashSet<U>((keys.size() - hitCapacity) * 2);
-        for (Object suffix : new Iterables(driver.getSuffixObj(context))) {
+        for (Object suffix : new Iterables(driver.getOnlyCacheByObjForMulti(context))) {
             String key = driver.getCacheKey(suffix);
             Object value = cacheResults != null ? cacheResults.get(key) : null;
             if (value == null) {
@@ -97,7 +97,7 @@ public class CacheableQueryOperator extends QueryOperator {
             logger.debug("cache miss #keys={}", missSuffix);
         }
         if (!missSuffix.isEmpty()) { // 有key没有命中
-            driver.setSuffixObj(context, missSuffix);
+            driver.setOnlyCacheByObjForMulti(context, missSuffix);
             Object dbValues = execute(context);
             for (Object dbValue : new Iterables(dbValues)) {
                 // db数据添加入结果
