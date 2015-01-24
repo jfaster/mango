@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
@@ -24,6 +24,9 @@ import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.operator.InvocationContext;
+import org.jfaster.mango.operator.NameProvider;
+import org.jfaster.mango.operator.ParameterContext;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;

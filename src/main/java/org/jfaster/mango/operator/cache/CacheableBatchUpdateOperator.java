@@ -14,8 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.cache;
 
+import org.jfaster.mango.operator.BatchUpdateOperator;
+import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.util.Iterables;

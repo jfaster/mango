@@ -156,7 +156,7 @@ public class BatchUpdateOperator extends AbstractOperator {
         TRANSFORMERS.put(Integer[].class, IntegerArrayTransformer.INSTANCE);
     }
 
-    interface Transformer {
+    public interface Transformer {
         Object transform(int[] s);
     }
 

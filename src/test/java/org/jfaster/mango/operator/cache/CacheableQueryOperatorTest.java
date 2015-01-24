@@ -14,12 +14,16 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.cache.Day;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.operator.InterceptorChain;
+import org.jfaster.mango.operator.Operator;
+import org.jfaster.mango.operator.OperatorFactory;
+import org.jfaster.mango.operator.StatsCounter;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;

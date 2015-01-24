@@ -14,15 +14,32 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.cache;
+
+import org.jfaster.mango.operator.InvocationContext;
+
+import java.util.Set;
 
 /**
  * @author ash
  */
-public interface CacheSingleKey {
+public interface CacheMultiKey {
 
-    public String getCacheKey(InvocationContext context);
+    /**
+     * 获得唯一的缓存
+     */
+    public Class<?> getOnlyCacheByClassForMulti();
 
-    public String getCacheKey(Object... objs);
+    public Set<String> getCacheKeysForMulti(InvocationContext context);
+
+    public Object getOnlyCacheByObjForMulti(InvocationContext context);
+
+    public void setOnlyCacheByObjForMulti(InvocationContext context, Object obj);
+
+    /**
+     * 获得使用in语句的字段，需要通过这个字段将从db中取出的数据放入缓存
+     */
+    public String getInterableProperty();
+
 
 }
