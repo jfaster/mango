@@ -55,14 +55,12 @@ public class TypeWrapper {
                         isArray = true;
                         mappedType = t.getComponentType();
                     }
-                    mappedClass = TypeToken.of(mappedType).getRawType();
                 }
 
                 @Override
                 void visitGenericArrayType(GenericArrayType t) {
                     isArray = true;
                     mappedType = t.getGenericComponentType();
-                    mappedClass = TypeToken.of(mappedType).getRawType();
                 }
 
                 @Override
@@ -77,7 +75,6 @@ public class TypeWrapper {
                     } else {
                         throw new RuntimeException(); // TODO
                     }
-                    mappedClass = TypeToken.of(mappedType).getRawType();
                 }
 
                 @Override
@@ -90,6 +87,7 @@ public class TypeWrapper {
                     throw new IllegalStateException("Does not support the type " + type);
                 }
             }.visit(type);
+            mappedClass = TypeToken.of(mappedType).getRawType();
         }
     }
 
