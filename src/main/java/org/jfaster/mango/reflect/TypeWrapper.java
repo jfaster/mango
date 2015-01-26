@@ -60,8 +60,9 @@ public class TypeWrapper {
 
                 @Override
                 void visitGenericArrayType(GenericArrayType t) {
+                    isArray = true;
                     mappedType = t.getGenericComponentType();
-                    mappedClass = Types.getArrayClass(TypeToken.of(mappedType).getRawType());
+                    mappedClass = TypeToken.of(mappedType).getRawType();
                 }
 
                 @Override
