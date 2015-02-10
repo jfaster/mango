@@ -14,26 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.cache;
+package org.jfaster.mango.operator.cache;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
- * 抽象的缓存操作接口，您可以使用memcache或redis等第三方缓存实现该接口。
+ * 缓存失效时间单位为天
  *
  * @author ash
  */
-public interface CacheHandler {
+public class Day implements CacheExpire {
 
-    public Object get(String key);
-
-    public Map<String, Object> getBulk(Set<String> keys);
-
-    public void set(String key, Object value, int expires);
-
-    public void delete(Set<String> keys);
-
-    public void delete(String key);
+    @Override
+    public int getExpireTime() {
+        return (int) TimeUnit.DAYS.toSeconds(1);
+    }
 
 }

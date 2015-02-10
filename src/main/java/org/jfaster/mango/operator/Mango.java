@@ -18,7 +18,7 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.cache.CacheHandler;
+import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.InitializationException;

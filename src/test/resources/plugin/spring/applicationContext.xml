@@ -2,7 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <beans>
-    <bean class="org.jfaster.mango.plugin.spring.MangoBeanFactoryPostProcessor">
+    <bean class="org.jfaster.mango.plugin.spring.MangoConfigurer">
         <property name="packages">
             <list>
                 <value>org.jfaster.mango.plugin.spring</value>
@@ -11,6 +11,12 @@
     </bean>
 
     <bean class="org.jfaster.mango.operator.Mango">
+        <property name="locationPatterns">
+            <list>
+                <value>classpath*:com/letv/boss/core/**/*Dao.class</value>
+                <value>classpath*:com/letv/boss/hades/**/*Dao.class</value>
+            </list>
+        </property>
         <constructor-arg type="javax.sql.DataSource" ref="dmds" />
     </bean>
 

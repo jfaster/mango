@@ -14,15 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.cache;
+package org.jfaster.mango.operator.cache;
+
+import java.util.concurrent.TimeUnit;
 
 /**
- * 缓存过期
+ * 缓存失效时间单位为小时
  *
  * @author ash
  */
-public interface CacheExpire {
+public class Hour implements CacheExpire {
 
-    public int getExpireTime();
+    @Override
+    public int getExpireTime() {
+        return (int) TimeUnit.HOURS.toSeconds(1);
+    }
 
 }

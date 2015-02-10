@@ -18,7 +18,7 @@ package org.jfaster.mango.exception;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
-import org.jfaster.mango.cache.Day;
+import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.annotation.DB;

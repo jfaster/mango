@@ -14,20 +14,26 @@
  * under the License.
  */
 
-package org.jfaster.mango.cache;
+package org.jfaster.mango.operator.cache;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
 
 /**
- * 缓存失效时间单位为天
+ * 缓存失效时间单位为今天结束
  *
  * @author ash
  */
-public class Day implements CacheExpire {
+public class EndOfDay implements CacheExpire {
 
     @Override
     public int getExpireTime() {
-        return (int) TimeUnit.DAYS.toSeconds(1);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        long d = cal.getTimeInMillis() - System.currentTimeMillis();
+        return Math.max((int) d / 1000, 1);
     }
 
 }

@@ -49,6 +49,13 @@
     </developers>
 
     <dependencies>
+        <!-- spring插件 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>4.0.5.RELEASE</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- findbug相关 -->
         <dependency>
@@ -145,6 +152,13 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>4.0.5.RELEASE</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

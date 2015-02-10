@@ -14,41 +14,13 @@
  * under the License.
  */
 
-package org.jfaster.mango.annotation;
+package org.jfaster.mango.plugin.spring;
 
-import org.jfaster.mango.operator.cache.CacheExpire;
-
-import java.lang.annotation.*;
+import org.jfaster.mango.annotation.DB;
 
 /**
- * 指明该DAO需要集成cache
- *
  * @author ash
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Cache {
-
-    /**
-     * 缓存key前缀
-     *
-     * @return
-     */
-    String prefix();
-
-    /**
-     * 缓存过期时间单位
-     *
-     * @return
-     */
-    Class<? extends CacheExpire> expire();
-
-    /**
-     * 缓存过期时间数量
-     *
-     * @return
-     */
-    int num() default 1;
-
+@DB
+public class TestDao {
 }

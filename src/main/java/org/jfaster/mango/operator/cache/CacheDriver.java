@@ -19,8 +19,6 @@ package org.jfaster.mango.operator.cache;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
-import org.jfaster.mango.cache.CacheExpire;
-import org.jfaster.mango.cache.CacheHandler;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.invoker.GetterInvoker;
@@ -47,7 +45,7 @@ import java.util.*;
 public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     /**
-     * 具体的缓存实现，通过{@link this#setCacheHandler(org.jfaster.mango.cache.CacheHandler)}初始化
+     * 具体的缓存实现，通过{@link this#setCacheHandler(CacheHandler)}初始化
      */
     private CacheHandler cacheHandler;
 

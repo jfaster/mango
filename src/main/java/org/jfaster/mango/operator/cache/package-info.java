@@ -14,18 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.cache;
-
 /**
- * 缓存失效时间单位为秒
- *
- * @author ash
+ * 数据缓存
  */
-public class Second implements CacheExpire {
-
-    @Override
-    public int getExpireTime() {
-        return 1;
-    }
-
-}
+package org.jfaster.mango.operator.cache;

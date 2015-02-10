@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.cache.CacheHandler;
+import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.datasource.factory.DataSourceFactory;
 import org.jfaster.mango.datasource.factory.DataSourceType;
 import org.jfaster.mango.datasource.router.DataSourceRouter;

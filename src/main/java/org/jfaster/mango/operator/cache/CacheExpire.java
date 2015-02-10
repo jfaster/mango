@@ -14,26 +14,15 @@
  * under the License.
  */
 
-package org.jfaster.mango.cache;
-
-import java.util.Calendar;
+package org.jfaster.mango.operator.cache;
 
 /**
- * 缓存失效时间单位为今天结束
+ * 缓存过期
  *
  * @author ash
  */
-public class EndOfDay implements CacheExpire {
+public interface CacheExpire {
 
-    @Override
-    public int getExpireTime() {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 999);
-        long d = cal.getTimeInMillis() - System.currentTimeMillis();
-        return Math.max((int) d / 1000, 1);
-    }
+    public int getExpireTime();
 
 }
