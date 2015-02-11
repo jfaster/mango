@@ -68,9 +68,9 @@ final public class MangoConfigurer implements BeanFactoryPostProcessor {
         try {
             List<Class<?>> daos = new ArrayList<Class<?>>();
             ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+            MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
             for (String locationPattern : locationPatterns) {
                 Resource[] rs = resourcePatternResolver.getResources(locationPattern);
-                MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
                 for (Resource r : rs) {
                     MetadataReader reader = metadataReaderFactory.getMetadataReader(r);
                     AnnotationMetadata annotationMD = reader.getAnnotationMetadata();
