@@ -44,7 +44,6 @@ public class MangoConfigurerTest {
         MangoConfigurer mc = new MangoConfigurer();
         List<String> packages = Lists.newArrayList("org.jfaster.mango", "", "org.jfaster");
         mc.setPackages(packages);
-        System.out.println(mc.locationPatterns);
         assertThat(mc.locationPatterns.get(0), is("classpath*:org/jfaster/mango/**/*Dao.class"));
         assertThat(mc.locationPatterns.get(1), is("classpath*:org/jfaster/mango/**/*DAO.class"));
         assertThat(mc.locationPatterns.get(2), is("classpath*:/**/*Dao.class"));

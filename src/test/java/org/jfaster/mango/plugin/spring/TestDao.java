@@ -22,5 +22,5 @@ import org.jfaster.mango.annotation.DB;
  * @author ash
  */
 @DB
-public class TestDao {
+public interface TestDao {
 }

@@ -11,13 +11,7 @@
     </bean>
 
     <bean class="org.jfaster.mango.operator.Mango">
-        <property name="locationPatterns">
-            <list>
-                <value>classpath*:com/letv/boss/core/**/*Dao.class</value>
-                <value>classpath*:com/letv/boss/hades/**/*Dao.class</value>
-            </list>
-        </property>
-        <constructor-arg type="javax.sql.DataSource" ref="dmds" />
+        <property name="dataSource" ref="dmds" />
     </bean>
 
     <bean id="dmds" class="org.jfaster.mango.datasource.DriverManagerDataSource">

@@ -89,7 +89,7 @@ public class Mango {
     }
 
     public static Mango newInstance(DataSource dataSource) {
-        return new Mango().setDataSourceFactory(new SimpleDataSourceFactory(dataSource));
+        return new Mango().setDataSource(dataSource);
     }
 
     public static Mango newInstance(DataSourceFactory dataSourceFactory) {
@@ -137,6 +137,10 @@ public class Mango {
     public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler, boolean lazyInit) {
         if (daoClass == null) {
             throw new NullPointerException("dao interface can't be null");
+        }
+
+        if (!daoClass.isInterface()) {
+            throw new IllegalArgumentException("expected an interface to proxy, but " + daoClass);
         }
 
         DB dbAnno = daoClass.getAnnotation(DB.class);
@@ -257,6 +261,14 @@ public class Mango {
             return statsCounter;
         }
 
+    }
+
+    public Mango setDataSource(DataSource dataSource) {
+        if (dataSource == null) {
+            throw new NullPointerException("dataSource can't be null");
+        }
+        dataSourceFactory = new SimpleDataSourceFactory(dataSource);
+        return this;
     }
 
     public DataSourceFactory getDataSourceFactory() {
