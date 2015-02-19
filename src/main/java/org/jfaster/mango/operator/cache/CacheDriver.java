@@ -188,7 +188,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             if (cacheByAnno != null) {
                 String parameterName = nameProvider.getParameterName(pd.getPosition());
                 String propertyPaths = cacheByAnno.value();
-                for (String propertyPath : propertyPaths.split("\\.")) {
+                for (String propertyPath : propertyPaths.split(",")) {
+                    propertyPath = propertyPath.trim();
                     GetterInvoker invoker = context.getInvoker(parameterName, propertyPath);
                     Type cacheByType = invoker.getType();
                     TypeWrapper tw = new TypeWrapper(cacheByType);
