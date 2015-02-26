@@ -127,9 +127,6 @@ public class CacheableQueryOperator extends QueryOperator {
             }
             value = execute(context);
             if (value != null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("cache set #key={} #value={}", key, value);
-                }
                 driver.setToCache(key, value);
             }
         } else {
