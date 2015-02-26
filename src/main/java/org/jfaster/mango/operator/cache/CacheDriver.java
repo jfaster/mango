@@ -200,7 +200,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         }
         int cacheByNum = cacheByItems.size();
         if (useMultipleKeys && cacheByNum > 1) { // 当@CacheBy修饰in语句时，只能有1个@CacheBy
-            throw new RuntimeException(); // TODO
+            throw new IncorrectCacheByException("when @CacheBy modification interable parameter, " +
+                    "there can be only one @CacheBy");
         }
 
         Cache cacheAnno = md.getAnnotation(Cache.class);
@@ -247,7 +248,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     private static CacheByItem getOnlyCacheByItem(List<CacheByItem> cacheByItems) {
         if (cacheByItems.size() != 1) {
-            throw new RuntimeException(); // TODO
+            throw new IllegalStateException("size of cacheByItems expected 1 but " + cacheByItems.size());
         }
         return cacheByItems.get(0);
     }
