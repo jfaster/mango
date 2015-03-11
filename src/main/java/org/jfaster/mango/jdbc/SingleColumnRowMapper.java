@@ -14,35 +14,25 @@
  * under the License.
  */
 
-package org.jfaster.mango.mapper;
+package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.exception.IncorrectResultSetColumnCountException;
-import org.jfaster.mango.invoker.Function;
-import org.jfaster.mango.jdbc.JdbcUtils;
 
-import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
- * 函数式单列RowMapper
+ * 单列RowMapper
  *
  * @author ash
  */
-public class FunctionalSingleColumnRowMapper<T> implements RowMapper<T> {
+public class SingleColumnRowMapper<T> implements RowMapper<T> {
 
-    private Function function;
-    private Class<?> fromDbClass;
     private Class<T> mappedClass;
-    private Type mappedType;
 
-    public FunctionalSingleColumnRowMapper(Function function, Class<?> fromDbClass,
-                                           Class<T> mappedClass, Type mappedType) {
-        this.function = function;
-        this.fromDbClass = fromDbClass;
+    public SingleColumnRowMapper(Class<T> mappedClass) {
         this.mappedClass = mappedClass;
-        this.mappedType = mappedType;
     }
 
     @SuppressWarnings("unchecked")
@@ -54,8 +44,7 @@ public class FunctionalSingleColumnRowMapper<T> implements RowMapper<T> {
             throw new IncorrectResultSetColumnCountException("incorrect column count, expected 1 but " + nrOfColumns);
         }
 
-        Object fromDbValue = getColumnValue(rs, 1, this.fromDbClass);
-        Object result = function.apply(fromDbValue, mappedType);
+        Object result = getColumnValue(rs, 1, this.mappedClass);
         return (T) result;
     }
 

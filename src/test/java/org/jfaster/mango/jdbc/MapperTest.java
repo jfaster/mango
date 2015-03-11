@@ -14,12 +14,13 @@
  * under the License.
  */
 
-package org.jfaster.mango.mapper;
+package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
+import org.jfaster.mango.jdbc.AbstractRowMapper;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Table;

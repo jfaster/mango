@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.mapper.RowMapper;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

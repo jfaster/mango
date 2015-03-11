@@ -15,6 +15,6 @@
  */
 
 /**
- * 分表
+ * 分表，分库（数据源路由）
  */
 package org.jfaster.mango.partition;

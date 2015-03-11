@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.jdbc.RowMapper;
 
 import java.lang.annotation.*;
 

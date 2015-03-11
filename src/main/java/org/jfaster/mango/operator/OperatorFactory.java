@@ -18,10 +18,10 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.cache.CacheHandler;
-import org.jfaster.mango.datasource.factory.DataSourceFactory;
-import org.jfaster.mango.datasource.factory.DataSourceType;
-import org.jfaster.mango.datasource.router.DataSourceRouter;
-import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
+import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceType;
+import org.jfaster.mango.partition.DataSourceRouter;
+import org.jfaster.mango.partition.IgnoreDataSourceRouter;
 import org.jfaster.mango.exception.*;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.operator.cache.CacheDriver;

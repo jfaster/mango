@@ -17,8 +17,8 @@
 package org.jfaster.mango.support;
 
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.datasource.router.DataSourceRouter;
-import org.jfaster.mango.datasource.router.IgnoreDataSourceRouter;
+import org.jfaster.mango.partition.DataSourceRouter;
+import org.jfaster.mango.partition.IgnoreDataSourceRouter;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
 

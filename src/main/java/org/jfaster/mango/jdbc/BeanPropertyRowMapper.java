@@ -14,11 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.mapper;
+package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.SetterInvoker;
-import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;

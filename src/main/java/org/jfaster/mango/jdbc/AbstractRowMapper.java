@@ -14,7 +14,28 @@
  * under the License.
  */
 
+package org.jfaster.mango.jdbc;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 /**
- * 数据源路由
+ * @author ash
  */
-package org.jfaster.mango.datasource.router;
+public abstract class AbstractRowMapper<T> implements RowMapper<T> {
+
+    private Class<T> mappedClass;
+
+    @SuppressWarnings("unchecked")
+    protected AbstractRowMapper() {
+        Type genType = getClass().getGenericSuperclass();
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        mappedClass =  (Class<T>) params[0];
+    }
+
+    @Override
+    public Class<T> getMappedClass() {
+        return mappedClass;
+    }
+
+}

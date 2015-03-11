@@ -1,4 +1,4 @@
-package org.jfaster.mango.datasource.factory;
+package org.jfaster.mango.datasource;
 
 /**
  * 数据源类型

@@ -14,17 +14,15 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource.factory;
-
-import javax.sql.DataSource;
+package org.jfaster.mango.partition;
 
 /**
- * 数据源工厂
+ * 数据源路由
  *
  * @author ash
  */
-public interface DataSourceFactory {
+public interface DataSourceRouter {
 
-    public DataSource getDataSource(String name, DataSourceType dataSourceType);
+    public String getDataSourceName(Object shardParam);
 
 }

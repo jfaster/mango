@@ -14,20 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource.router;
+package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.UnreachableCodeException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * {@link org.jfaster.mango.annotation.DB#dataSourceRouter()}的默认值，表示不使用数据源路由
- *
  * @author ash
  */
-public final class IgnoreDataSourceRouter implements DataSourceRouter {
+public interface RowMapper<T> {
 
-    @Override
-    public String getDataSourceName(Object shardByParam) {
-        throw new UnreachableCodeException();
-    }
+    T mapRow(ResultSet rs, int rowNum) throws SQLException;
+
+    Class<T> getMappedClass();
 
 }

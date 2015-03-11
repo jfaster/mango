@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.datasource.factory.DataSourceFactory;
-import org.jfaster.mango.datasource.factory.MultipleDataSourceFactory;
-import org.jfaster.mango.datasource.factory.SimpleDataSourceFactory;
-import org.jfaster.mango.datasource.router.DataSourceRouter;
+import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.MultipleDataSourceFactory;
+import org.jfaster.mango.datasource.SimpleDataSourceFactory;
+import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.partition.ModHundredTablePartition;
 import org.jfaster.mango.reflect.MethodDescriptor;

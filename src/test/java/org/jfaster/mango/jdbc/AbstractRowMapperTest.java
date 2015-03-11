@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.mapper;
+package org.jfaster.mango.jdbc;
 
 import org.junit.Test;
 

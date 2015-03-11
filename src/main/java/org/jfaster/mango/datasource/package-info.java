@@ -15,6 +15,6 @@
  */
 
 /**
- * 数据源
+ * 数据源工具与工厂
  */
 package org.jfaster.mango.datasource;

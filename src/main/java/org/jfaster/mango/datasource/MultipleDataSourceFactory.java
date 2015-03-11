@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.datasource.factory;
+package org.jfaster.mango.datasource;
 
 import javax.sql.DataSource;
 import java.util.Map;

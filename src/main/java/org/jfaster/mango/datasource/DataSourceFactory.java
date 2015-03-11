@@ -14,18 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.mapper;
+package org.jfaster.mango.datasource;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.sql.DataSource;
 
 /**
+ * 数据源工厂
+ *
  * @author ash
  */
-public interface RowMapper<T> {
+public interface DataSourceFactory {
 
-    T mapRow(ResultSet rs, int rowNum) throws SQLException;
-
-    Class<T> getMappedClass();
+    public DataSource getDataSource(String name, DataSourceType dataSourceType);
 
 }
