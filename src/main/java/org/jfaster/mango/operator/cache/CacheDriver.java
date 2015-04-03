@@ -76,7 +76,10 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
      */
     private boolean useMultipleKeys;
 
-    private String interableProperty;
+    /**
+     * "msg_id in (:1)"中的msg_id
+     */
+    private String propertyOfMapper;
 
     public CacheDriver(MethodDescriptor md, ASTRootNode rootNode, CacheHandler cacheHandler,
                            ParameterContext context, NameProvider nameProvider) {
@@ -178,8 +181,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
-    public String getInterableProperty() {
-        return interableProperty;
+    public String getPropertyOfMapper() {
+        return propertyOfMapper;
     }
 
     private void init(MethodDescriptor md, ASTRootNode rootNode, ParameterContext context) {
@@ -239,7 +242,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             for (ASTJDBCIterableParameter jip : rootNode.getJDBCIterableParameters()) {
                 if (jip.getParameterName().equals(cacheByItem.getParameterName())
                         && jip.getPropertyPath().equals(cacheByItem.getPropertyPath())) {
-                    interableProperty = jip.getPropertyOfMapper();
+                    propertyOfMapper = jip.getPropertyOfMapper();
                     break;
                 }
             }

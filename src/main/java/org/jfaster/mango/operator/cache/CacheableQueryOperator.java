@@ -26,6 +26,7 @@ import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -40,7 +41,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private CacheDriver driver;
 
-    private GetterInvoker suffixInvoker;
+    GetterInvoker propertyOfMapperInvoker;
 
     public CacheableQueryOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver) {
         super(rootNode, md);
@@ -54,12 +55,17 @@ public class CacheableQueryOperator extends QueryOperator {
         }
 
         if (driver.isUseMultipleKeys()) {
-            String suffixProperty = driver.getInterableProperty();
-            suffixInvoker = InvokerCache.getGetterInvoker(mappedClass, suffixProperty);
-            if (suffixInvoker == null) {
+            String propertyOfMapper = driver.getPropertyOfMapper().toLowerCase(); //可能有下划线
+            List<GetterInvoker> invokers = InvokerCache.getGetterInvokers(mappedClass);
+            for (GetterInvoker invoker : invokers) {
+                if (Strings.underscoreName(invoker.getName()).equals(propertyOfMapper)) {
+                    propertyOfMapperInvoker = invoker;
+                }
+            }
+            if (propertyOfMapperInvoker == null) {
                 // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
                 throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
-                        + suffixProperty + " of " + mappedClass + " expected readable but not");
+                        + propertyOfMapper + " of " + mappedClass + " expected readable but not");
             }
         }
     }
@@ -105,9 +111,9 @@ public class CacheableQueryOperator extends QueryOperator {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
                 // 添加入缓存
-                Object suffix = suffixInvoker.invoke(dbValue);
+                Object suffix = propertyOfMapperInvoker.invoke(dbValue);
                 if (suffix == null) {
-                    throw new NullPointerException("property " + suffixInvoker.getName() + " of " +
+                    throw new NullPointerException("property " + propertyOfMapperInvoker.getName() + " of " +
                             mappedClass + " is null, please check return type");
                 }
                 String key = driver.getCacheKey(suffix);

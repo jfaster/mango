@@ -41,7 +41,7 @@ public interface CacheMultiKey {
     /**
      * 获得使用in语句的字段，需要通过这个字段将从db中取出的数据放入缓存
      */
-    public String getInterableProperty();
+    public String getPropertyOfMapper();
 
 
 }

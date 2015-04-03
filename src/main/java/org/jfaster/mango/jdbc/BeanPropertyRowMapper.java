@@ -57,30 +57,12 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
                 invokerMap.put(column, invoker);
             } else {
                 invokerMap.put(invoker.getName().toLowerCase(), invoker);
-                String underscoredName = underscoreName(invoker.getName());
+                String underscoredName = Strings.underscoreName(invoker.getName());
                 if (!invoker.getName().toLowerCase().equals(underscoredName)) {
                     invokerMap.put(underscoredName, invoker);
                 }
             }
         }
-    }
-
-    private String underscoreName(String name) {
-        if (Strings.isEmpty(name)) {
-            return "";
-        }
-        StringBuilder result = new StringBuilder();
-        result.append(name.substring(0, 1).toLowerCase());
-        for (int i = 1; i < name.length(); i++) {
-            String s = name.substring(i, i + 1);
-            String slc = s.toLowerCase();
-            if (!s.equals(slc)) {
-                result.append("_").append(slc);
-            } else {
-                result.append(s);
-            }
-        }
-        return result.toString();
     }
 
     public T mapRow(ResultSet rs, int rowNumber) throws SQLException {

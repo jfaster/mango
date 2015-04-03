@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
+import org.hamcrest.Matchers;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.operator.InterceptorChain;
@@ -35,8 +36,8 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author ash
@@ -52,7 +53,7 @@ public class CacheableQueryOperatorTest {
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Object get(String key) {
-                assertThat(key, equalTo("user_1"));
+                assertThat(key, Matchers.equalTo("user_1"));
                 return new User();
             }
         }, new MockCacheBy(""));
@@ -62,7 +63,7 @@ public class CacheableQueryOperatorTest {
         operator.setJdbcOperations(new JdbcOperationsAdapter());
 
         operator.execute(new Object[]{1});
-        assertThat(sc.snapshot().getHitCount(), equalTo(1L));
+        assertThat(sc.snapshot().getHitCount(), Matchers.equalTo(1L));
     }
 
     @Test
@@ -73,14 +74,14 @@ public class CacheableQueryOperatorTest {
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Object get(String key) {
-                assertThat(key, equalTo("user_1"));
+                assertThat(key, Matchers.equalTo("user_1"));
                 return null;
             }
 
             @Override
             public void set(String key, Object value, int expires) {
-                assertThat(key, equalTo("user_1"));
-                assertThat(expires, equalTo((int) TimeUnit.DAYS.toSeconds(1)));
+                assertThat(key, Matchers.equalTo("user_1"));
+                assertThat(expires, Matchers.equalTo((int) TimeUnit.DAYS.toSeconds(1)));
             }
         }, new MockCacheBy(""));
 
@@ -91,15 +92,15 @@ public class CacheableQueryOperatorTest {
             @Override
             public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(1));
-                assertThat(args[0], equalTo((Object) 1));
+                assertThat(sql, Matchers.equalTo(descSql));
+                assertThat(args.length, Matchers.equalTo(1));
+                assertThat(args[0], Matchers.equalTo((Object) 1));
                 return (T) new User();
             }
         });
 
         operator.execute(new Object[]{1});
-        assertThat(sc.snapshot().getMissCount(), equalTo(1L));
+        assertThat(sc.snapshot().getMissCount(), Matchers.equalTo(1L));
     }
 
     @Test
@@ -114,7 +115,7 @@ public class CacheableQueryOperatorTest {
                 map.put("user_1", new User());
                 map.put("user_2", new User());
                 map.put("user_3", new User());
-                assertThat(keys, equalTo(map.keySet()));
+                assertThat(keys, Matchers.equalTo(map.keySet()));
                 return map;
             }
         }, new MockCacheBy(""));
@@ -125,6 +126,7 @@ public class CacheableQueryOperatorTest {
 
         operator.execute(new Object[]{Arrays.asList(1, 2, 3)});
         assertThat(sc.snapshot().getHitCount(), equalTo(3L));
+        assertThat(((CacheableQueryOperator) operator).propertyOfMapperInvoker.getName(), equalTo("id"));
     }
 
     @Test
@@ -140,7 +142,7 @@ public class CacheableQueryOperatorTest {
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Map<String, Object> getBulk(Set<String> keys) {
-                assertThat(keys, equalTo(keys));
+                assertThat(keys, Matchers.equalTo(keys));
                 return null;
             }
             @Override
@@ -155,11 +157,11 @@ public class CacheableQueryOperatorTest {
             @Override
             public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id in (?,?,?)";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(3));
-                assertThat(args[0], equalTo((Object) 1));
-                assertThat(args[1], equalTo((Object) 2));
-                assertThat(args[2], equalTo((Object) 3));
+                assertThat(sql, Matchers.equalTo(descSql));
+                assertThat(args.length, Matchers.equalTo(3));
+                assertThat(args[0], Matchers.equalTo((Object) 1));
+                assertThat(args[1], Matchers.equalTo((Object) 2));
+                assertThat(args[2], Matchers.equalTo((Object) 3));
 
                 List<T> users = new ArrayList<T>();
                 users.add((T) new User(1, "1"));
@@ -170,8 +172,8 @@ public class CacheableQueryOperatorTest {
         });
 
         operator.execute(new Object[]{Arrays.asList(1, 2, 3)});
-        assertThat(sc.snapshot().getMissCount(), equalTo(3L));
-        assertThat(keys, equalTo(setKeys));
+        assertThat(sc.snapshot().getMissCount(), Matchers.equalTo(3L));
+        assertThat(keys, Matchers.equalTo(setKeys));
     }
 
     @Test
@@ -187,7 +189,7 @@ public class CacheableQueryOperatorTest {
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Map<String, Object> getBulk(Set<String> keys) {
-                assertThat(keys, equalTo(keys));
+                assertThat(keys, Matchers.equalTo(keys));
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("user_2", new User());
                 return map;
@@ -204,10 +206,10 @@ public class CacheableQueryOperatorTest {
             @Override
             public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id in (?,?)";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(2));
-                assertThat(args[0], equalTo((Object) 1));
-                assertThat(args[1], equalTo((Object) 3));
+                assertThat(sql, Matchers.equalTo(descSql));
+                assertThat(args.length, Matchers.equalTo(2));
+                assertThat(args[0], Matchers.equalTo((Object) 1));
+                assertThat(args[1], Matchers.equalTo((Object) 3));
 
                 List<T> users = new ArrayList<T>();
                 users.add((T) new User(1, "1"));
@@ -217,10 +219,42 @@ public class CacheableQueryOperatorTest {
         });
 
         operator.execute(new Object[]{Arrays.asList(1, 2, 3)});
-        assertThat(sc.snapshot().getHitCount(), equalTo(1L));
-        assertThat(sc.snapshot().getMissCount(), equalTo(2L));
+        assertThat(sc.snapshot().getHitCount(), Matchers.equalTo(1L));
+        assertThat(sc.snapshot().getMissCount(), Matchers.equalTo(2L));
         keys.remove("user_2");
-        assertThat(keys, equalTo(setKeys));
+        assertThat(keys, Matchers.equalTo(setKeys));
+    }
+
+    @Test
+    public void testQueryMultiKeyPropertyOfMapper() throws Exception {
+        TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
+        TypeToken<List<X>> rt = new TypeToken<List<X>>() {};
+        String srcSql = "select * from user where msg_id in (:1)";
+        Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+        }, new MockCacheBy(""));
+        assertThat(((CacheableQueryOperator) operator).propertyOfMapperInvoker.getName(), equalTo("msgId"));
+    }
+
+    private static class X {
+
+        private int msgId;
+        private String content;
+
+        public int getMsgId() {
+            return msgId;
+        }
+
+        public void setMsgId(int msgId) {
+            this.msgId = msgId;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
     }
 
 

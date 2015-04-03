@@ -36,7 +36,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     private String propertyPath; // 为""的时候表示没有属性
     private GetterInvoker invoker;
 
-    private String propertyOfMapper; // "a in (:1)"中的a
+    private String propertyOfMapper; // "msg_id in (:1)"中的msg_id
 
     public ASTJDBCIterableParameter(int i) {
         super(i);
