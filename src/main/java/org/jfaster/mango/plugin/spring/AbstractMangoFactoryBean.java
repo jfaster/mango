@@ -17,22 +17,20 @@
 package org.jfaster.mango.plugin.spring;
 
 import org.jfaster.mango.operator.Mango;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * @author ash
  */
-public class MangoFactoryBean implements FactoryBean, ApplicationContextAware {
+public abstract class AbstractMangoFactoryBean implements FactoryBean {
 
-    private ApplicationContext applicationContext;
     private Class<?> daoClass;
+
+    public abstract Mango getMangoInstance();
 
     @Override
     public Object getObject() throws Exception {
-        Mango mango = applicationContext.getBean(Mango.class);
+        Mango mango = getMangoInstance();
         return mango.create(daoClass);
     }
 
@@ -50,8 +48,4 @@ public class MangoFactoryBean implements FactoryBean, ApplicationContextAware {
         this.daoClass = daoClass;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
 }

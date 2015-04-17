@@ -49,6 +49,8 @@ final public class MangoConfigurer implements BeanFactoryPostProcessor {
 
     List<String> locationPatterns = new ArrayList<String>();
 
+    Class<?> factoryBeanClass = DefaultMangoFactoryBean.class;
+
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         DefaultListableBeanFactory dlbf = (DefaultListableBeanFactory) beanFactory;
@@ -57,7 +59,7 @@ final public class MangoConfigurer implements BeanFactoryPostProcessor {
             bf.setBeanClassName(daoClass.getName());
             MutablePropertyValues pvs = bf.getPropertyValues();
             pvs.addPropertyValue("daoClass", daoClass);
-            bf.setBeanClass(MangoFactoryBean.class);
+            bf.setBeanClass(factoryBeanClass);
             bf.setPropertyValues(pvs);
             bf.setLazyInit(false);
             dlbf.registerBeanDefinition(daoClass.getName(), bf);
@@ -96,4 +98,7 @@ final public class MangoConfigurer implements BeanFactoryPostProcessor {
         }
     }
 
+    public void setFactoryBeanClass(Class<?> factoryBeanClass) {
+        this.factoryBeanClass = factoryBeanClass;
+    }
 }

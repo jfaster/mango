@@ -8,6 +8,10 @@
                 <value>org.jfaster.mango.plugin.spring</value>
             </list>
         </property>
+
+        <property name="factoryBeanClass">
+            <value>org.jfaster.mango.plugin.spring.DefaultMangoFactoryBean</value>
+        </property>
     </bean>
 
     <bean class="org.jfaster.mango.operator.Mango">
