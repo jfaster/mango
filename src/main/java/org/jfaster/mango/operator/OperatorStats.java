@@ -52,6 +52,10 @@ public class OperatorStats {
         return method.getName();
     }
 
+    public String getMethodNameWithParameterNum() {
+        return method.getName() + "(" + method.getParameterTypes().length + ")";
+    }
+
     public String getClassName() {
         return method.getDeclaringClass().getName();
     }

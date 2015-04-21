@@ -84,16 +84,30 @@ public class Mango {
     private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap =
             new ConcurrentHashMap<Method, StatsCounter>();
 
-    public static Mango newInstance() {
-        return new Mango();
+    /**
+     * mango实例
+     */
+    private final static List<Mango> instances = new ArrayList<Mango>();
+
+    public synchronized static Mango newInstance() {
+        Mango mango = new Mango();
+        instances.add(mango);
+        return mango;
     }
 
     public static Mango newInstance(DataSource dataSource) {
-        return new Mango().setDataSource(dataSource);
+        return newInstance().setDataSource(dataSource);
     }
 
     public static Mango newInstance(DataSourceFactory dataSourceFactory) {
-        return new Mango().setDataSourceFactory(dataSourceFactory);
+        return newInstance().setDataSourceFactory(dataSourceFactory);
+    }
+
+    /**
+     * 获得mango实例
+     */
+    public synchronized static List<Mango> getInstances() {
+        return Collections.unmodifiableList(instances);
     }
 
     /**
