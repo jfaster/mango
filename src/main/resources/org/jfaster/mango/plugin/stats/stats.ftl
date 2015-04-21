@@ -45,7 +45,7 @@
                     <#if (isFetchAll || stats.executeCount > 0)>
                         <tr>
                             <td>${stats.classSimpleName}</td>
-                            <td>${stats.methodName}</td>
+                            <td>${stats.methodNameWithParameterNum}</td>
                             <td>${stats.hitCount}</td>
                             <td>${stats.missCount}</td>
                             <td>${(stats.hitRate * 100)?string('0.0')}%</td>
