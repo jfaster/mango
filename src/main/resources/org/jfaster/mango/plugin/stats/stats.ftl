@@ -42,7 +42,7 @@
                 <tbody>
 
                 <#list mango.allStats as stats>
-                    <#if (isFetchAll || stats.executeCount > 0)>
+                    <#if (isFetchAll || stats.executeCount > 0 || stats.hitCount > 0)>
                         <tr>
                             <td>${stats.classSimpleName}</td>
                             <td>${stats.methodNameWithParameterNum}</td>
