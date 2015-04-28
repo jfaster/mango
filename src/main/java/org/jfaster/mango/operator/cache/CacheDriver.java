@@ -141,7 +141,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     @Override
     public Class<?> getOnlyCacheByClass() {
-        return getOnlyCacheByItem(cacheByItems).getClazz();
+        return getOnlyCacheByItem(cacheByItems).getActualClass();
     }
 
     @Override
@@ -294,14 +294,14 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
         private final String propertyPath;
 
-        private final Class<?> clazz;
+        private final Class<?> actualClass;
 
         private final GetterInvoker invoker;
 
-        public CacheByItem(String parameterName, String propertyPath, Class<?> clazz, GetterInvoker invoker) {
+        public CacheByItem(String parameterName, String propertyPath, Class<?> actualClass, GetterInvoker invoker) {
             this.parameterName = parameterName;
             this.propertyPath = propertyPath;
-            this.clazz = clazz;
+            this.actualClass = actualClass;
             this.invoker = invoker;
         }
 
@@ -313,8 +313,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             return propertyPath;
         }
 
-        public Class<?> getClazz() {
-            return clazz;
+        private Class<?> getActualClass() {
+            return actualClass;
         }
 
         private GetterInvoker getInvoker() {

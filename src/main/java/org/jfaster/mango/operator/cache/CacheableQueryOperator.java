@@ -78,45 +78,47 @@ public class CacheableQueryOperator extends QueryOperator {
                 singleKeyCache(context);
     }
 
-    private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass, Class<U> suffixClass) {
+    private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass, Class<U> cacheByActualClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
         Set<String> keys = driver.getCacheKeys(context);
-        Map<String, Object> cacheResults = driver.getBulkFromCache(keys);
+        Map<String, Object> cachedResults = driver.getBulkFromCache(keys);
         AddableObject<T> addableObj = new AddableObject<T>(keys.size(), mappedClass);
-        int hitCapacity = cacheResults != null ? cacheResults.size() : 0;
-        List<U> hitSuffix = new ArrayList<U>(hitCapacity); // 用于debug
-        Set<U> missSuffix = new HashSet<U>((keys.size() - hitCapacity) * 2);
-        for (Object suffix : new Iterables(driver.getOnlyCacheByObj(context))) {
-            String key = driver.getCacheKey(suffix);
-            Object value = cacheResults != null ? cacheResults.get(key) : null;
+        int hitCapacity = cachedResults != null ? cachedResults.size() : 0;
+        List<U> hitCacheByActualObjs = new ArrayList<U>(hitCapacity); // 用于debug
+        int hitNum = 0;
+        Set<U> missCacheByActualObjs = new HashSet<U>(Math.max(1, keys.size() - hitCapacity) * 2);
+        for (Object cacheByActualObj : new Iterables(driver.getOnlyCacheByObj(context))) {
+            String key = driver.getCacheKey(cacheByActualObj);
+            Object value = cachedResults != null ? cachedResults.get(key) : null;
             if (value == null) {
-                missSuffix.add(suffixClass.cast(suffix));
+                missCacheByActualObjs.add(cacheByActualClass.cast(cacheByActualObj));
             } else {
                 addableObj.add(mappedClass.cast(value));
+                hitNum++;
                 if (isDebugEnabled) {
-                    hitSuffix.add(suffixClass.cast(suffix));
+                    hitCacheByActualObjs.add(cacheByActualClass.cast(cacheByActualObj));
                 }
             }
         }
-        statsCounter.recordHits(hitSuffix.size());
-        statsCounter.recordMisses(missSuffix.size());
+        statsCounter.recordHits(hitNum);
+        statsCounter.recordMisses(missCacheByActualObjs.size());
         if (isDebugEnabled) {
-            logger.debug("cache hit #keys={} #values={}", hitSuffix, addableObj);
-            logger.debug("cache miss #keys={}", missSuffix);
+            logger.debug("cache hit #keys={} #values={}", hitCacheByActualObjs, addableObj);
+            logger.debug("cache miss #keys={}", missCacheByActualObjs);
         }
-        if (!missSuffix.isEmpty()) { // 有key没有命中
-            driver.setOnlyCacheByObj(context, missSuffix);
+        if (!missCacheByActualObjs.isEmpty()) { // 有key没有命中
+            driver.setOnlyCacheByObj(context, missCacheByActualObjs);
             Object dbValues = execute(context);
             for (Object dbValue : new Iterables(dbValues)) {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
                 // 添加入缓存
-                Object suffix = propertyOfMapperInvoker.invoke(dbValue);
-                if (suffix == null) {
+                Object propertyObj = propertyOfMapperInvoker.invoke(dbValue);
+                if (propertyObj == null) {
                     throw new NullPointerException("property " + propertyOfMapperInvoker.getName() + " of " +
                             mappedClass + " is null, please check return type");
                 }
-                String key = driver.getCacheKey(suffix);
+                String key = driver.getCacheKey(propertyObj);
                 driver.setToCache(key, dbValue);
             }
         }
