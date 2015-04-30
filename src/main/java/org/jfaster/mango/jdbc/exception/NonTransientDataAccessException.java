@@ -14,17 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.jdbc.exception;
 
 /**
- * 错误的返回结果数量异常
+ * 所有非暂时性数据访问异常继承此类
  *
  * @author ash
+ * @see java.sql.SQLNonTransientException
  */
-public class IncorrectResultSetColumnCountException extends DataAccessException {
+public abstract class NonTransientDataAccessException extends DataAccessException {
 
-    public IncorrectResultSetColumnCountException(String message) {
-        super(message);
+    public NonTransientDataAccessException(String msg) {
+        super(msg);
+    }
+
+    public NonTransientDataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
 }

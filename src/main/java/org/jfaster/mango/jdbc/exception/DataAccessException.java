@@ -14,28 +14,23 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.jdbc.exception;
+
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
- * 数据库访问异常
+ * 所的数据访问异常继承此类
  *
  * @author ash
  */
-public abstract class DataAccessException extends RuntimeException {
+public abstract class DataAccessException extends NestedRuntimeException {
 
-    public DataAccessException(Throwable cause) {
-        super(cause);
+    public DataAccessException(String msg) {
+        super(msg);
     }
 
-    public DataAccessException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public DataAccessException(String message) {
-        super(message);
-    }
-
-    public DataAccessException() {
+    public DataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
 }

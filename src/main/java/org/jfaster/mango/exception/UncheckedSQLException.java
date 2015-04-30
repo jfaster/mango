@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.exception;
 
+import org.jfaster.mango.jdbc.exception.DataAccessException;
+
 /**
  * Unchecked {@link java.sql.SQLException}
  *

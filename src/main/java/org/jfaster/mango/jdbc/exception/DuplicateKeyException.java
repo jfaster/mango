@@ -14,19 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
-
-import org.jfaster.mango.jdbc.exception.DataAccessException;
+package org.jfaster.mango.jdbc.exception;
 
 /**
- * 获取自增key失败异常
+ * 主键重复异常
  *
  * @author ash
  */
-public class ReturnGeneratedKeyException extends DataAccessException {
+public class DuplicateKeyException extends DataIntegrityViolationException {
 
-    public ReturnGeneratedKeyException(String message) {
-        super(message);
+    public DuplicateKeyException(String msg) {
+        super(msg);
+    }
+
+    public DuplicateKeyException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
 }

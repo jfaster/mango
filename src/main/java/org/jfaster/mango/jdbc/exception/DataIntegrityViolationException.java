@@ -14,19 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
-
-import org.jfaster.mango.jdbc.exception.DataAccessException;
+package org.jfaster.mango.jdbc.exception;
 
 /**
- * 获取自增key失败异常
+ * 数据不一致异常
  *
  * @author ash
  */
-public class ReturnGeneratedKeyException extends DataAccessException {
+public class DataIntegrityViolationException extends NonTransientDataAccessException {
 
-    public ReturnGeneratedKeyException(String message) {
-        super(message);
+    public DataIntegrityViolationException(String msg) {
+        super(msg);
+    }
+
+    public DataIntegrityViolationException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
 }
