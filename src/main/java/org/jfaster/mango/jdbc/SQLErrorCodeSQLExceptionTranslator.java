@@ -1,7 +1,6 @@
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.jdbc.exception.DataAccessException;
-import org.jfaster.mango.jdbc.exception.DuplicateKeyException;
+import org.jfaster.mango.jdbc.exception.*;
 
 import javax.sql.DataSource;
 import java.sql.BatchUpdateException;
@@ -16,7 +15,7 @@ public class SQLErrorCodeSQLExceptionTranslator extends AbstractFallbackSQLExcep
     private final SQLErrorCodes sqlErrorCodes;
 
     public SQLErrorCodeSQLExceptionTranslator(DataSource dataSource) {
-        setFallbackTranslator(null);
+        setFallbackTranslator(new SQLExceptionSubclassTranslator());
         this.sqlErrorCodes = SQLErrorCodesFactory.getInstance().getErrorCodes(dataSource);
     }
 
@@ -45,9 +44,36 @@ public class SQLErrorCodeSQLExceptionTranslator extends AbstractFallbackSQLExcep
         }
 
         if (errorCode != null) {
-            if (Arrays.binarySearch(sqlErrorCodes.getDuplicateKeyCodes(), errorCode) >= 0) {
+            if (Arrays.binarySearch(this.sqlErrorCodes.getBadSqlGrammarCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new BadSqlGrammarException(sql, sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getInvalidResultSetAccessCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new InvalidResultSetAccessException(sql, sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getDuplicateKeyCodes(), errorCode) >= 0) {
                 logTranslation(sql, sqlEx);
                 return new DuplicateKeyException(buildMessage(sql, sqlEx), sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getDataIntegrityViolationCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new DataIntegrityViolationException(buildMessage(sql, sqlEx), sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getPermissionDeniedCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new PermissionDeniedDataAccessException(buildMessage(sql, sqlEx), sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getDataAccessResourceFailureCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new DataAccessResourceFailureException(buildMessage(sql, sqlEx), sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getTransientDataAccessResourceCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new TransientDataAccessResourceException(buildMessage(sql, sqlEx), sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getCannotAcquireLockCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new CannotAcquireLockException(buildMessage(sql, sqlEx), sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getDeadlockLoserCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new DeadlockLoserDataAccessException(buildMessage(sql, sqlEx), sqlEx);
+            } else if (Arrays.binarySearch(this.sqlErrorCodes.getCannotSerializeTransactionCodes(), errorCode) >= 0) {
+                logTranslation(sql, sqlEx);
+                return new CannotSerializeTransactionException(buildMessage(sql, sqlEx), sqlEx);
             }
         }
 
