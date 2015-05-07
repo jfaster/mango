@@ -25,6 +25,7 @@ import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -114,8 +115,12 @@ public class DataSourceUtils {
         return conn;
     }
 
-    public static void releaseConnection(Connection conn) {
+    public static void releaseConnection(@Nullable Connection conn) {
         try {
+            if (conn == null) {
+                return;
+            }
+
             if (TransactionSynchronizationManager.inTransaction()) { // 在事务中不关闭连接，直接返回
                 return;
             }

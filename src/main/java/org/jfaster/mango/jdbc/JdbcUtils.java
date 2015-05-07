@@ -16,11 +16,15 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.datasource.DataSourceUtils;
+import org.jfaster.mango.jdbc.exception.CannotGetJdbcConnectionException;
+import org.jfaster.mango.jdbc.exception.MetaDataAccessException;
 import org.jfaster.mango.util.Primitives;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -170,6 +174,7 @@ public class JdbcUtils {
     }
 
     private final static Set<Class<?>> singleColumClassSet = new HashSet<Class<?>>();
+
     static {
         // 字符串
         singleColumClassSet.add(String.class);
@@ -223,4 +228,35 @@ public class JdbcUtils {
         return name;
     }
 
+    /**
+     * 获取数据库名称
+     *
+     * @param dataSource
+     * @return
+     * @throws MetaDataAccessException
+     */
+    public static String fetchDatabaseProductName(DataSource dataSource) throws MetaDataAccessException {
+        Connection con = null;
+        try {
+            con = DataSourceUtils.getConnection(dataSource);
+            DatabaseMetaData metaData = con.getMetaData();
+            return metaData.getDatabaseProductName();
+        } catch (CannotGetJdbcConnectionException ex) {
+            throw new MetaDataAccessException("Could not get Connection for extracting meta data", ex);
+        } catch (SQLException ex) {
+            throw new MetaDataAccessException("Error while extracting DatabaseMetaData", ex);
+        } finally {
+            DataSourceUtils.releaseConnection(con);
+        }
+    }
+
 }
+
+
+
+
+
+
+
+
+

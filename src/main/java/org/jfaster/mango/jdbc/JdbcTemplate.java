@@ -18,7 +18,9 @@ package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.datasource.DataSourceUtils;
 import org.jfaster.mango.exception.ReturnGeneratedKeyException;
-import org.jfaster.mango.exception.UncheckedSQLException;
+import org.jfaster.mango.util.concurrent.cache.CacheLoader;
+import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
+import org.jfaster.mango.util.concurrent.cache.LoadingCache;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -87,8 +89,15 @@ public class JdbcTemplate implements JdbcOperations {
             }
             return r;
         } catch (SQLException e) {
+            JdbcUtils.closeResultSet(rs);
+            rs = null;
+            JdbcUtils.closeStatement(ps);
+            ps = null;
+            DataSourceUtils.releaseConnection(conn);
+            conn = null;
+
             ee = e;
-            throw new UncheckedSQLException(e.getMessage(), e);
+            throw getExceptionTranslator(ds).translate(sql, e);
         } finally {
             if (logger.isDebugEnabled()) {
                 if (ee == null) { // 执行成功
@@ -116,8 +125,13 @@ public class JdbcTemplate implements JdbcOperations {
             r = ps.executeBatch();
             return r;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            ps = null;
+            DataSourceUtils.releaseConnection(conn);
+            conn = null;
+
             ee = e;
-            throw new UncheckedSQLException(e.getMessage(), e);
+            throw getExceptionTranslator(ds).translate(sql, e);
         } finally {
             if (logger.isDebugEnabled()) {
                 List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
@@ -152,8 +166,13 @@ public class JdbcTemplate implements JdbcOperations {
                     setValues(ps, args);
                     r[i] = ps.executeUpdate();
                 } catch (SQLException e) {
+                    JdbcUtils.closeStatement(ps);
+                    ps = null;
+                    DataSourceUtils.releaseConnection(conn);
+                    conn = null;
+
                     ee = e;
-                    throw new UncheckedSQLException(e.getMessage(), e);
+                    throw getExceptionTranslator(ds).translate(sql, e);
                 } finally {
                     if (logger.isDebugEnabled()) {
                         if (ee == null) {
@@ -185,8 +204,15 @@ public class JdbcTemplate implements JdbcOperations {
             r = rse.extractData(rs);
             return r;
         } catch (SQLException e) {
+            JdbcUtils.closeResultSet(rs);
+            rs = null;
+            JdbcUtils.closeStatement(ps);
+            ps = null;
+            DataSourceUtils.releaseConnection(conn);
+            conn = null;
+
             ee = e;
-            throw new UncheckedSQLException(e.getMessage(), e);
+            throw getExceptionTranslator(ds).translate(sql, e);
         } finally {
             if (logger.isDebugEnabled()) {
                 if (ee == null) { // 执行成功
@@ -218,6 +244,18 @@ public class JdbcTemplate implements JdbcOperations {
             ps.addBatch();
         }
     }
+
+    private SQLExceptionTranslator getExceptionTranslator(DataSource dataSource) {
+        return exceptionTranslatorCache.get(dataSource);
+    }
+
+    private final LoadingCache<DataSource, SQLExceptionTranslator> exceptionTranslatorCache
+            = new DoubleCheckCache<DataSource, SQLExceptionTranslator>(
+            new CacheLoader<DataSource, SQLExceptionTranslator>() {
+                public SQLExceptionTranslator load(DataSource dataSource) {
+                    return new SQLErrorCodeSQLExceptionTranslator(dataSource);
+                }
+            });
 
 }
 
