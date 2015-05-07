@@ -20,6 +20,18 @@ public enum SQLErrorCodes {
             setDataIntegrityViolationCodes(parse("-9"));
             setDataAccessResourceFailureCodes(parse("-80"));
         }
+    },
+
+    MySQL {
+        @Override
+        void init() {
+            setBadSqlGrammarCodes(parse("1054,1064,1146"));
+            setDuplicateKeyCodes(parse("1062"));
+            setDataIntegrityViolationCodes(parse("630,839,840,893,1169,1215,1216,1217,1364,1451,1452,1557"));
+            setDataAccessResourceFailureCodes(parse("1"));
+            setCannotAcquireLockCodes(parse("1205"));
+            setDeadlockLoserCodes(parse("1213"));
+        }
     }
     ;
 

@@ -17,7 +17,7 @@
 package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.datasource.DataSourceUtils;
-import org.jfaster.mango.exception.ReturnGeneratedKeyException;
+import org.jfaster.mango.jdbc.exception.DataRetrievalFailureException;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
 import org.jfaster.mango.util.concurrent.cache.LoadingCache;
@@ -82,7 +82,8 @@ public class JdbcTemplate implements JdbcOperations {
             if (needGenerateKey) { // 生成自增key
                 rs = ps.getGeneratedKeys();
                 if (!rs.next()) {
-                    throw new ReturnGeneratedKeyException("please check whether the table has auto increment key");
+                    throw new DataRetrievalFailureException("Unable to retrieve the generated key. " +
+                            "Check that the table has an identity column enabled.");
                 }
                 Object key = JdbcUtils.getResultSetValue(rs, 1, holder.getKeyClass());
                 holder.setKey(key);

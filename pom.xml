@@ -49,6 +49,13 @@
     </developers>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>4.0.5.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- spring插件 -->
         <dependency>
             <groupId>org.springframework</groupId>
