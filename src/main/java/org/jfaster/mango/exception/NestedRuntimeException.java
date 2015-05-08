@@ -19,6 +19,8 @@ package org.jfaster.mango.exception;
 import org.jfaster.mango.util.NestedExceptionUtils;
 
 /**
+ * 所有的runtime异常继承此类
+ *
  * @author ash
  */
 public abstract class NestedRuntimeException extends RuntimeException {
