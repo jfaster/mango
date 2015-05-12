@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class TransactionSystemException extends NestedRuntimeException {
+public class TransactionSystemException extends TransactionException {
 
     public TransactionSystemException(String message) {
         super(message);
