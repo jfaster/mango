@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class IncorrectSqlException extends RuntimeException {
+public class IncorrectSqlException extends NestedRuntimeException {
 
     public IncorrectSqlException(String message) {
         super(message);

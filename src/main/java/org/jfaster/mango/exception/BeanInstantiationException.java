@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class BeanInstantiationException extends RuntimeException {
+public class BeanInstantiationException extends NestedRuntimeException {
 
     private Class beanClass;
 

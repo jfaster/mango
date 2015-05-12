@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class IncorrectDefinitionException extends RuntimeException {
+public class IncorrectDefinitionException extends NestedRuntimeException {
 
     public IncorrectDefinitionException(String message) {
         super(message);

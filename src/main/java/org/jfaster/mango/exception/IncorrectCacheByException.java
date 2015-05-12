@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class IncorrectCacheByException extends RuntimeException {
+public class IncorrectCacheByException extends NestedRuntimeException {
 
     public IncorrectCacheByException(String message) {
         super(message);

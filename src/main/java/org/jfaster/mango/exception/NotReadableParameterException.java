@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class NotReadableParameterException extends RuntimeException {
+public class NotReadableParameterException extends NestedRuntimeException {
 
     public NotReadableParameterException(String message) {
         super(message);

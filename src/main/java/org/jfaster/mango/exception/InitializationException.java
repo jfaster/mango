@@ -21,15 +21,14 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class InitializationException extends RuntimeException{
+public class InitializationException extends NestedRuntimeException{
 
-    public InitializationException(String message, Throwable cause) {
-        super(message, cause);
+    public InitializationException(String msg) {
+        super(msg);
     }
 
-    @Override
-    public String getMessage() {
-        return super.getMessage() + "; nested exception is " + getCause();
+    public InitializationException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
 }

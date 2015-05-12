@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class IncorrectJdbcConnectionException extends RuntimeException {
+public class IncorrectJdbcConnectionException extends NestedRuntimeException {
 
     public IncorrectJdbcConnectionException(String message) {
         super(message);

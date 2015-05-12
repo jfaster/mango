@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class IncorrectParameterTypeException extends RuntimeException {
+public class IncorrectParameterTypeException extends NestedRuntimeException {
 
     public IncorrectParameterTypeException(String message) {
         super(message);

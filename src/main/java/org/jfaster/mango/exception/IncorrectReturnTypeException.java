@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class IncorrectReturnTypeException extends RuntimeException {
+public class IncorrectReturnTypeException extends NestedRuntimeException {
 
     public IncorrectReturnTypeException(String message) {
         super(message);

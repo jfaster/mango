@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class SqlParserException extends RuntimeException {
+public class SqlParserException extends NestedRuntimeException {
 
     public SqlParserException(String message) {
         super(message);
