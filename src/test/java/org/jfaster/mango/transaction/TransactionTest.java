@@ -16,10 +16,9 @@
 
 package org.jfaster.mango.transaction;
 
-import org.hamcrest.Matchers;
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.annotation.SQL;
+import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Account;
@@ -32,6 +31,7 @@ import java.sql.Connection;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * 测试事务
@@ -64,19 +64,19 @@ public class TransactionTest {
         x.add(num);
         y.sub(num);
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-        Transaction tx = TransactionFactory.newTransaction(level);
-        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, notNullValue());
-        assertThat(tc.getConnection(), nullValue());
+        Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, notNullValue());
+        assertThat(connHolder.getConnection(), notNullValue());
 
         dao.update(x);
-        checkConn(tc.getConnection(), false, level.getLevel());
+        checkConn(connHolder.getConnection(), false, level.getLevel());
         dao.update(y);
-        checkConn(tc.getConnection(), false, level.getLevel());
+        checkConn(connHolder.getConnection(), false, level.getLevel());
         tx.commit();
 
-        tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, Matchers.nullValue());
+        connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, nullValue());
         Connection conn = ds.getConnection();
         checkConn(conn, true, previousLevel);
         conn.close();
@@ -98,19 +98,19 @@ public class TransactionTest {
         x.add(num);
         y.sub(num);
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-        Transaction tx = TransactionFactory.newTransaction(level);
-        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, notNullValue());
-        assertThat(tc.getConnection(), nullValue());
+        Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, notNullValue());
+        assertThat(connHolder.getConnection(), notNullValue());
 
         dao.update(x);
-        checkConn(tc.getConnection(), false, level.getLevel());
+        checkConn(connHolder.getConnection(), false, level.getLevel());
         dao.update(y);
-        checkConn(tc.getConnection(), false, level.getLevel());
+        checkConn(connHolder.getConnection(), false, level.getLevel());
         tx.rollback();
 
-        tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, Matchers.nullValue());
+        connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, nullValue());
         Connection conn = ds.getConnection();
         checkConn(conn, true, previousLevel);
         conn.close();
@@ -134,17 +134,17 @@ public class TransactionTest {
         x.add(num);
         y.sub(num);
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-        Transaction tx = TransactionFactory.newTransaction(level);
-        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, notNullValue());
-        assertThat(tc.getConnection(), nullValue());
+        Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, notNullValue());
+        assertThat(connHolder.getConnection(), notNullValue());
 
         dao.update(x);
-        checkConn(tc.getConnection(), false, level.getLevel());
+        checkConn(connHolder.getConnection(), false, level.getLevel());
         tx.rollback();
 
-        tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, Matchers.nullValue());
+        connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, nullValue());
 
         Connection conn = ds.getConnection();
         checkConn(conn, true, previousLevel);
@@ -161,15 +161,15 @@ public class TransactionTest {
         int previousLevel = getPreviousLevel();
 
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-        Transaction tx = TransactionFactory.newTransaction(level);
-        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, notNullValue());
-        assertThat(tc.getConnection(), nullValue());
+        Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, notNullValue());
+        assertThat(connHolder.getConnection(), notNullValue());
 
         tx.commit();
 
-        tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, Matchers.nullValue());
+        connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, nullValue());
         Connection conn = ds.getConnection();
         checkConn(conn, true, previousLevel);
         conn.close();
@@ -181,15 +181,15 @@ public class TransactionTest {
         int previousLevel = getPreviousLevel();
 
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-        Transaction tx = TransactionFactory.newTransaction(level);
-        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, notNullValue());
-        assertThat(tc.getConnection(), nullValue());
+        Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, notNullValue());
+        assertThat(connHolder.getConnection(), notNullValue());
 
         tx.rollback();
 
-        tc = TransactionSynchronizationManager.getTransactionContext();
-        assertThat(tc, Matchers.nullValue());
+        connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
+        assertThat(connHolder, nullValue());
         Connection conn = ds.getConnection();
         checkConn(conn, true, previousLevel);
         conn.close();
@@ -207,13 +207,13 @@ public class TransactionTest {
         x.add(num);
         y.sub(num);
 
-        Transaction tx = TransactionFactory.newTransaction();
-        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
+        Transaction tx = TransactionFactory.newTransaction(mango, "");
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
 
         dao.update(x);
-        checkConn(tc.getConnection(), false, previousLevel);
+        checkConn(connHolder.getConnection(), false, previousLevel);
         dao.update(y);
-        checkConn(tc.getConnection(), false, previousLevel);
+        checkConn(connHolder.getConnection(), false, previousLevel);
         tx.commit();
 
         Connection conn = ds.getConnection();

@@ -42,6 +42,10 @@ public abstract class TransactionFactory {
         return newTransaction(dataSource, level);
     }
 
+    public static Transaction newTransaction(Mango mango, String dataSourceName) {
+        return newTransaction(mango, dataSourceName, TransactionIsolationLevel.DEFAULT);
+    }
+
     public static Transaction newTransaction(String dataSourceName, TransactionIsolationLevel level) {
         List<Mango> mangos = Mango.getInstances();
         if (mangos.size() != 1) {
@@ -97,15 +101,6 @@ public abstract class TransactionFactory {
                 logger.debug("Acquired Connection [" + conn + "] for JDBC transaction");
             }
 
-            // 设置自动提交为false
-            if (conn.getAutoCommit()) {
-                isMustRestoreAutoCommit = true;
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Switching JDBC Connection [" + conn + "] to manual commit");
-                }
-                conn.setAutoCommit(false);
-            }
-
             // 设置事务的隔离级别
             if (expectedLevel != TransactionIsolationLevel.DEFAULT) {
                 previousLevel = conn.getTransactionIsolation();
@@ -116,6 +111,15 @@ public abstract class TransactionFactory {
                     }
                     conn.setTransactionIsolation(expectedLevel.getLevel());
                 }
+            }
+
+            // 设置自动提交为false
+            if (conn.getAutoCommit()) {
+                isMustRestoreAutoCommit = true;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Switching JDBC Connection [" + conn + "] to manual commit");
+                }
+                conn.setAutoCommit(false);
             }
 
             Transaction transaction = new Transaction(true, dataSource, previousLevel, isMustRestoreAutoCommit);
