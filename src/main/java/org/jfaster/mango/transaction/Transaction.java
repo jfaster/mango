@@ -67,10 +67,16 @@ public class Transaction {
         }
 
         if (!isNewTransaction) { // 嵌套的事务，不真正提交
+            if (logger.isDebugEnabled()) {
+                logger.debug("Not a new transaction, Not really commit");
+            }
             return;
         }
 
         if (connHolder.isRollbackOnly()) { // 嵌套的事务出现回滚则回滚
+            if (logger.isDebugEnabled()) {
+                logger.debug("Transaction is marked as rollback-only, so will rollback");
+            }
             processRollback(connHolder.getConnection());
         }
 
@@ -90,6 +96,9 @@ public class Transaction {
 
     private void doCommit(Connection conn) {
         try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Committing JDBC transaction on Connection [" + conn + "]");
+            }
             conn.commit();
         } catch (SQLException e) {
             throw new TransactionSystemException("Could not commit JDBC transaction", e);
@@ -117,6 +126,9 @@ public class Transaction {
         }
 
         if (!isNewTransaction) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Not a new transaction, Not really rollback");
+            }
             connHolder.setRollbackOnly(true); // 促发顶层事务回滚
             return;
         }
@@ -134,6 +146,9 @@ public class Transaction {
 
     private void doRollback(Connection conn) {
         try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Rolling back JDBC transaction on Connection [" + conn + "]");
+            }
             conn.rollback();
         } catch (SQLException e) {
             throw new TransactionSystemException("Could not roll back JDBC transaction", e);
