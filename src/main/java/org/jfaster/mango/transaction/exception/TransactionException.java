@@ -14,17 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.transaction.exception;
+
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
- * 事务相关异常
- *
  * @author ash
  */
-public class TransactionSystemException extends TransactionException {
+public abstract class TransactionException extends NestedRuntimeException {
 
-    public TransactionSystemException(String message) {
-        super(message);
+    public TransactionException(String msg) {
+        super(msg);
+    }
+
+    public TransactionException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
 }

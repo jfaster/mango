@@ -17,11 +17,14 @@
 package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.datasource.DataSourceUtils;
+import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.transaction.exception.CannotCreateTransactionException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.util.List;
 
 /**
  * @author ash
@@ -30,14 +33,47 @@ public abstract class TransactionFactory {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(TransactionFactory.class);
 
-    public static Transaction doNewTransaction(DataSource dataSource, TransactionIsolationLevel level) {
+    public static Transaction newTransaction(Mango mango, String dataSourceName, TransactionIsolationLevel level) {
+        DataSource dataSource = mango.getMasterDataSource(dataSourceName);
+        if (dataSource == null) {
+            throw new IllegalArgumentException("Can't find master DataSource from mango [" + mango + "] " +
+                    "with DataSourceName [" + dataSourceName + "]");
+        }
+        return newTransaction(dataSource, level);
+    }
+
+    public static Transaction newTransaction(String dataSourceName, TransactionIsolationLevel level) {
+        List<Mango> mangos = Mango.getInstances();
+        if (mangos.size() != 1) {
+            throw new IllegalStateException("The number of instances mango expected 1 but " + mangos.size() + ", " +
+                    "Please specify mango instance");
+        }
+        return newTransaction(mangos.get(0), dataSourceName, level);
+    }
+
+    public static Transaction newTransaction(String dataSourceName) {
+        return newTransaction(dataSourceName, TransactionIsolationLevel.DEFAULT);
+    }
+
+    public static Transaction newTransaction(TransactionIsolationLevel level) {
+        return newTransaction("", level);
+    }
+
+    public static Transaction newTransaction() {
+        return newTransaction("", TransactionIsolationLevel.DEFAULT);
+    }
+
+    private static Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level) {
+        if (dataSource == null) {
+            new IllegalArgumentException("DataSource can't be null");
+        }
         if (level == null) {
             new IllegalArgumentException("TransactionIsolationLevel can't be null");
         }
         ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
         return connHolder != null ?
                 usingExistingTransaction(dataSource) :
-                createNewTransaction(dataSource);
+                createNewTransaction(dataSource, level);
     }
 
     private static Transaction usingExistingTransaction(DataSource dataSource) {
@@ -48,21 +84,47 @@ public abstract class TransactionFactory {
         return transaction;
     }
 
-    private static Transaction createNewTransaction(DataSource dataSource) {
+    private static Transaction createNewTransaction(DataSource dataSource, TransactionIsolationLevel expectedLevel) {
         if (logger.isDebugEnabled()) {
             logger.debug("Creating new transaction");
         }
-        Transaction transaction = new Transaction(true, dataSource);
         Connection conn = null;
         try {
+            Integer previousLevel = null;
+            boolean isMustRestoreAutoCommit = false;
             conn = dataSource.getConnection();
-            conn.setAutoCommit(false);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Acquired Connection [" + conn + "] for JDBC transaction");
+            }
+
+            // 设置自动提交为false
+            if (conn.getAutoCommit()) {
+                isMustRestoreAutoCommit = true;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Switching JDBC Connection [" + conn + "] to manual commit");
+                }
+                conn.setAutoCommit(false);
+            }
+
+            // 设置事务的隔离级别
+            if (expectedLevel != TransactionIsolationLevel.DEFAULT) {
+                previousLevel = conn.getTransactionIsolation();
+                if (previousLevel != expectedLevel.getLevel()) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Changing isolation level of JDBC Connection [" + conn + "] to " +
+                                expectedLevel.getLevel());
+                    }
+                    conn.setTransactionIsolation(expectedLevel.getLevel());
+                }
+            }
+
+            Transaction transaction = new Transaction(true, dataSource, previousLevel, isMustRestoreAutoCommit);
             ConnectionHolder connHolder = new ConnectionHolder(conn);
             TransactionSynchronizationManager.bindConnectionHolder(dataSource, connHolder);
             return transaction;
         } catch (Throwable e) {
             DataSourceUtils.releaseConnection(conn, dataSource);
-            throw new RuntimeException(); // TODO
+            throw new CannotCreateTransactionException("Could not open JDBC Connection for transaction", e);
         }
     }
 

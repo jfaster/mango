@@ -85,31 +85,4 @@ public class DataSourceUtils {
         return heldConn == passedInConn || heldConn.equals(passedInConn);
     }
 
-    public static void resetConnectionAfterTransaction(Connection conn, DataSource ds, Integer previousIsolationLevel) {
-        try {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Switching JDBC Connection to auto commit");
-            }
-            conn.setAutoCommit(true);
-        } catch (SQLException e) {
-            logger.error("Could not reset autoCommit of JDBC Connection after transaction", e);
-            DataSourceMonitor.resetAutoCommitFail(ds);
-        } catch (Throwable e) {
-            logger.error("Unexpected exception on resetting autoCommit of JDBC Connection after transaction", e);
-            DataSourceMonitor.resetAutoCommitFail(ds);
-        }
-        try {
-            if (previousIsolationLevel != null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Resetting isolation level of JDBC Connection to " + previousIsolationLevel);
-                }
-                conn.setTransactionIsolation(previousIsolationLevel);
-            }
-        } catch (SQLException e) {
-            logger.error("Could not reset isolation level of JDBC Connection after transaction", e);
-        } catch (Throwable e) {
-            logger.error("Unexpected exception on resetting isolation level of JDBC Connection after transaction", e);
-        }
-    }
-
 }

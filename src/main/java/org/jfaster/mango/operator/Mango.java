@@ -18,6 +18,7 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
@@ -213,6 +214,13 @@ public class Mango {
             }
         });
         return oss;
+    }
+
+    /**
+     * 根据数据源名字获得主库数据源
+     */
+    public DataSource getMasterDataSource(String dataSourceName) {
+        return dataSourceFactory.getDataSource(dataSourceName, DataSourceType.MASTER);
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
