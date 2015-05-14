@@ -236,17 +236,17 @@ public class JdbcUtils {
      * @throws MetaDataAccessException
      */
     public static String fetchDatabaseProductName(DataSource dataSource) throws MetaDataAccessException {
-        Connection con = null;
+        Connection conn = null;
         try {
-            con = DataSourceUtils.getConnection(dataSource);
-            DatabaseMetaData metaData = con.getMetaData();
+            conn = DataSourceUtils.getConnection(dataSource);
+            DatabaseMetaData metaData = conn.getMetaData();
             return metaData.getDatabaseProductName();
         } catch (CannotGetJdbcConnectionException ex) {
             throw new MetaDataAccessException("Could not get Connection for extracting meta data", ex);
         } catch (SQLException ex) {
             throw new MetaDataAccessException("Error while extracting DatabaseMetaData", ex);
         } finally {
-            DataSourceUtils.releaseConnection(con);
+            DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 

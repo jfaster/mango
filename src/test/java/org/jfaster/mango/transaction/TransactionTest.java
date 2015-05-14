@@ -65,7 +65,7 @@ public class TransactionTest {
         y.sub(num);
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
         Transaction tx = TransactionFactory.newTransaction(level);
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
         assertThat(tc, notNullValue());
         assertThat(tc.getConnection(), nullValue());
 
@@ -99,7 +99,7 @@ public class TransactionTest {
         y.sub(num);
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
         Transaction tx = TransactionFactory.newTransaction(level);
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
         assertThat(tc, notNullValue());
         assertThat(tc.getConnection(), nullValue());
 
@@ -135,7 +135,7 @@ public class TransactionTest {
         y.sub(num);
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
         Transaction tx = TransactionFactory.newTransaction(level);
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
         assertThat(tc, notNullValue());
         assertThat(tc.getConnection(), nullValue());
 
@@ -162,7 +162,7 @@ public class TransactionTest {
 
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
         Transaction tx = TransactionFactory.newTransaction(level);
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
         assertThat(tc, notNullValue());
         assertThat(tc.getConnection(), nullValue());
 
@@ -182,7 +182,7 @@ public class TransactionTest {
 
         TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
         Transaction tx = TransactionFactory.newTransaction(level);
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
         assertThat(tc, notNullValue());
         assertThat(tc.getConnection(), nullValue());
 
@@ -208,7 +208,7 @@ public class TransactionTest {
         y.sub(num);
 
         Transaction tx = TransactionFactory.newTransaction();
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
+        ConnectionHolder tc = TransactionSynchronizationManager.getTransactionContext();
 
         dao.update(x);
         checkConn(tc.getConnection(), false, previousLevel);

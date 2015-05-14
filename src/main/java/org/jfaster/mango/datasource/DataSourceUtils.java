@@ -17,10 +17,7 @@
 package org.jfaster.mango.datasource;
 
 import org.jfaster.mango.jdbc.exception.CannotGetJdbcConnectionException;
-import org.jfaster.mango.exception.IncorrectJdbcConnectionException;
-import org.jfaster.mango.exception.TransactionSystemException;
-import org.jfaster.mango.transaction.TransactionContext;
-import org.jfaster.mango.transaction.TransactionIsolationLevel;
+import org.jfaster.mango.transaction.ConnectionHolder;
 import org.jfaster.mango.transaction.TransactionSynchronizationManager;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -37,102 +34,55 @@ public class DataSourceUtils {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceUtils.class);
 
-    public static Connection getConnection(DataSource ds)
-            throws TransactionSystemException, CannotGetJdbcConnectionException, IncorrectJdbcConnectionException {
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
-        boolean inTransaction = tc != null;
-        if (inTransaction) {
-            if (tc.getDataSource() != null
-                    && tc.getDataSource() != ds) { // 在使用事务的过程中数据源不一致
-                throw new TransactionSystemException("Multiple Datasources in transaction");
-            }
-            Connection conn = tc.getConnection();
-            if (conn != null) { // 使用之前的连接
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Fetching JDBC Connection from TransactionContext");
-                }
-                return conn;
-            }
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Fetching JDBC Connection from DataSource");
-        }
-        Connection conn;
+    public static Connection getConnection(DataSource dataSource) throws CannotGetJdbcConnectionException {
         try {
-            conn = ds.getConnection();
+            return doGetConnection(dataSource);
         } catch (SQLException e) {
             throw new CannotGetJdbcConnectionException("Could not get JDBC Connection", e);
         }
-        if (conn == null) {
-            throw new CannotGetJdbcConnectionException("Datasource return null Connection");
-        }
+    }
 
-        if (inTransaction) {
+    private static Connection doGetConnection(DataSource dataSource) throws SQLException {
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
+        if (connHolder != null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Registering JDBC Connection to TransactionContext");
+                logger.debug("Fetching resumed JDBC Connection from DataSource");
             }
-            tc.setConnection(conn);
-            tc.setDataSource(ds);
-
-            try {
-                TransactionIsolationLevel expectedLevel = tc.getLevel();
-                if (expectedLevel != TransactionIsolationLevel.DEFAULT) {
-                    int previousLevel = conn.getTransactionIsolation();
-                    if (previousLevel != expectedLevel.getLevel()) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Setting isolation level of JDBC Connection to " + expectedLevel.getLevel());
-                        }
-                        conn.setTransactionIsolation(expectedLevel.getLevel());
-                        tc.setPreviousLevel(previousLevel);
-                    }
-                }
-
-                if (conn.getAutoCommit()) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Switching JDBC Connection to manual commit");
-                    }
-                    conn.setAutoCommit(false);
-                }
-            } catch (SQLException e) {
-                throw new IncorrectJdbcConnectionException("Incorrect JDBC Connection");
-            }
-        } else {
-            if (DataSourceMonitor.needCheckAutoCommit(ds)) { // 如果使用事务后，归还conn时，重置autoCommit失败，则需要检测
-                try {
-                    if (!conn.getAutoCommit()) {
-                        conn.setAutoCommit(true);
-                    }
-                } catch (SQLException e) {
-                    logger.error("Could not set autoCommit of JDBC Connection after get Connection, so close it");
-                    releaseConnection(conn);
-                    throw new CannotGetJdbcConnectionException("Could not set autoCommit of JDBC Connection " +
-                            "after get Connection, so close it");
-                }
-            }
+            return connHolder.getConnection();
         }
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Fetching JDBC Connection from DataSource");
+        }
+        Connection conn = dataSource.getConnection();
         return conn;
     }
 
-    public static void releaseConnection(@Nullable Connection conn) {
-        try {
-            if (conn == null) {
-                return;
-            }
 
-            if (TransactionSynchronizationManager.inTransaction()) { // 在事务中不关闭连接，直接返回
-                return;
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("Returning JDBC Connection to DataSource");
-            }
-            conn.close();
+    public static void releaseConnection(@Nullable Connection conn, DataSource dataSource) {
+        try {
+            doReleaseConnection(conn, dataSource);
         } catch (SQLException e) {
             logger.error("Could not close JDBC Connection", e);
         } catch (Throwable e) {
             logger.error("Unexpected exception on closing JDBC Connection", e);
         }
+    }
+
+    private static void doReleaseConnection(@Nullable Connection conn, DataSource dataSource) throws SQLException {
+        if (conn == null) {
+            return;
+        }
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
+        if (connHolder != null && connectionEquals(connHolder, conn)) {
+            return;
+        }
+        logger.debug("Returning JDBC Connection to DataSource");
+        conn.close();
+    }
+
+    private static boolean connectionEquals(ConnectionHolder connHolder, Connection passedInConn) {
+        Connection heldConn = connHolder.getConnection();
+        return heldConn == passedInConn || heldConn.equals(passedInConn);
     }
 
     public static void resetConnectionAfterTransaction(Connection conn, DataSource ds, Integer previousIsolationLevel) {
@@ -157,7 +107,7 @@ public class DataSourceUtils {
             }
         } catch (SQLException e) {
             logger.error("Could not reset isolation level of JDBC Connection after transaction", e);
-        }  catch (Throwable e) {
+        } catch (Throwable e) {
             logger.error("Unexpected exception on resetting isolation level of JDBC Connection after transaction", e);
         }
     }

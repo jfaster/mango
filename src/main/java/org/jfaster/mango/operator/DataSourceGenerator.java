@@ -2,10 +2,9 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.transaction.TransactionSynchronizationManager;
+import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -45,11 +44,7 @@ public class DataSourceGenerator {
         if (logger.isDebugEnabled()) {
             logger.debug("The name of Datasource is [" + dataSourceName + "]");
         }
-        DataSourceType dst = dataSourceType;
-        if (TransactionSynchronizationManager.inTransaction()) { // 事务使用主数据源
-            dst = DataSourceType.MASTER;
-        }
-        DataSource ds = dataSourceFactory.getDataSource(dataSourceName, dst);
+        DataSource ds = dataSourceFactory.getDataSource(dataSourceName, dataSourceType);
         if (ds == null) {
             throw new IncorrectDefinitionException("can't find datasource for name [" + dataSourceName + "]");
         }

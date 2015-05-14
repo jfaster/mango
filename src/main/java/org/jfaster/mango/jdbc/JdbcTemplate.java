@@ -40,33 +40,33 @@ public class JdbcTemplate implements JdbcOperations {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(JdbcTemplate.class);
 
     @Override
-    public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
+    public <T> T queryForObject(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(dataSource, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new ListResultSetExtractor<T>(rowMapper));
+    public <T> List<T> queryForList(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(dataSource, sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new SetResultSetExtractor<T>(rowMapper));
+    public <T> Set<T> queryForSet(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(dataSource, sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-        return executeQuery(ds, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
+    public <T> Object queryForArray(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return executeQuery(dataSource, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public int update(DataSource ds, String sql, Object[] args) {
-        return update(ds, sql, args, null);
+    public int update(DataSource dataSource, String sql, Object[] args) {
+        return update(dataSource, sql, args, null);
     }
 
     @Override
-    public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
-        Connection conn = DataSourceUtils.getConnection(ds);
+    public int update(DataSource dataSource, String sql, Object[] args, GeneratedKeyHolder holder) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         ResultSet rs = null;
         Integer r = null;
@@ -94,11 +94,11 @@ public class JdbcTemplate implements JdbcOperations {
             rs = null;
             JdbcUtils.closeStatement(ps);
             ps = null;
-            DataSourceUtils.releaseConnection(conn);
+            DataSourceUtils.releaseConnection(conn, dataSource);
             conn = null;
 
             ee = e;
-            throw getExceptionTranslator(ds).translate(sql, e);
+            throw getExceptionTranslator(dataSource).translate(sql, e);
         } finally {
             if (logger.isDebugEnabled()) {
                 if (ee == null) { // 执行成功
@@ -110,13 +110,13 @@ public class JdbcTemplate implements JdbcOperations {
 
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn);
+            DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 
     @Override
-    public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-        Connection conn = DataSourceUtils.getConnection(ds);
+    public int[] batchUpdate(DataSource dataSource, String sql, List<Object[]> batchArgs) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         int[] r = null;
         Exception ee = null;
@@ -128,11 +128,11 @@ public class JdbcTemplate implements JdbcOperations {
         } catch (SQLException e) {
             JdbcUtils.closeStatement(ps);
             ps = null;
-            DataSourceUtils.releaseConnection(conn);
+            DataSourceUtils.releaseConnection(conn, dataSource);
             conn = null;
 
             ee = e;
-            throw getExceptionTranslator(ds).translate(sql, e);
+            throw getExceptionTranslator(dataSource).translate(sql, e);
         } finally {
             if (logger.isDebugEnabled()) {
                 List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
@@ -147,15 +147,15 @@ public class JdbcTemplate implements JdbcOperations {
             }
 
             JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn);
+            DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 
     @Override
-    public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs) {
+    public int[] batchUpdate(DataSource dataSource, List<String> sqls, List<Object[]> batchArgs) {
         int size = Math.min(sqls.size(), batchArgs.size());
         int[] r = new int[size];
-        Connection conn = DataSourceUtils.getConnection(ds);
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         try {
             for (int i = 0; i < size; i++) {
                 String sql = sqls.get(i);
@@ -169,11 +169,11 @@ public class JdbcTemplate implements JdbcOperations {
                 } catch (SQLException e) {
                     JdbcUtils.closeStatement(ps);
                     ps = null;
-                    DataSourceUtils.releaseConnection(conn);
+                    DataSourceUtils.releaseConnection(conn, dataSource);
                     conn = null;
 
                     ee = e;
-                    throw getExceptionTranslator(ds).translate(sql, e);
+                    throw getExceptionTranslator(dataSource).translate(sql, e);
                 } finally {
                     if (logger.isDebugEnabled()) {
                         if (ee == null) {
@@ -187,13 +187,13 @@ public class JdbcTemplate implements JdbcOperations {
                 }
             }
         } finally {
-            DataSourceUtils.releaseConnection(conn);
+            DataSourceUtils.releaseConnection(conn, dataSource);
         }
         return r;
     }
 
-    private <T> T executeQuery(DataSource ds, String sql, Object[] args, ResultSetExtractor<T> rse) {
-        Connection conn = DataSourceUtils.getConnection(ds);
+    private <T> T executeQuery(DataSource dataSource, String sql, Object[] args, ResultSetExtractor<T> rse) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         ResultSet rs = null;
         T r = null;
@@ -209,11 +209,11 @@ public class JdbcTemplate implements JdbcOperations {
             rs = null;
             JdbcUtils.closeStatement(ps);
             ps = null;
-            DataSourceUtils.releaseConnection(conn);
+            DataSourceUtils.releaseConnection(conn, dataSource);
             conn = null;
 
             ee = e;
-            throw getExceptionTranslator(ds).translate(sql, e);
+            throw getExceptionTranslator(dataSource).translate(sql, e);
         } finally {
             if (logger.isDebugEnabled()) {
                 if (ee == null) { // 执行成功
@@ -225,7 +225,7 @@ public class JdbcTemplate implements JdbcOperations {
 
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn);
+            DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 

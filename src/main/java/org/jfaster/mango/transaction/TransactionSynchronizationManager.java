@@ -16,28 +16,56 @@
 
 package org.jfaster.mango.transaction;
 
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author ash
  */
 public abstract class TransactionSynchronizationManager {
 
-    private static final ThreadLocal<TransactionContext> TRANSACTION_CONTEXT =
-            new ThreadLocal<TransactionContext>();
+    private static final ThreadLocal<Map<DataSource, ConnectionHolder>> CONNECTION_HOLDERS =
+            new ThreadLocal<Map<DataSource, ConnectionHolder>>();
 
-    public static void setTransactionContext(TransactionContext transactionContext) {
-        TRANSACTION_CONTEXT.set(transactionContext);
+    public static void bindConnectionHolder(DataSource dataSource, ConnectionHolder connHolder) {
+        Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
+        if (map == null) {
+            map = new HashMap<DataSource, ConnectionHolder>();
+            CONNECTION_HOLDERS.set(map);
+        }
+        ConnectionHolder oldConnHolder = map.put(dataSource, connHolder);
+        if (oldConnHolder != null) {
+            throw new IllegalStateException("Already ConnectionHolder [" + oldConnHolder + "] for DataSource [" +
+                    dataSource + "] bound to thread [" + Thread.currentThread().getName() + "]");
+        }
     }
 
-    public static TransactionContext getTransactionContext() {
-        return TRANSACTION_CONTEXT.get();
+    public static void unbindConnectionHolder(DataSource dataSource) {
+        Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
+        if (map == null) {
+            throw new IllegalStateException(); // TODO
+        }
+        ConnectionHolder connHolder = map.remove(dataSource);
+        if (map.isEmpty()) {
+            CONNECTION_HOLDERS.remove();
+        }
+        if (connHolder == null) {
+            throw new IllegalStateException(
+                    "No value for DataSource [" + dataSource + "] bound to " +
+                            "thread [" + Thread.currentThread().getName() + "]");
+        }
     }
 
-    public static boolean inTransaction() {
-        return getTransactionContext() != null;
-    }
-
-    public static void clear() {
-        TRANSACTION_CONTEXT.remove();
+    public static ConnectionHolder getConnectionHolder(DataSource dataSource) {
+        Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
+        return map == null ? null : map.get(dataSource);
     }
 
 }
+
+
+
+
+
+

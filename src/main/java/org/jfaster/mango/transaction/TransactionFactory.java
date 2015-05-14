@@ -16,9 +16,12 @@
 
 package org.jfaster.mango.transaction;
 
-import org.jfaster.mango.exception.TransactionSystemException;
+import org.jfaster.mango.datasource.DataSourceUtils;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
 
 /**
  * @author ash
@@ -27,28 +30,40 @@ public abstract class TransactionFactory {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(TransactionFactory.class);
 
-    public static Transaction newTransaction(TransactionIsolationLevel level) {
+    public static Transaction doNewTransaction(DataSource dataSource, TransactionIsolationLevel level) {
         if (level == null) {
             new IllegalArgumentException("TransactionIsolationLevel can't be null");
         }
+        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
+        return connHolder != null ?
+                usingExistingTransaction(dataSource) :
+                createNewTransaction(dataSource);
+    }
 
-        TransactionContext tc = TransactionSynchronizationManager.getTransactionContext();
-        if (tc != null) {
-            throw new TransactionSystemException("already exists transaction");
-        }
-
+    private static Transaction usingExistingTransaction(DataSource dataSource) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Creating new transaction");
+            logger.debug("Using existing transaction");
         }
-
-        tc = new TransactionContext(level);
-        Transaction transaction = new TransactionImpl(tc);
-        TransactionSynchronizationManager.setTransactionContext(tc);
+        Transaction transaction = new Transaction(false, dataSource);
         return transaction;
     }
 
-    public static Transaction newTransaction() {
-        return newTransaction(TransactionIsolationLevel.DEFAULT);
+    private static Transaction createNewTransaction(DataSource dataSource) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating new transaction");
+        }
+        Transaction transaction = new Transaction(true, dataSource);
+        Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            ConnectionHolder connHolder = new ConnectionHolder(conn);
+            TransactionSynchronizationManager.bindConnectionHolder(dataSource, connHolder);
+            return transaction;
+        } catch (Throwable e) {
+            DataSourceUtils.releaseConnection(conn, dataSource);
+            throw new RuntimeException(); // TODO
+        }
     }
 
 }

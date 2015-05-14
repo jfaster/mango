@@ -16,49 +16,33 @@
 
 package org.jfaster.mango.transaction;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 
 /**
  * @author ash
  */
-public class TransactionContext {
+public class ConnectionHolder {
 
-    private final TransactionIsolationLevel level;
-    private DataSource dataSource;
-    private Connection connection;
-    private Integer previousLevel; // nul表示level不用变
+    private final Connection connection;
 
-    public TransactionContext(TransactionIsolationLevel level) {
-        this.level = level;
-    }
+    private boolean rollbackOnly = false;
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public void setConnection(Connection connection) {
+    public ConnectionHolder(Connection connection) {
+        if (connection == null) {
+            throw new IllegalArgumentException("connection can't be null");
+        }
         this.connection = connection;
-    }
-
-    public void setPreviousLevel(Integer previousLevel) {
-        this.previousLevel = previousLevel;
-    }
-
-    public TransactionIsolationLevel getLevel() {
-        return level;
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
     }
 
     public Connection getConnection() {
         return connection;
     }
 
-    public Integer getPreviousLevel() {
-        return previousLevel;
+    public boolean isRollbackOnly() {
+        return rollbackOnly;
     }
 
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
 }
