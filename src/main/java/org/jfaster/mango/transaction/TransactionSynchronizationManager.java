@@ -44,7 +44,9 @@ public abstract class TransactionSynchronizationManager {
     public static void unbindConnectionHolder(DataSource dataSource) {
         Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
         if (map == null) {
-            throw new IllegalStateException(); // TODO
+            throw new IllegalStateException(
+                    "No value for DataSource [" + dataSource + "] bound to " +
+                            "thread [" + Thread.currentThread().getName() + "]");
         }
         ConnectionHolder connHolder = map.remove(dataSource);
         if (map.isEmpty()) {

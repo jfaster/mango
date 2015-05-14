@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.transaction;
 
-import org.jfaster.mango.datasource.DataSourceMonitor;
 import org.jfaster.mango.datasource.DataSourceUtils;
 import org.jfaster.mango.transaction.exception.IllegalTransactionStateException;
+import org.jfaster.mango.transaction.exception.TransactionSystemException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -33,30 +33,30 @@ public class Transaction {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(Transaction.class);
 
-    private final boolean newTransaction;
+    private final boolean isNewTransaction;
 
     private final DataSource dataSource;
 
     private final Integer previousLevel;
 
-    private final boolean mustRestoreAutoCommit;
+    private final boolean isMustRestoreAutoCommit;
 
-    private boolean completed;
+    private boolean isCompleted = false;
 
     public Transaction(boolean newTransaction, DataSource dataSource) {
         this(newTransaction, dataSource, null, true);
     }
 
-    public Transaction(boolean newTransaction, DataSource dataSource,
-                       Integer previousLevel, boolean mustRestoreAutoCommit) {
-        this.newTransaction = newTransaction;
+    public Transaction(boolean isNewTransaction, DataSource dataSource,
+                       Integer previousLevel, boolean isMustRestoreAutoCommit) {
+        this.isNewTransaction = isNewTransaction;
         this.dataSource = dataSource;
         this.previousLevel = previousLevel;
-        this.mustRestoreAutoCommit = mustRestoreAutoCommit;
+        this.isMustRestoreAutoCommit = isMustRestoreAutoCommit;
     }
 
     public void commit() {
-        if (isCompleted()) {
+        if (isCompleted) {
             throw new IllegalTransactionStateException(
                     "Transaction is already completed - do not call commit or rollback more than once per transaction");
         }
@@ -66,28 +66,25 @@ public class Transaction {
             throw new IllegalStateException("No ConnectionHolder bind to DataSource [" + dataSource + "]");
         }
 
-        if (!isNewTransaction()) { // 嵌套的事务，不真正提交
+        if (!isNewTransaction) { // 嵌套的事务，不真正提交
             return;
         }
 
         if (connHolder.isRollbackOnly()) { // 嵌套的事务出现回滚则回滚
-            processRollback(connHolder.getConnection(), dataSource);
+            processRollback(connHolder.getConnection());
         }
 
         // 提交事务
-        processCommit(connHolder.getConnection(), dataSource);
+        processCommit(connHolder.getConnection());
     }
 
-    private void processCommit(Connection conn, DataSource dataSource) {
+    private void processCommit(Connection conn) {
         try {
             doCommit(conn);
         } catch (Exception e) {
             doRollbackOnCommitException(conn, e);
         } finally {
-            TransactionSynchronizationManager.unbindConnectionHolder(dataSource);
-            resetConnectionAfterTransaction(conn, dataSource, getPreviousLevel(), isMustRestoreAutoCommit());
-            DataSourceUtils.releaseConnection(conn, dataSource);
-            setCompleted(true);
+            cleanup(conn);
         }
     }
 
@@ -95,20 +92,21 @@ public class Transaction {
         try {
             conn.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(); // TODO
+            throw new TransactionSystemException("Could not commit JDBC transaction", e);
         }
     }
 
-    private void doRollbackOnCommitException(Connection conn, Exception ce) {
+    private void doRollbackOnCommitException(Connection conn, Exception e) {
         try {
             doRollback(conn);
-        } catch (Exception re) {
-            throw new RuntimeException(); // TODO
+        } catch (TransactionSystemException tes) {
+            logger.error("Commit exception overridden by rollback exception", e);
+            throw tes;
         }
     }
 
     public void rollback() {
-        if (isCompleted()) {
+        if (isCompleted) {
             throw new IllegalTransactionStateException(
                     "Transaction is already completed - do not call commit or rollback more than once per transaction");
         }
@@ -118,23 +116,19 @@ public class Transaction {
             throw new IllegalStateException("No ConnectionHolder bind to DataSource [" + dataSource + "]");
         }
 
-        if (!isNewTransaction()) {
+        if (!isNewTransaction) {
             connHolder.setRollbackOnly(true); // 促发顶层事务回滚
             return;
         }
 
-        processRollback(connHolder.getConnection(), dataSource);
+        processRollback(connHolder.getConnection());
     }
 
-    private void processRollback(Connection conn, DataSource dataSource) {
+    private void processRollback(Connection conn) {
         try {
             doRollback(conn);
-        } catch (Exception e) {
-            throw new RuntimeException(); // TODO
         } finally {
-            TransactionSynchronizationManager.unbindConnectionHolder(dataSource);
-            resetConnectionAfterTransaction(conn, dataSource, getPreviousLevel(), isMustRestoreAutoCommit());
-            DataSourceUtils.releaseConnection(conn, dataSource);
+            cleanup(conn);
         }
     }
 
@@ -142,37 +136,18 @@ public class Transaction {
         try {
             conn.rollback();
         } catch (SQLException e) {
-            throw new RuntimeException(); // TODO
+            throw new TransactionSystemException("Could not roll back JDBC transaction", e);
         }
     }
 
-    public boolean isNewTransaction() {
-        return newTransaction;
+    private void cleanup(Connection conn) {
+        TransactionSynchronizationManager.unbindConnectionHolder(dataSource);
+        resetConnectionAfterTransaction(conn);
+        DataSourceUtils.releaseConnection(conn, dataSource);
+        isCompleted = true;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    public Integer getPreviousLevel() {
-        return previousLevel;
-    }
-
-    public boolean isMustRestoreAutoCommit() {
-        return mustRestoreAutoCommit;
-    }
-
-    private boolean isCompleted() {
-        return completed;
-    }
-
-    private void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
-    private static void resetConnectionAfterTransaction(
-            Connection conn, DataSource ds, Integer previousIsolationLevel,
-            boolean isMustRestoreAutoCommit) {
+    private void resetConnectionAfterTransaction(Connection conn) {
 
         try {
             if (isMustRestoreAutoCommit) {
@@ -183,17 +158,15 @@ public class Transaction {
             }
         } catch (SQLException e) {
             logger.error("Could not reset autoCommit of JDBC Connection after transaction", e);
-            DataSourceMonitor.resetAutoCommitFail(ds);
         } catch (Throwable e) {
             logger.error("Unexpected exception on resetting autoCommit of JDBC Connection after transaction", e);
-            DataSourceMonitor.resetAutoCommitFail(ds);
         }
         try {
-            if (previousIsolationLevel != null) {
+            if (previousLevel != null) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Resetting isolation level of JDBC Connection to " + previousIsolationLevel);
+                    logger.debug("Resetting isolation level of JDBC Connection to " + previousLevel);
                 }
-                conn.setTransactionIsolation(previousIsolationLevel);
+                conn.setTransactionIsolation(previousLevel);
             }
         } catch (SQLException e) {
             logger.error("Could not reset isolation level of JDBC Connection after transaction", e);
