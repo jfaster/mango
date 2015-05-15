@@ -39,6 +39,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * mango框架DAO工厂
@@ -88,9 +89,14 @@ public class Mango {
     /**
      * mango实例
      */
-    private final static List<Mango> instances = new ArrayList<Mango>();
+    private final static CopyOnWriteArrayList<Mango> instances = new CopyOnWriteArrayList<Mango>();
 
     public synchronized static Mango newInstance() {
+        if (instances.size() == 1) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Find out more mango instances, it is recommended to use only one");
+            }
+        }
         Mango mango = new Mango();
         instances.add(mango);
         return mango;
@@ -107,8 +113,12 @@ public class Mango {
     /**
      * 获得mango实例
      */
-    public synchronized static List<Mango> getInstances() {
-        return Collections.unmodifiableList(instances);
+    public static List<Mango> getInstances() {
+        List<Mango> mangos = new ArrayList<Mango>();
+        for (Mango instance : instances) {
+            mangos.add(instance);
+        }
+        return Collections.unmodifiableList(mangos);
     }
 
     /**
