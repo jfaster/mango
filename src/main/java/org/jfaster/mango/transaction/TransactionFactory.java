@@ -84,7 +84,7 @@ public abstract class TransactionFactory {
         if (logger.isDebugEnabled()) {
             logger.debug("Using existing transaction");
         }
-        Transaction transaction = new Transaction(false, dataSource);
+        Transaction transaction = new TransactionImpl(false, dataSource);
         return transaction;
     }
 
@@ -122,7 +122,7 @@ public abstract class TransactionFactory {
                 conn.setAutoCommit(false);
             }
 
-            Transaction transaction = new Transaction(true, dataSource, previousLevel, isMustRestoreAutoCommit);
+            Transaction transaction = new TransactionImpl(true, dataSource, previousLevel, isMustRestoreAutoCommit);
             ConnectionHolder connHolder = new ConnectionHolder(conn);
             TransactionSynchronizationManager.bindConnectionHolder(dataSource, connHolder);
             return transaction;

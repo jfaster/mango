@@ -17,36 +17,18 @@
 package org.jfaster.mango.transaction;
 
 /**
- * 事务状态
- *
  * @author ash
  */
-public enum TransactionState {
+public class TransactionStatus {
 
-    /**
-     * 事务运行中
-     */
-    RUNNING,
+    private boolean rollbackOnly = false;
 
-    /**
-     * 提交事务成功
-     */
-    COMMIT_SUCCESS,
+    public boolean isRollbackOnly() {
+        return rollbackOnly;
+    }
 
-    /**
-     * 提交事务失败
-     */
-    COMMIT_FAIL,
-
-    /**
-     * 回滚事务成功
-     */
-    ROLLBACK_SUCCESS,
-
-    /**
-     * 回滚事务失败
-     */
-    ROLLBACK_FAIL;
-
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
 
 }
