@@ -24,66 +24,109 @@ import org.jfaster.mango.util.concurrent.atomic.LongAddables;
  */
 public class StatsCounter {
 
-    private final LongAddable initCount = LongAddables.create();
-    private final LongAddable totalInitTime = LongAddables.create();
-    private final LongAddable hitCount = LongAddables.create();
-    private final LongAddable missCount = LongAddables.create();
-    private final LongAddable executeSuccessCount = LongAddables.create();
-    private final LongAddable executeExceptionCount = LongAddables.create();
-    private final LongAddable totalExecuteTime = LongAddables.create();
-    private final LongAddable evictionCount = LongAddables.create();
-
-    public StatsCounter() {}
+    private volatile RealStatsCounter realStatsCounter = new RealStatsCounter();
 
     public void recordInit(long initTime) {
-        if (initTime >= 0) {
-            initCount.increment();
-            totalInitTime.add(initTime);
-        }
+        final RealStatsCounter sc = realStatsCounter;
+        sc.recordInit(initTime);
     }
 
     public void recordHits(int count) {
-        if (count > 0) {
-            hitCount.add(count);
-        }
+        final RealStatsCounter sc = realStatsCounter;
+        sc.recordHits(count);
     }
 
     public void recordMisses(int count) {
-        if (count > 0) {
-            missCount.add(count);
-        }
+        final RealStatsCounter sc = realStatsCounter;
+        sc.recordMisses(count);
     }
 
     public void recordExecuteSuccess(long executeTime) {
-        if (executeTime >= 0) {
-            executeSuccessCount.increment();
-            totalExecuteTime.add(executeTime);
-        }
+        final RealStatsCounter sc = realStatsCounter;
+        sc.recordExecuteSuccess(executeTime);
     }
 
     public void recordExecuteException(long executeTime) {
-        if (executeTime >= 0) {
-            executeExceptionCount.increment();
-            totalExecuteTime.add(executeTime);
-        }
+        final RealStatsCounter sc = realStatsCounter;
+        sc.recordExecuteException(executeTime);
     }
 
     public void recordEviction(int count) {
-        if (count > 0) {
-            evictionCount.add(count);
-        }
+        final RealStatsCounter sc = realStatsCounter;
+        sc.recordEviction(count);
     }
 
     public OperatorStats snapshot() {
-        return new OperatorStats(
-                initCount.sum(),
-                totalInitTime.sum(),
-                hitCount.sum(),
-                missCount.sum(),
-                executeSuccessCount.sum(),
-                executeExceptionCount.sum(),
-                totalExecuteTime.sum(),
-                evictionCount.sum());
+        final RealStatsCounter sc = realStatsCounter;
+        return sc.snapshot();
+    }
+
+    public void reset() {
+        RealStatsCounter sc = new RealStatsCounter();
+        realStatsCounter = sc;
+    }
+
+    private static class RealStatsCounter {
+
+        private final LongAddable initCount = LongAddables.create();
+        private final LongAddable totalInitTime = LongAddables.create();
+        private final LongAddable hitCount = LongAddables.create();
+        private final LongAddable missCount = LongAddables.create();
+        private final LongAddable executeSuccessCount = LongAddables.create();
+        private final LongAddable executeExceptionCount = LongAddables.create();
+        private final LongAddable totalExecuteTime = LongAddables.create();
+        private final LongAddable evictionCount = LongAddables.create();
+
+        public void recordInit(long initTime) {
+            if (initTime >= 0) {
+                initCount.increment();
+                totalInitTime.add(initTime);
+            }
+        }
+
+        public void recordHits(int count) {
+            if (count > 0) {
+                hitCount.add(count);
+            }
+        }
+
+        public void recordMisses(int count) {
+            if (count > 0) {
+                missCount.add(count);
+            }
+        }
+
+        public void recordExecuteSuccess(long executeTime) {
+            if (executeTime >= 0) {
+                executeSuccessCount.increment();
+                totalExecuteTime.add(executeTime);
+            }
+        }
+
+        public void recordExecuteException(long executeTime) {
+            if (executeTime >= 0) {
+                executeExceptionCount.increment();
+                totalExecuteTime.add(executeTime);
+            }
+        }
+
+        public void recordEviction(int count) {
+            if (count > 0) {
+                evictionCount.add(count);
+            }
+        }
+
+        public OperatorStats snapshot() {
+            return new OperatorStats(
+                    initCount.sum(),
+                    totalInitTime.sum(),
+                    hitCount.sum(),
+                    missCount.sum(),
+                    executeSuccessCount.sum(),
+                    executeExceptionCount.sum(),
+                    totalExecuteTime.sum(),
+                    evictionCount.sum());
+        }
     }
 
 }

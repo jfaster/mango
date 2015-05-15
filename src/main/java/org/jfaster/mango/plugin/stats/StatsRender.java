@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,7 +43,12 @@ public class StatsRender {
             sw = new StringWriter();
             bw = new BufferedWriter(sw);
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("mangos", Mango.getInstances());
+
+            List<Mango> mangos = Mango.getInstances();
+            if (mangos.size() != 1) {
+                throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
+            }
+            data.put("mango", mangos.get(0));
             data.put("isFetchAll", isFetchAll);
             Template t = new Template(null, reader, null);
             t.process(data, bw);

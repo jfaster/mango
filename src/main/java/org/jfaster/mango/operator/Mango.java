@@ -227,6 +227,16 @@ public class Mango {
     }
 
     /**
+     * 重置各个方法的状态
+     */
+    public void resetAllStats() {
+        Set<Map.Entry<Method, StatsCounter>> entrySet = statsCounterMap.entrySet();
+        for (Map.Entry<Method, StatsCounter> entry : entrySet) {
+            entry.getValue().reset();
+        }
+    }
+
+    /**
      * 根据数据源名字获得主库数据源
      */
     public DataSource getMasterDataSource(String dataSourceName) {
