@@ -73,8 +73,8 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <optional>true</optional>
         </dependency>
 
@@ -181,6 +181,12 @@
             <artifactId>spring-test</artifactId>
             <version>4.0.5.RELEASE</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>8.1.16.v20140903</version>
         </dependency>
     </dependencies>
 
