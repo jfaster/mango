@@ -17,6 +17,7 @@
 package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.datasource.DataSourceUtils;
+import org.jfaster.mango.jdbc.exception.DataAccessException;
 import org.jfaster.mango.jdbc.exception.DataRetrievalFailureException;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
@@ -40,32 +41,44 @@ public class JdbcTemplate implements JdbcOperations {
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(JdbcTemplate.class);
 
     @Override
-    public <T> T queryForObject(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> T queryForObject(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException {
+
         return executeQuery(dataSource, sql, args, new ObjectResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public <T> List<T> queryForList(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> List<T> queryForList(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException {
+
         return executeQuery(dataSource, sql, args, new ListResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public <T> Set<T> queryForSet(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> Set<T> queryForSet(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException {
+
         return executeQuery(dataSource, sql, args, new SetResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public <T> Object queryForArray(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> Object queryForArray(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException {
+
         return executeQuery(dataSource, sql, args, new ArrayResultSetExtractor<T>(rowMapper));
     }
 
     @Override
-    public int update(DataSource dataSource, String sql, Object[] args) {
+    public int update(DataSource dataSource, String sql, Object[] args)
+            throws DataAccessException {
+
         return update(dataSource, sql, args, null);
     }
 
     @Override
-    public int update(DataSource dataSource, String sql, Object[] args, GeneratedKeyHolder holder) {
+    public int update(DataSource dataSource, String sql, Object[] args, GeneratedKeyHolder holder)
+            throws DataAccessException {
+
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -115,7 +128,9 @@ public class JdbcTemplate implements JdbcOperations {
     }
 
     @Override
-    public int[] batchUpdate(DataSource dataSource, String sql, List<Object[]> batchArgs) {
+    public int[] batchUpdate(DataSource dataSource, String sql, List<Object[]> batchArgs)
+            throws DataAccessException {
+
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         int[] r = null;
@@ -152,7 +167,9 @@ public class JdbcTemplate implements JdbcOperations {
     }
 
     @Override
-    public int[] batchUpdate(DataSource dataSource, List<String> sqls, List<Object[]> batchArgs) {
+    public int[] batchUpdate(DataSource dataSource, List<String> sqls, List<Object[]> batchArgs)
+            throws DataAccessException {
+
         int size = Math.min(sqls.size(), batchArgs.size());
         int[] r = new int[size];
         Connection conn = DataSourceUtils.getConnection(dataSource);
@@ -192,7 +209,9 @@ public class JdbcTemplate implements JdbcOperations {
         return r;
     }
 
-    private <T> T executeQuery(DataSource dataSource, String sql, Object[] args, ResultSetExtractor<T> rse) {
+    private <T> T executeQuery(DataSource dataSource, String sql, Object[] args, ResultSetExtractor<T> rse)
+            throws DataAccessException {
+
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         ResultSet rs = null;

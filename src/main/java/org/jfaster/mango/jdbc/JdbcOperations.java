@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.jdbc.exception.DataAccessException;
+
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Set;
@@ -25,20 +27,28 @@ import java.util.Set;
  */
 public interface JdbcOperations {
 
-    public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper);
+    public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException;
 
-    public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper);
+    public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException;
 
-    public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper);
+    public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException;
 
-    public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper);
+    public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper)
+            throws DataAccessException;
 
-    public int update(DataSource ds, String sql, Object[] args);
+    public int update(DataSource ds, String sql, Object[] args)
+            throws DataAccessException;
 
-    public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder);
+    public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder)
+            throws DataAccessException;
 
-    public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs);
+    public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs)
+            throws DataAccessException;
 
-    public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs);
+    public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs)
+            throws DataAccessException;
 
 }

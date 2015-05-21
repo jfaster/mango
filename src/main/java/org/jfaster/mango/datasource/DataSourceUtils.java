@@ -54,6 +54,18 @@ public class DataSourceUtils {
             logger.debug("Fetching JDBC Connection from DataSource");
         }
         Connection conn = dataSource.getConnection();
+        if (DataSourceMonitor.needCheckAutoCommit(dataSource)) { // 如果使用事务后，归还conn时，重置autoCommit失败，则需要检测
+            try {
+                if (!conn.getAutoCommit()) {
+                    conn.setAutoCommit(true);
+                }
+            } catch (SQLException e) {
+                logger.error("Could not set autoCommit of JDBC Connection after get Connection, so close it");
+                releaseConnection(conn, dataSource);
+                throw new CannotGetJdbcConnectionException("Could not set autoCommit of JDBC Connection " +
+                        "after get Connection, so close it");
+            }
+        }
         return conn;
     }
 

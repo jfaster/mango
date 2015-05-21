@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.transaction;
 
+import org.jfaster.mango.datasource.DataSourceMonitor;
 import org.jfaster.mango.datasource.DataSourceUtils;
 import org.jfaster.mango.transaction.exception.IllegalTransactionStateException;
 import org.jfaster.mango.transaction.exception.TransactionSystemException;
@@ -193,8 +194,10 @@ public class TransactionImpl implements Transaction {
                 conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
+            DataSourceMonitor.resetAutoCommitFail(dataSource);
             logger.error("Could not reset autoCommit of JDBC Connection after transaction", e);
         } catch (Throwable e) {
+            DataSourceMonitor.resetAutoCommitFail(dataSource);
             logger.error("Unexpected exception on resetting autoCommit of JDBC Connection after transaction", e);
         }
         try {
