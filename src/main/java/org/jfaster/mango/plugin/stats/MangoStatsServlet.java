@@ -53,6 +53,8 @@ public class MangoStatsServlet extends HttpServlet {
                     throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
                 }
                 mangos.get(0).resetAllStats();
+                resp.sendRedirect(req.getRequestURL().toString());
+                return;
             }
             out.println(StatsRender.getHtml(Boolean.valueOf(req.getParameter("all"))));
             out.flush();

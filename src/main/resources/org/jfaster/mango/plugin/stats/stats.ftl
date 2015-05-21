@@ -11,7 +11,7 @@
 
 <div id="custom-toolbar">
     <div class="form-inline" role="form">
-        <b`utton type="button" class="btn btn-default">清空状态</button>
+        <button type="button" class="btn btn-default">清空状态</button>
     </div>
 </div>
 
@@ -73,6 +73,12 @@
         if (n1 < n2) return -1;
         return 0;
     }
+    $(function() {
+        $("button").click(function(){
+            var action = window.location.pathname + "?type=reset";
+            window.location.href = action;
+        });
+    });
 </script>
 </body>
 </html>
