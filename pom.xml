@@ -173,6 +173,7 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
             <version>8.1.16.v20140903</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
