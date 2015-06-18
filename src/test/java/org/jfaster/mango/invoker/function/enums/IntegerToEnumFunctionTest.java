@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.invoker.FunctionalSetterInvoker;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class IntegerToEnumFunctionTest {
             return e;
         }
 
-        @Functional(IntegerToEnumFunction.class)
+        @Setter(IntegerToEnumFunction.class)
         void setE(E e) {
             this.e = e;
         }

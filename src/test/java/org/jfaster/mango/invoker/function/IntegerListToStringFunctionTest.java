@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function;
 
 import com.google.common.collect.Lists;
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.invoker.FunctionalGetterInvoker;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class IntegerListToStringFunctionTest {
     static class A {
         private List<Integer> x;
 
-        @Functional(IntegerListToStringFunction.class)
+        @Getter(IntegerListToStringFunction.class)
         List<Integer> getX() {
             return x;
         }

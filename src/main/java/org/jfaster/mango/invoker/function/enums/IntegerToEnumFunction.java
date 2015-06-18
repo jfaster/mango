@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.invoker.GenericFunction;
+import org.jfaster.mango.invoker.GenericSetterFunction;
 import org.jfaster.mango.reflect.TypeToken;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ import java.util.EnumSet;
  *
  * @author ash
  */
-public class IntegerToEnumFunction extends GenericFunction<Integer, Enum> {
+public class IntegerToEnumFunction extends GenericSetterFunction<Integer, Enum> {
 
     private static volatile EnumSet es;
 

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.GetterInvokerChain;
 
 /**
  * @author ash
@@ -35,6 +35,6 @@ public interface ParameterBean {
 
     public String getFullName();
 
-    public void setInvoker(GetterInvoker invoker);
+    public void setInvokerChain(GetterInvokerChain invoker);
 
 }

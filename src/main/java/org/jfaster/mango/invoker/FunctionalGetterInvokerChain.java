@@ -4,7 +4,6 @@ import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.util.Strings;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +11,14 @@ import java.util.List;
 /**
  * @author ash
  */
-public class HierarchyGetterInvoker implements GetterInvoker  {
+public class FunctionalGetterInvokerChain implements GetterInvokerChain {
 
-    private Type type;
-    private Class<?> rawType;
-    private String parameterName;
+    private final Type finalType;
+    private final String parameterName;
     private String propertyPath;
-    private List<GetterInvoker> invokers;
+    private final List<GetterInvoker> invokers;
 
-    private HierarchyGetterInvoker(Type type, String parameterName, String propertyPath) {
+    private FunctionalGetterInvokerChain(Type type, String parameterName, String propertyPath) {
         this.parameterName = parameterName;
         this.propertyPath = propertyPath;
         invokers = new ArrayList<GetterInvoker>();
@@ -43,16 +41,20 @@ public class HierarchyGetterInvoker implements GetterInvoker  {
                 pnp.append(propertyName);
             }
         }
-        this.type = type;
-        this.rawType = rawType;
+        this.finalType = type;
     }
 
-    public static HierarchyGetterInvoker create(Type type, String parameterName, String propertyPath) {
-        return new HierarchyGetterInvoker(type, parameterName, propertyPath);
+    public static FunctionalGetterInvokerChain create(Type type, String parameterName, String propertyPath) {
+        return new FunctionalGetterInvokerChain(type, parameterName, propertyPath);
     }
 
     @Override
-    public Object invoke(@Nullable Object obj) {
+    public Type getFinalType() {
+        return finalType;
+    }
+
+    @Override
+    public Object invoke(Object obj) {
         Object r = obj;
         int size = invokers.size();
         for (int i = 0; i < size; i++) {
@@ -71,18 +73,8 @@ public class HierarchyGetterInvoker implements GetterInvoker  {
     }
 
     @Override
-    public String getName() {
+    public String getPropertyPath() {
         return propertyPath;
-    }
-
-    @Override
-    public Type getType() {
-        return type;
-    }
-
-    @Override
-    public Class<?> getRawType() {
-        return rawType;
     }
 
     private static class NestedProperty {
@@ -103,6 +95,5 @@ public class HierarchyGetterInvoker implements GetterInvoker  {
         }
 
     }
-
 
 }

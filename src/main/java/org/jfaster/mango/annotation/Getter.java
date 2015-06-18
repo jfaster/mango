@@ -14,21 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.annotation;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Type;
+import org.jfaster.mango.invoker.GetterFunction;
+
+import java.lang.annotation.*;
 
 /**
  * @author ash
  */
-public interface Function<I, O> {
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Getter {
 
-    @Nullable
-    public O apply(@Nullable I input, Type type);
-
-    public boolean inverseCheck();
-
-    public boolean isIdentity();
+    Class<? extends GetterFunction<?, ?>> value();
 
 }

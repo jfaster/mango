@@ -16,13 +16,9 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.annotation.Functional;
-import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeToken;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /**
  * @author ash
@@ -31,34 +27,34 @@ public abstract class FunctionalInvoker implements Invoker {
 
     protected String name;
     protected Method method;
-    protected Function function;
-    protected TypeToken<?> inputToken;
-    protected TypeToken<?> outputToken;
+    private TypeToken<?> inputToken;
+    private TypeToken<?> outputToken;
 
     protected FunctionalInvoker(String name, Method method) {
         this.name = name;
         this.method = method;
         handleMethod(method);
-        Functional funcAnno = method.getAnnotation(Functional.class);
-        if (funcAnno != null) {
-            Class<? extends Function<?, ?>> funcClass = funcAnno.value();
-            function = Reflection.instantiate(funcClass);
-            Type genType = funcClass.getGenericSuperclass();
-            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-            inputToken = TypeToken.of(params[0]);
-            outputToken = TypeToken.of(params[1]);
-        } else {
-            function = new IdentityFunction();
-        }
+//        Function function = getFunction();
+//        if (function != null) {
+//            Type genType = function.getClass().getGenericSuperclass();
+//            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+//            inputToken = TypeToken.of(params[0]);
+//            outputToken = TypeToken.of(params[1]);
+//        }
+//
+//
+//        if (funcAnno != null) {
+//            Class<? extends Function<?, ?>> funcClass = funcAnno.value();
+//            function = Reflection.instantiate(funcClass);
+//
+//        } else {
+//            function = new IdentityFunction();
+//        }
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    protected boolean needCheckAndChange() {
-        return !function.isIdentity();
     }
 
     private void handleMethod(Method method) {

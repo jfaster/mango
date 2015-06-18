@@ -14,33 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.annotation;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Type;
+import org.jfaster.mango.invoker.SetterFunction;
+
+import java.lang.annotation.*;
 
 /**
  * @author ash
  */
-public abstract class LiteFunction<I, O> implements Function<I, O> {
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Setter {
 
-    @Nullable
-    @Override
-    public O apply(@Nullable I input, Type type) {
-        return apply(input);
-    }
-
-    @Override
-    public boolean inverseCheck() {
-        return false;
-    }
-
-    @Override
-    public boolean isIdentity() {
-        return false;
-    }
-
-    @Nullable
-    public abstract O apply(@Nullable I input);
+    Class<? extends SetterFunction<?, ?>> value();
 
 }

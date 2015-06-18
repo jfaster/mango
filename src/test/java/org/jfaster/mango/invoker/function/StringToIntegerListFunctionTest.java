@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function;
 
 import com.google.common.collect.Lists;
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.invoker.FunctionalSetterInvoker;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class StringToIntegerListFunctionTest {
             return x;
         }
 
-        @Functional(StringToIntegerListFunction.class)
+        @Setter(StringToIntegerListFunction.class)
         void setX(List<Integer> x) {
             this.x = x;
         }

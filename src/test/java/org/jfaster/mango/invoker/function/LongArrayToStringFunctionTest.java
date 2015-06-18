@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.invoker.FunctionalGetterInvoker;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class LongArrayToStringFunctionTest {
     static class A {
         private long[] x;
 
-        @Functional(LongArrayToStringFunction.class)
+        @Getter(LongArrayToStringFunction.class)
         long[] getX() {
             return x;
         }

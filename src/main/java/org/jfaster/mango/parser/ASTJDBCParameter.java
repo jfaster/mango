@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.GetterInvokerChain;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Strings;
 
@@ -34,7 +34,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
 
     private String parameterName;
     private String propertyPath; // 为""的时候表示没有属性
-    private GetterInvoker invoker;
+    private GetterInvokerChain invokerChain;
 
     public ASTJDBCParameter(int i) {
         super(i);
@@ -59,11 +59,11 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
 
     @Override
     public boolean render(InvocationContext context) {
-        if (invoker == null) {
+        if (invokerChain == null) {
             throw new NullPointerException("invoker must set");
         }
         context.writeToSqlBuffer("?");
-        Object obj = context.getNullablePropertyValue(parameterName, invoker);
+        Object obj = context.getNullablePropertyValue(parameterName, invokerChain);
         context.appendToArgs(obj);
         return true;
     }
@@ -113,7 +113,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
     }
 
     @Override
-    public void setInvoker(GetterInvoker invoker) {
-        this.invoker = invoker;
+    public void setInvokerChain(GetterInvokerChain invokerChain) {
+        this.invokerChain = invokerChain;
     }
 }

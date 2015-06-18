@@ -19,8 +19,9 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.NotReadableParameterException;
+import org.jfaster.mango.invoker.FunctionalGetterInvokerChain;
 import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.HierarchyGetterInvoker;
+import org.jfaster.mango.invoker.GetterInvokerChain;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.ParameterDescriptor;
@@ -88,13 +89,13 @@ public class ParameterContext {
     /**
      * 获得getter调用器
      */
-    public GetterInvoker getInvoker(String parameterName, String propertyPath) {
+    public GetterInvokerChain getInvokerChain(String parameterName, String propertyPath) {
         Type type = typeMap.get(parameterName);
         if (type == null) {
             throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
         }
-        HierarchyGetterInvoker invoker = HierarchyGetterInvoker.create(type, parameterName, propertyPath);
-        return invoker;
+        GetterInvokerChain invokerChain = FunctionalGetterInvokerChain.create(type, parameterName, propertyPath);
+        return invokerChain;
     }
 
     @Nullable

@@ -16,13 +16,17 @@
 
 package org.jfaster.mango.invoker;
 
+import org.jfaster.mango.annotation.Getter;
+import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.Types;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -30,35 +34,43 @@ import java.lang.reflect.Type;
  */
 public class FunctionalSetterInvoker extends FunctionalInvoker implements SetterInvoker {
 
+    private SetterFunction function;
     private Type realParameterType;
     private Class<?> realRawParameterType;
-    private Type parameterType;
-    private Class<?> rawParameterTpe;
 
     private FunctionalSetterInvoker(String name, Method method) {
         super(name, method);
         TypeToken<?> parameterToken = TypeToken.of(method.getGenericParameterTypes()[0]);
         realParameterType = parameterToken.getType();
         realRawParameterType = parameterToken.getRawType();
-        if (needCheckAndChange()) {
+
+        Getter getterAnno = method.getAnnotation(Getter.class);
+        if (getterAnno != null) {
+            throw new RuntimeException(); // TODO
+        }
+        Setter setterAnno = method.getAnnotation(Setter.class);
+
+        if (setterAnno != null) { // 启用函数式调用功能
+            Class<? extends SetterFunction<?, ?>> funcClass = setterAnno.value();
+            function = Reflection.instantiate(funcClass);
+            Type genType = funcClass.getGenericSuperclass();
+            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+            TypeToken<?> outputToken = TypeToken.of(params[1]);
             TypeToken<?> wrapParameterToken = parameterToken.wrap();
-            if (function.inverseCheck()) { // 针对继承GenericFunction的
+            if (function.outputTypeIsGeneric()) { // 针对继承GenericSetterFunction的
                 if (!outputToken.isAssignableFrom(wrapParameterToken)) {
                     throw new ClassCastException("function[" + function.getClass() + "] " +
                             "on method[" + method + "] error, function's outputType[" + outputToken.getType() + "] " +
                             "must be assignable from method's parameterType[" + parameterToken.getType() + "]");
                 }
-            } else { // 针对继承LiteFunction的
+            } else { // 针对继承LiteSetterFunction的
                 if (!wrapParameterToken.isAssignableFrom(outputToken)) {
                     throw new ClassCastException("function[" + function.getClass() + "] " +
                             "on method[" + method + "] error, method's parameterType[" + parameterToken.getType() + "] " +
                             "must be assignable from function's outputType[" + outputToken.getType() + "]");
                 }
             }
-            parameterToken = inputToken;
         }
-        parameterType = parameterToken.getType();
-        rawParameterTpe = parameterToken.getRawType();
     }
 
     public static FunctionalSetterInvoker create(String name, Method method) {
@@ -69,17 +81,19 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
     @Override
     public void invoke(Object object, @Nullable Object parameter) {
         try {
-            Object output = function.apply(parameter, realParameterType);
-            if (output == null && realRawParameterType.isPrimitive()) {
+            if (function != null) {
+                parameter = function.apply(parameter, realParameterType);
+            }
+            if (parameter == null && realRawParameterType.isPrimitive()) {
                 throw new NullPointerException("property " + getName() + " of " +
                         object.getClass() + " is primitive, can not be assigned to null");
             }
-            if (output != null &&  !Types.isAssignable(realRawParameterType, output.getClass())) {
-                throw new ClassCastException("cannot convert value of type [" + output.getClass().getName() +
+            if (parameter != null &&  !Types.isAssignable(realRawParameterType, parameter.getClass())) {
+                throw new ClassCastException("cannot convert value of type [" + parameter.getClass().getName() +
                         "] to required type [" + realRawParameterType.getName() + "] " +
                         "for property '" + getName() + "' of " +  object.getClass());
             }
-            method.invoke(object, output);
+            method.invoke(object, parameter);
         } catch (IllegalAccessException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());
         } catch (InvocationTargetException e) {
@@ -89,12 +103,12 @@ public class FunctionalSetterInvoker extends FunctionalInvoker implements Setter
 
     @Override
     public Type getType() {
-        return parameterType;
+        return null;
     }
 
     @Override
     public Class<?> getRawType() {
-        return rawParameterTpe;
+        return null;
     }
 
 }

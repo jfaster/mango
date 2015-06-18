@@ -19,7 +19,7 @@ package org.jfaster.mango.invoker;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FunctionalGetterInvokerTest {
 
-    public static class IntegerToStringFunction extends LiteFunction<Integer, String> {
+    public static class IntegerToStringFunction extends GetterFunction<Integer, String> {
 
         @Nullable
         @Override
@@ -62,7 +62,7 @@ public class FunctionalGetterInvokerTest {
             this.x = x;
         }
         
-        @Functional(IntegerToStringFunction.class)
+        @Getter(IntegerToStringFunction.class)
         int getY() {
             return y;
         }
@@ -105,7 +105,7 @@ public class FunctionalGetterInvokerTest {
             this.x = x;
         }
 
-        @Functional(IntegerToStringFunction.class)
+        @Getter(IntegerToStringFunction.class)
         Integer getY() {
             return y;
         }
@@ -136,7 +136,7 @@ public class FunctionalGetterInvokerTest {
         assertThat((String) invoker.invoke(b), is("string100"));
     }
 
-    public static class StringToIntegerFunction extends LiteFunction<String, Integer> {
+    public static class StringToIntegerFunction extends GetterFunction<String, Integer> {
 
         @Nullable
         @Override
@@ -158,7 +158,7 @@ public class FunctionalGetterInvokerTest {
             this.x = x;
         }
 
-        @Functional(StringToIntegerFunction.class)
+        @Getter(StringToIntegerFunction.class)
         String getY() {
             return y;
         }
@@ -189,7 +189,7 @@ public class FunctionalGetterInvokerTest {
         assertThat((Integer) invoker.invoke(c), is(952700));
     }
 
-    public static class IntegerListToStringFunction extends LiteFunction<List<Integer>, String> {
+    public static class IntegerListToStringFunction extends GetterFunction<List<Integer>, String> {
 
         @Nullable
         @Override
@@ -211,7 +211,7 @@ public class FunctionalGetterInvokerTest {
             this.x = x;
         }
 
-        @Functional(IntegerListToStringFunction.class)
+        @Getter(IntegerListToStringFunction.class)
         List<Integer> getY() {
             return y;
         }
@@ -251,7 +251,7 @@ public class FunctionalGetterInvokerTest {
     static class E {
         private String x;
 
-        @Functional(IntegerToStringFunction.class)
+        @Getter(IntegerToStringFunction.class)
         String getX() {
             return x;
         }
@@ -278,7 +278,7 @@ public class FunctionalGetterInvokerTest {
     static class F {
         private List<String> x;
 
-        @Functional(IntegerListToStringFunction.class)
+        @Getter(IntegerListToStringFunction.class)
         List<String> getX() {
             return x;
         }
@@ -299,7 +299,7 @@ public class FunctionalGetterInvokerTest {
         FunctionalGetterInvoker.create("x", method);
     }
 
-    public static class IntArrayToStringFunction extends LiteFunction<int[], String> {
+    public static class IntArrayToStringFunction extends GetterFunction<int[], String> {
 
         @Nullable
         @Override
@@ -320,7 +320,7 @@ public class FunctionalGetterInvokerTest {
             this.x = x;
         }
 
-        @Functional(IntArrayToStringFunction.class)
+        @Getter(IntArrayToStringFunction.class)
         int[] getY() {
             return y;
         }

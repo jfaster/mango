@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function;
 
 import com.google.common.collect.Lists;
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.invoker.FunctionalSetterInvoker;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class StringToLongListFunctionTest {
             return x;
         }
 
-        @Functional(StringToLongListFunction.class)
+        @Setter(StringToLongListFunction.class)
         void setX(List<Long> x) {
             this.x = x;
         }

@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.GetterInvokerChain;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.Strings;
@@ -34,7 +34,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
     private String parameterName;
     private String propertyPath; // 为""的时候表示没有属性
-    private GetterInvoker invoker;
+    private GetterInvokerChain invokerChain;
 
     private String propertyOfMapper; // "msg_id in (:1)"中的msg_id
 
@@ -62,10 +62,10 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
     @Override
     public boolean render(InvocationContext context) {
-        if (invoker == null) {
+        if (invokerChain == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object objs = context.getNullablePropertyValue(parameterName, invoker);
+        Object objs = context.getNullablePropertyValue(parameterName, invokerChain);
         if (objs == null) {
             throw new NullPointerException("value of " +
                     Strings.getFullName(parameterName, propertyPath) + " can't be null");
@@ -135,8 +135,8 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
 
     @Override
-    public void setInvoker(GetterInvoker invoker) {
-        this.invoker = invoker;
+    public void setInvokerChain(GetterInvokerChain invokerChain) {
+        this.invokerChain = invokerChain;
     }
 
     public String getPropertyOfMapper() {

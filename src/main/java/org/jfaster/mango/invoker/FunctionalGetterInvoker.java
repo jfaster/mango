@@ -16,11 +16,15 @@
 
 package org.jfaster.mango.invoker;
 
+import org.jfaster.mango.annotation.Getter;
+import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeToken;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -30,24 +34,31 @@ import java.lang.reflect.Type;
  */
 public class FunctionalGetterInvoker extends FunctionalInvoker implements GetterInvoker {
 
-    private Type realReturnType;
+    private GetterFunction function;
     private Type returnType;
     private Class<?> rawReturnType;
 
     private FunctionalGetterInvoker(String name, Method method) {
         super(name, method);
+        Setter setterAnno = method.getAnnotation(Setter.class);
+        if (setterAnno != null) {
+            throw new RuntimeException(); // TODO
+        }
+        Getter getterAnno = method.getAnnotation(Getter.class);
+
         TypeToken<?> returnToken = TypeToken.of(method.getGenericReturnType());
-        realReturnType = returnToken.getType();
-        if (needCheckAndChange()) {
-            if (function.inverseCheck()) { // 针对继承GenericFunction的
-                throw new IllegalStateException("generic function can't be use in getter");
-            } else { // 针对继承LiteFunction的
-                TypeToken<?> wrapReturnToken = returnToken.wrap();
-                if (!inputToken.isAssignableFrom(wrapReturnToken)) {
-                    throw new ClassCastException("function[" + function.getClass() + "] " +
-                            "on method[" + method + "] error, function's inputType[" + inputToken.getType() + "] " +
-                            "must be assignable from method's returnType[" + returnToken.getType() + "]");
-                }
+        if (getterAnno != null) { // 启用函数式调用功能
+            Class<? extends GetterFunction<?, ?>> funcClass = getterAnno.value();
+            function = Reflection.instantiate(funcClass);
+            Type genType = funcClass.getGenericSuperclass();
+            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+            TypeToken<?> inputToken = TypeToken.of(params[0]);
+            TypeToken<?> outputToken = TypeToken.of(params[1]);
+            TypeToken<?> wrapReturnToken = returnToken.wrap();
+            if (!inputToken.isAssignableFrom(wrapReturnToken)) {
+                throw new ClassCastException("function[" + function.getClass() + "] " +
+                        "on method[" + method + "] error, function's inputType[" + inputToken.getType() + "] " +
+                        "must be assignable from method's returnType[" + returnToken.getType() + "]");
             }
             returnToken = outputToken;
         }
@@ -63,8 +74,10 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
     @Override
     public Object invoke(Object obj) {
         try {
-            Object input = method.invoke(obj);
-            Object r = function.apply(input, realReturnType);
+            Object r = method.invoke(obj);
+            if (function != null) {
+                r = function.apply(r);
+            }
             return r;
         } catch (IllegalAccessException e) {
             throw new UncheckedException(e.getMessage(), e.getCause());

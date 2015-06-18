@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.invoker.FunctionalSetterInvoker;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class StringToLongArrayFunctionTest {
             return x;
         }
 
-        @Functional(StringToLongArrayFunction.class)
+        @Setter(StringToLongArrayFunction.class)
         void setX(long[] x) {
             this.x = x;
         }

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.invoker.LiteFunction;
+import org.jfaster.mango.invoker.LiteSetterFunction;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class StringToLongArrayFunction extends LiteFunction<String, long[]> {
+public class StringToLongArrayFunction extends LiteSetterFunction<String, long[]> {
 
     private final static String SEPARATOR = ",";
 

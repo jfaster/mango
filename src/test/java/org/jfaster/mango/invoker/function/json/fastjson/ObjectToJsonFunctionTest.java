@@ -18,7 +18,7 @@ package org.jfaster.mango.invoker.function.json.fastjson;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.invoker.FunctionalGetterInvoker;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class ObjectToJsonFunctionTest {
         private List<Integer> list;
         private B b;
 
-        @Functional(ObjectToJsonFunction.class)
+        @Getter(ObjectToJsonFunction.class)
         List<Integer> getList() {
             return list;
         }
@@ -65,7 +65,7 @@ public class ObjectToJsonFunctionTest {
             this.list = list;
         }
 
-        @Functional(ObjectToJsonFunction.class)
+        @Getter(ObjectToJsonFunction.class)
         B getB() {
             return b;
         }
@@ -133,7 +133,7 @@ public class ObjectToJsonFunctionTest {
         private B[] b;
         private Integer[] c;
 
-        @Functional(ObjectToJsonFunction.class)
+        @Getter(ObjectToJsonFunction.class)
         int[] getA() {
             return a;
         }
@@ -142,7 +142,7 @@ public class ObjectToJsonFunctionTest {
             this.a = a;
         }
 
-        @Functional(ObjectToJsonFunction.class)
+        @Getter(ObjectToJsonFunction.class)
         B[] getB() {
             return b;
         }
@@ -151,7 +151,7 @@ public class ObjectToJsonFunctionTest {
             this.b = b;
         }
 
-        @Functional(ObjectToJsonFunction.class)
+        @Getter(ObjectToJsonFunction.class)
         Integer[] getC() {
             return c;
         }

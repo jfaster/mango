@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.GetterInvokerChain;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Strings;
 
@@ -34,7 +34,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     private String parameterName;
     private String propertyPath; // 为""的时候表示没有属性
-    private GetterInvoker invoker;
+    private GetterInvokerChain invokerChain;
 
     public ASTExpressionParameter(int i) {
         super(i);
@@ -59,10 +59,10 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     @Override
     public boolean evaluate(InvocationContext context) {
-        if (invoker == null) {
+        if (invokerChain == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object obj = context.getNullablePropertyValue(parameterName, invoker);
+        Object obj = context.getNullablePropertyValue(parameterName, invokerChain);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         }
@@ -71,10 +71,10 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
 
     @Override
     public Object value(InvocationContext context) {
-        if (invoker == null) {
+        if (invokerChain == null) {
             throw new NullPointerException("invoker must set");
         }
-        return context.getNullablePropertyValue(parameterName, invoker);
+        return context.getNullablePropertyValue(parameterName, invokerChain);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
     }
 
     @Override
-    public void setInvoker(GetterInvoker invoker) {
-        this.invoker = invoker;
+    public void setInvokerChain(GetterInvokerChain invokerChain) {
+        this.invokerChain = invokerChain;
     }
 }

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.invoker.LiteFunction;
+import org.jfaster.mango.invoker.GetterFunction;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class EnumToStringFunction extends LiteFunction<Enum, String> {
+public class EnumToStringFunction extends GetterFunction<Enum, String> {
 
     @Nullable
     @Override

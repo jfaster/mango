@@ -17,19 +17,17 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.partition.DataSourceRouter;
-import org.jfaster.mango.partition.IgnoreDataSourceRouter;
-import org.jfaster.mango.exception.*;
-import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.operator.cache.CacheDriver;
-import org.jfaster.mango.operator.cache.CacheableBatchUpdateOperator;
-import org.jfaster.mango.operator.cache.CacheableQueryOperator;
-import org.jfaster.mango.operator.cache.CacheableUpdateOperator;
+import org.jfaster.mango.exception.IncorrectDefinitionException;
+import org.jfaster.mango.exception.IncorrectParameterTypeException;
+import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.invoker.GetterInvokerChain;
+import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
+import org.jfaster.mango.partition.DataSourceRouter;
+import org.jfaster.mango.partition.IgnoreDataSourceRouter;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
 import org.jfaster.mango.reflect.MethodDescriptor;
@@ -96,13 +94,13 @@ public class OperatorFactory {
 
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
-                dbInfo.invoker, dbInfo.tablePartition);
+                dbInfo.shardByInvokerChain, dbInfo.tablePartition);
         DataSourceType dst = DataSourceType.SLAVE;
         if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
             dst = DataSourceType.MASTER;
         }
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, dst,
-               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.invoker, dbInfo.dataSourceRouter);
+               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardByInvokerChain, dbInfo.dataSourceRouter);
 
         Operator operator;
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
@@ -185,7 +183,7 @@ public class OperatorFactory {
 
         int shardByNum = 0;
         String shardParameterName = null;
-        GetterInvoker invoker = null;
+        GetterInvokerChain shardByInvokerChain = null;
         String shardParameterProperty = null;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
@@ -197,8 +195,8 @@ public class OperatorFactory {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
-                invoker = context.getInvoker(shardParameterName, shardParameterProperty);
-                Type shardType = invoker.getType();
+                shardByInvokerChain = context.getInvokerChain(shardParameterName, shardParameterProperty);
+                Type shardType = shardByInvokerChain.getFinalType();
                 TypeWrapper tw = new TypeWrapper(shardType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {
@@ -216,22 +214,22 @@ public class OperatorFactory {
             }
         }
 
-        return new DbInfo(shardParameterName, invoker, globalTable,
+        return new DbInfo(shardParameterName, shardByInvokerChain, globalTable,
                 dataSourceName, tablePartition, dataSourceRouter);
     }
 
     static class DbInfo {
         String shardParameterName;
-        GetterInvoker invoker;
+        GetterInvokerChain shardByInvokerChain;
         String globalTable;
         String dataSourceName;
         TablePartition tablePartition;
         DataSourceRouter dataSourceRouter;
 
-        DbInfo(String shardParameterName, GetterInvoker invoker, String globalTable,
+        DbInfo(String shardParameterName, GetterInvokerChain shardByInvokerChain, String globalTable,
                String dataSourceName, TablePartition tablePartition, DataSourceRouter dataSourceRouter) {
             this.shardParameterName = shardParameterName;
-            this.invoker = invoker;
+            this.shardByInvokerChain = shardByInvokerChain;
             this.globalTable = globalTable;
             this.dataSourceName = dataSourceName;
             this.tablePartition = tablePartition;

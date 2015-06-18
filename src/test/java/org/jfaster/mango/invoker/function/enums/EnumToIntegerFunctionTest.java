@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.annotation.Functional;
+import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.invoker.FunctionalGetterInvoker;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class EnumToIntegerFunctionTest {
     static class A {
         private E e;
 
-        @Functional(EnumToIntegerFunction.class)
+        @Getter(EnumToIntegerFunction.class)
         E getE() {
             return e;
         }

@@ -1,6 +1,6 @@
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.GetterInvokerChain;
 import org.jfaster.mango.partition.TablePartition;
 
 /**
@@ -10,14 +10,14 @@ public class TableGenerator {
 
     private String table; // 原始表名称
     private String shardParameterName;
-    private GetterInvoker invoker;
+    private GetterInvokerChain shardByInvokerChain;
     private TablePartition tablePartition; // 分表
 
     public TableGenerator(String table, String shardParameterName,
-                          GetterInvoker invoker, TablePartition tablePartition) {
+                          GetterInvokerChain shardByInvokerChain, TablePartition tablePartition) {
         this.table = table;
         this.shardParameterName = shardParameterName;
-        this.invoker = invoker;
+        this.shardByInvokerChain = shardByInvokerChain;
         this.tablePartition = tablePartition;
     }
 
@@ -26,14 +26,14 @@ public class TableGenerator {
         if (!needTablePartition()) {
             realTable = table;
         } else {
-            Object shardParam = context.getPropertyValue(shardParameterName, invoker);
+            Object shardParam = context.getPropertyValue(shardParameterName, shardByInvokerChain);
             realTable = tablePartition.getPartitionedTable(table, shardParam);
         }
         return realTable;
     }
 
     boolean needTablePartition() {
-        return tablePartition != null && shardParameterName != null && invoker != null;
+        return tablePartition != null && shardParameterName != null && shardByInvokerChain != null;
     }
 
 }

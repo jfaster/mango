@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.NotReadableParameterException;
-import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.GetterInvokerChain;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
@@ -45,19 +45,19 @@ public class InvocationContext {
         parameterValues.add(parameterValue);
     }
 
-    public Object getPropertyValue(String parameterName, GetterInvoker invoker) {
-        Object value = getNullablePropertyValue(parameterName, invoker);
+    public Object getPropertyValue(String parameterName, GetterInvokerChain invokerChain) {
+        Object value = getNullablePropertyValue(parameterName, invokerChain);
         if (value == null) {
-            String fullName = Strings.getFullName(parameterName, invoker.getName());
-            String key = Strings.isEmpty(invoker.getName()) ? "parameter" : "property";
+            String fullName = Strings.getFullName(parameterName, invokerChain.getPropertyPath());
+            String key = Strings.isEmpty(invokerChain.getPropertyPath()) ? "parameter" : "property";
             throw new NullPointerException(key + " " + fullName + " need a non-null value");
         }
         return value;
     }
 
     @Nullable
-    public Object getNullablePropertyValue(String parameterName, GetterInvoker invoker) {
-        String key = getCacheKey(parameterName, invoker);
+    public Object getNullablePropertyValue(String parameterName, GetterInvokerChain invokerChain) {
+        String key = getCacheKey(parameterName, invokerChain);
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);
         }
@@ -65,13 +65,13 @@ public class InvocationContext {
             throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
         }
         Object obj = parameterMap.get(parameterName);
-        Object value = invoker.invoke(obj);
+        Object value = invokerChain.invoke(obj);
         cache.put(key, value);
         return value;
     }
 
-    public void setPropertyValue(String parameterName, GetterInvoker invoker, Object propertyValue) {
-        String key = getCacheKey(parameterName, invoker);
+    public void setPropertyValue(String parameterName, GetterInvokerChain invokerChain, Object propertyValue) {
+        String key = getCacheKey(parameterName, invokerChain);
         cache.put(key, propertyValue);
     }
 
@@ -100,8 +100,8 @@ public class InvocationContext {
         return parameterValues;
     }
 
-    private String getCacheKey(String parameterName, GetterInvoker invoker) {
-        return invoker == null ? parameterName : parameterName + "." + invoker.getName();
+    private String getCacheKey(String parameterName, GetterInvokerChain invokerChain) {
+        return invokerChain == null ? parameterName : parameterName + "." + invokerChain.getPropertyPath();
     }
 
 }
