@@ -17,7 +17,7 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.exception.UnreachableCodeException;
-import org.jfaster.mango.invoker.GetterInvokerChain;
+import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Strings;
 
@@ -31,7 +31,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
 
     private String parameterName;
     private String propertyPath; // 为""的时候表示没有属性
-    private GetterInvokerChain invokerChain;
+    private GetterInvokerGroup invokerGroup;
 
     public ASTJoinParameter(int id) {
         super(id);
@@ -57,10 +57,10 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
 
     @Override
     public boolean render(InvocationContext context) {
-        if (invokerChain == null) {
+        if (invokerGroup == null) {
             throw new NullPointerException("invoker chain must set");
         }
-        Object obj = context.getPropertyValue(parameterName, invokerChain);
+        Object obj = context.getPropertyValue(parameterName, invokerGroup);
         context.writeToSqlBuffer(obj.toString());
         return true;
     }
@@ -110,7 +110,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     }
 
     @Override
-    public void setInvokerChain(GetterInvokerChain invokerChain) {
-        this.invokerChain = invokerChain;
+    public void setInvokerGroup(GetterInvokerGroup invokerGroup) {
+        this.invokerGroup = invokerGroup;
     }
 }

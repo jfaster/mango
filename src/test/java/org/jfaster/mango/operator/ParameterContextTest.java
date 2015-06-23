@@ -50,8 +50,8 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
-        assertThat(ctx.getInvokerChain("1", "").getFinalType(), equalTo(t0.getType()));
-        assertThat(ctx.getInvokerChain("2", "").getFinalType(), equalTo(t1.getType()));
+        assertThat(ctx.getInvokerGroup("1", "").getFinalType(), equalTo(t0.getType()));
+        assertThat(ctx.getInvokerGroup("2", "").getFinalType(), equalTo(t1.getType()));
         assertThat(ctx.getParameterDescriptors(), equalTo(pds));
     }
 
@@ -66,10 +66,10 @@ public class ParameterContextTest {
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.BATCHUPDATYPE);
         TypeToken<User> ut = TypeToken.of(User.class);
         ParameterDescriptor up = new ParameterDescriptor(0, ut.getType(), empty, "1");
-        assertThat(ctx.getInvokerChain("1", "").getFinalType(), equalTo(ut.getType()));
-        assertThat(ctx.getInvokerChain("1", "").getFinalType(), equalTo(ut.getType())); // test cache
-        assertThat(ctx.getInvokerChain("1", "name").getFinalType(), equalTo((new TypeToken<String>() {}).getType()));
-        assertThat(ctx.getInvokerChain("1", "name").getFinalType(), equalTo((new TypeToken<String>() {}).getType())); // test cache
+        assertThat(ctx.getInvokerGroup("1", "").getFinalType(), equalTo(ut.getType()));
+        assertThat(ctx.getInvokerGroup("1", "").getFinalType(), equalTo(ut.getType())); // test cache
+        assertThat(ctx.getInvokerGroup("1", "name").getFinalType(), equalTo((new TypeToken<String>() {}).getType()));
+        assertThat(ctx.getInvokerGroup("1", "name").getFinalType(), equalTo((new TypeToken<String>() {}).getType())); // test cache
         assertThat(ctx.getParameterDescriptors(), equalTo(Arrays.asList(up)));
     }
 
@@ -120,7 +120,7 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.UPDATE);
-        ctx.getInvokerChain("2", "");
+        ctx.getInvokerGroup("2", "");
     }
 
 }

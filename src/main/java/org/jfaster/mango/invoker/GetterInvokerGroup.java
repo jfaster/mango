@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public interface GetterInvokerChain {
+public interface GetterInvokerGroup {
 
     public Type getFinalType();
 

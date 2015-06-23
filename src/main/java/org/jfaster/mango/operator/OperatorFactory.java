@@ -22,7 +22,7 @@ import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.invoker.GetterInvokerChain;
+import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
@@ -94,13 +94,13 @@ public class OperatorFactory {
 
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
         TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
-                dbInfo.shardByInvokerChain, dbInfo.tablePartition);
+                dbInfo.shardByInvokerGroup, dbInfo.tablePartition);
         DataSourceType dst = DataSourceType.SLAVE;
         if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
             dst = DataSourceType.MASTER;
         }
         DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, dst,
-               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardByInvokerChain, dbInfo.dataSourceRouter);
+               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardByInvokerGroup, dbInfo.dataSourceRouter);
 
         Operator operator;
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
@@ -183,7 +183,7 @@ public class OperatorFactory {
 
         int shardByNum = 0;
         String shardParameterName = null;
-        GetterInvokerChain shardByInvokerChain = null;
+        GetterInvokerGroup shardByInvokerGroup = null;
         String shardParameterProperty = null;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
@@ -195,8 +195,8 @@ public class OperatorFactory {
         }
         if (tablePartition != null) {
             if (shardByNum == 1) {
-                shardByInvokerChain = context.getInvokerChain(shardParameterName, shardParameterProperty);
-                Type shardType = shardByInvokerChain.getFinalType();
+                shardByInvokerGroup = context.getInvokerGroup(shardParameterName, shardParameterProperty);
+                Type shardType = shardByInvokerGroup.getFinalType();
                 TypeWrapper tw = new TypeWrapper(shardType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {
@@ -214,22 +214,22 @@ public class OperatorFactory {
             }
         }
 
-        return new DbInfo(shardParameterName, shardByInvokerChain, globalTable,
+        return new DbInfo(shardParameterName, shardByInvokerGroup, globalTable,
                 dataSourceName, tablePartition, dataSourceRouter);
     }
 
     static class DbInfo {
         String shardParameterName;
-        GetterInvokerChain shardByInvokerChain;
+        GetterInvokerGroup shardByInvokerGroup;
         String globalTable;
         String dataSourceName;
         TablePartition tablePartition;
         DataSourceRouter dataSourceRouter;
 
-        DbInfo(String shardParameterName, GetterInvokerChain shardByInvokerChain, String globalTable,
+        DbInfo(String shardParameterName, GetterInvokerGroup shardByInvokerGroup, String globalTable,
                String dataSourceName, TablePartition tablePartition, DataSourceRouter dataSourceRouter) {
             this.shardParameterName = shardParameterName;
-            this.shardByInvokerChain = shardByInvokerChain;
+            this.shardByInvokerGroup = shardByInvokerGroup;
             this.globalTable = globalTable;
             this.dataSourceName = dataSourceName;
             this.tablePartition = tablePartition;

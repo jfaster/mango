@@ -11,14 +11,14 @@ import java.util.List;
 /**
  * @author ash
  */
-public class FunctionalGetterInvokerChain implements GetterInvokerChain {
+public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
 
     private final Type finalType;
     private final String parameterName;
     private String propertyPath;
     private final List<GetterInvoker> invokers;
 
-    private FunctionalGetterInvokerChain(Type type, String parameterName, String propertyPath) {
+    private FunctionalGetterInvokerGroup(Type type, String parameterName, String propertyPath) {
         this.parameterName = parameterName;
         this.propertyPath = propertyPath;
         invokers = new ArrayList<GetterInvoker>();
@@ -44,8 +44,8 @@ public class FunctionalGetterInvokerChain implements GetterInvokerChain {
         this.finalType = type;
     }
 
-    public static FunctionalGetterInvokerChain create(Type type, String parameterName, String propertyPath) {
-        return new FunctionalGetterInvokerChain(type, parameterName, propertyPath);
+    public static FunctionalGetterInvokerGroup create(Type type, String parameterName, String propertyPath) {
+        return new FunctionalGetterInvokerGroup(type, parameterName, propertyPath);
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
 import org.jfaster.mango.exception.IncorrectCacheByException;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
-import org.jfaster.mango.invoker.GetterInvokerChain;
+import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.NameProvider;
 import org.jfaster.mango.operator.ParameterContext;
@@ -130,7 +130,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     public String getCacheKey(InvocationContext context) {
         StringBuilder key = new StringBuilder(prefix);
         for (CacheByItem item : cacheByItems) {
-            Object obj = context.getPropertyValue(item.getParameterName(), item.getInvokerChain());
+            Object obj = context.getPropertyValue(item.getParameterName(), item.getInvokerGroup());
             if (obj == null) {
                 throw new NullPointerException("value of " + item.getFullName() + " can't be null");
             }
@@ -167,7 +167,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public Object getOnlyCacheByObj(InvocationContext context) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
-        Object obj = context.getPropertyValue(item.getParameterName(), item.getInvokerChain());
+        Object obj = context.getPropertyValue(item.getParameterName(), item.getInvokerGroup());
         if (obj == null) {
             throw new NullPointerException("value of " + item.getFullName() + " can't be null");
         }
@@ -177,7 +177,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public void setOnlyCacheByObj(InvocationContext context, Object obj) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
-        context.setPropertyValue(item.getParameterName(), item.getInvokerChain(), obj);
+        context.setPropertyValue(item.getParameterName(), item.getInvokerGroup(), obj);
     }
 
     @Override
@@ -193,10 +193,10 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                 String propertyPaths = cacheByAnno.value();
                 for (String propertyPath : propertyPaths.split(",")) {
                     propertyPath = propertyPath.trim();
-                    GetterInvokerChain invokerChain = context.getInvokerChain(parameterName, propertyPath);
-                    Type cacheByType = invokerChain.getFinalType();
+                    GetterInvokerGroup invokerGroup = context.getInvokerGroup(parameterName, propertyPath);
+                    Type cacheByType = invokerGroup.getFinalType();
                     TypeWrapper tw = new TypeWrapper(cacheByType);
-                    cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerChain));
+                    cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerGroup));
                     useMultipleKeys = useMultipleKeys || tw.isIterable();
                 }
             }
@@ -296,13 +296,13 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
         private final Class<?> actualClass;
 
-        private final GetterInvokerChain invokerChain;
+        private final GetterInvokerGroup invokerGroup;
 
-        public CacheByItem(String parameterName, String propertyPath, Class<?> actualClass, GetterInvokerChain invokerChain) {
+        public CacheByItem(String parameterName, String propertyPath, Class<?> actualClass, GetterInvokerGroup invokerGroup) {
             this.parameterName = parameterName;
             this.propertyPath = propertyPath;
             this.actualClass = actualClass;
-            this.invokerChain = invokerChain;
+            this.invokerGroup = invokerGroup;
         }
 
         public String getParameterName() {
@@ -317,8 +317,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             return actualClass;
         }
 
-        private GetterInvokerChain getInvokerChain() {
-            return invokerChain;
+        private GetterInvokerGroup getInvokerGroup() {
+            return invokerGroup;
         }
 
         public String getFullName() {

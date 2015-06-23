@@ -3,7 +3,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.exception.IncorrectDefinitionException;
-import org.jfaster.mango.invoker.GetterInvokerChain;
+import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -22,17 +22,17 @@ public class DataSourceGenerator {
     private final DataSourceType dataSourceType;
     private final String dataSourceName;
     private final String shardParameterName;
-    private final GetterInvokerChain shardByInvokerChain;
+    private final GetterInvokerGroup shardByInvokerGroup;
     private final DataSourceRouter dataSourceRouter; // 分表
 
     public DataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
                                String dataSourceName, String shardParameterName,
-                               GetterInvokerChain shardByInvokerChain, DataSourceRouter dataSourceRouter) {
+                               GetterInvokerGroup shardByInvokerGroup, DataSourceRouter dataSourceRouter) {
         this.dataSourceFactory = dataSourceFactory;
         this.dataSourceType = dataSourceType;
         this.dataSourceName = dataSourceName;
         this.shardParameterName = shardParameterName;
-        this.shardByInvokerChain = shardByInvokerChain;
+        this.shardByInvokerGroup = shardByInvokerGroup;
         this.dataSourceRouter = dataSourceRouter;
     }
 
@@ -54,7 +54,7 @@ public class DataSourceGenerator {
     @Nullable
     public String getDataSourceName(InvocationContext context) {
         String realDataSourceName = dataSourceRouter != null ?
-                dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardByInvokerChain)) :
+                dataSourceRouter.getDataSourceName(context.getPropertyValue(shardParameterName, shardByInvokerGroup)) :
                 dataSourceName;
         return realDataSourceName;
     }
