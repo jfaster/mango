@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function.json.fastjson;
+package org.jfaster.mango.invoker.function.json;
 
 import com.alibaba.fastjson.JSON;
 import org.jfaster.mango.invoker.GenericSetterFunction;
@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
  *
  * @author ash
  */
-public class JsonToObjectFunction extends GenericSetterFunction<String, Object> {
+public class FastjsonToObjectFunction extends GenericSetterFunction<String, Object> {
 
     @Nullable
     @Override

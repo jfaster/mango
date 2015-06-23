@@ -14,10 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function.json.gson;
+package org.jfaster.mango.invoker.function.json;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.invoker.FunctionalSetterInvoker;
 import org.jfaster.mango.invoker.SetterInvoker;
@@ -33,20 +33,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author ash
  */
-public class JsonToObjectFunctionTest {
+public class FastjsonToObjectFunctionTest {
 
     @Test
     public void testApply() throws Exception {
         A a = new A();
         List<Integer> list = Lists.newArrayList(1, 2, 3);
-        String json = new Gson().toJson(list);
+        String json = JSON.toJSONString(list);
         Method m = A.class.getDeclaredMethod("setList", List.class);
         SetterInvoker invoker = FunctionalSetterInvoker.create("list", m);
         invoker.invoke(a, json);
         assertThat(a.getList().toString(), equalTo(list.toString()));
 
         B b = new B(3, 5);
-        String json2 = new Gson().toJson(b);
+        String json2 = JSON.toJSONString(b);
         Method m2 = A.class.getDeclaredMethod("setB", B.class);
         SetterInvoker invoker2 = FunctionalSetterInvoker.create("b", m2);
         invoker2.invoke(a, json2);
@@ -58,21 +58,21 @@ public class JsonToObjectFunctionTest {
         G g = new G();
 
         int[] a = new int[] {2, 3, 4};
-        String jsonA = new Gson().toJson(a);
+        String jsonA = JSON.toJSONString(a);
         Method m = G.class.getDeclaredMethod("setA", int[].class);
         SetterInvoker invoker = FunctionalSetterInvoker.create("a", m);
         invoker.invoke(g, jsonA);
         assertThat(Arrays.toString(g.getA()), equalTo(Arrays.toString(a)));
 
         B[] b = new B[] {new B(4, 5), new B(7, 8)};
-        String jsonB = new Gson().toJson(b);
+        String jsonB = JSON.toJSONString(b);
         Method m2 = G.class.getDeclaredMethod("setB", B[].class);
         SetterInvoker invoker2 = FunctionalSetterInvoker.create("b", m2);
         invoker2.invoke(g, jsonB);
         assertThat(Arrays.toString(g.getB()), equalTo(Arrays.toString(b)));
 
         Integer[] c = new Integer[] {1, 4, 7};
-        String jsonC = new Gson().toJson(c);
+        String jsonC = JSON.toJSONString(c);
         Method m3 = G.class.getDeclaredMethod("setC", Integer[].class);
         SetterInvoker invoker3 = FunctionalSetterInvoker.create("c", m3);
         invoker3.invoke(g, jsonC);
@@ -88,7 +88,7 @@ public class JsonToObjectFunctionTest {
             return list;
         }
 
-        @Setter(JsonToObjectFunction.class)
+        @Setter(FastjsonToObjectFunction.class)
         void setList(List<Integer> list) {
             this.list = list;
         }
@@ -97,7 +97,7 @@ public class JsonToObjectFunctionTest {
             return b;
         }
 
-        @Setter(JsonToObjectFunction.class)
+        @Setter(FastjsonToObjectFunction.class)
         void setB(B b) {
             this.b = b;
         }
@@ -155,7 +155,7 @@ public class JsonToObjectFunctionTest {
             return a;
         }
 
-        @Setter(JsonToObjectFunction.class)
+        @Setter(FastjsonToObjectFunction.class)
         void setA(int[] a) {
             this.a = a;
         }
@@ -164,7 +164,7 @@ public class JsonToObjectFunctionTest {
             return b;
         }
 
-        @Setter(JsonToObjectFunction.class)
+        @Setter(FastjsonToObjectFunction.class)
         void setB(B[] b) {
             this.b = b;
         }
@@ -173,7 +173,7 @@ public class JsonToObjectFunctionTest {
             return c;
         }
 
-        @Setter(JsonToObjectFunction.class)
+        @Setter(FastjsonToObjectFunction.class)
         void setC(Integer[] c) {
             this.c = c;
         }

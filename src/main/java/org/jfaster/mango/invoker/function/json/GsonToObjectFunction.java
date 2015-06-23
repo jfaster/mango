@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function.json.gson;
+package org.jfaster.mango.invoker.function.json;
 
 import com.google.gson.Gson;
 import org.jfaster.mango.invoker.GenericSetterFunction;
@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
  *
  * @author ash
  */
-public class JsonToObjectFunction extends GenericSetterFunction<String, Object> {
+public class GsonToObjectFunction extends GenericSetterFunction<String, Object> {
 
     @Nullable
     @Override
