@@ -49,7 +49,7 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
 
         Getter getterAnno = method.getAnnotation(Getter.class);
         if (getterAnno != null) {
-            throw new RuntimeException(); // TODO
+            throw new IncorrectSetterAnnotationException("@Getter annotation can not be placed on the set method");
         }
         Setter setterAnno = method.getAnnotation(Setter.class);
 

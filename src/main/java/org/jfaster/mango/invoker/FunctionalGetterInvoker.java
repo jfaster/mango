@@ -42,7 +42,7 @@ public class FunctionalGetterInvoker extends MethodNamedObject implements Getter
         super(name, method);
         Setter setterAnno = method.getAnnotation(Setter.class);
         if (setterAnno != null) {
-            throw new RuntimeException(); // TODO
+            throw new IncorrectSetterAnnotationException("@Setter annotation can not be placed on the get method");
         }
         Getter getterAnno = method.getAnnotation(Getter.class);
 

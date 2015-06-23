@@ -16,17 +16,17 @@
 
 package org.jfaster.mango.invoker;
 
-import java.lang.reflect.Type;
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
+ * 不正确的使用{@link org.jfaster.mango.annotation.Getter}注解异常
+ *
  * @author ash
  */
-public interface Invoker {
+public class IncorrectGetterAnnotationException extends NestedRuntimeException {
 
-    public String getName();
-
-    public Type getType();
-
-    public Class<?> getRawType();
+    public IncorrectGetterAnnotationException(String msg) {
+        super(msg);
+    }
 
 }
