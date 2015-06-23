@@ -20,6 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import org.jfaster.mango.annotation.Getter;
+import org.jfaster.mango.invoker.function.LongListToStringFunction;
 import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
@@ -351,6 +352,27 @@ public class FunctionalGetterInvokerTest {
         assertThat(String.class.equals(invoker.getReturnType()), is(true));
         assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((String) invoker.invoke(g), is("1,2,3"));
+    }
+
+    static class H {
+        private String x;
+
+        String getX() {
+            return x;
+        }
+
+        @Getter(LongListToStringFunction.class)
+        void setX(String x) {
+            this.x = x;
+        }
+    }
+
+    @Test
+    public void testException3() throws Exception {
+        thrown.expect(IncorrectGetterAnnotationException.class);
+        thrown.expectMessage("@Getter annotation can not be placed on the set method [void org.jfaster.mango.invoker.FunctionalGetterInvokerTest$H.setX(java.lang.String)]");
+        Method method = H.class.getDeclaredMethod("setX", String.class);
+        FunctionalSetterInvoker.create("x", method);
     }
 
 }
