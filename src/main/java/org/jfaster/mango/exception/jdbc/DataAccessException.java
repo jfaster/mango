@@ -14,17 +14,23 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.exception.jdbc;
 
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
+ * 所的数据访问异常继承此类
+ *
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public abstract class DataAccessException extends NestedRuntimeException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public DataAccessException(String msg) {
+        super(msg);
+    }
+
+    public DataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

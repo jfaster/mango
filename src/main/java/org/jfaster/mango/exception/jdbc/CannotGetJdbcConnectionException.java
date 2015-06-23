@@ -14,17 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
+ * 不能获得jdbc连接异常
+ *
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class CannotGetJdbcConnectionException extends DataAccessResourceFailureException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public CannotGetJdbcConnectionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
+    public CannotGetJdbcConnectionException(String message) {
+        super(message);
+    }
 }

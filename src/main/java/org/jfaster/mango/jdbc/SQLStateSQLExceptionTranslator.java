@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.jdbc.exception.*;
+import org.jfaster.mango.exception.jdbc.*;
 
 import java.sql.SQLException;
 import java.util.HashSet;

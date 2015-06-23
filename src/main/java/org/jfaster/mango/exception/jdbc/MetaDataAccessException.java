@@ -14,17 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.exception.jdbc;
 
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+import org.jfaster.mango.exception.NestedCheckedException;
 
 /**
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class MetaDataAccessException extends NestedCheckedException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public MetaDataAccessException(String message) {
+        super(message);
+    }
+
+    public MetaDataAccessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

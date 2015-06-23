@@ -14,17 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
  * @author ash
+ * @see java.sql.SQLTransientConnectionException
  */
-public interface SQLExceptionTranslator {
+public class TransientDataAccessResourceException extends TransientDataAccessException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public TransientDataAccessResourceException(String msg) {
+        super(msg);
+    }
+
+    public TransientDataAccessResourceException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }
+

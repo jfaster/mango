@@ -14,17 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
+ * 错误的返回结果数量异常
+ *
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class IncorrectResultSetColumnCountException extends DataRetrievalFailureException {
 
-    DataAccessException translate(String sql, SQLException ex);
+
+    public IncorrectResultSetColumnCountException(String msg) {
+        super(msg);
+    }
+
+    public IncorrectResultSetColumnCountException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

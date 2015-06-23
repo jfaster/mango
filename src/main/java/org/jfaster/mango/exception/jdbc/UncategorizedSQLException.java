@@ -14,17 +14,29 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
+package org.jfaster.mango.exception.jdbc;
 
 import java.sql.SQLException;
 
 /**
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class UncategorizedSQLException extends NonTransientDataAccessException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    private final String sql;
+
+    public UncategorizedSQLException(String sql, SQLException ex) {
+        super("uncategorized SQLException for SQL [" + sql + "]; SQL state [" +
+                ex.getSQLState() + "]; error code [" + ex.getErrorCode() + "]; " + ex.getMessage(), ex);
+        this.sql = sql;
+    }
+
+    public SQLException getSQLException() {
+        return (SQLException) getCause();
+    }
+
+    public String getSql() {
+        return this.sql;
+    }
 
 }

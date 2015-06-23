@@ -17,8 +17,8 @@
 package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.datasource.DataSourceUtils;
-import org.jfaster.mango.jdbc.exception.DataAccessException;
-import org.jfaster.mango.jdbc.exception.DataRetrievalFailureException;
+import org.jfaster.mango.exception.jdbc.DataAccessException;
+import org.jfaster.mango.exception.jdbc.DataRetrievalFailureException;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
 import org.jfaster.mango.util.concurrent.cache.LoadingCache;

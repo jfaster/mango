@@ -14,17 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class PermissionDeniedDataAccessException extends NonTransientDataAccessException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public PermissionDeniedDataAccessException(String msg) {
+        super(msg);
+    }
+
+    public PermissionDeniedDataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

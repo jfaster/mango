@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.jdbc.exception.IncorrectResultSetColumnCountException;
+import org.jfaster.mango.exception.jdbc.IncorrectResultSetColumnCountException;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

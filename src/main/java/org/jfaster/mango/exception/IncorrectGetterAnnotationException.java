@@ -14,17 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.exception;
 
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
+ * 不正确的使用{@link org.jfaster.mango.annotation.Getter}注解异常
+ *
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class IncorrectGetterAnnotationException extends NestedRuntimeException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public IncorrectGetterAnnotationException(String msg) {
+        super(msg);
+    }
 
 }

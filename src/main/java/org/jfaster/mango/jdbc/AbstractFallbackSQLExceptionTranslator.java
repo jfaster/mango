@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.jdbc.exception.DataAccessException;
-import org.jfaster.mango.jdbc.exception.UncategorizedSQLException;
+import org.jfaster.mango.exception.jdbc.DataAccessException;
+import org.jfaster.mango.exception.jdbc.UncategorizedSQLException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 

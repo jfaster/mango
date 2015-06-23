@@ -18,8 +18,8 @@ package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.datasource.DataSourceMonitor;
 import org.jfaster.mango.datasource.DataSourceUtils;
-import org.jfaster.mango.transaction.exception.IllegalTransactionStateException;
-import org.jfaster.mango.transaction.exception.TransactionSystemException;
+import org.jfaster.mango.exception.transaction.IllegalTransactionStateException;
+import org.jfaster.mango.exception.transaction.TransactionSystemException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 

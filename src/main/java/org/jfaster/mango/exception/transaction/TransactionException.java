@@ -14,17 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.exception.transaction;
 
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public abstract class TransactionException extends NestedRuntimeException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public TransactionException(String msg) {
+        super(msg);
+    }
+
+    public TransactionException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

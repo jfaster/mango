@@ -14,17 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
  * @author ash
+ * @see java.sql.SQLRecoverableException
  */
-public interface SQLExceptionTranslator {
+public class RecoverableDataAccessException extends DataAccessException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public RecoverableDataAccessException(String msg) {
+        super(msg);
+    }
+
+    public RecoverableDataAccessException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

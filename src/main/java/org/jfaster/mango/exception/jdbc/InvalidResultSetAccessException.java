@@ -14,17 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
  * @author ash
+ * @see BadSqlGrammarException
+ * @see org.springframework.jdbc.support.rowset.SqlRowSet
  */
-public interface SQLExceptionTranslator {
+public class InvalidResultSetAccessException extends InvalidDataAccessResourceUsageException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public InvalidResultSetAccessException(String msg) {
+        super(msg);
+    }
+
+    public InvalidResultSetAccessException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

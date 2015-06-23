@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.jdbc.exception.MetaDataAccessException;
+import org.jfaster.mango.exception.jdbc.MetaDataAccessException;
 import org.jfaster.mango.util.PatternMatchUtils;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;

@@ -14,17 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
+ * 错误的sql语法异常
+ *
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class BadSqlGrammarException extends InvalidDataAccessResourceUsageException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public BadSqlGrammarException(String msg) {
+        super(msg);
+    }
+
+    public BadSqlGrammarException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

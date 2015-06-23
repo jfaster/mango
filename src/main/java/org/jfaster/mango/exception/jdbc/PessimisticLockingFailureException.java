@@ -14,17 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.jdbc;
 
 /**
  * @author ash
+ * @see CannotAcquireLockException
+ * @see DeadlockLoserDataAccessException
+ * @see OptimisticLockingFailureException
  */
-public interface SQLExceptionTranslator {
+public class PessimisticLockingFailureException extends ConcurrencyFailureException {
 
-    DataAccessException translate(String sql, SQLException ex);
+    public PessimisticLockingFailureException(String msg) {
+        super(msg);
+    }
+
+    public PessimisticLockingFailureException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

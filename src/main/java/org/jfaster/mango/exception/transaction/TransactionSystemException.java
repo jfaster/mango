@@ -14,17 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
-
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-
-import java.sql.SQLException;
+package org.jfaster.mango.exception.transaction;
 
 /**
+ * 事务相关异常
+ *
  * @author ash
  */
-public interface SQLExceptionTranslator {
+public class TransactionSystemException extends TransactionException {
 
-    DataAccessException translate(String sql, SQLException ex);
+
+    public TransactionSystemException(String msg) {
+        super(msg);
+    }
+
+    public TransactionSystemException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }
