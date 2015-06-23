@@ -6,11 +6,11 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public abstract class LiteSetterFunction<I, O> extends SetterFunction<I, O> {
+public abstract class SimpleSetterFunction<I, O> extends SetterFunction<I, O> {
 
     @Nullable
     @Override
-    public O apply(@Nullable I input, Type realOutputType) {
+    public O apply(@Nullable I input, Type runtimeOutputType) {
         return apply(input);
     }
 

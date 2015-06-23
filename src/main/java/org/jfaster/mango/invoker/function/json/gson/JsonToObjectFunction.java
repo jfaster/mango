@@ -31,8 +31,8 @@ public class JsonToObjectFunction extends GenericSetterFunction<String, Object> 
 
     @Nullable
     @Override
-    public Object apply(@Nullable String input, Type type) {
-        return input == null ? null : new Gson().fromJson(input, type);
+    public Object apply(@Nullable String input, Type runtimeOutputType) {
+        return input == null ? null : new Gson().fromJson(input, runtimeOutputType);
     }
 
 }

@@ -34,18 +34,18 @@ public class IntegerToEnumFunction extends GenericSetterFunction<Integer, Enum> 
 
     @Nullable
     @Override
-    public Enum apply(@Nullable Integer input, Type type) {
+    public Enum apply(@Nullable Integer input, Type runtimeOutputType) {
         if (input == null) {
             return null;
         }
-        Class<?> rawType = TypeToken.of(type).getRawType();
+        Class<?> rawType = TypeToken.of(runtimeOutputType).getRawType();
         EnumSet<?> es = getEnumSet(rawType);
         for (Enum<?> e : es) {
             if (e.ordinal() == input) {
                 return e;
             }
         }
-        throw new IllegalStateException("cant' trans Integer(" + input + ") to " + type);
+        throw new IllegalStateException("cant' trans Integer(" + input + ") to " + runtimeOutputType);
     }
 
     private static EnumSet getEnumSet(Class enumType) {

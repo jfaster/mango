@@ -31,11 +31,11 @@ public class StringToEnumFunction extends GenericSetterFunction<String, Enum> {
 
     @Nullable
     @Override
-    public Enum apply(@Nullable String input, Type type) {
+    public Enum apply(@Nullable String input, Type runtimeOutputType) {
         if (input == null) {
             return null;
         }
-        Class rawType = TypeToken.of(type).getRawType();
+        Class rawType = TypeToken.of(runtimeOutputType).getRawType();
         Enum r = Enum.valueOf(rawType, input);
         return r;
     }

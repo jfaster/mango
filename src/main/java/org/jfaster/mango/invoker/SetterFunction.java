@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 public abstract class SetterFunction<I, O> {
 
     @Nullable
-    public abstract O apply(@Nullable I input, Type realOutputType);
+    public abstract O apply(@Nullable I input, Type runtimeOutputType);
 
     public abstract boolean outputTypeIsGeneric();
 
