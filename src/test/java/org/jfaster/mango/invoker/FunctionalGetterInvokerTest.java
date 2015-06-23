@@ -79,8 +79,8 @@ public class FunctionalGetterInvokerTest {
         a.setX(100);
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
         assertThat(invoker.getName(), is("x"));
-        assertThat(int.class.equals(invoker.getType()), is(true));
-        assertThat(int.class.equals(invoker.getRawType()), is(true));
+        assertThat(int.class.equals(invoker.getReturnType()), is(true));
+        assertThat(int.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((Integer) invoker.invoke(a), is(100));
 
         method = A.class.getDeclaredMethod("getY");
@@ -88,8 +88,8 @@ public class FunctionalGetterInvokerTest {
         a.setY(100);
         invoker = FunctionalGetterInvoker.create("y", method);
         assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getType()), is(true));
-        assertThat(String.class.equals(invoker.getRawType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((String) invoker.invoke(a), is("string100"));
     }
 
@@ -122,8 +122,8 @@ public class FunctionalGetterInvokerTest {
         b.setX(100);
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
         assertThat(invoker.getName(), is("x"));
-        assertThat(Integer.class.equals(invoker.getType()), is(true));
-        assertThat(Integer.class.equals(invoker.getRawType()), is(true));
+        assertThat(Integer.class.equals(invoker.getReturnType()), is(true));
+        assertThat(Integer.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((Integer) invoker.invoke(b), is(100));
 
         method = B.class.getDeclaredMethod("getY");
@@ -131,8 +131,8 @@ public class FunctionalGetterInvokerTest {
         b.setY(100);
         invoker = FunctionalGetterInvoker.create("y", method);
         assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getType()), is(true));
-        assertThat(String.class.equals(invoker.getRawType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((String) invoker.invoke(b), is("string100"));
     }
 
@@ -175,8 +175,8 @@ public class FunctionalGetterInvokerTest {
         c.setX("9527");
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
         assertThat(invoker.getName(), is("x"));
-        assertThat(String.class.equals(invoker.getType()), is(true));
-        assertThat(String.class.equals(invoker.getRawType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((String) invoker.invoke(c), is("9527"));
 
         method = C.class.getDeclaredMethod("getY");
@@ -184,8 +184,8 @@ public class FunctionalGetterInvokerTest {
         c.setY("9527");
         invoker = FunctionalGetterInvoker.create("y", method);
         assertThat(invoker.getName(), is("y"));
-        assertThat(Integer.class.equals(invoker.getType()), is(true));
-        assertThat(Integer.class.equals(invoker.getRawType()), is(true));
+        assertThat(Integer.class.equals(invoker.getReturnType()), is(true));
+        assertThat(Integer.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((Integer) invoker.invoke(c), is(952700));
     }
 
@@ -231,8 +231,8 @@ public class FunctionalGetterInvokerTest {
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
         assertThat(invoker.getName(), is("x"));
         Type type = new TypeToken<List<Integer>>() {}.getType();
-        assertThat(type.equals(invoker.getType()), is(true));
-        assertThat(List.class.equals(invoker.getRawType()), is(true));
+        assertThat(type.equals(invoker.getReturnType()), is(true));
+        assertThat(List.class.equals(invoker.getReturnRawType()), is(true));
         assertThat(invoker.invoke(d).equals(x), is(true));
 
         method = D.class.getDeclaredMethod("getY");
@@ -241,8 +241,8 @@ public class FunctionalGetterInvokerTest {
         d.setY(y);
         invoker = FunctionalGetterInvoker.create("y", method);
         assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getType()), is(true));
-        assertThat(String.class.equals(invoker.getRawType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((String) invoker.invoke(d), is("1,2"));
     }
 
@@ -338,8 +338,8 @@ public class FunctionalGetterInvokerTest {
         g.setX(x);
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
         assertThat(invoker.getName(), is("x"));
-        assertThat(int[].class.equals(invoker.getType()), is(true));
-        assertThat(int[].class.equals(invoker.getRawType()), is(true));
+        assertThat(int[].class.equals(invoker.getReturnType()), is(true));
+        assertThat(int[].class.equals(invoker.getReturnRawType()), is(true));
         assertThat(Arrays.toString((int[]) invoker.invoke(g)).equals(Arrays.toString(x)), is(true));
 
         method = G.class.getDeclaredMethod("getY");
@@ -348,8 +348,8 @@ public class FunctionalGetterInvokerTest {
         g.setY(y);
         invoker = FunctionalGetterInvoker.create("y", method);
         assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getType()), is(true));
-        assertThat(String.class.equals(invoker.getRawType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnType()), is(true));
+        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
         assertThat((String) invoker.invoke(g), is("1,2,3"));
     }
 

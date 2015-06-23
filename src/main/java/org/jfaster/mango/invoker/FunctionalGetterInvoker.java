@@ -32,11 +32,11 @@ import java.lang.reflect.Type;
  *
  * @author ash
  */
-public class FunctionalGetterInvoker extends FunctionalInvoker implements GetterInvoker {
+public class FunctionalGetterInvoker extends MethodNamedObject implements GetterInvoker {
 
     private GetterFunction function;
     private Type returnType;
-    private Class<?> rawReturnType;
+    private Class<?> returnRawType;
 
     private FunctionalGetterInvoker(String name, Method method) {
         super(name, method);
@@ -63,7 +63,7 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
             returnToken = outputToken;
         }
         returnType = returnToken.getType();
-        rawReturnType = returnToken.getRawType();
+        returnRawType = returnToken.getRawType();
     }
 
     public static FunctionalGetterInvoker create(String name, Method method) {
@@ -87,13 +87,13 @@ public class FunctionalGetterInvoker extends FunctionalInvoker implements Getter
     }
 
     @Override
-    public Type getType() {
+    public Type getReturnType() {
         return returnType;
     }
 
     @Override
-    public Class<?> getRawType() {
-        return rawReturnType;
+    public Class<?> getReturnRawType() {
+        return returnRawType;
     }
 
 }

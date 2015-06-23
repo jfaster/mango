@@ -52,7 +52,7 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
                             "the type of " + pFullName + " is " + type + ", please check it's get method");
                 }
                 invokers.add(invoker);
-                type = invoker.getType();
+                type = invoker.getReturnType();
                 rawType = TypeToken.of(type).getRawType();
                 pnp.append(propertyName);
             }

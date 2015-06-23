@@ -75,10 +75,10 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
             String column = JdbcUtils.lookupColumnName(rsmd, index);
             SetterInvoker invoker = invokerMap.get(column.trim().toLowerCase());
             if (invoker != null) {
-                Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getRawType());
+                Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getParameterRawType());
                 if (logger.isDebugEnabled() && rowNumber == 0) {
                     logger.debug("Mapping column '" + column + "' to property '" +
-                            invoker.getName() + "' of type " + invoker.getRawType());
+                            invoker.getName() + "' of type " + invoker.getParameterRawType());
                 }
                 invoker.invoke(mappedObject, value);
             }

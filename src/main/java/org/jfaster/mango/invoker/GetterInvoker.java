@@ -16,11 +16,17 @@
 
 package org.jfaster.mango.invoker;
 
+import java.lang.reflect.Type;
+
 /**
  * @author ash
  */
-public interface GetterInvoker extends Invoker {
+public interface GetterInvoker extends NamedObject {
 
     public Object invoke(Object obj);
+
+    public Type getReturnType();
+
+    public Class<?> getReturnRawType();
 
 }

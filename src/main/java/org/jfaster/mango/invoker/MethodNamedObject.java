@@ -16,40 +16,20 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.reflect.TypeToken;
-
 import java.lang.reflect.Method;
 
 /**
  * @author ash
  */
-public abstract class FunctionalInvoker implements Invoker {
+public abstract class MethodNamedObject implements NamedObject {
 
     protected String name;
     protected Method method;
-    private TypeToken<?> inputToken;
-    private TypeToken<?> outputToken;
 
-    protected FunctionalInvoker(String name, Method method) {
+    protected MethodNamedObject(String name, Method method) {
         this.name = name;
         this.method = method;
         handleMethod(method);
-//        Function function = getFunction();
-//        if (function != null) {
-//            Type genType = function.getClass().getGenericSuperclass();
-//            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-//            inputToken = TypeToken.of(params[0]);
-//            outputToken = TypeToken.of(params[1]);
-//        }
-//
-//
-//        if (funcAnno != null) {
-//            Class<? extends Function<?, ?>> funcClass = funcAnno.value();
-//            function = Reflection.instantiate(funcClass);
-//
-//        } else {
-//            function = new IdentityFunction();
-//        }
     }
 
     @Override

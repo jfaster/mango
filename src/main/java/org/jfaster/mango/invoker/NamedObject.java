@@ -16,17 +16,11 @@
 
 package org.jfaster.mango.invoker;
 
-import java.lang.reflect.Type;
-
 /**
  * @author ash
  */
-public interface SetterInvoker extends NamedObject {
+public interface NamedObject {
 
-    public void invoke(Object object, Object parameter);
-
-    public Type getParameterType();
-
-    public Class<?> getParameterRawType();
+    public String getName();
 
 }
