@@ -34,11 +34,11 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     protected BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
-        transformer = TRANSFORMERS.get(md.getRawReturnType());
+        transformer = TRANSFORMERS.get(md.getReturnRawType());
         if (transformer == null) {
             String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
             throw new IncorrectReturnTypeException("the return type of batch update " +
-                    "expected one of " + expected + " but " + md.getRawReturnType());
+                    "expected one of " + expected + " but " + md.getReturnRawType());
         }
     }
 

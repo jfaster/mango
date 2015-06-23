@@ -51,7 +51,7 @@ public class MethodDescriptor {
         return returnDescriptor.getType();
     }
 
-    public Class<?> getRawReturnType() {
+    public Class<?> getReturnRawType() {
         return returnDescriptor.getRawType();
     }
 

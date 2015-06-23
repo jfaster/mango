@@ -27,7 +27,6 @@ import org.jfaster.mango.util.ToStringHelper;
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author ash
@@ -50,22 +49,22 @@ public class UpdateOperator extends AbstractOperator {
         returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
                 && sqlType == SQLType.INSERT; // 是插入语句
 
-        Class<?> rawReturnType = md.getRawReturnType();
+        Class<?> returnRawType = md.getReturnRawType();
         if (returnGeneratedId) {
-            GeneratedTransformer gt = GENERATED_TRANSFORMERS.get(rawReturnType);
+            GeneratedTransformer gt = GENERATED_TRANSFORMERS.get(returnRawType);
             if (gt == null) {
                 String expected = ToStringHelper.toString(GENERATED_TRANSFORMERS.keySet());
                 throw new IncorrectReturnTypeException("the return type of update(returnGeneratedId) " +
-                        "expected one of " + expected + " but " + rawReturnType);
+                        "expected one of " + expected + " but " + returnRawType);
             }
             numberRawType = gt.getRawType();
             transformer = gt;
         } else {
-            transformer = TRANSFORMERS.get(rawReturnType);
+            transformer = TRANSFORMERS.get(returnRawType);
             if (transformer == null) {
                 String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
                 throw new IncorrectReturnTypeException("the return type of update " +
-                        "expected one of " + expected + " but " + rawReturnType);
+                        "expected one of " + expected + " but " + returnRawType);
             }
         }
     }
