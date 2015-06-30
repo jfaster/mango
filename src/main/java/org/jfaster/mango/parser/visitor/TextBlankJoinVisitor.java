@@ -206,6 +206,11 @@ public enum TextBlankJoinVisitor implements ParserVisitor {
     }
 
     @Override
+    public Object visit(ASTStringLiteral node, Object data) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Object visit(ASTTrue node, Object data) {
         throw new UnsupportedOperationException();
     }

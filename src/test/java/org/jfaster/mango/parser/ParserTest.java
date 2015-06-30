@@ -279,7 +279,83 @@ public class ParserTest {
         assertThat(n.getSQLType(), is(SQLType.MERGE));
     }
 
+    @Test
+    public void testStringLiteral() throws Exception {
+        String sql = "select #if (:1 == 'hello') ok #end";
+        ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) String.class));
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        context.addParameter("1", "hello");
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    }
 
+    @Test
+    public void testStringLiteral2() throws Exception {
+        String sql = "select #if (:1 == 'hello') ok #end";
+        ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) String.class));
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        context.addParameter("1", "hello2");
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    }
+
+    @Test
+    public void testStringLiteral3() throws Exception {
+        String sql = "select #if ('') ok #end";
+        ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) String.class));
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        context.addParameter("1", "hello2");
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    }
+
+    @Test
+    public void testStringLiteral4() throws Exception {
+        String sql = "select #if (!'') ok #end";
+        ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) String.class));
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        context.addParameter("1", "hello2");
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    }
+
+    @Test
+    public void testStringLiteral5() throws Exception {
+        String sql = "select #if (:1) ok #end";
+        ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) String.class));
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        context.addParameter("1", "he");
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    }
+
+    @Test
+    public void testStringLiteral6() throws Exception {
+        String sql = "select #if (:1) ok #end";
+        ASTRootNode n = new Parser(sql).parse().init();
+        ParameterContext ctx = getParameterContext(Lists.newArrayList((Type) String.class));
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        context.addParameter("1", "");
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    }
 
     private ParameterContext getParameterContext(List<Type> types) {
         List<Annotation> empty = Collections.emptyList();

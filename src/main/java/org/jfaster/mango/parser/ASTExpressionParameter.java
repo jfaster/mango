@@ -66,6 +66,9 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         }
+        if (obj instanceof String) {
+            return !((String) obj).isEmpty();
+        }
         return obj != null;
     }
 

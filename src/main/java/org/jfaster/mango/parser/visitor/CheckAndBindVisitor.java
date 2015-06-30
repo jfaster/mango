@@ -218,6 +218,11 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     }
 
     @Override
+    public Object visit(ASTStringLiteral node, Object data) {
+        return node.childrenAccept(this, data);
+    }
+
+    @Override
     public Object visit(ASTTrue node, Object data) {
         return node.childrenAccept(this, data);
     }

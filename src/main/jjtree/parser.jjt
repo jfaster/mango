@@ -82,6 +82,7 @@ TOKEN:
     |   <LOGICAL_NE: "!=" | "ne" >
     |   <LOGICAL_NOT: "!" | "not" >
     |   <INTEGER_LITERAL: ("-")? (["0"-"9"])+ >
+    |   <STRING_LITERAL: "'" (~["'"])* "'" >
     |   <TRUE: "true" >
     |   <FALSE: "false" >
     |   <NULL: "null" >
@@ -319,6 +320,7 @@ void PrimaryExpression() #void :
 {
         ExpressionParameter()
     |   IntegerLiteral()
+    |   StringLiteral()
     |   True()
     |   False()
     |   Null()
@@ -341,6 +343,17 @@ void IntegerLiteral() :
 }
 {
     t=<INTEGER_LITERAL>
+    {
+        jjtThis.init(t.image);
+    }
+}
+
+void StringLiteral() :
+{
+    Token t;
+}
+{
+    t=<STRING_LITERAL>
     {
         jjtThis.init(t.image);
     }
