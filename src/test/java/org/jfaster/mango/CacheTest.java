@@ -287,6 +287,90 @@ public class CacheTest {
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
 
+    @Test
+    public void testReturnArrayList() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        List<Msg> msgs = new ArrayList<Msg>();
+        MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+        int uid = 100;
+        String key = getMsgKey(uid);
+
+        for (int i = 0; i < 3; i++) {
+            Msg msg = createRandomMsg(uid);
+            msgs.add(msg);
+            msg.setId(dao.insert(msg));
+            assertThat(cacheHandler.get(key), nullValue());
+            ArrayList<Msg> actual = dao.getArrayMsgs(uid);
+            assertThat(actual, hasSize(msgs.size()));
+            assertThat(actual, contains(msgs.toArray()));
+            @SuppressWarnings("unchecked")
+            ArrayList<Msg> cacheActual = (ArrayList<Msg>) cacheHandler.get(key);
+            assertThat(cacheActual, hasSize(msgs.size()));
+            assertThat(cacheActual, contains(msgs.toArray()));
+        }
+
+        ArrayList<Msg> actual = dao.getArrayMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+
+        Msg msg = msgs.get(0);
+        msg.setContent("ash");
+        dao.update(msg);
+        assertThat(cacheHandler.get(key), nullValue());
+
+        actual = dao.getArrayMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+
+        msg = msgs.remove(0);
+        dao.delete(msg.getUid(), msg.getId());
+        actual = dao.getArrayMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+    }
+
+    @Test
+    public void testReturnLinkedList() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        List<Msg> msgs = new ArrayList<Msg>();
+        MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+        int uid = 100;
+        String key = getMsgKey(uid);
+
+        for (int i = 0; i < 3; i++) {
+            Msg msg = createRandomMsg(uid);
+            msgs.add(msg);
+            msg.setId(dao.insert(msg));
+            assertThat(cacheHandler.get(key), nullValue());
+            LinkedList<Msg> actual = dao.getLinkedMsgs(uid);
+            assertThat(actual, hasSize(msgs.size()));
+            assertThat(actual, contains(msgs.toArray()));
+            @SuppressWarnings("unchecked")
+            LinkedList<Msg> cacheActual = (LinkedList<Msg>) cacheHandler.get(key);
+            assertThat(cacheActual, hasSize(msgs.size()));
+            assertThat(cacheActual, contains(msgs.toArray()));
+        }
+
+        LinkedList<Msg> actual = dao.getLinkedMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+
+        Msg msg = msgs.get(0);
+        msg.setContent("ash");
+        dao.update(msg);
+        assertThat(cacheHandler.get(key), nullValue());
+
+        actual = dao.getLinkedMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+
+        msg = msgs.remove(0);
+        dao.delete(msg.getUid(), msg.getId());
+        actual = dao.getLinkedMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+    }
+
     private String getUserKey(int id) {
         return "user_" + id;
     }
@@ -374,6 +458,12 @@ public class CacheTest {
 
         @SQL("select id, uid, content from msg where uid=:1 order by id")
         public List<Msg> getMsgs(@CacheBy int uid);
+
+        @SQL("select id, uid, content from msg where uid=:1 order by id")
+        public ArrayList<Msg> getArrayMsgs(@CacheBy int uid);
+
+        @SQL("select id, uid, content from msg where uid=:1 order by id")
+        public LinkedList<Msg> getLinkedMsgs(@CacheBy int uid);
 
     }
 

@@ -85,7 +85,8 @@ public class TypeWrapper {
                     } else if (HashSet.class.equals(rawType)) {
                         isHashSet = true;
                     } else {
-                        throw new RuntimeException(); // TODO
+                        throw new IllegalStateException("parameterized type must be one of" +
+                                "[Collection,List,ArrayList,LinkedList,Set,HashSet] but " + type);
                     }
                     isCollectionAssignable = true;
                     mappedType = t.getActualTypeArguments()[0];

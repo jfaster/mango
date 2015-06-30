@@ -182,6 +182,20 @@ public class DbTest {
     }
 
     @Test
+    public void testQeuryInCollection() throws Exception {
+        Collection<User> users = createRandomUsers(10);
+        Collection<Integer> ids = new ArrayList<Integer>();
+        for (User user : users) {
+            int id = dao.insertUser(user);
+            ids.add(id);
+            user.setId(id);
+        }
+        Collection<User> actual = dao.getUsersInCollection(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
     public void testQeuryInList() throws Exception {
         List<User> users = createRandomUsers(10);
         List<Integer> ids = new ArrayList<Integer>();
@@ -196,6 +210,34 @@ public class DbTest {
     }
 
     @Test
+    public void testQeuryInArrayList() throws Exception {
+        List<User> users = createRandomUsers(10);
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        for (User user : users) {
+            int id = dao.insertUser(user);
+            ids.add(id);
+            user.setId(id);
+        }
+        ArrayList<User> actual = dao.getUsersInArrayList(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
+    public void testQeuryInLinkedList() throws Exception {
+        List<User> users = createRandomUsers(10);
+        LinkedList<Integer> ids = new LinkedList<Integer>();
+        for (User user : users) {
+            int id = dao.insertUser(user);
+            ids.add(id);
+            user.setId(id);
+        }
+        LinkedList<User> actual = dao.getUsersInLinkedList(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
     public void testQueryInSet() throws Exception {
         List<User> users = createRandomUsers(10);
         Set<Integer> ids = new HashSet<Integer>();
@@ -204,7 +246,21 @@ public class DbTest {
             ids.add(id);
             user.setId(id);
         }
-        List<User> actual = dao.getUsersInSet(ids);
+        Set<User> actual = dao.getUsersInSet(ids);
+        assertThat(actual, hasSize(users.size()));
+        assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
+    public void testQueryInHashSet() throws Exception {
+        List<User> users = createRandomUsers(10);
+        HashSet<Integer> ids = new HashSet<Integer>();
+        for (User user : users) {
+            int id = dao.insertUser(user);
+            ids.add(id);
+            user.setId(id);
+        }
+        HashSet<User> actual = dao.getUsersInHashSet(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
@@ -409,10 +465,22 @@ public class DbTest {
         public int[] getIntArray();
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public Collection<User> getUsersInCollection(Collection<Integer> ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
         public List<User> getUsersInList(List<Integer> ids);
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
-        public List<User> getUsersInSet(Set<Integer> ids);
+        public ArrayList<User> getUsersInArrayList(ArrayList<Integer> ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public LinkedList<User> getUsersInLinkedList(LinkedList<Integer> ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public Set<User> getUsersInSet(Set<Integer> ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public HashSet<User> getUsersInHashSet(HashSet<Integer> ids);
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
         public List<User> getUsersInIntegerArray(Integer[] ids);

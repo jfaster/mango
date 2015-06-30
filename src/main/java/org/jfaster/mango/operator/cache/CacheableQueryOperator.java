@@ -178,8 +178,8 @@ public class CacheableQueryOperator extends QueryOperator {
         }
 
         public Object getReturn() {
-            if (returnDescriptor.isCollection()
-                    || returnDescriptor.isListAssignable()) {
+            if (returnDescriptor.isListAssignable()
+                    || returnDescriptor.isCollection()) {
 
                 return hitValueList;
 
