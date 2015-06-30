@@ -18,6 +18,7 @@ package org.jfaster.mango.operator.cache;
 
 import org.hamcrest.Matchers;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
+import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.operator.InterceptorChain;
 import org.jfaster.mango.operator.Operator;
@@ -155,7 +156,8 @@ public class CacheableQueryOperatorTest {
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
-            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+                                            ListSupplier listSupplier, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id in (?,?,?)";
                 assertThat(sql, Matchers.equalTo(descSql));
                 assertThat(args.length, Matchers.equalTo(3));
@@ -204,7 +206,8 @@ public class CacheableQueryOperatorTest {
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
-            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+                                            ListSupplier listSupplier, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id in (?,?)";
                 assertThat(sql, Matchers.equalTo(descSql));
                 assertThat(args.length, Matchers.equalTo(2));

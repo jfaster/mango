@@ -17,8 +17,7 @@
 package org.jfaster.mango.reflect;
 
 import java.lang.reflect.*;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ash
@@ -39,9 +38,14 @@ public class TypeWrapper {
      */
     private Type mappedType;
 
-    private boolean isList;
-    private boolean isSet;
     private boolean isArray;
+    private boolean isCollection;
+    private boolean isList;
+    private boolean isArrayList;
+    private boolean isLinkedList;
+    private boolean isSet;
+    private boolean isHashSet;
+    private boolean isCollectionAssignable;
 
     public TypeWrapper(final Type type) {
         if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
@@ -66,15 +70,25 @@ public class TypeWrapper {
                 @Override
                 void visitParameterizedType(ParameterizedType t) {
                     Type rawType = t.getRawType();
-                    if (List.class.equals(rawType)) {
+
+                    // 支持Collection,List,ArrayList,LinkedList,Set,HashSet
+                    if (Collection.class.equals(rawType)) {
+                        isCollection = true;
+                    } else if (List.class.equals(rawType)) {
                         isList = true;
-                        mappedType = t.getActualTypeArguments()[0];
+                    } else if (ArrayList.class.equals(rawType)) {
+                        isArrayList = true;
+                    } else if (LinkedList.class.equals(rawType)) {
+                        isLinkedList = true;
                     } else if (Set.class.equals(rawType)) {
                         isSet = true;
-                        mappedType = t.getActualTypeArguments()[0];
+                    } else if (HashSet.class.equals(rawType)) {
+                        isHashSet = true;
                     } else {
                         throw new RuntimeException(); // TODO
                     }
+                    isCollectionAssignable = true;
+                    mappedType = t.getActualTypeArguments()[0];
                 }
 
                 @Override
@@ -91,24 +105,36 @@ public class TypeWrapper {
         }
     }
 
-    public boolean isIterable() {
-        return isList || isSet || isArray;
-    }
-
     public boolean isArray() {
         return isArray;
     }
 
-    public boolean isSet() {
-        return isSet;
+    public boolean isCollection() {
+        return isCollection;
     }
 
     public boolean isList() {
         return isList;
     }
 
-    public boolean isCollection() {
-        return isList || isSet;
+    public boolean isArrayList() {
+        return isArrayList;
+    }
+
+    public boolean isLinkedList() {
+        return isLinkedList;
+    }
+
+    public boolean isSet() {
+        return isSet;
+    }
+
+    public boolean isHashSet() {
+        return isHashSet;
+    }
+
+    public boolean isIterable() {
+        return isCollectionAssignable || isArray;
     }
 
     public Class<?> getMappedClass() {

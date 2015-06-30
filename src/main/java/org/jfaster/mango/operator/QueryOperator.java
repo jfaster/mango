@@ -19,10 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
-import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.jdbc.BeanPropertyRowMapper;
-import org.jfaster.mango.jdbc.RowMapper;
-import org.jfaster.mango.jdbc.SingleColumnRowMapper;
+import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.Reflection;
@@ -38,10 +35,8 @@ import java.util.Map;
 public class QueryOperator extends AbstractOperator {
 
     protected RowMapper<?> rowMapper;
-    protected boolean isForList;
-    protected boolean isForSet;
-    protected boolean isForArray;
-    protected Class<?> mappedClass;
+    protected ReturnDescriptor returnDescriptor;
+    protected ListSupplier listSupplier;
 
     protected QueryOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
@@ -49,12 +44,15 @@ public class QueryOperator extends AbstractOperator {
     }
 
     private void init(MethodDescriptor md) {
-        ReturnDescriptor rd = md.getReturnDescriptor();
-        isForList = rd.isList();
-        isForSet = rd.isSet();
-        isForArray = rd.isArray();
-        mappedClass = rd.getMappedClass();
-        rowMapper = getRowMapper(mappedClass, rd);
+        returnDescriptor = md.getReturnDescriptor();
+        rowMapper = getRowMapper(returnDescriptor.getMappedClass(), returnDescriptor);
+        if (returnDescriptor.isCollection()
+                || returnDescriptor.isList()
+                || returnDescriptor.isLinkedList()) {
+            listSupplier = new LinkedListSuppliter();
+        } else if (returnDescriptor.isArrayList()) {
+            listSupplier = new ArrayListSuppliter();
+        }
     }
 
     @Override
@@ -81,14 +79,23 @@ public class QueryOperator extends AbstractOperator {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            if (isForList) {
-                r = jdbcOperations.queryForList(ds, sql, args, rowMapper);
-            } else if (isForSet) {
+            if (returnDescriptor.isCollection()
+                    || returnDescriptor.isListAssignable()) {
+
+                r = jdbcOperations.queryForList(ds, sql, args, listSupplier, rowMapper);
+
+            } else if (returnDescriptor.isSetAssignable()) {
+
                 r = jdbcOperations.queryForSet(ds, sql, args, rowMapper);
-            } else if (isForArray) {
-                r= jdbcOperations.queryForArray(ds, sql, args, rowMapper);
+
+            } else if (returnDescriptor.isArray()) {
+
+                r = jdbcOperations.queryForArray(ds, sql, args, rowMapper);
+
             } else {
+
                 r = jdbcOperations.queryForObject(ds, sql, args, rowMapper);
+
             }
             success = true;
         } finally {

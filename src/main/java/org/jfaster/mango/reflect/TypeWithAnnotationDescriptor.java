@@ -31,10 +31,7 @@ public abstract class TypeWithAnnotationDescriptor {
     private final Type type;
     private final Class<?> rawType;
     private final List<Annotation> annotations;
-    private final boolean isList;
-    private final boolean isSet;
-    private final boolean isArray;
-    private final Class<?> mappedClass;
+    private final TypeWrapper typeWrapper;
 
     public TypeWithAnnotationDescriptor(Type type, List<Annotation> annotations) {
         this.type = type;
@@ -64,11 +61,7 @@ public abstract class TypeWithAnnotationDescriptor {
             }
         }.visit(type);
 
-        TypeWrapper tw = new TypeWrapper(type);
-        isList = tw.isList();
-        isSet = tw.isSet();
-        isArray = tw.isArray();
-        mappedClass = tw.getMappedClass();
+        typeWrapper = new TypeWrapper(type);
     }
 
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
@@ -97,23 +90,48 @@ public abstract class TypeWithAnnotationDescriptor {
         return annotations;
     }
 
-    public boolean isIterable() {
-        return isList || isSet || isArray;
+    public boolean isArray() {
+        return typeWrapper.isArray();
+    }
+
+    public boolean isCollection() {
+        return typeWrapper.isCollection();
     }
 
     public boolean isList() {
-        return isList;
+        return typeWrapper.isList();
+    }
+
+    public boolean isArrayList() {
+        return typeWrapper.isArrayList();
+    }
+
+    public boolean isLinkedList() {
+        return typeWrapper.isLinkedList();
     }
 
     public boolean isSet() {
-        return isSet;
+        return typeWrapper.isSet();
     }
 
-    public boolean isArray() {
-        return isArray;
+    public boolean isHashSet() {
+        return typeWrapper.isHashSet();
+    }
+
+    public boolean isIterable() {
+        return typeWrapper.isIterable();
+    }
+
+    public boolean isListAssignable() {
+        return isList() || isArrayList() || isLinkedList();
+    }
+
+    public boolean isSetAssignable() {
+        return isSet() || isHashSet();
     }
 
     public Class<?> getMappedClass() {
-        return mappedClass;
+        return typeWrapper.getMappedClass();
     }
+
 }

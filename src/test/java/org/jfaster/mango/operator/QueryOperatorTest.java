@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
+import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
@@ -80,7 +81,8 @@ public class QueryOperatorTest {
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
-            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+                                            ListSupplier listSupplier, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id=? and name=?";
                 assertThat(sql, equalTo(descSql));
                 assertThat(args.length, equalTo(2));
@@ -164,7 +166,8 @@ public class QueryOperatorTest {
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
-            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+                                            ListSupplier listSupplier, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id in (?,?,?)";
                 assertThat(sql, equalTo(descSql));
                 assertThat(args.length, equalTo(3));

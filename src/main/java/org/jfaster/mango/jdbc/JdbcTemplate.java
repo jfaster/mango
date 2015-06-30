@@ -48,10 +48,11 @@ public class JdbcTemplate implements JdbcOperations {
     }
 
     @Override
-    public <T> List<T> queryForList(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper)
+    public <T> List<T> queryForList(DataSource dataSource, String sql, Object[] args,
+                                    ListSupplier listSupplier, RowMapper<T> rowMapper)
             throws DataAccessException {
 
-        return executeQuery(dataSource, sql, args, new ListResultSetExtractor<T>(rowMapper));
+        return executeQuery(dataSource, sql, args, new ListResultSetExtractor<T>(listSupplier, rowMapper));
     }
 
     @Override

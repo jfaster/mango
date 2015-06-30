@@ -18,6 +18,7 @@ package org.jfaster.mango.support;
 
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.jdbc.JdbcOperations;
+import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.RowMapper;
 
 import javax.sql.DataSource;
@@ -35,7 +36,8 @@ public class JdbcOperationsAdapter implements JdbcOperations {
     }
 
     @Override
-    public <T> List<T> queryForList(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+    public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+                                    ListSupplier listSupplier, RowMapper<T> rowMapper) {
         throw new UnsupportedOperationException();
     }
 

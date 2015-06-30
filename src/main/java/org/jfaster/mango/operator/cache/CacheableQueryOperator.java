@@ -56,7 +56,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
         if (driver.isUseMultipleKeys()) {
             String propertyOfMapper = driver.getPropertyOfMapper().toLowerCase(); //可能有下划线
-            List<GetterInvoker> invokers = InvokerCache.getGetterInvokers(mappedClass);
+            List<GetterInvoker> invokers = InvokerCache.getGetterInvokers(returnDescriptor.getMappedClass());
             for (GetterInvoker invoker : invokers) {
                 if (Strings.underscoreName(invoker.getName()).equals(propertyOfMapper)) {
                     propertyOfMapperInvoker = invoker;
@@ -65,7 +65,7 @@ public class CacheableQueryOperator extends QueryOperator {
             if (propertyOfMapperInvoker == null) {
                 // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
                 throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
-                        + propertyOfMapper + " of " + mappedClass + " expected readable but not");
+                        + propertyOfMapper + " of " + returnDescriptor.getMappedClass() + " expected readable but not");
             }
         }
     }
@@ -153,10 +153,18 @@ public class CacheableQueryOperator extends QueryOperator {
         Class<T> valueClass;
 
         private AddableObject(int initialCapacity, Class<T> valueClass) {
-            if (isForSet) {
+            if (returnDescriptor.isSetAssignable()) {
+
                 hitValueSet = new HashSet<T>(initialCapacity * 2);
-            } else { // 返回List或数组或单个值都先使用List
+
+            } else if (returnDescriptor.isArrayList()) {
+
+                hitValueList = new ArrayList<T>(initialCapacity);
+
+            } else { // Collection,List,LinkedList或数组或单个值都先使用LinkedList
+
                 hitValueList = new LinkedList<T>();
+
             }
             this.valueClass = valueClass;
         }
@@ -170,12 +178,19 @@ public class CacheableQueryOperator extends QueryOperator {
         }
 
         public Object getReturn() {
-            if (isForList) {
+            if (returnDescriptor.isCollection()
+                    || returnDescriptor.isListAssignable()) {
+
                 return hitValueList;
-            } else if (isForSet) {
+
+            } else if (returnDescriptor.isSetAssignable()) {
+
                 return hitValueSet;
-            } else if (isForArray) {
+
+            } else if (returnDescriptor.isArray()) {
+
                 return org.jfaster.mango.util.Arrays.toArray(hitValueList, valueClass);
+
             } else {
                 return !hitValueList.isEmpty() ? hitValueList.get(0) : null;
             }
