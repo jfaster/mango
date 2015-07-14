@@ -39,6 +39,7 @@ public enum Table {
     LONG_ID_MSG("long_id_msg.sql"),
     ACCOUNT("account.sql"),
     POSITION("position.sql"),
+    BT("bt.sql"),
     ;
 
     private String name;

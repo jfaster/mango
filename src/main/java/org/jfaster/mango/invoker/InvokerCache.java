@@ -73,17 +73,31 @@ public class InvokerCache {
             for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
                 if (!Class.class.equals(pd.getPropertyType())) {
                     String name = pd.getName();
+                    String bname = isBoolean(pd.getPropertyType()) ?
+                            "is" + Character.toUpperCase(name.charAt(0)) + name.substring(1, name.length()) :
+                            null;
                     Method readMethod = pd.getReadMethod();
+
                     if (readMethod != null) {
-                        FunctionalGetterInvoker gi = FunctionalGetterInvoker.create(name, readMethod);
-                        gim.put(name, gi);
-                        gis.add(gi);
+                        FunctionalGetterInvoker fgi = FunctionalGetterInvoker.create(name, readMethod);
+                        gim.put(name, fgi);
+                        gis.add(fgi);
+                        if (bname != null) { // 特殊处理boolean类型
+                            FunctionalGetterInvoker bfgi = FunctionalGetterInvoker.create(bname, readMethod);
+                            gim.put(bname, bfgi);
+                            gis.add(bfgi);
+                        }
                     }
                     Method writeMethod = pd.getWriteMethod();
-                    if (writeMethod != null) {
-                        FunctionalSetterInvoker si = FunctionalSetterInvoker.create(name, writeMethod);
-                        sim.put(name, si);
-                        sis.add(si);
+                    if (writeMethod != null) { // 特殊处理boolean类型
+                        FunctionalSetterInvoker fsi = FunctionalSetterInvoker.create(name, writeMethod);
+                        sim.put(name, fsi);
+                        sis.add(fsi);
+                        if (bname != null) {
+                            FunctionalSetterInvoker bfsi = FunctionalSetterInvoker.create(bname, writeMethod);
+                            sim.put(bname, bfsi);
+                            sis.add(bfsi);
+                        }
                     }
                 }
             }
@@ -109,6 +123,11 @@ public class InvokerCache {
         private List<SetterInvoker> getSetterInvokers() {
             return setterInvokers;
         }
+
+        private static boolean isBoolean(Class<?> clazz) {
+            return boolean.class.equals(clazz) || Boolean.class.equals(clazz);
+        }
+
     }
 
 }
