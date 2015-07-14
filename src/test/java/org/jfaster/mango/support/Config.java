@@ -28,7 +28,7 @@ import javax.sql.DataSource;
  */
 public class Config {
 
-    private static String DIR = "mysql";
+    private static String DIR = "hsqldb";
     private static Configuration[] CONFIGS;
 
     static {
