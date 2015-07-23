@@ -91,6 +91,8 @@ public class Mango {
      */
     private final static CopyOnWriteArrayList<Mango> instances = new CopyOnWriteArrayList<Mango>();
 
+    private Mango() {}
+
     public synchronized static Mango newInstance() {
         if (instances.size() == 1) {
             if (logger.isWarnEnabled()) {
