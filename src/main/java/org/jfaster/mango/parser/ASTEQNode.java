@@ -43,14 +43,13 @@ public class ASTEQNode extends AbstractExpression {
             return left.equals(right);
         }
 
-        left = (left == null) ? null : left.toString();
-        right = (right == null) ? null : right.toString();
-
         if (left == null && right == null) { // 都为null
             return true;
         } else if (left == null || right == null) { // 一个为null，一个不为null
             return false;
         } else { // 都不为null
+            left = left.toString();
+            right = right.toString();
             return left.equals(right);
         }
     }
