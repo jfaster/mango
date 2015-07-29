@@ -53,7 +53,9 @@ public class HttpServer {
                 dao.getIntegerId(id);
                 dao.getName(id);
                 dao.getBoolObjGender(id);
-                dao.getLongObjMoney(id);
+                for (int i = 0; i < 1500; i++) {
+                    dao.getLongObjMoney(id);
+                }
             }
         }, 0, 10, TimeUnit.SECONDS);
     }

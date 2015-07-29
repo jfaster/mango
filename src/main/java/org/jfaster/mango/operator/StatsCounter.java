@@ -61,9 +61,10 @@ public class StatsCounter {
         return sc.snapshot();
     }
 
-    public void reset() {
-        RealStatsCounter sc = new RealStatsCounter();
-        realStatsCounter = sc;
+    public synchronized void reset() {
+        final RealStatsCounter sc = realStatsCounter;
+        RealStatsCounter newSC = new RealStatsCounter(sc.getInitCount(), sc.getTotalInitTime());
+        realStatsCounter = newSC;
     }
 
     private static class RealStatsCounter {
@@ -76,6 +77,14 @@ public class StatsCounter {
         private final LongAddable executeExceptionCount = LongAddables.create();
         private final LongAddable totalExecuteTime = LongAddables.create();
         private final LongAddable evictionCount = LongAddables.create();
+
+        public RealStatsCounter() {
+        }
+
+        public RealStatsCounter(long initCount, long totalInitTime) {
+            this.initCount.add(initCount);
+            this.totalInitTime.add(totalInitTime);
+        }
 
         public void recordInit(long initTime) {
             if (initTime >= 0) {
@@ -126,6 +135,14 @@ public class StatsCounter {
                     executeExceptionCount.sum(),
                     totalExecuteTime.sum(),
                     evictionCount.sum());
+        }
+
+        public long getInitCount() {
+            return initCount.sum();
+        }
+
+        public long getTotalInitTime() {
+            return totalInitTime.sum();
         }
     }
 
