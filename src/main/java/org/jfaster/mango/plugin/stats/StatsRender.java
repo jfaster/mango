@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public class StatsRender {
 
-    public static String getHtml(boolean isFetchAll) throws Exception {
+    public static String getHtml(boolean isFetchAll, String key) throws Exception {
         InputStream is = null;
         InputStreamReader reader = null;
         StringWriter sw = null;
@@ -50,6 +50,7 @@ public class StatsRender {
             }
             data.put("mango", mangos.get(0));
             data.put("isFetchAll", isFetchAll);
+            data.put("key", key);
             Template t = new Template(null, reader, null);
             t.process(data, bw);
             bw.flush();

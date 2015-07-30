@@ -18,6 +18,7 @@ package org.jfaster.mango.plugin.stats;
 
 import org.jfaster.mango.operator.Mango;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,14 @@ import java.util.List;
  * @author ash
  */
 public class MangoStatsServlet extends HttpServlet {
+
+    private final static String KEY_NAME = "key";
+    private String key;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        key = config.getInitParameter(KEY_NAME);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -45,6 +54,14 @@ public class MangoStatsServlet extends HttpServlet {
             return;
         }
 
+        String pKey = req.getParameter(KEY_NAME);
+        if (key != null && !key.equals(pKey)) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            out.println("404");
+            out.flush();
+            return;
+        }
+
         try {
             String type = req.getParameter("type");
             if ("reset".equals(type)) {
@@ -53,10 +70,14 @@ public class MangoStatsServlet extends HttpServlet {
                     throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
                 }
                 mangos.get(0).resetAllStats();
-                resp.sendRedirect(req.getRequestURL().toString());
+                String url = req.getRequestURL().toString();
+                if (key != null) {
+                    url = url + "?" + KEY_NAME + "=" + key;
+                }
+                resp.sendRedirect(url);
                 return;
             }
-            out.println(StatsRender.getHtml(Boolean.valueOf(req.getParameter("all"))));
+            out.println(StatsRender.getHtml(Boolean.valueOf(req.getParameter("all")), key));
             out.flush();
         } catch (Exception e) {
             out.println(e.getMessage());

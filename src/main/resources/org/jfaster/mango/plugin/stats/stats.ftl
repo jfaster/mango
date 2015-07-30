@@ -82,7 +82,7 @@
     }
     $(function() {
         $("#clear-stats").click(function(){
-            var action = window.location.pathname + "?type=reset";
+            var action = window.location.pathname + "?type=reset<#if key?exists>&key=${key}</#if>";
             window.location.href = action;
         });
     });

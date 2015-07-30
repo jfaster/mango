@@ -31,8 +31,9 @@ public class HttpServer {
         context.setContextPath("/");
         server.setHandler(context);
 
-        context.addServlet(new ServletHolder(new MangoStatsServlet()), "/mango-stats");
-
+        ServletHolder servlet = new ServletHolder(new MangoStatsServlet());
+        servlet.setInitParameter("key", "9527");
+        context.addServlet(servlet, "/mango-stats");
         server.start();
         server.join();
     }
