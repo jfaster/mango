@@ -31,9 +31,19 @@ public interface CacheBase {
     public boolean isUseMultipleKeys();
 
     /**
+     * 是否缓存数据库中的null对象
+     */
+    public boolean isCacheNullObject();
+
+    /**
      * 存入缓存
      */
     public void setToCache(String key, Object value);
+
+    /**
+     * 存入缓存
+     */
+    public void addToCache(String key, Object value);
 
     /**
      * 从缓存删除单个key

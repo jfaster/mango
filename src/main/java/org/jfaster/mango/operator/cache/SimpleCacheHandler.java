@@ -16,26 +16,24 @@
 
 package org.jfaster.mango.operator.cache;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
- * 抽象的缓存操作接口，您可以使用memcache或redis等第三方缓存实现该接口。
- *
  * @author ash
  */
-public interface CacheHandler {
+public abstract class SimpleCacheHandler implements CacheHandler {
 
-    public Object get(String key);
+    @Override
+    public void add(String key, Object value, int expires) {
+        // TODO
+        throw new UnsupportedOperationException("");
+    }
 
-    public Map<String, Object> getBulk(Set<String> keys);
-
-    public void set(String key, Object value, int expires);
-
-    public void add(String key, Object value, int expires);
-
-    public void delete(Set<String> keys);
-
-    public void delete(String key);
+    @Override
+    public void delete(Set<String> keys) {
+        for (String key : keys) {
+            delete(key);
+        }
+    }
 
 }

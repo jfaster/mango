@@ -80,31 +80,43 @@ public class CacheableQueryOperator extends QueryOperator {
 
     private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass, Class<U> cacheByActualClass) {
         boolean isDebugEnabled = logger.isDebugEnabled();
+        boolean isCacheNullObj = driver.isCacheNullObject();
         Set<String> keys = driver.getCacheKeys(context);
+
+        // 从缓存中批量取数据
         Map<String, Object> cachedResults = driver.getBulkFromCache(keys);
-        AddableObject<T> addableObj = new AddableObject<T>(keys.size(), mappedClass);
-        int hitCapacity = cachedResults != null ? cachedResults.size() : 0;
-        List<U> hitCacheByActualObjs = new ArrayList<U>(hitCapacity); // 用于debug
+
+        AddableObject<T> addableObj = new AddableObject<T>(mappedClass); // 存储最后返回的结果
         int hitNum = 0;
-        Set<U> missCacheByActualObjs = new HashSet<U>(Math.max(1, keys.size() - hitCapacity) * 2);
+
+        // 用于debug log
+        List<String> hitKeys = isDebugEnabled ? new ArrayList<String>() : null;
+        List<String> missKeys = isDebugEnabled ? new ArrayList<String>() : null;
+
+        Set<U> missCacheByActualObjs = new HashSet<U>();
         for (Object cacheByActualObj : new Iterables(driver.getOnlyCacheByObj(context))) {
             String key = driver.getCacheKey(cacheByActualObj);
             Object value = cachedResults != null ? cachedResults.get(key) : null;
             if (value == null) {
                 missCacheByActualObjs.add(cacheByActualClass.cast(cacheByActualObj));
-            } else {
-                addableObj.add(mappedClass.cast(value));
-                hitNum++;
                 if (isDebugEnabled) {
-                    hitCacheByActualObjs.add(cacheByActualClass.cast(cacheByActualObj));
+                    missKeys.add(key);
+                }
+            } else {
+                hitNum++;
+                if (!isNullObject(value)) {
+                    addableObj.add(mappedClass.cast(value));
+                }
+                if (isDebugEnabled) {
+                    hitKeys.add(key);
                 }
             }
         }
         statsCounter.recordHits(hitNum);
         statsCounter.recordMisses(missCacheByActualObjs.size());
         if (isDebugEnabled) {
-            logger.debug("cache hit #keys={} #values={}", hitCacheByActualObjs, addableObj);
-            logger.debug("cache miss #keys={}", missCacheByActualObjs);
+            logger.debug("[multiple] cache hit #keys={}", hitKeys);
+            logger.debug("[multiple] cache miss #keys={}", missKeys);
         }
         if (!missCacheByActualObjs.isEmpty()) { // 有key没有命中
             driver.setOnlyCacheByObj(context, missCacheByActualObjs);
@@ -118,32 +130,56 @@ public class CacheableQueryOperator extends QueryOperator {
                     throw new NullPointerException("property " + propertyOfMapperInvoker.getName() + " of " +
                             mappedClass + " is null, please check return type");
                 }
-                String key = driver.getCacheKey(propertyObj);
+                U cacheByActualObj = cacheByActualClass.cast(propertyObj);
+                String key = driver.getCacheKey(cacheByActualObj);
                 driver.setToCache(key, dbValue);
+                if (isCacheNullObj) {
+                    missCacheByActualObjs.remove(cacheByActualObj);
+                }
+            }
+            if (isCacheNullObj && !missCacheByActualObjs.isEmpty()) {
+                for (U missCacheByActualObj : missCacheByActualObjs) {
+                    String key = driver.getCacheKey(missCacheByActualObj);
+                    driver.addToCache(key, createNullObject());
+                }
             }
         }
         return addableObj.getReturn();
     }
 
     private Object singleKeyCache(InvocationContext context) {
+        boolean isDebugEnabled = logger.isDebugEnabled();
         String key = driver.getCacheKey(context);
         Object value = driver.getFromCache(key);
         if (value == null) {
             statsCounter.recordMisses(1);
-            if (logger.isDebugEnabled()) {
-                logger.debug("cache miss #key＝{}", key);
+            if (isDebugEnabled) {
+                logger.debug("[single] cache miss #key={}", key);
             }
             value = execute(context);
             if (value != null) {
                 driver.setToCache(key, value);
+            } else if (driver.isCacheNullObject()) { // 缓存null对象
+                driver.addToCache(key, createNullObject());
             }
         } else {
             statsCounter.recordHits(1);
-            if (logger.isDebugEnabled()) {
-                logger.debug("cache hit #key={} #value={}", key, value);
+            if (isDebugEnabled) {
+                logger.debug("[single] cache hit #key={}", key);
+            }
+            if (isNullObject(value)) {
+                value = null;
             }
         }
         return value;
+    }
+
+    private NullObject createNullObject() {
+        return new NullObject();
+    }
+
+    private boolean isNullObject(Object obj) {
+        return obj instanceof NullObject;
     }
 
     private class AddableObject<T> {
@@ -152,14 +188,14 @@ public class CacheableQueryOperator extends QueryOperator {
         Set<T> hitValueSet;
         Class<T> valueClass;
 
-        private AddableObject(int initialCapacity, Class<T> valueClass) {
+        private AddableObject(Class<T> valueClass) {
             if (returnDescriptor.isSetAssignable()) {
 
-                hitValueSet = new HashSet<T>(initialCapacity * 2);
+                hitValueSet = new HashSet<T>();
 
             } else if (returnDescriptor.isArrayList()) {
 
-                hitValueList = new ArrayList<T>(initialCapacity);
+                hitValueList = new ArrayList<T>();
 
             } else { // Collection,List,LinkedList或数组或单个值都先使用LinkedList
 

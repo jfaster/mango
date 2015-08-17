@@ -21,13 +21,14 @@ import org.jfaster.mango.operator.cache.CacheHandler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
 * @author ash
 */
 public class CacheHandlerImpl implements CacheHandler {
 
-    private Map<String, Object> cache = new HashMap<String, Object>();
+    private ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 
     @Override
     public Object get(String key) {
@@ -46,6 +47,11 @@ public class CacheHandlerImpl implements CacheHandler {
     @Override
     public void set(String key, Object value, int expires) {
         cache.put(key, value);
+    }
+
+    @Override
+    public void add(String key, Object value, int expires) {
+        cache.putIfAbsent(key, value);
     }
 
     @Override

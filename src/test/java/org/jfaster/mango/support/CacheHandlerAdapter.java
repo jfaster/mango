@@ -42,6 +42,11 @@ public class CacheHandlerAdapter implements CacheHandler {
     }
 
     @Override
+    public void add(String key, Object value, int expires) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void delete(Set<String> keys) {
         throw new UnsupportedOperationException();
     }

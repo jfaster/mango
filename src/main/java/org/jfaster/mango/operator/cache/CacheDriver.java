@@ -54,7 +54,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     /**
      * 缓存key前缀
      */
-    private String prefix; // 缓存key前缀
+    private String prefix;
 
     /**
      * 缓存过期控制
@@ -65,6 +65,11 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
      * expire的数量
      */
     private int expireNum;
+
+    /**
+     * 是否缓存数据库中的null对象
+     */
+    private boolean cacheNullObject;
 
     /**
      * cacheBy相关信息
@@ -94,8 +99,18 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
+    public boolean isCacheNullObject() {
+        return cacheNullObject;
+    }
+
+    @Override
     public void setToCache(String key, Object value) {
         cacheHandler.set(key, value, cacheExpire.getExpireTime() * expireNum);
+    }
+
+    @Override
+    public void addToCache(String key, Object value) {
+        cacheHandler.add(key, value, cacheExpire.getExpireTime() * expireNum);
     }
 
     @Override
@@ -219,6 +234,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                 prefix = cacheAnno.prefix();
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
+                cacheNullObject = cacheAnno.cacheNullObject();
                 checkCacheBy(rootNode, cacheByItems);
             } else {
                 if (cacheByNum > 0) {

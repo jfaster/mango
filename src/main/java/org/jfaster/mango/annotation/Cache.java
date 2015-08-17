@@ -51,4 +51,11 @@ public @interface Cache {
      */
     int num() default 1;
 
+    /**
+     * 是否缓存null对象
+     *
+     * @return
+     */
+    boolean cacheNullObject() default false;
+
 }
