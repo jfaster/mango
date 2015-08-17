@@ -89,10 +89,11 @@ public class CacheableQueryOperator extends QueryOperator {
         AddableObject<T> addableObj = new AddableObject<T>(mappedClass); // 存储最后返回的结果
         int hitNum = 0;
 
-        // 用于debug log
+        // 用于 debug log
         List<String> hitKeys = isDebugEnabled ? new ArrayList<String>() : null;
         List<String> missKeys = isDebugEnabled ? new ArrayList<String>() : null;
 
+        // 筛选出缓存命中和丢失的数据
         Set<U> missCacheByActualObjs = new HashSet<U>();
         for (Object cacheByActualObj : new Iterables(driver.getOnlyCacheByObj(context))) {
             String key = driver.getCacheKey(cacheByActualObj);
@@ -115,12 +116,20 @@ public class CacheableQueryOperator extends QueryOperator {
         statsCounter.recordHits(hitNum);
         statsCounter.recordMisses(missCacheByActualObjs.size());
         if (isDebugEnabled) {
-            logger.debug("[multiple] cache hit #keys={}", hitKeys);
-            logger.debug("[multiple] cache miss #keys={}", missKeys);
+            if (!hitKeys.isEmpty()) {
+                logger.debug("Cache hit for multiple keys {}", hitKeys);
+            }
+            if (!missKeys.isEmpty()) {
+                logger.debug("Cache miss for multiple keys {}", missKeys);
+            }
         }
-        if (!missCacheByActualObjs.isEmpty()) { // 有key没有命中
+
+        if (!missCacheByActualObjs.isEmpty()) { // 有缓存没命中的数据
             driver.setOnlyCacheByObj(context, missCacheByActualObjs);
             Object dbValues = execute(context);
+
+            // 用于 debug log
+            List<String> needSetKeys = isDebugEnabled ? new ArrayList<String>() : null;
             for (Object dbValue : new Iterables(dbValues)) {
                 // db数据添加入结果
                 addableObj.add(mappedClass.cast(dbValue));
@@ -136,11 +145,26 @@ public class CacheableQueryOperator extends QueryOperator {
                 if (isCacheNullObj) {
                     missCacheByActualObjs.remove(cacheByActualObj);
                 }
+                if (isDebugEnabled) {
+                    needSetKeys.add(key);
+                }
             }
+            if (isDebugEnabled && !needSetKeys.isEmpty()) {
+                logger.debug("Cache set for multiple keys {}", needSetKeys);
+            }
+
             if (isCacheNullObj && !missCacheByActualObjs.isEmpty()) {
+                // 用于 debug log
+                List<String> needAddKeys = isDebugEnabled ? new ArrayList<String>() : null;
                 for (U missCacheByActualObj : missCacheByActualObjs) {
                     String key = driver.getCacheKey(missCacheByActualObj);
                     driver.addToCache(key, createNullObject());
+                    if (isDebugEnabled) {
+                        needAddKeys.add(key);
+                    }
+                }
+                if (isDebugEnabled && !needAddKeys.isEmpty()) {
+                    logger.debug("Cache add for multiple keys {}", needAddKeys);
                 }
             }
         }
@@ -154,18 +178,24 @@ public class CacheableQueryOperator extends QueryOperator {
         if (value == null) {
             statsCounter.recordMisses(1);
             if (isDebugEnabled) {
-                logger.debug("[single] cache miss #key={}", key);
+                logger.debug("Cache miss for single key [{}]", key);
             }
             value = execute(context);
             if (value != null) {
                 driver.setToCache(key, value);
+                if (isDebugEnabled) {
+                    logger.debug("Cache set for single key [{}]", key);
+                }
             } else if (driver.isCacheNullObject()) { // 缓存null对象
                 driver.addToCache(key, createNullObject());
+                if (isDebugEnabled) {
+                    logger.debug("Cache add for single key [{}]", key);
+                }
             }
         } else {
             statsCounter.recordHits(1);
             if (isDebugEnabled) {
-                logger.debug("[single] cache hit #key={}", key);
+                logger.debug("Cache hit for single key [{}]", key);
             }
             if (isNullObject(value)) {
                 value = null;

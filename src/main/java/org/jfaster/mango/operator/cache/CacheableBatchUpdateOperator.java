@@ -66,7 +66,7 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
         }
         int[] ints = executeDb(groupMap, t);
         if (logger.isDebugEnabled()) {
-            logger.debug("cache delete #keys={}", keys);
+            logger.debug("Cache delete for multiple keys {}", keys);
         }
         driver.deleteFromCache(keys);
         statsCounter.recordEviction(keys.size());

@@ -83,16 +83,18 @@ public class JdbcTemplate implements JdbcOperations {
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        Integer r = null;
-        Exception ee = null;
-
         try {
             boolean needGenerateKey = holder != null;
             ps = needGenerateKey ?
                     conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : // 生成自增key
                     conn.prepareStatement(sql); // 不生成自增key
             setValues(ps, args);
-            r = ps.executeUpdate();
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Executing \"{}\" {}", sql, args);
+            }
+
+            int r = ps.executeUpdate();
             if (needGenerateKey) { // 生成自增key
                 rs = ps.getGeneratedKeys();
                 if (!rs.next()) {
@@ -111,17 +113,8 @@ public class JdbcTemplate implements JdbcOperations {
             DataSourceUtils.releaseConnection(conn, dataSource);
             conn = null;
 
-            ee = e;
             throw getExceptionTranslator(dataSource).translate(sql, e);
         } finally {
-            if (logger.isDebugEnabled()) {
-                if (ee == null) { // 执行成功
-                    logger.debug("\"{}\" #args={} #result={}", sql, args, r);
-                } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
-                }
-            }
-
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, dataSource);
@@ -134,34 +127,27 @@ public class JdbcTemplate implements JdbcOperations {
 
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
-        int[] r = null;
-        Exception ee = null;
         try {
             ps = conn.prepareStatement(sql);
             setBatchValues(ps, batchArgs);
-            r = ps.executeBatch();
-            return r;
+
+            if (logger.isDebugEnabled()) {
+                List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
+                for (Object[] batchArg : batchArgs) {
+                    debugBatchArgs.add(Arrays.asList(batchArg));
+                }
+                logger.debug("Executing \"{}\" {}", sql, debugBatchArgs);
+            }
+
+            return ps.executeBatch();
         } catch (SQLException e) {
             JdbcUtils.closeStatement(ps);
             ps = null;
             DataSourceUtils.releaseConnection(conn, dataSource);
             conn = null;
 
-            ee = e;
             throw getExceptionTranslator(dataSource).translate(sql, e);
         } finally {
-            if (logger.isDebugEnabled()) {
-                List<List<Object>> debugBatchArgs = new ArrayList<List<Object>>(batchArgs.size());
-                for (Object[] batchArg : batchArgs) {
-                    debugBatchArgs.add(Arrays.asList(batchArg));
-                }
-                if (ee == null) { // 执行成功
-                    logger.debug("\"{}\" #args={} #result={}", sql, debugBatchArgs, r);
-                } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, debugBatchArgs, ee.getMessage());
-                }
-            }
-
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, dataSource);
         }
@@ -178,11 +164,15 @@ public class JdbcTemplate implements JdbcOperations {
             for (int i = 0; i < size; i++) {
                 String sql = sqls.get(i);
                 Object[] args = batchArgs.get(i);
-                Exception ee = null;
                 PreparedStatement ps = null;
                 try {
                     ps = conn.prepareStatement(sql);
                     setValues(ps, args);
+
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Executing \"{}\" {}", sql, args);
+                    }
+
                     r[i] = ps.executeUpdate();
                 } catch (SQLException e) {
                     JdbcUtils.closeStatement(ps);
@@ -190,17 +180,8 @@ public class JdbcTemplate implements JdbcOperations {
                     DataSourceUtils.releaseConnection(conn, dataSource);
                     conn = null;
 
-                    ee = e;
                     throw getExceptionTranslator(dataSource).translate(sql, e);
                 } finally {
-                    if (logger.isDebugEnabled()) {
-                        if (ee == null) {
-                            logger.debug("\"{}\" #args={} #result={}", sql, args, r[i]);
-                        } else {
-                            logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
-                        }
-                    }
-
                     JdbcUtils.closeStatement(ps);
                 }
             }
@@ -216,14 +197,16 @@ public class JdbcTemplate implements JdbcOperations {
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        T r = null;
-        Exception ee = null;
         try {
             ps = conn.prepareStatement(sql);
             setValues(ps, args);
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Executing \"{}\" {}", sql, args);
+            }
+
             rs = ps.executeQuery();
-            r = rse.extractData(rs);
-            return r;
+            return rse.extractData(rs);
         } catch (SQLException e) {
             JdbcUtils.closeResultSet(rs);
             rs = null;
@@ -232,17 +215,8 @@ public class JdbcTemplate implements JdbcOperations {
             DataSourceUtils.releaseConnection(conn, dataSource);
             conn = null;
 
-            ee = e;
             throw getExceptionTranslator(dataSource).translate(sql, e);
         } finally {
-            if (logger.isDebugEnabled()) {
-                if (ee == null) { // 执行成功
-                    logger.debug("\"{}\" #args={} #result={}", sql, args, r);
-                } else {
-                    logger.debug("[error] \"{}\" #args={} #errorMsg=[{}]", sql, args, ee.getMessage());
-                }
-            }
-
             JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, dataSource);

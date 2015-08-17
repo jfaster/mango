@@ -256,7 +256,7 @@ public class Mango {
                 new CacheLoader<Method, Operator>() {
                     public Operator load(Method method) {
                         if (logger.isInfoEnabled()) {
-                            logger.info("initializing operator for {}", ToStringHelper.toString(method));
+                            logger.info("Initializing operator for {}", ToStringHelper.toString(method));
                         }
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
@@ -279,13 +279,10 @@ public class Mango {
         @Override
         protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
             if (logger.isDebugEnabled()) {
-                logger.debug("{} #args={}", ToStringHelper.toString(method), args);
+                logger.debug("Invoking {}", ToStringHelper.toString(method));
             }
             Operator operator = getOperator(method);
             Object r = operator.execute(args);
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} #result={}", ToStringHelper.toString(method), r);
-            }
             return r;
         }
 
