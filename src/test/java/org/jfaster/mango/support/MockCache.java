@@ -62,6 +62,11 @@ public class MockCache implements Annotation, Cache {
     }
 
     @Override
+    public boolean cacheEmptyList() {
+        return true;
+    }
+
+    @Override
     public Class<? extends Annotation> annotationType() {
         throw new UnsupportedOperationException();
     }

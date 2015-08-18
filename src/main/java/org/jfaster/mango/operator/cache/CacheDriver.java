@@ -72,6 +72,11 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     private boolean cacheNullObject;
 
     /**
+     * 是否缓存数据库中的空列表
+     */
+    private boolean cacheEmptyList;
+
+    /**
      * cacheBy相关信息
      */
     private List<CacheByItem> cacheByItems = new ArrayList<CacheByItem>();
@@ -104,6 +109,11 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
+    public boolean isCacheEmptyList() {
+        return cacheEmptyList;
+    }
+
+    @Override
     public void setToCache(String key, Object value) {
         cacheHandler.set(key, value, cacheExpire.getExpireTime() * expireNum);
     }
@@ -125,6 +135,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         }
     }
 
+    @Nullable
     @Override
     public Object getFromCache(String key) {
         Object value = cacheHandler.get(key);
@@ -235,6 +246,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                 cacheExpire = Reflection.instantiate(cacheAnno.expire());
                 expireNum = cacheAnno.num();
                 cacheNullObject = cacheAnno.cacheNullObject();
+                cacheEmptyList = cacheAnno.cacheEmptyList();
                 checkCacheBy(rootNode, cacheByItems);
             } else {
                 if (cacheByNum > 0) {

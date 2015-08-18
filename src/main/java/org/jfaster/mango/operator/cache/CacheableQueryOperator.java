@@ -182,9 +182,11 @@ public class CacheableQueryOperator extends QueryOperator {
             }
             value = execute(context);
             if (value != null) {
-                driver.setToCache(key, value);
-                if (isDebugEnabled) {
-                    logger.debug("Cache set for single key [{}]", key);
+                if (driver.isCacheEmptyList() || isNotEmptyList(value)) {
+                    driver.setToCache(key, value);
+                    if (isDebugEnabled) {
+                        logger.debug("Cache set for single key [{}]", key);
+                    }
                 }
             } else if (driver.isCacheNullObject()) { // 缓存null对象
                 driver.addToCache(key, createNullObject());
@@ -202,6 +204,11 @@ public class CacheableQueryOperator extends QueryOperator {
             }
         }
         return value;
+    }
+
+    private boolean isNotEmptyList(Object value) {
+        Iterables iterables = new Iterables(value);
+        return !(iterables.isIterable() && iterables.isEmpty());
     }
 
     private NullObject createNullObject() {

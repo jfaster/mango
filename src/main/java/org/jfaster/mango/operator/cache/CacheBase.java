@@ -36,6 +36,11 @@ public interface CacheBase {
     public boolean isCacheNullObject();
 
     /**
+     * 是否缓存数据库中的空列表
+     */
+    public boolean isCacheEmptyList();
+
+    /**
      * 存入缓存
      */
     public void setToCache(String key, Object value);

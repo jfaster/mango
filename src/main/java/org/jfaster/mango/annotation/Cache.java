@@ -58,4 +58,11 @@ public @interface Cache {
      */
     boolean cacheNullObject() default false;
 
+    /**
+     * 是否缓存空列表
+     *
+     * @return
+     */
+    boolean cacheEmptyList() default true;
+
 }
