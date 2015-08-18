@@ -54,10 +54,8 @@ public class CacheNullObjectTest {
     public void before() throws Exception {
         Connection conn = ds.getConnection();
         Table.USER.load(conn);
-        Table.MSG.load(conn);
         conn.close();
     }
-
 
     @Test
     public void testSingleKey() throws Exception {

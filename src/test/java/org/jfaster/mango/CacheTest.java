@@ -208,6 +208,40 @@ public class CacheTest {
         assertThat(actual, contains(msgs.toArray()));
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSingleKeyReturnList2() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        List<Msg> msgs = new ArrayList<Msg>();
+        MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+        int uid = 100;
+        String key = getMsgKey(uid);
+
+        List<Msg> actual = dao.getMsgs(uid);
+        assertThat(actual, hasSize(0));
+        List<Msg> cacheActual = (List<Msg>) cacheHandler.get(key);
+        assertThat(cacheActual, hasSize(0));
+
+        Msg msg = createRandomMsg(uid);
+        msgs.add(msg);
+        msg.setId(dao.insert(msg));
+
+        actual = dao.getMsgs(uid);
+        assertThat(actual, hasSize(msgs.size()));
+        assertThat(actual, contains(msgs.toArray()));
+        cacheActual = (List<Msg>) cacheHandler.get(key);
+        assertThat(cacheActual, hasSize(msgs.size()));
+        assertThat(cacheActual, contains(msgs.toArray()));
+
+
+        msg = msgs.remove(0);
+        dao.delete(msg.getUid(), msg.getId());
+        actual = dao.getMsgs(uid);
+        assertThat(actual, hasSize(0));
+        cacheActual = (List<Msg>) cacheHandler.get(key);
+        assertThat(cacheActual, hasSize(0));
+    }
+
 
     @Test
     public void testUpdateWithInStatement() {
