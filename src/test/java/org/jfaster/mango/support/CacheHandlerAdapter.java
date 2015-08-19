@@ -47,7 +47,7 @@ public class CacheHandlerAdapter implements CacheHandler {
     }
 
     @Override
-    public void delete(Set<String> keys) {
+    public void batchDelete(Set<String> keys) {
         throw new UnsupportedOperationException();
     }
 

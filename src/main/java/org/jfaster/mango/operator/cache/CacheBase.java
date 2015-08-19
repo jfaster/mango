@@ -58,7 +58,7 @@ public interface CacheBase {
     /**
      * 从缓存删除多个key
      */
-    public void deleteFromCache(Set<String> keys);
+    public void batchDeleteFromCache(Set<String> keys);
 
     /**
      * 从缓存读取单个key

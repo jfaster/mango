@@ -26,6 +26,12 @@ public class StatsCounter {
 
     private volatile RealStatsCounter realStatsCounter = new RealStatsCounter();
 
+    private OperatorType operatorType;
+
+    public void setOperatorType(OperatorType operatorType) {
+        this.operatorType = operatorType;
+    }
+
     public void recordInit(long initTime) {
         final RealStatsCounter sc = realStatsCounter;
         sc.recordInit(initTime);
@@ -58,7 +64,7 @@ public class StatsCounter {
 
     public OperatorStats snapshot() {
         final RealStatsCounter sc = realStatsCounter;
-        return sc.snapshot();
+        return sc.snapshot(operatorType);
     }
 
     public synchronized void reset() {
@@ -125,8 +131,9 @@ public class StatsCounter {
             }
         }
 
-        public OperatorStats snapshot() {
+        public OperatorStats snapshot(OperatorType operatorType) {
             return new OperatorStats(
+                    operatorType,
                     initCount.sum(),
                     totalInitTime.sum(),
                     hitCount.sum(),

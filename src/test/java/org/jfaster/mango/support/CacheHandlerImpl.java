@@ -55,7 +55,7 @@ public class CacheHandlerImpl implements CacheHandler {
     }
 
     @Override
-    public void delete(Set<String> keys) {
+    public void batchDelete(Set<String> keys) {
         for (String key : keys) {
             delete(key);
         }

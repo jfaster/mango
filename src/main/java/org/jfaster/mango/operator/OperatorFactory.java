@@ -23,6 +23,7 @@ import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.exception.IncorrectSqlException;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
+import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
@@ -50,15 +51,17 @@ public class OperatorFactory {
     private final DataSourceFactory dataSourceFactory;
     private final CacheHandler cacheHandler;
     private final InterceptorChain interceptorChain;
+    private final JdbcOperations jdbcOperations;
 
     public OperatorFactory(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
-                           InterceptorChain interceptorChain) {
+                           InterceptorChain interceptorChain, JdbcOperations jdbcOperations) {
         this.dataSourceFactory = dataSourceFactory;
         this.cacheHandler = cacheHandler;
         this.interceptorChain = interceptorChain;
+        this.jdbcOperations = jdbcOperations;
     }
 
-    public Operator getOperator(MethodDescriptor md)  {
+    public Operator getOperator(MethodDescriptor md, StatsCounter statsCounter)  {
         SQL sqlAnno = md.getAnnotation(SQL.class);
         if (sqlAnno == null) {
             throw new IllegalStateException("each method expected one @SQL annotation " +
@@ -88,6 +91,7 @@ public class OperatorFactory {
 
         NameProvider nameProvider = new NameProvider(md.getParameterDescriptors());
         ParameterContext context = new ParameterContext(md.getParameterDescriptors(), nameProvider, operatorType);
+        statsCounter.setOperatorType(operatorType);
 
         rootNode.expandParameter(context); // 扩展简化的参数节点
         rootNode.checkAndBind(context); // 绑定GetterInvoker
@@ -107,7 +111,7 @@ public class OperatorFactory {
         Cache cacheAnno = md.getAnnotation(Cache.class);
         boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
         if (useCache) {
-            CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, nameProvider);
+            CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, nameProvider, statsCounter);
             switch (operatorType) {
                 case QUERY:
                     operator = new CacheableQueryOperator(rootNode, md, driver);
@@ -143,6 +147,8 @@ public class OperatorFactory {
         operator.setDataSourceGenerator(dataSourceGenerator);
         operator.setInvocationContextFactory(new InvocationContextFactory(nameProvider));
         operator.setInvocationInterceptorChain(chain);
+        operator.setJdbcOperations(jdbcOperations);
+        operator.setStatsCounter(statsCounter);
         return operator;
     }
 

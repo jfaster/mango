@@ -25,6 +25,7 @@ import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.NameProvider;
 import org.jfaster.mango.operator.ParameterContext;
+import org.jfaster.mango.operator.StatsCounter;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -50,6 +51,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     private CacheHandler cacheHandler;
 
     private NameProvider nameProvider;
+
+    private StatsCounter statsCounter;
 
     /**
      * 缓存key前缀
@@ -92,9 +95,10 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     private String propertyOfMapper;
 
     public CacheDriver(MethodDescriptor md, ASTRootNode rootNode, CacheHandler cacheHandler,
-                           ParameterContext context, NameProvider nameProvider) {
+                           ParameterContext context, NameProvider nameProvider, StatsCounter statsCounter) {
         this.cacheHandler = cacheHandler;
         this.nameProvider = nameProvider;
+        this.statsCounter = statsCounter;
         init(md, rootNode, context);
     }
 
@@ -129,9 +133,9 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
-    public void deleteFromCache(Set<String> keys) {
+    public void batchDeleteFromCache(Set<String> keys) {
         if (keys.size() > 0) {
-            cacheHandler.delete(keys);
+            cacheHandler.batchDelete(keys);
         }
     }
 

@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 public class OperatorStats {
 
     private Method method;
+    OperatorType type;
     private final long initCount;
     private final long totalInitTime;
     private final long hitCount;
@@ -35,9 +36,10 @@ public class OperatorStats {
     private final long totalExecuteTime;
     private final long evictionCount;
 
-    public OperatorStats(long initCount, long totalInitTime, long hitCount, long missCount,
-                         long executeSuccessCount, long executeExceptionCount,
-                         long totalExecuteTime, long evictionCount) {
+    public OperatorStats(OperatorType type, long initCount, long totalInitTime,
+                         long hitCount, long missCount, long executeSuccessCount,
+                         long executeExceptionCount, long totalExecuteTime, long evictionCount) {
+        this.type = type;
         this.initCount = initCount;
         this.totalInitTime = totalInitTime;
         this.hitCount = hitCount;
@@ -62,6 +64,10 @@ public class OperatorStats {
 
     public String getClassSimpleName() {
         return method.getDeclaringClass().getSimpleName();
+    }
+
+    public OperatorType getType() {
+        return type;
     }
 
     /**

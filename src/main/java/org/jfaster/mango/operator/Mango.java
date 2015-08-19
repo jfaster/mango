@@ -247,7 +247,6 @@ public class Mango {
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
-        private final JdbcOperations jdbcOperations;
         private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
         private final OperatorFactory operatorFactory;
         private final ParameterNameDiscover parameterNameDiscover;
@@ -261,18 +260,16 @@ public class Mango {
                         StatsCounter statsCounter = getStatusCounter(method);
                         long now = System.nanoTime();
                         MethodDescriptor md = Methods.getMethodDescriptor(method, parameterNameDiscover);
-                        Operator operator = operatorFactory.getOperator(md);
-                        operator.setJdbcOperations(jdbcOperations);
-                        operator.setStatsCounter(statsCounter);
+                        Operator operator = operatorFactory.getOperator(md, statsCounter);
                         statsCounter.recordInit(System.nanoTime() - now);
                         return operator;
                     }
                 });
 
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
-            jdbcOperations = mango.jdbcOperations;
             statsCounterMap = mango.statsCounterMap;
-            operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler, mango.interceptorChain);
+            operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
+                    mango.interceptorChain, mango.jdbcOperations);
             parameterNameDiscover = mango.parameterNameDiscover;
         }
 
@@ -290,6 +287,9 @@ public class Mango {
             return cache.get(method);
         }
 
+        /**
+         * 一个mango对象可能会创建多个相同的dao，这里多个相同的dao使用同一个StatsCounter
+         */
         private StatsCounter getStatusCounter(Method method) {
             StatsCounter statsCounter = statsCounterMap.get(method);
             if (statsCounter == null) {

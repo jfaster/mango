@@ -81,7 +81,7 @@ public class CacheableUpdateOperatorTest {
         String srcSql = "update user set name=ash where id in (:1)";
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public void delete(Set<String> keys) {
+            public void batchDelete(Set<String> keys) {
                 Set<String> set = new HashSet<String>();
                 set.add("user_100");
                 set.add("user_200");
@@ -123,9 +123,9 @@ public class CacheableUpdateOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain());
+                new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain(), null);
 
-        Operator operator = factory.getOperator(md);
+        Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;
     }
 
