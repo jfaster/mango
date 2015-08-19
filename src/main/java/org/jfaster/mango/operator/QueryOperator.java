@@ -101,9 +101,9 @@ public class QueryOperator extends AbstractOperator {
         } finally {
             long cost = System.nanoTime() - now;
             if (success) {
-                statsCounter.recordExecuteSuccess(cost);
+                statsCounter.recordDatabaseExecuteSuccess(cost);
             } else {
-                statsCounter.recordExecuteException(cost);
+                statsCounter.recordDatabaseExecuteException(cost);
             }
         }
         return r;

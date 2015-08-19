@@ -102,9 +102,9 @@ public class BatchUpdateOperator extends AbstractOperator {
         } finally {
             long cost = System.nanoTime() - now;
             if (t == groupMap.entrySet().size()) {
-                statsCounter.recordExecuteSuccess(cost);
+                statsCounter.recordDatabaseExecuteSuccess(cost);
             } else {
-                statsCounter.recordExecuteException(cost);
+                statsCounter.recordDatabaseExecuteException(cost);
             }
         }
         return r;

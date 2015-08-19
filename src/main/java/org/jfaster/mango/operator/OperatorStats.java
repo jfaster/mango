@@ -26,28 +26,127 @@ import java.lang.reflect.Method;
 public class OperatorStats {
 
     private Method method;
-    OperatorType type;
+
+    /**
+     * query or update or batchupdate
+     */
+    private final OperatorType type;
+
+    /**
+     * 初始化统计
+     */
     private final long initCount;
     private final long totalInitTime;
+
+    /**
+     * 数据库执行统计
+     */
+    private final long databaseExecuteSuccessCount;
+    private final long databaseExecuteExceptionCount;
+    private final long totalDatabaseExecuteTime;
+
+    /**
+     * 缓存命中统计
+     */
     private final long hitCount;
     private final long missCount;
-    private final long executeSuccessCount;
-    private final long executeExceptionCount;
-    private final long totalExecuteTime;
-    private final long evictionCount;
 
-    public OperatorStats(OperatorType type, long initCount, long totalInitTime,
-                         long hitCount, long missCount, long executeSuccessCount,
-                         long executeExceptionCount, long totalExecuteTime, long evictionCount) {
+    /**
+     * 缓存get统计
+     */
+    private final long cacheGetSuccessCount;
+    private final long cacheGetExceptionCount;
+    private final long totalCacheGetTime;
+
+    /**
+     * 缓存getBulk统计
+     */
+    private final long cacheGetBulkSuccessCount;
+    private final long cacheGetBulkExceptionCount;
+    private final long totalCacheGetBulkTime;
+
+    /**
+     * 缓存set统计
+     */
+    private final long cacheSetSuccessCount;
+    private final long cacheSetExceptionCount;
+    private final long totalCacheSetTime;
+
+    /**
+     * 缓存add统计
+     */
+    private final long cacheAddSuccessCount;
+    private final long cacheAddExceptionCount;
+    private final long totalCacheAddTime;
+
+    /**
+     * 缓存delete统计
+     */
+    private final long cacheDeleteSuccessCount;
+    private final long cacheDeleteExceptionCount;
+    private final long totalCacheDeleteTime;
+
+    /**
+     * 缓存batchDelete统计
+     */
+    private final long cacheBatchDeleteSuccessCount;
+    private final long cacheBatchDeleteExceptionCount;
+    private final long totalCacheBatchDeleteTime;
+
+
+    public OperatorStats(
+            OperatorType type,
+            long initCount,
+            long totalInitTime,
+            long databaseExecuteSuccessCount,
+            long databaseExecuteExceptionCount,
+            long totalDatabaseExecuteTime,
+            long hitCount,
+            long missCount,
+            long cacheGetSuccessCount,
+            long cacheGetExceptionCount,
+            long totalCacheGetTime,
+            long cacheGetBulkSuccessCount,
+            long cacheGetBulkExceptionCount,
+            long totalCacheGetBulkTime,
+            long cacheSetSuccessCount,
+            long cacheSetExceptionCount,
+            long totalCacheSetTime,
+            long cacheAddSuccessCount,
+            long cacheAddExceptionCount,
+            long totalCacheAddTime,
+            long cacheDeleteSuccessCount,
+            long cacheDeleteExceptionCount,
+            long totalCacheDeleteTime,
+            long cacheBatchDeleteSuccessCount,
+            long cacheBatchDeleteExceptionCount,
+            long totalCacheBatchDeleteTime) {
         this.type = type;
         this.initCount = initCount;
         this.totalInitTime = totalInitTime;
+        this.databaseExecuteSuccessCount = databaseExecuteSuccessCount;
+        this.databaseExecuteExceptionCount = databaseExecuteExceptionCount;
+        this.totalDatabaseExecuteTime = totalDatabaseExecuteTime;
         this.hitCount = hitCount;
         this.missCount = missCount;
-        this.executeSuccessCount = executeSuccessCount;
-        this.executeExceptionCount = executeExceptionCount;
-        this.totalExecuteTime = totalExecuteTime;
-        this.evictionCount = evictionCount;
+        this.cacheGetSuccessCount = cacheGetSuccessCount;
+        this.cacheGetExceptionCount = cacheGetExceptionCount;
+        this.totalCacheGetTime = totalCacheGetTime;
+        this.cacheGetBulkSuccessCount = cacheGetBulkSuccessCount;
+        this.cacheGetBulkExceptionCount = cacheGetBulkExceptionCount;
+        this.totalCacheGetBulkTime = totalCacheGetBulkTime;
+        this.cacheSetSuccessCount = cacheSetSuccessCount;
+        this.cacheSetExceptionCount = cacheSetExceptionCount;
+        this.totalCacheSetTime = totalCacheSetTime;
+        this.cacheAddSuccessCount = cacheAddSuccessCount;
+        this.cacheAddExceptionCount = cacheAddExceptionCount;
+        this.totalCacheAddTime = totalCacheAddTime;
+        this.cacheDeleteSuccessCount = cacheDeleteSuccessCount;
+        this.cacheDeleteExceptionCount = cacheDeleteExceptionCount;
+        this.totalCacheDeleteTime = totalCacheDeleteTime;
+        this.cacheBatchDeleteSuccessCount = cacheBatchDeleteSuccessCount;
+        this.cacheBatchDeleteExceptionCount = cacheBatchDeleteExceptionCount;
+        this.totalCacheBatchDeleteTime = totalCacheBatchDeleteTime;
     }
 
     public String getMethodName() {
@@ -70,129 +169,104 @@ public class OperatorStats {
         return type;
     }
 
-    /**
-     * 返回平均初始化时间，单位为纳秒
-     */
-    public long getAverageInitPenalty() {
-        return (initCount == 0)
-                ? 0
-                : totalInitTime / initCount;
-    }
-
-    /**
-     * 初始化次数
-     */
     public long getInitCount() {
         return initCount;
     }
 
-    /**
-     * 初始化总时间，单位为纳秒
-     */
     public long getTotalInitTime() {
         return totalInitTime;
     }
 
-    /**
-     * 返回缓存命中数加缓存丢失数
-     */
-    public long getRequestCount() {
-        return hitCount + missCount;
+    public long getDatabaseExecuteSuccessCount() {
+        return databaseExecuteSuccessCount;
     }
 
-    /**
-     * 返回缓存命中数
-     */
+    public long getDatabaseExecuteExceptionCount() {
+        return databaseExecuteExceptionCount;
+    }
+
+    public long getTotalDatabaseExecuteTime() {
+        return totalDatabaseExecuteTime;
+    }
+
     public long getHitCount() {
         return hitCount;
     }
 
-    /**
-     * 返回缓存命中率
-     */
-    public double getHitRate() {
-        long requestCount = getRequestCount();
-        return (requestCount == 0) ? 1.0 : (double) hitCount / requestCount;
-    }
-
-    /**
-     * 返回缓存丢失数
-     */
     public long getMissCount() {
         return missCount;
     }
 
-    /**
-     * 返回缓存丢失率
-     */
-    public double getMissRate() {
-        long requestCount = getRequestCount();
-        return (requestCount == 0) ? 0.0 : (double) missCount / requestCount;
+    public long getCacheGetSuccessCount() {
+        return cacheGetSuccessCount;
     }
 
-    /**
-     * 返回db执行总数
-     */
-    public long getExecuteCount() {
-        return executeSuccessCount + executeExceptionCount;
+    public long getCacheGetExceptionCount() {
+        return cacheGetExceptionCount;
     }
 
-    /**
-     * 返回db执行成功数
-     */
-    public long getExecuteSuccessCount() {
-        return executeSuccessCount;
+    public long getTotalCacheGetTime() {
+        return totalCacheGetTime;
     }
 
-    /**
-     * 返回db执行成功率
-     */
-    public double getExecuteSuccessRate() {
-        long totalExecuteCount = executeSuccessCount + executeExceptionCount;
-        return (totalExecuteCount == 0)
-                ? 1.0
-                : (double) executeSuccessCount / totalExecuteCount;
+    public long getCacheGetBulkSuccessCount() {
+        return cacheGetBulkSuccessCount;
     }
 
-    /**
-     * 返回db执行失败数
-     */
-    public long getExecuteExceptionCount() {
-        return executeExceptionCount;
+    public long getCacheGetBulkExceptionCount() {
+        return cacheGetBulkExceptionCount;
     }
 
-    /**
-     * 返回db执行失败率
-     */
-    public double getExecuteExceptionRate() {
-        long totalExecuteCount = executeSuccessCount + executeExceptionCount;
-        return (totalExecuteCount == 0)
-                ? 0.0
-                : (double) executeExceptionCount / totalExecuteCount;
+    public long getTotalCacheGetBulkTime() {
+        return totalCacheGetBulkTime;
     }
 
-    /**
-     * 返回db执行总时间，单位为纳秒
-     */
-    public long getTotalExecuteTime() {
-        return totalExecuteTime;
+    public long getCacheSetSuccessCount() {
+        return cacheSetSuccessCount;
     }
 
-    /**
-     * 返回平均每次db执行时间，单位为纳秒
-     */
-    public long getAverageExecutePenalty() {
-        long totalExecuteCount = executeSuccessCount + executeExceptionCount;
-        return (totalExecuteCount == 0)
-                ? 0
-                : totalExecuteTime / totalExecuteCount;
+    public long getCacheSetExceptionCount() {
+        return cacheSetExceptionCount;
     }
 
-    /**
-     * 删除cache数
-     */
-    public long getEvictionCount() {
-        return evictionCount;
+    public long getTotalCacheSetTime() {
+        return totalCacheSetTime;
+    }
+
+    public long getCacheAddSuccessCount() {
+        return cacheAddSuccessCount;
+    }
+
+    public long getCacheAddExceptionCount() {
+        return cacheAddExceptionCount;
+    }
+
+    public long getTotalCacheAddTime() {
+        return totalCacheAddTime;
+    }
+
+    public long getCacheDeleteSuccessCount() {
+        return cacheDeleteSuccessCount;
+    }
+
+    public long getCacheDeleteExceptionCount() {
+        return cacheDeleteExceptionCount;
+    }
+
+    public long getTotalCacheDeleteTime() {
+        return totalCacheDeleteTime;
+    }
+
+    public long getCacheBatchDeleteSuccessCount() {
+        return cacheBatchDeleteSuccessCount;
+    }
+
+    public long getCacheBatchDeleteExceptionCount() {
+        return cacheBatchDeleteExceptionCount;
+    }
+
+    public long getTotalCacheBatchDeleteTime() {
+        return totalCacheBatchDeleteTime;
     }
 
     void setMethod(Method method) {

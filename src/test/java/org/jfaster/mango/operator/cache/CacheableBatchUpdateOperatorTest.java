@@ -46,6 +46,7 @@ public class CacheableBatchUpdateOperatorTest {
         TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
         TypeToken<int[]> rt = TypeToken.of(int[].class);
         String srcSql = "update user set name=:1.name where id=:1.id";
+        StatsCounter sc = new StatsCounter();
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public void batchDelete(Set<String> keys) {
@@ -54,11 +55,9 @@ public class CacheableBatchUpdateOperatorTest {
                 set.add("user_200");
                 assertThat(keys, equalTo(set));
             }
-        }, new MockCacheBy("id"));
+        }, new MockCacheBy("id"), sc);
 
         final int[] expectedInts = new int[] {1, 2};
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
@@ -75,11 +74,11 @@ public class CacheableBatchUpdateOperatorTest {
         List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
         int[] actualInts = (int[]) operator.execute(new Object[]{users});
         assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
-        assertThat(sc.snapshot().getEvictionCount(), equalTo(2L));
+        assertThat(sc.snapshot().getCacheBatchDeleteSuccessCount(), equalTo(1L));
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
-                                 CacheHandler ch, MockCacheBy cacheBy) throws Exception {
+                                 CacheHandler ch, MockCacheBy cacheBy, StatsCounter sc) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
         pAnnos.add(cacheBy);
         ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pAnnos, "1");
@@ -95,7 +94,7 @@ public class CacheableBatchUpdateOperatorTest {
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain(), null);
 
-        Operator operator = factory.getOperator(md, new StatsCounter());
+        Operator operator = factory.getOperator(md, sc);
         return operator;
     }
 

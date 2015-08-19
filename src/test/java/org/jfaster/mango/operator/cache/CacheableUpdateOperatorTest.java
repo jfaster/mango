@@ -46,15 +46,16 @@ public class CacheableUpdateOperatorTest {
         TypeToken<User> pt = TypeToken.of(User.class);
         TypeToken<Integer> rt = TypeToken.of(int.class);
         String srcSql = "update user set name=:1.name where id=:1.id";
+
+        StatsCounter sc = new StatsCounter();
+
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public void delete(String key) {
                 assertThat(key, equalTo("user_100"));
             }
-        }, new MockCacheBy("id"));
+        }, new MockCacheBy("id"), sc);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public int update(DataSource ds, String sql, Object[] args) {
@@ -71,7 +72,7 @@ public class CacheableUpdateOperatorTest {
         user.setId(100);
         user.setName("ash");
         operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().getEvictionCount(), equalTo(1L));
+        assertThat(sc.snapshot().getCacheDeleteSuccessCount(), equalTo(1L));
     }
 
     @Test
@@ -79,6 +80,8 @@ public class CacheableUpdateOperatorTest {
         TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
         TypeToken<Integer> rt = TypeToken.of(int.class);
         String srcSql = "update user set name=ash where id in (:1)";
+        StatsCounter sc = new StatsCounter();
+
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public void batchDelete(Set<String> keys) {
@@ -87,10 +90,8 @@ public class CacheableUpdateOperatorTest {
                 set.add("user_200");
                 assertThat(keys, equalTo(set));
             }
-        }, new MockCacheBy(""));
+        }, new MockCacheBy(""), sc);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public int update(DataSource ds, String sql, Object[] args) {
@@ -105,11 +106,11 @@ public class CacheableUpdateOperatorTest {
 
         List<Integer> ids = Arrays.asList(100, 200);
         operator.execute(new Object[]{ids});
-        assertThat(sc.snapshot().getEvictionCount(), equalTo(2L));
+        assertThat(sc.snapshot().getCacheBatchDeleteSuccessCount(), equalTo(1L));
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
-                                 CacheHandler ch, MockCacheBy cacheBy) throws Exception {
+                                 CacheHandler ch, MockCacheBy cacheBy, StatsCounter sc) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
         pAnnos.add(cacheBy);
         ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pAnnos, "1");
@@ -125,7 +126,7 @@ public class CacheableUpdateOperatorTest {
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain(), null);
 
-        Operator operator = factory.getOperator(md, new StatsCounter());
+        Operator operator = factory.getOperator(md, sc);
         return operator;
     }
 

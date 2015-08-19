@@ -34,8 +34,8 @@ public interface CacheHandler {
 
     public void add(String key, Object value, int expires);
 
-    public void batchDelete(Set<String> keys);
-
     public void delete(String key);
+
+    public void batchDelete(Set<String> keys);
 
 }

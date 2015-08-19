@@ -59,14 +59,12 @@ public class CacheableUpdateOperator extends UpdateOperator {
                 logger.debug("Cache delete for multiple keys {}", keys);
             }
             driver.batchDeleteFromCache(keys);
-            statsCounter.recordEviction(keys.size());
         } else { // 单个key，例如：update table set name='ash' where id ＝ 1;
             String key = driver.getCacheKey(context);
             if (logger.isDebugEnabled()) {
                 logger.debug("Cache delete for single key [{}]", key);
             }
             driver.deleteFromCache(key);
-            statsCounter.recordEviction(1);
         }
         return r;
     }

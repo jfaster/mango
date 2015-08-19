@@ -222,21 +222,21 @@ public class BatchUpdateOperatorTest {
         });
         List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
         operator.execute(new Object[]{users});
-        assertThat(sc.snapshot().getExecuteSuccessCount(), equalTo(1L));
+        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
         operator.execute(new Object[]{users});
-        assertThat(sc.snapshot().getExecuteSuccessCount(), equalTo(2L));
+        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
 
         operator.setJdbcOperations(new JdbcOperationsAdapter());
         try {
             operator.execute(new Object[]{users});
         } catch (UnsupportedOperationException e) {
         }
-        assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(1L));
+        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
         try {
             operator.execute(new Object[]{users});
         } catch (UnsupportedOperationException e) {
         }
-        assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(2L));
+        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
     }
 
     @Rule

@@ -51,16 +51,16 @@ public class CacheableQueryOperatorTest {
         TypeToken<Integer> pt = TypeToken.of(Integer.class);
         TypeToken<User> rt = TypeToken.of(User.class);
         String srcSql = "select * from user where id=:1";
+        StatsCounter sc = new StatsCounter();
+
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Object get(String key) {
                 assertThat(key, Matchers.equalTo("user_1"));
                 return new User();
             }
-        }, new MockCacheBy(""));
+        }, new MockCacheBy(""), sc);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter());
 
         operator.execute(new Object[]{1});
@@ -72,6 +72,8 @@ public class CacheableQueryOperatorTest {
         TypeToken<Integer> pt = TypeToken.of(Integer.class);
         TypeToken<User> rt = TypeToken.of(User.class);
         String srcSql = "select * from user where id=:1";
+        StatsCounter sc = new StatsCounter();
+
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Object get(String key) {
@@ -84,10 +86,8 @@ public class CacheableQueryOperatorTest {
                 assertThat(key, Matchers.equalTo("user_1"));
                 assertThat(expires, Matchers.equalTo((int) TimeUnit.DAYS.toSeconds(1)));
             }
-        }, new MockCacheBy(""));
+        }, new MockCacheBy(""), sc);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
 
             @Override
@@ -109,6 +109,8 @@ public class CacheableQueryOperatorTest {
         TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
         TypeToken<List<User>> rt = new TypeToken<List<User>>() {};
         String srcSql = "select * from user where id in (:1)";
+        StatsCounter sc = new StatsCounter();
+
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Map<String, Object> getBulk(Set<String> keys) {
@@ -119,10 +121,8 @@ public class CacheableQueryOperatorTest {
                 assertThat(keys, Matchers.equalTo(map.keySet()));
                 return map;
             }
-        }, new MockCacheBy(""));
+        }, new MockCacheBy(""), sc);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter());
 
         operator.execute(new Object[]{Arrays.asList(1, 2, 3)});
@@ -140,6 +140,8 @@ public class CacheableQueryOperatorTest {
         keys.add("user_1");
         keys.add("user_2");
         keys.add("user_3");
+        StatsCounter sc = new StatsCounter();
+
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Map<String, Object> getBulk(Set<String> keys) {
@@ -150,10 +152,8 @@ public class CacheableQueryOperatorTest {
             public void set(String key, Object value, int expires) {
                 setKeys.add(key);
             }
-        }, new MockCacheBy(""));
+        }, new MockCacheBy(""), sc);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
@@ -188,6 +188,8 @@ public class CacheableQueryOperatorTest {
         keys.add("user_1");
         keys.add("user_2");
         keys.add("user_3");
+        StatsCounter sc = new StatsCounter();
+
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
             public Map<String, Object> getBulk(Set<String> keys) {
@@ -200,10 +202,8 @@ public class CacheableQueryOperatorTest {
             public void set(String key, Object value, int expires) {
                 setKeys.add(key);
             }
-        }, new MockCacheBy(""));
+        }, new MockCacheBy(""), sc);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
             public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
@@ -234,7 +234,7 @@ public class CacheableQueryOperatorTest {
         TypeToken<List<X>> rt = new TypeToken<List<X>>() {};
         String srcSql = "select * from user where msg_id in (:1)";
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
-        }, new MockCacheBy(""));
+        }, new MockCacheBy(""), new StatsCounter());
         assertThat(((CacheableQueryOperator) operator).propertyOfMapperInvoker.getName(), equalTo("msgId"));
     }
 
@@ -262,7 +262,7 @@ public class CacheableQueryOperatorTest {
 
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
-                                 CacheHandler ch, MockCacheBy cacheBy) throws Exception {
+                                 CacheHandler ch, MockCacheBy cacheBy, StatsCounter sc) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
         pAnnos.add(cacheBy);
         ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pAnnos, "1");
@@ -278,7 +278,7 @@ public class CacheableQueryOperatorTest {
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain(), null);
 
-        Operator operator = factory.getOperator(md, new StatsCounter());
+        Operator operator = factory.getOperator(md, sc);
         return operator;
     }
 

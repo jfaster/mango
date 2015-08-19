@@ -215,16 +215,15 @@ public class Mango {
             os.setMethod(method);
             oss.add(os);
         }
-
-        // 按照总执行次数从高到低排序
-        Collections.sort(oss, new Comparator<OperatorStats>() {
-            @Override
-            public int compare(OperatorStats o1, OperatorStats o2) {
-                long c1 = o1.getExecuteCount();
-                long c2 = o2.getExecuteCount();
-                return (c1 < c2) ? 1 : ((c1 > c2) ? -1 : 0);
-            }
-        });
+//        // 按照总执行次数从高到低排序
+//        Collections.sort(oss, new Comparator<OperatorStats>() {
+//            @Override
+//            public int compare(OperatorStats o1, OperatorStats o2) {
+//                long c1 = o1.getExecuteCount();
+//                long c2 = o2.getExecuteCount();
+//                return (c1 < c2) ? 1 : ((c1 > c2) ? -1 : 0);
+//            }
+//        });
         return oss;
     }
 

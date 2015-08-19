@@ -119,39 +119,111 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     @Override
     public void setToCache(String key, Object value) {
-        cacheHandler.set(key, value, cacheExpire.getExpireTime() * expireNum);
+        boolean success = false;
+        long now = System.nanoTime();
+        try {
+            cacheHandler.set(key, value, cacheExpire.getExpireTime() * expireNum);
+            success = true;
+        } finally {
+            long cost = System.nanoTime() - now;
+            if (success) {
+                statsCounter.recordCacheSetSuccess(cost);
+            } else {
+                statsCounter.recordCacheSetException(cost);
+            }
+        }
     }
 
     @Override
     public void addToCache(String key, Object value) {
-        cacheHandler.add(key, value, cacheExpire.getExpireTime() * expireNum);
+        boolean success = false;
+        long now = System.nanoTime();
+        try {
+            cacheHandler.add(key, value, cacheExpire.getExpireTime() * expireNum);
+            success = true;
+        } finally {
+            long cost = System.nanoTime() - now;
+            if (success) {
+                statsCounter.recordCacheAddSuccess(cost);
+            } else {
+                statsCounter.recordCacheAddException(cost);
+            }
+        }
     }
 
     @Override
     public void deleteFromCache(String key) {
-        cacheHandler.delete(key);
+        boolean success = false;
+        long now = System.nanoTime();
+        try {
+            cacheHandler.delete(key);
+            success = true;
+        } finally {
+            long cost = System.nanoTime() - now;
+            if (success) {
+                statsCounter.recordCacheDeleteSuccess(cost);
+            } else {
+                statsCounter.recordCacheDeleteException(cost);
+            }
+        }
     }
 
     @Override
     public void batchDeleteFromCache(Set<String> keys) {
         if (keys.size() > 0) {
-            cacheHandler.batchDelete(keys);
+            boolean success = false;
+            long now = System.nanoTime();
+            try {
+                cacheHandler.batchDelete(keys);
+                success = true;
+            } finally {
+                long cost = System.nanoTime() - now;
+                if (success) {
+                    statsCounter.recordCacheBatchDeleteSuccess(cost);
+                } else {
+                    statsCounter.recordCacheBatchDeleteException(cost);
+                }
+            }
         }
     }
 
     @Nullable
     @Override
     public Object getFromCache(String key) {
-        Object value = cacheHandler.get(key);
-        return value;
+        boolean success = false;
+        long now = System.nanoTime();
+        try {
+            Object value = cacheHandler.get(key);
+            success = true;
+            return value;
+        } finally {
+            long cost = System.nanoTime() - now;
+            if (success) {
+                statsCounter.recordCacheGetSuccess(cost);
+            } else {
+                statsCounter.recordCacheGetException(cost);
+            }
+        }
     }
 
     @Nullable
     @Override
     public Map<String, Object> getBulkFromCache(Set<String> keys) {
         if (keys.size() > 0) {
-            Map<String, Object> values = cacheHandler.getBulk(keys);
-            return values;
+            boolean success = false;
+            long now = System.nanoTime();
+            try {
+                Map<String, Object> values = cacheHandler.getBulk(keys);
+                success = true;
+                return values;
+            } finally {
+                long cost = System.nanoTime() - now;
+                if (success) {
+                    statsCounter.recordCacheGetSuccess(cost);
+                } else {
+                    statsCounter.recordCacheGetException(cost);
+                }
+            }
         }
         return null;
     }

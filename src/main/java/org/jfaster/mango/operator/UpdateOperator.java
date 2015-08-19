@@ -103,9 +103,9 @@ public class UpdateOperator extends AbstractOperator {
         } finally {
             long cost = System.nanoTime() - now;
             if (r != null) {
-                statsCounter.recordExecuteSuccess(cost);
+                statsCounter.recordDatabaseExecuteSuccess(cost);
             } else {
-                statsCounter.recordExecuteException(cost);
+                statsCounter.recordDatabaseExecuteException(cost);
             }
         }
         return r;

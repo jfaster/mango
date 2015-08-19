@@ -231,21 +231,21 @@ public class QueryOperatorTest {
             }
         });
         operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().getExecuteSuccessCount(), equalTo(1L));
+        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
         operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().getExecuteSuccessCount(), equalTo(2L));
+        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
 
         operator.setJdbcOperations(new JdbcOperationsAdapter());
         try {
             operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
-        assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(1L));
+        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
         try {
             operator.execute(new Object[]{user});
         } catch (UnsupportedOperationException e) {
         }
-        assertThat(sc.snapshot().getExecuteExceptionCount(), equalTo(2L));
+        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
     }
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
