@@ -177,6 +177,15 @@ public class OperatorStats {
         return totalInitTime;
     }
 
+    /**
+     * 返回平均初始化时间，单位为纳秒
+     */
+    public long getAverageInitPenalty() {
+        return (initCount == 0)
+                ? 0
+                : totalInitTime / initCount;
+    }
+
     public long getDatabaseExecuteSuccessCount() {
         return databaseExecuteSuccessCount;
     }
@@ -189,12 +198,57 @@ public class OperatorStats {
         return totalDatabaseExecuteTime;
     }
 
+    /**
+     * 返回db执行总数
+     */
+    public long getDatabaseExecuteCount() {
+        return databaseExecuteSuccessCount + databaseExecuteExceptionCount;
+    }
+
+    /**
+     * 返回db执行成功率
+     */
+    public double getDatabaseExecuteSuccessRate() {
+        long totalDatabaseExecuteCount = getDatabaseExecuteCount();
+        return (totalDatabaseExecuteCount == 0)
+                ? 1.0
+                : (double) databaseExecuteSuccessCount / totalDatabaseExecuteCount;
+    }
+
+    /**
+     * 返回db执行失败率
+     */
+    public double getDatabaseExecuteExceptionRate() {
+        long totalDatabaseExecuteCount = getDatabaseExecuteCount();
+        return (totalDatabaseExecuteCount == 0)
+                ? 0.0
+                : (double) databaseExecuteExceptionCount / totalDatabaseExecuteCount;
+    }
+
+    /**
+     * 返回平均每次db执行时间，单位为纳秒
+     */
+    public long getAverageDatabaseExecutePenalty() {
+        long totalDatabaseExecuteCount = getDatabaseExecuteCount();
+        return (totalDatabaseExecuteCount == 0)
+                ? 0
+                : totalDatabaseExecuteTime / totalDatabaseExecuteCount;
+    }
+
     public long getHitCount() {
         return hitCount;
     }
 
     public long getMissCount() {
         return missCount;
+    }
+
+    /**
+     * 返回缓存命中率
+     */
+    public double getHitRate() {
+        long requestCount = hitCount + missCount;
+        return (requestCount == 0) ? 1.0 : (double) hitCount / requestCount;
     }
 
     public long getCacheGetSuccessCount() {
@@ -209,6 +263,43 @@ public class OperatorStats {
         return totalCacheGetTime;
     }
 
+    /**
+     * 返回cache[get]执行总数
+     */
+    public long getCacheGetCount() {
+        return cacheGetSuccessCount + cacheGetExceptionCount;
+    }
+
+    /**
+     * 返回cache[get]执行成功率
+     */
+    public double getCacheGetSuccessRate() {
+        long totalCacheGetCount = getCacheGetCount();
+        return (totalCacheGetCount == 0)
+                ? 1.0
+                : (double) cacheGetSuccessCount / totalCacheGetCount;
+    }
+
+    /**
+     * 返回cache[get]执行失败率
+     */
+    public double getCacheGetExceptionRate() {
+        long totalCacheGetCount = getCacheGetCount();
+        return (totalCacheGetCount == 0)
+                ? 0.0
+                : (double) cacheGetExceptionCount / totalCacheGetCount;
+    }
+
+    /**
+     * 返回平均每次cache[get]执行时间，单位为纳秒
+     */
+    public long getAverageCacheGetPenalty() {
+        long totalCacheGetCount = getCacheGetCount();
+        return (totalCacheGetCount == 0)
+                ? 0
+                : totalCacheGetTime / totalCacheGetCount;
+    }
+
     public long getCacheGetBulkSuccessCount() {
         return cacheGetBulkSuccessCount;
     }
@@ -219,6 +310,43 @@ public class OperatorStats {
 
     public long getTotalCacheGetBulkTime() {
         return totalCacheGetBulkTime;
+    }
+
+    /**
+     * 返回cache[getBulk]执行总数
+     */
+    public long getCacheGetBulkCount() {
+        return cacheGetBulkSuccessCount + cacheGetBulkExceptionCount;
+    }
+
+    /**
+     * 返回cache[getBulk]执行成功率
+     */
+    public double getCacheGetBulkSuccessRate() {
+        long totalCacheGetBulkCount = getCacheGetBulkCount();
+        return (totalCacheGetBulkCount == 0)
+                ? 1.0
+                : (double) cacheGetBulkSuccessCount / totalCacheGetBulkCount;
+    }
+
+    /**
+     * 返回cache[getBulk]执行失败率
+     */
+    public double getCacheGetBulkExceptionRate() {
+        long totalCacheGetBulkCount = getCacheGetBulkCount();
+        return (totalCacheGetBulkCount == 0)
+                ? 0.0
+                : (double) cacheGetBulkExceptionCount / totalCacheGetBulkCount;
+    }
+
+    /**
+     * 返回平均每次cache[getBulk]执行时间，单位为纳秒
+     */
+    public long getAverageCacheGetBulkPenalty() {
+        long totalCacheGetBulkCount = getCacheGetBulkCount();
+        return (totalCacheGetBulkCount == 0)
+                ? 0
+                : totalCacheGetBulkTime / totalCacheGetBulkCount;
     }
 
     public long getCacheSetSuccessCount() {
@@ -233,6 +361,43 @@ public class OperatorStats {
         return totalCacheSetTime;
     }
 
+    /**
+     * 返回cache[set]执行总数
+     */
+    public long getCacheSetCount() {
+        return cacheSetSuccessCount + cacheSetExceptionCount;
+    }
+
+    /**
+     * 返回cache[set]执行成功率
+     */
+    public double getCacheSetSuccessRate() {
+        long totalCacheSetCount = getCacheSetCount();
+        return (totalCacheSetCount == 0)
+                ? 1.0
+                : (double) cacheSetSuccessCount / totalCacheSetCount;
+    }
+
+    /**
+     * 返回cache[set]执行失败率
+     */
+    public double getCacheSetExceptionRate() {
+        long totalCacheSetCount = getCacheSetCount();
+        return (totalCacheSetCount == 0)
+                ? 0.0
+                : (double) cacheSetExceptionCount / totalCacheSetCount;
+    }
+
+    /**
+     * 返回平均每次cache[set]执行时间，单位为纳秒
+     */
+    public long getAverageCacheSetPenalty() {
+        long totalCacheSetCount = getCacheSetCount();
+        return (totalCacheSetCount == 0)
+                ? 0
+                : totalCacheSetTime / totalCacheSetCount;
+    }
+
     public long getCacheAddSuccessCount() {
         return cacheAddSuccessCount;
     }
@@ -243,6 +408,43 @@ public class OperatorStats {
 
     public long getTotalCacheAddTime() {
         return totalCacheAddTime;
+    }
+
+    /**
+     * 返回cache[add]执行总数
+     */
+    public long getCacheAddCount() {
+        return cacheAddSuccessCount + cacheAddExceptionCount;
+    }
+
+    /**
+     * 返回cache[add]执行成功率
+     */
+    public double getCacheAddSuccessRate() {
+        long totalCacheAddCount = getCacheAddCount();
+        return (totalCacheAddCount == 0)
+                ? 1.0
+                : (double) cacheAddSuccessCount / totalCacheAddCount;
+    }
+
+    /**
+     * 返回cache[add]执行失败率
+     */
+    public double getCacheAddExceptionRate() {
+        long totalCacheAddCount = getCacheAddCount();
+        return (totalCacheAddCount == 0)
+                ? 0.0
+                : (double) cacheAddExceptionCount / totalCacheAddCount;
+    }
+
+    /**
+     * 返回平均每次cache[add]执行时间，单位为纳秒
+     */
+    public long getAverageCacheAddPenalty() {
+        long totalCacheAddCount = getCacheAddCount();
+        return (totalCacheAddCount == 0)
+                ? 0
+                : totalCacheAddTime / totalCacheAddCount;
     }
 
     public long getCacheDeleteSuccessCount() {
@@ -257,6 +459,43 @@ public class OperatorStats {
         return totalCacheDeleteTime;
     }
 
+    /**
+     * 返回cache[delete]执行总数
+     */
+    public long getCacheDeleteCount() {
+        return cacheDeleteSuccessCount + cacheDeleteExceptionCount;
+    }
+
+    /**
+     * 返回cache[delete]执行成功率
+     */
+    public double getCacheDeleteSuccessRate() {
+        long totalCacheDeleteCount = getCacheDeleteCount();
+        return (totalCacheDeleteCount == 0)
+                ? 1.0
+                : (double) cacheDeleteSuccessCount / totalCacheDeleteCount;
+    }
+
+    /**
+     * 返回cache[delete]执行失败率
+     */
+    public double getCacheDeleteExceptionRate() {
+        long totalCacheDeleteCount = getCacheDeleteCount();
+        return (totalCacheDeleteCount == 0)
+                ? 0.0
+                : (double) cacheDeleteExceptionCount / totalCacheDeleteCount;
+    }
+
+    /**
+     * 返回平均每次cache[delete]执行时间，单位为纳秒
+     */
+    public long getAverageCacheDeletePenalty() {
+        long totalCacheDeleteCount = getCacheDeleteCount();
+        return (totalCacheDeleteCount == 0)
+                ? 0
+                : totalCacheDeleteTime / totalCacheDeleteCount;
+    }
+
     public long getCacheBatchDeleteSuccessCount() {
         return cacheBatchDeleteSuccessCount;
     }
@@ -267,6 +506,43 @@ public class OperatorStats {
 
     public long getTotalCacheBatchDeleteTime() {
         return totalCacheBatchDeleteTime;
+    }
+
+    /**
+     * 返回cache[batchDelete]执行总数
+     */
+    public long getCacheBatchDeleteCount() {
+        return cacheBatchDeleteSuccessCount + cacheBatchDeleteExceptionCount;
+    }
+
+    /**
+     * 返回cache[batchDelete]执行成功率
+     */
+    public double getCacheBatchDeleteSuccessRate() {
+        long totalCacheBatchDeleteCount = getCacheBatchDeleteCount();
+        return (totalCacheBatchDeleteCount == 0)
+                ? 1.0
+                : (double) cacheBatchDeleteSuccessCount / totalCacheBatchDeleteCount;
+    }
+
+    /**
+     * 返回cache[batchDelete]执行失败率
+     */
+    public double getCacheBatchDeleteExceptionRate() {
+        long totalCacheBatchDeleteCount = getCacheBatchDeleteCount();
+        return (totalCacheBatchDeleteCount == 0)
+                ? 0.0
+                : (double) cacheBatchDeleteExceptionCount / totalCacheBatchDeleteCount;
+    }
+
+    /**
+     * 返回平均每次cache[batchDelete]执行时间，单位为纳秒
+     */
+    public long getAverageCacheBatchDeletePenalty() {
+        long totalCacheBatchDeleteCount = getCacheBatchDeleteCount();
+        return (totalCacheBatchDeleteCount == 0)
+                ? 0
+                : totalCacheBatchDeleteTime / totalCacheBatchDeleteCount;
     }
 
     void setMethod(Method method) {

@@ -15,39 +15,103 @@
     </div>
 </div>
 
-<table data-toggle="table" data-show-columns="true" data-toolbar="#custom-toolbar"
-       data-sort-name="executeCount" data-sort-order="desc">
+<table data-toggle="table" data-toolbar="#custom-toolbar"
+       data-sort-name="databaseExecuteCount" data-sort-order="desc">
     <thead>
     <tr>
         <th data-sortable="true">类</th>
         <th data-sortable="true">方法</th>
-        <th data-visible="false" data-sortable="true" data-sorter="intSorter">cache命中数</th>
-        <th data-visible="false" data-sortable="true" data-sorter="intSorter">cache丢失数</th>
-        <th data-visible="false" data-sortable="true" data-sorter="rateSorter">cache命中率</th>
-        <th data-visible="false" data-sortable="true" data-sorter="intSorter">cache剔除数量</th>
-        <th data-switchable="false" data-sortable="true" data-sorter="floatSorter">db平均速率(毫秒)</th>
-        <th data-field="executeCount" data-sortable="true" data-sorter="intSorter" data-switchable="false">db总次数</th>
-        <th data-switchable="false" data-sortable="true" data-sorter="intSorter">db失败次数</th>
-        <th data-switchable="false" data-sortable="true" data-sorter="rateSorter">db失败率</th>
-        <th data-visible="false" data-sortable="true" data-sorter="floatSorter">init速率(毫秒)</th>
-        <th data-visible="false" data-sortable="true" data-sorter="intSorter">init次数</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">db平均速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter" data-field="databaseExecuteCount">db总次数</th>
+        <th data-sortable="true" data-sorter="intSorter">db失败次数</th>
+        <th data-sortable="true" data-sorter="rateSorter">db失败率</th>
+
+        <th data-sortable="true" data-sorter="intSorter">cache命中数</th>
+        <th data-sortable="true" data-sorter="intSorter">cache丢失数</th>
+        <th data-sortable="true" data-sorter="rateSorter">cache命中率</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">cache[get]平均速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[get]总次数</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[get]失败次数</th>
+        <th data-sortable="true" data-sorter="rateSorter">cache[get]失败率</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">cache[getBulk]平均速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[getBulk]总次数</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[getBulk]失败次数</th>
+        <th data-sortable="true" data-sorter="rateSorter">cache[getBulk]失败率</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">cache[set]平均速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[set]总次数</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[set]失败次数</th>
+        <th data-sortable="true" data-sorter="rateSorter">cache[set]失败率</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">cache[add]平均速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[add]总次数</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[add]失败次数</th>
+        <th data-sortable="true" data-sorter="rateSorter">cache[add]失败率</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">cache[delete]平均速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[delete]总次数</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[delete]失败次数</th>
+        <th data-sortable="true" data-sorter="rateSorter">cache[delete]失败率</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">cache[batchDelete]平均速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[batchDelete]总次数</th>
+        <th data-sortable="true" data-sorter="intSorter">cache[batchDelete]失败次数</th>
+        <th data-sortable="true" data-sorter="rateSorter">cache[batchDelete]失败率</th>
+
+        <th data-sortable="true" data-sorter="floatSorter">init速率(毫秒)</th>
+        <th data-sortable="true" data-sorter="intSorter">init次数</th>
     </tr>
     </thead>
     <tbody>
 
     <#list mango.allStats as stats>
-        <#if (isFetchAll || stats.executeCount > 0 || stats.hitCount > 0)>
+        <#if (isFetchAll || stats.databaseExecuteCount > 0 || stats.hitCount > 0)>
             <tr>
                 <td>${stats.classSimpleName}</td>
                 <td>${stats.methodNameWithParameterNum}</td>
+
+                <td>${(stats.averageDatabaseExecutePenalty / 1000000)?string('0.0')}</td>
+                <td>${stats.databaseExecuteCount?c}</td>
+                <td>${stats.databaseExecuteExceptionCount?c}</td>
+                <td>${(stats.databaseExecuteExceptionRate * 100)?string('0.0')}%</td>
+
                 <td>${stats.hitCount?c}</td>
                 <td>${stats.missCount?c}</td>
                 <td>${(stats.hitRate * 100)?string('0.0')}%</td>
-                <td>${stats.evictionCount?c}</td>
-                <td>${(stats.averageExecutePenalty / 1000000)?string('0.0')}</td>
-                <td>${stats.executeCount?c}</td>
-                <td>${stats.executeExceptionCount?c}</td>
-                <td>${(stats.executeExceptionRate * 100)?string('0.0')}%</td>
+
+                <td>${(stats.averageCacheGetPenalty / 1000000)?string('0.0')}</td>
+                <td>${stats.cacheGetCount?c}</td>
+                <td>${stats.cacheGetExceptionCount?c}</td>
+                <td>${(stats.cacheGetExceptionRate * 100)?string('0.0')}%</td>
+
+                <td>${(stats.averageCacheGetBulkPenalty / 1000000)?string('0.0')}</td>
+                <td>${stats.cacheGetBulkCount?c}</td>
+                <td>${stats.cacheGetBulkExceptionCount?c}</td>
+                <td>${(stats.cacheGetBulkExceptionRate * 100)?string('0.0')}%</td>
+
+                <td>${(stats.averageCacheSetPenalty / 1000000)?string('0.0')}</td>
+                <td>${stats.cacheSetCount?c}</td>
+                <td>${stats.cacheSetExceptionCount?c}</td>
+                <td>${(stats.cacheSetExceptionRate * 100)?string('0.0')}%</td>
+
+                <td>${(stats.averageCacheAddPenalty / 1000000)?string('0.0')}</td>
+                <td>${stats.cacheAddCount?c}</td>
+                <td>${stats.cacheAddExceptionCount?c}</td>
+                <td>${(stats.cacheAddExceptionRate * 100)?string('0.0')}%</td>
+
+                <td>${(stats.averageCacheDeletePenalty / 1000000)?string('0.0')}</td>
+                <td>${stats.cacheDeleteCount?c}</td>
+                <td>${stats.cacheDeleteExceptionCount?c}</td>
+                <td>${(stats.cacheDeleteExceptionRate * 100)?string('0.0')}%</td>
+
+                <td>${(stats.averageCacheBatchDeletePenalty / 1000000)?string('0.0')}</td>
+                <td>${stats.cacheBatchDeleteCount?c}</td>
+                <td>${stats.cacheBatchDeleteExceptionCount?c}</td>
+                <td>${(stats.cacheBatchDeleteExceptionRate * 100)?string('0.0')}%</td>
+
                 <td>${(stats.averageInitPenalty / 1000000)?string('0.0')}</td>
                 <td>${stats.initCount?c}</td>
             </tr>

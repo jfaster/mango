@@ -32,7 +32,7 @@ public class HttpServer {
         server.setHandler(context);
 
         ServletHolder servlet = new ServletHolder(new MangoStatsServlet());
-        servlet.setInitParameter("key", "9527");
+        //servlet.setInitParameter("key", "9527");
         context.addServlet(servlet, "/mango-stats");
         server.start();
         server.join();
