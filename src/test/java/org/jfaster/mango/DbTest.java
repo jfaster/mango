@@ -16,6 +16,7 @@
 
 package org.jfaster.mango;
 
+import org.hamcrest.Matchers;
 import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
@@ -36,6 +37,7 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
 
 /**
  * 测试db
@@ -400,6 +402,15 @@ public class DbTest {
         assertThat(actual, contains(users));
     }
 
+    @Test
+    public void testQuoteText() throws Exception {
+        User user = createRandomUser();
+        user.setName(":ash");
+        int id = dao.insertUserWithQoute(user);
+        user.setId(id);
+        assertThat(dao.getUserByNameWithQoute(id), equalTo(user));
+    }
+
     private User createRandomUser() {
         Random r = new Random();
         String name = Randoms.randomString(20);
@@ -525,6 +536,16 @@ public class DbTest {
 
         @SQL("insert into user(name, age, gender, money, update_time) values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
         public int[] batchInsertUserArray(User[] users);
+
+        /***********************************************************************/
+
+        @ReturnGeneratedId
+        @SQL("insert into user(name, age, gender, money, update_time) " +
+                "values(':ash', :age, :gender, :money, :updateTime)")
+        public int insertUserWithQoute(User user);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id = :1 and name = ':ash'")
+        public User getUserByNameWithQoute(int id);
 
     }
 

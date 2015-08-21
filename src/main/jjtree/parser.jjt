@@ -47,6 +47,7 @@ TOKEN:
 TOKEN:
 {
         <BLANK : (" ")+ >
+    |   <QUOTE_TEXT: "'" (~["'"])* "'" >
     |   <JDBC_ITERABLE_PARAMETER: "in" <WHITESPACE> "(" <WHITESPACE> <PARAMETER> <WHITESPACE> ")"  >
     |   <GLOBAL_TABLE: "#table" >
     |   <JOIN_PARAMETER: "#{" <WHITESPACE> <PARAMETER> <WHITESPACE> "}" >
@@ -60,8 +61,7 @@ TOKEN:
     |   <SELECT: "select" >
     |   <REPLACE: "replace" >
     |   <MERGE: "merge" >
-    |   <QUOTE_TEXT: "'" (~["'"])* "'" >
-    |   <TEXT: (~[":", "#", " "])+ >
+    |   <TEXT: (~[":", "#", " ", "'"])+ >
 }
 
 <EXPRESSION>

@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +35,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 
 /**
  * @author ash
@@ -355,6 +357,21 @@ public class ParserTest {
         n.render(context);
         PreparedSql preparedSql = context.getPreparedSql();
         assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    }
+
+    @Test
+    public void testQuote() throws Exception {
+        String sql = "insert into table ... values(':dd',':xx')";
+        ASTRootNode n = new Parser(sql).parse().init();
+        n.dump("");
+        List<Type> types = Lists.newArrayList();
+        ParameterContext ctx = getParameterContext(types);
+        n.checkAndBind(ctx);
+        InvocationContext context = new InvocationContext();
+        n.render(context);
+        PreparedSql preparedSql = context.getPreparedSql();
+        assertThat(preparedSql.getSql().toString(), equalTo("insert into table ... values(':dd',':xx')"));
+        assertThat(preparedSql.getArgs(), hasSize(0));
     }
 
     private ParameterContext getParameterContext(List<Type> types) {
