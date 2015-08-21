@@ -104,6 +104,11 @@ public enum InterablePropertyCollectVisitor implements ParserVisitor {
     }
 
     @Override
+    public Object visit(ASTQuoteText node, Object data) {
+        return data;
+    }
+
+    @Override
     public Object visit(ASTText node, Object data) {
         return data;
     }

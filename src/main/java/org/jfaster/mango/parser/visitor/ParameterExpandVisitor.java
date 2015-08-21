@@ -100,6 +100,11 @@ public enum ParameterExpandVisitor implements ParserVisitor {
     }
 
     @Override
+    public Object visit(ASTQuoteText node, Object data) {
+        return node.childrenAccept(this, data);
+    }
+
+    @Override
     public Object visit(ASTText node, Object data) {
         return node.childrenAccept(this, data);
     }

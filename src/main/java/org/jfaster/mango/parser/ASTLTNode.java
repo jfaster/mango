@@ -47,8 +47,7 @@ public class ASTLTNode extends AbstractExpression {
     }
 
     @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data)
-    {
+    public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }
 

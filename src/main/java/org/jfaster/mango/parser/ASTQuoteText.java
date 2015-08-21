@@ -16,28 +16,17 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.InvocationContext;
+/**
+ * @author ash
+ */
+public class ASTQuoteText extends AbstractStringNode {
 
-public class ASTOrNode extends AbstractExpression {
-
-    public ASTOrNode(int id) {
-        super(id);
+    public ASTQuoteText(int i) {
+        super(i);
     }
 
-    public ASTOrNode(Parser p, int id) {
-        super(p, id);
-    }
-
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        AbstractExpression left = (AbstractExpression) jjtGetChild(0);
-        AbstractExpression right = (AbstractExpression) jjtGetChild(1);
-        return left.evaluate(context) || right.evaluate(context);
-    }
-
-    @Override
-    public Object value(InvocationContext context) {
-        return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
+    public ASTQuoteText(Parser p, int i) {
+        super(p, i);
     }
 
     @Override

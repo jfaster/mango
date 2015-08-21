@@ -112,6 +112,10 @@ public class Mango {
         return newInstance().setDataSourceFactory(dataSourceFactory);
     }
 
+    public static Mango newInstance(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler) {
+        return newInstance().setDataSourceFactory(dataSourceFactory).setDefaultCacheHandler(cacheHandler);
+    }
+
     /**
      * 获得mango实例
      */

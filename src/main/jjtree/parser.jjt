@@ -60,6 +60,7 @@ TOKEN:
     |   <SELECT: "select" >
     |   <REPLACE: "replace" >
     |   <MERGE: "merge" >
+    |   <QUOTE_TEXT: "'" (~["'"])* "'" >
     |   <TEXT: (~[":", "#", " "])+ >
 }
 
@@ -184,6 +185,7 @@ void Statement() #void : {}
     |   GlobalTable()
     |   JoinParameter()
     |   IfStatement()
+    |   QuoteText()
     |   Text()
     |   Blank()
 }
@@ -224,6 +226,17 @@ void JoinParameter() :
     t=<JOIN_PARAMETER>
     {
         jjtThis.init(t.image);
+    }
+}
+
+void QuoteText() :
+{
+    Token t;
+}
+{
+    t=<QUOTE_TEXT>
+    {
+        jjtThis.setValue(t.image);
     }
 }
 

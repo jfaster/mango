@@ -35,8 +35,7 @@ public class ASTElseStatement extends AbstractRenderableNode {
     }
 
     @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data)
-    {
+    public Object jjtAccept(ParserVisitor visitor, Object data) {
         return visitor.visit(this, data);
     }
 
