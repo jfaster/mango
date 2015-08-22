@@ -11,6 +11,7 @@ import org.jfaster.mango.support.Table;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +56,7 @@ public class HttpServer {
                 dao.getName(id);
                 dao.getBoolObjGender(id);
                 for (int i = 0; i < 1500; i++) {
-                    dao.getLongObjMoney(id);
+                    dao.getLongObjMoney(id, null, null);
                 }
             }
         }, 0, 10, TimeUnit.SECONDS);
@@ -74,8 +75,11 @@ public class HttpServer {
         public Boolean getBoolObjGender(int id);
 
         @SQL("select money from user where id = :1")
-        public Long getLongObjMoney(int id);
+        public Long getLongObjMoney(int id, String str, List<User> users);
 
+    }
+
+    static class User {
     }
 
 }

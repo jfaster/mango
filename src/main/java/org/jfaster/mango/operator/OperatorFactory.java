@@ -112,6 +112,9 @@ public class OperatorFactory {
         boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
         if (useCache) {
             CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, nameProvider, statsCounter);
+            statsCounter.setCacheable(true);
+            statsCounter.setUseMultipleKeys(driver.isUseMultipleKeys());
+            statsCounter.setCacheNullObject(driver.isCacheNullObject());
             switch (operatorType) {
                 case QUERY:
                     operator = new CacheableQueryOperator(rootNode, md, driver);

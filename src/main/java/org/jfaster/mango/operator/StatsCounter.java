@@ -32,6 +32,21 @@ public class StatsCounter {
     private OperatorType operatorType;
 
     /**
+     * 是否使用缓存
+     */
+    private boolean isCacheable;
+
+    /**
+     * 缓存是否操作多个key
+     */
+    private boolean isUseMultipleKeys;
+
+    /**
+     * 是否缓存数据库中的null对象
+     */
+    private boolean isCacheNullObject;
+
+    /**
      * 初始化统计，不可重置
      */
     private final LongAddable initCount = LongAddables.create();
@@ -39,6 +54,18 @@ public class StatsCounter {
 
     public void setOperatorType(OperatorType operatorType) {
         this.operatorType = operatorType;
+    }
+
+    public void setCacheable(boolean cacheable) {
+        isCacheable = cacheable;
+    }
+
+    public void setUseMultipleKeys(boolean useMultipleKeys) {
+        isUseMultipleKeys = useMultipleKeys;
+    }
+
+    public void setCacheNullObject(boolean cacheNullObject) {
+        isCacheNullObject = cacheNullObject;
     }
 
     public void recordInit(long initTime) {
@@ -130,7 +157,8 @@ public class StatsCounter {
 
     public OperatorStats snapshot() {
         final ResettableStatsCounter sc = resettableStatsCounter;
-        return sc.snapshot(operatorType, initCount.sum(), totalInitTime.sum());
+        return sc.snapshot(operatorType, isCacheable, isUseMultipleKeys, isCacheNullObject,
+                initCount.sum(), totalInitTime.sum());
     }
 
     public synchronized void reset() {
@@ -304,9 +332,14 @@ public class StatsCounter {
             }
         }
 
-        public OperatorStats snapshot(OperatorType operatorType, long initCount, long totalInitTime) {
+        public OperatorStats snapshot(OperatorType operatorType,
+                                      boolean isCacheable, boolean isUseMultipleKeys, boolean isCacheNullObject,
+                                      long initCount, long totalInitTime) {
             return new OperatorStats(
                     operatorType,
+                    isCacheable,
+                    isUseMultipleKeys,
+                    isCacheNullObject,
                     initCount,
                     totalInitTime,
                     databaseExecuteSuccessCount.sum(),

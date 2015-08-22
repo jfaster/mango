@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.util;
 
-import org.jfaster.mango.parser.visitor.InterablePropertyCollectVisitor;
-
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +30,12 @@ public class ToStringHelper {
         sb.append(m.getDeclaringClass().getSimpleName()).append(".").append(m.getName()).append("(");
         printTypes(sb, m.getGenericParameterTypes(), "", ", ", "");
         return sb.append(")").toString();
+    }
+
+    public static String toString(Type type) {
+        StringBuffer sb = new StringBuffer();
+        printType(sb, type);
+        return sb.toString();
     }
 
     public static String toString(Iterable<Class> clazzs) {

@@ -18,6 +18,7 @@ package org.jfaster.mango.plugin.stats;
 
 import freemarker.template.Template;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.operator.OperatorStats;
 
 import java.io.BufferedWriter;
 import java.io.InputStream;
@@ -48,7 +49,17 @@ public class StatsRender {
             if (mangos.size() != 1) {
                 throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
             }
-            data.put("mango", mangos.get(0));
+            Mango mango = mangos.get(0);
+            Map<String, OperatorStats> osMap = new HashMap<String, OperatorStats>();
+            Map<String, ExtendStats> esMap = new HashMap<String, ExtendStats>();
+            int index = 0;
+            for (OperatorStats os : mango.getAllStats()) {
+                osMap.put(String.valueOf(index), os);
+                esMap.put(String.valueOf(index), new ExtendStats(os));
+                index++;
+            }
+            data.put("osMap", osMap);
+            data.put("esMap", esMap);
             data.put("isFetchAll", isFetchAll);
             data.put("key", key);
             Template t = new Template(null, reader, null);

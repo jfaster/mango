@@ -33,6 +33,21 @@ public class OperatorStats {
     private final OperatorType type;
 
     /**
+     * 是否使用缓存
+     */
+    private final boolean isCacheable;
+
+    /**
+     * 缓存是否操作多个key
+     */
+    private final boolean isUseMultipleKeys;
+
+    /**
+     * 是否缓存数据库中的null对象
+     */
+    private boolean isCacheNullObject;
+
+    /**
      * 初始化统计
      */
     private final long initCount;
@@ -96,6 +111,9 @@ public class OperatorStats {
 
     public OperatorStats(
             OperatorType type,
+            boolean isCacheable,
+            boolean isUseMultipleKeys,
+            boolean isCacheNullObject,
             long initCount,
             long totalInitTime,
             long databaseExecuteSuccessCount,
@@ -122,6 +140,9 @@ public class OperatorStats {
             long cacheBatchDeleteExceptionCount,
             long totalCacheBatchDeleteTime) {
         this.type = type;
+        this.isCacheable = isCacheable;
+        this.isUseMultipleKeys = isUseMultipleKeys;
+        this.isCacheNullObject = isCacheNullObject;
         this.initCount = initCount;
         this.totalInitTime = totalInitTime;
         this.databaseExecuteSuccessCount = databaseExecuteSuccessCount;
@@ -149,24 +170,24 @@ public class OperatorStats {
         this.totalCacheBatchDeleteTime = totalCacheBatchDeleteTime;
     }
 
-    public String getMethodName() {
-        return method.getName();
-    }
-
-    public String getMethodNameWithParameterNum() {
-        return method.getName() + "(" + method.getParameterTypes().length + ")";
-    }
-
-    public String getClassName() {
-        return method.getDeclaringClass().getName();
-    }
-
-    public String getClassSimpleName() {
-        return method.getDeclaringClass().getSimpleName();
+    public Method getMethod() {
+        return method;
     }
 
     public OperatorType getType() {
         return type;
+    }
+
+    public boolean isCacheable() {
+        return isCacheable;
+    }
+
+    public boolean isUseMultipleKeys() {
+        return isUseMultipleKeys;
+    }
+
+    public boolean isCacheNullObject() {
+        return isCacheNullObject;
     }
 
     public long getInitCount() {

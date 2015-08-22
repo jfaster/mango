@@ -16,17 +16,16 @@
 
 package org.jfaster.mango;
 
-import org.hamcrest.Matchers;
-import org.jfaster.mango.annotation.Rename;
+import com.google.common.primitives.Ints;
 import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.support.Config;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.User;
-import org.jfaster.mango.support.Config;
-import com.google.common.primitives.Ints;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +36,6 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.contains;
 
 /**
  * 测试db
