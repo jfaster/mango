@@ -25,8 +25,7 @@ public abstract class SimpleCacheHandler implements CacheHandler {
 
     @Override
     public void add(String key, Object value, int expires) {
-        // TODO
-        throw new UnsupportedOperationException("");
+        throw new UnsupportedOperationException("If @Cache.cacheNullObject is true, please override add method");
     }
 
     @Override

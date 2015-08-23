@@ -84,7 +84,7 @@ public class OperatorFactory {
                 ParameterDescriptor pd = pds.get(0);
                 if (pd.isIterable() && rootNode.getJDBCIterableParameters().isEmpty()) {
                     // 参数可迭代，同时sql中没有in语句
-                    operatorType = OperatorType.BATCHUPDATYPE;
+                    operatorType = OperatorType.BATCHUPDATE;
                 }
             }
         }
@@ -122,7 +122,7 @@ public class OperatorFactory {
                 case UPDATE:
                     operator = new CacheableUpdateOperator(rootNode, md, driver);
                     break;
-                case BATCHUPDATYPE:
+                case BATCHUPDATE:
                     operator = new CacheableBatchUpdateOperator(rootNode, md, driver);
                     break;
                 default:
@@ -136,7 +136,7 @@ public class OperatorFactory {
                 case UPDATE:
                     operator = new UpdateOperator(rootNode, md);
                     break;
-                case BATCHUPDATYPE:
+                case BATCHUPDATE:
                     operator = new BatchUpdateOperator(rootNode, md);
                     break;
                 default:

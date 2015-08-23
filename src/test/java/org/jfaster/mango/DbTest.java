@@ -327,6 +327,31 @@ public class DbTest {
     }
 
     @Test
+    public void testUpdate2() throws Exception {
+        User user1 = createRandomUser();
+        User user2 = createRandomUser();
+        User user3 = createRandomUser();
+        int id1 = dao.insertUser(user1);
+        int id2 = dao.insertUser(user2);
+        int id3 = dao.insertUser(user3);
+        user1.setId(id1);
+        user2.setId(id2);
+        user3.setId(id3);
+        assertThat(dao.getUser(id1), equalTo(user1));
+        assertThat(dao.getUser(id2), equalTo(user2));
+        assertThat(dao.getUser(id3), equalTo(user3));
+        dao.deleteUser(id3);
+        assertThat(dao.getUser(id1), equalTo(user1));
+        assertThat(dao.getUser(id2), equalTo(user2));
+        assertThat(dao.getUser(id3), equalTo(null));
+        user2.setName("ash");
+        dao.updateUser(user2);
+        assertThat(dao.getUser(id1), equalTo(user1));
+        assertThat(dao.getUser(id2), equalTo(user2));
+        assertThat(dao.getUser(id3), equalTo(null));
+    }
+
+    @Test
     public void testUpdateSelectNull() throws Exception {
         User user = createRandomUser();
         user.setName(null);

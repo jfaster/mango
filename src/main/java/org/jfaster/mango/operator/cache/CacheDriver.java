@@ -219,9 +219,9 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             } finally {
                 long cost = System.nanoTime() - now;
                 if (success) {
-                    statsCounter.recordCacheGetSuccess(cost);
+                    statsCounter.recordCacheGetBulkSuccess(cost);
                 } else {
-                    statsCounter.recordCacheGetException(cost);
+                    statsCounter.recordCacheGetBulkException(cost);
                 }
             }
         }

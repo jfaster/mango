@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 /**
  * @author ash
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Result {

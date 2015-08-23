@@ -17,6 +17,7 @@
 
 <table id="mango-stats-table"
        data-toggle="table"
+       data-show-columns="true"
        data-toolbar="#custom-toolbar"
        data-sort-name="databaseExecuteCount"
        data-sort-order="desc"
@@ -24,7 +25,7 @@
        data-detail-formatter="detailFormatter">
     <thead>
     <tr>
-        <th data-field="cacheable">缓存</th>
+        <th data-field="cacheable" data-sortable="true">缓存</th>
 
         <th data-field="simpleClassName" data-sortable="true">类</th>
         <th data-field="simpleMethodName" data-sortable="true">方法</th>
@@ -181,7 +182,7 @@
 
         var isCacheable = row['cacheable'] == 'yes';
         var isUseMultipleKeys = row['useMultipleKeys'] == 'yes';
-        var isCacheNullObject = row['cacheNullObject'] = 'yes';
+        var isCacheNullObject = row['cacheNullObject'] == 'yes';
         var isQuery = row['type'] == 'query';
         var isUpdate = row['type'] == 'update';
         var isBatchUpdate = row['type'] == 'batchupdate';

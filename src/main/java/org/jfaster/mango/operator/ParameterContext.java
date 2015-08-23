@@ -44,7 +44,7 @@ public class ParameterContext {
 
     public ParameterContext(List<ParameterDescriptor> parameterDescriptors,
                             NameProvider nameProvider, OperatorType operatorType) {
-        if (operatorType == OperatorType.BATCHUPDATYPE) {
+        if (operatorType == OperatorType.BATCHUPDATE) {
             if (parameterDescriptors.size() != 1) {
                 throw new IncorrectParameterCountException("batch update expected one and " +
                         "only one parameter but " + parameterDescriptors.size()); // 批量更新只能有一个参数

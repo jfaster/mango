@@ -25,6 +25,6 @@ public enum OperatorType {
 
     UPDATE,
 
-    BATCHUPDATYPE,
+    BATCHUPDATE,
 
 }

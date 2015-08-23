@@ -63,7 +63,7 @@ public class ParameterContextTest {
         List<ParameterDescriptor> pds = Arrays.asList(p);
         NameProvider np = new NameProvider(pds);
 
-        ParameterContext ctx = new ParameterContext(pds, np, OperatorType.BATCHUPDATYPE);
+        ParameterContext ctx = new ParameterContext(pds, np, OperatorType.BATCHUPDATE);
         TypeToken<User> ut = TypeToken.of(User.class);
         ParameterDescriptor up = new ParameterDescriptor(0, ut.getType(), empty, "1");
         assertThat(ctx.getInvokerGroup("1", "").getFinalType(), equalTo(ut.getType()));
@@ -89,7 +89,7 @@ public class ParameterContextTest {
         List<ParameterDescriptor> pds = Arrays.asList(p0, p1);
         NameProvider np = new NameProvider(pds);
 
-        new ParameterContext(pds, np, OperatorType.BATCHUPDATYPE);
+        new ParameterContext(pds, np, OperatorType.BATCHUPDATE);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ParameterContextTest {
         List<ParameterDescriptor> pds = Arrays.asList(p);
         NameProvider np = new NameProvider(pds);
 
-        new ParameterContext(pds, np, OperatorType.BATCHUPDATYPE);
+        new ParameterContext(pds, np, OperatorType.BATCHUPDATE);
     }
 
     @Test

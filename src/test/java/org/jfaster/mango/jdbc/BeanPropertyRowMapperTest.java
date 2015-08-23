@@ -70,6 +70,10 @@ public class BeanPropertyRowMapperTest {
     }
 
     @DB(table = "msg")
+    @Results({
+            @Result(column = "id", property = "idxx"),
+            @Result(column = "content", property = "yyCon")
+    })
     interface MsgDao {
 
         @ReturnGeneratedId
@@ -83,10 +87,6 @@ public class BeanPropertyRowMapperTest {
         @SQL("select id, uid, content from #table where id in (:1) order by id")
         public List<MullMsg> getMsgs(List<Integer> ids);
 
-        @Results({
-                @Result(column = "id", property = "idxx"),
-                @Result(column = "content", property = "yyCon")
-        })
         @SQL("select id, uid, content from #table where id = :1")
         public MullMsg getMsg(int id);
 
