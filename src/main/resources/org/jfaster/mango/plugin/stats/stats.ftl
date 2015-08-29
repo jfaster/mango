@@ -25,15 +25,17 @@
        data-detail-formatter="detailFormatter">
     <thead>
     <tr>
-        <th data-field="cacheable" data-sortable="true">缓存</th>
+        <th data-field="cacheable" data-sortable="true" data-switchable="false">缓存</th>
 
-        <th data-field="simpleClassName" data-sortable="true">类</th>
-        <th data-field="simpleMethodName" data-sortable="true">方法</th>
+        <th data-field="simpleClassName" data-sortable="true" data-switchable="false">类</th>
+        <th data-field="simpleMethodName" data-sortable="true" data-switchable="false">方法</th>
 
-        <th data-field="averageDatabaseExecutePenalty" data-sortable="true" data-sorter="floatSorter">db平均速率(毫秒)</th>
-        <th data-field="databaseExecuteCount" data-sortable="true" data-sorter="intSorter">db总次数</th>
-        <th data-field="databaseExecuteExceptionCount" data-sortable="true" data-sorter="intSorter">db失败次数</th>
-        <th data-field="databaseExecuteExceptionRate" data-sortable="true" data-sorter="rateSorter">db失败率</th>
+        <th data-field="averageDatabaseExecutePenalty" data-sortable="true" data-sorter="floatSorter" data-switchable="false">db平均速率(毫秒)</th>
+        <th data-field="databaseExecuteCount" data-sortable="true" data-sorter="intSorter" data-switchable="false">db总次数</th>
+        <th data-field="databaseExecuteExceptionCount" data-sortable="true" data-sorter="intSorter" data-switchable="false">db失败次数</th>
+        <th data-field="databaseExecuteExceptionRate" data-sortable="true" data-sorter="rateSorter" data-switchable="false">db失败率</th>
+
+        <th data-field="initCount" data-sortable="true" data-sorter="intSorter">对象数</th>
 
         <th data-field="hitCount" data-sortable="true" data-sorter="intSorter" data-visible="false">cache命中数</th>
         <th data-field="missCount" data-sortable="true" data-sorter="intSorter" data-visible="false">cache丢失数</th>
@@ -69,15 +71,12 @@
         <th data-field="cacheBatchDeleteExceptionCount" data-sortable="true" data-sorter="intSorter" data-visible="false">cache[batchDelete]失败次数</th>
         <th data-field="cacheBatchDeleteExceptionRate" data-sortable="true" data-sorter="rateSorter" data-visible="false">cache[batchDelete]失败率</th>
 
-        <th data-field="averageInitPenalty" data-sortable="true" data-sorter="floatSorter">init速率(毫秒)</th>
-        <th data-field="initCount" data-sortable="true" data-sorter="intSorter">init次数</th>
+        <th data-field="sql" data-visible="false" data-switchable="false">sql</th>
+        <th data-field="strParameterTypes" data-visible="false" data-switchable="false">参数类型</th>
 
-        <th data-field="sql" data-visible="false">sql</th>
-        <th data-field="strParameterTypes" data-visible="false">参数类型</th>
-
-        <th data-field="type" data-visible="false">操作类型</th>
-        <th data-field="useMultipleKeys" data-visible="false">缓存是否操作多个key</th>
-        <th data-field="cacheNullObject" data-visible="false">是否缓存null对象</th>
+        <th data-field="type" data-visible="false" data-switchable="false">操作类型</th>
+        <th data-field="useMultipleKeys" data-visible="false" data-switchable="false">缓存是否操作多个key</th>
+        <th data-field="cacheNullObject" data-visible="false" data-switchable="false">是否缓存null对象</th>
     </tr>
     </thead>
     <tbody>
@@ -96,6 +95,8 @@
                 <td>${os.databaseExecuteCount?c}</td>
                 <td>${os.databaseExecuteExceptionCount?c}</td>
                 <td>${(os.databaseExecuteExceptionRate * 100)?string('0.0')}%</td>
+
+                <td>${os.initCount?c}</td>
 
                 <td>${os.hitCount?c}</td>
                 <td>${os.missCount?c}</td>
@@ -130,9 +131,6 @@
                 <td>${os.cacheBatchDeleteCount?c}</td>
                 <td>${os.cacheBatchDeleteExceptionCount?c}</td>
                 <td>${(os.cacheBatchDeleteExceptionRate * 100)?string('0.0')}%</td>
-
-                <td>${(os.averageInitPenalty / 1000000)?string('0.0')}</td>
-                <td>${os.initCount?c}</td>
 
                 <td>${es.sql}</td>
                 <td><#list es.strParameterTypes as type>${type?replace("<", "&lt;")?replace(">", "&gt;")}  </#list></td>
