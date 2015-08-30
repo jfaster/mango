@@ -113,7 +113,7 @@ public class QueryOperator extends AbstractOperator {
         Mapper mapperAnno = rd.getAnnotation(Mapper.class);
         Results resultsAnoo = rd.getAnnotation(Results.class);
         if (mapperAnno != null) { // 自定义mapper
-            return Reflection.instantiate(mapperAnno.value());
+            return Reflection.instantiateClass(mapperAnno.value());
         }
         if (JdbcUtils.isSingleColumnClass(clazz)) { // 单列mapper
             return new SingleColumnRowMapper<T>(clazz);

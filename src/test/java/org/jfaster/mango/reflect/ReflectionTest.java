@@ -14,19 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception.jdbc;
+package org.jfaster.mango.reflect;
+
+import org.junit.Test;
 
 /**
  * @author ash
  */
-public class InvalidResultSetAccessException extends InvalidDataAccessResourceUsageException {
+public class ReflectionTest {
 
-    public InvalidResultSetAccessException(String msg) {
-        super(msg);
+    @Test
+    public void testInstantiate() throws Exception {
+        Reflection.instantiateClass(A.class);
     }
 
-    public InvalidResultSetAccessException(String msg, Throwable cause) {
-        super(msg, cause);
+    private static class A {
+
     }
 
 }

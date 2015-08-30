@@ -50,7 +50,7 @@ public class FunctionalGetterInvoker extends MethodNamedObject implements Getter
         TypeToken<?> returnToken = TypeToken.of(method.getGenericReturnType());
         if (getterAnno != null) { // 启用函数式调用功能
             Class<? extends GetterFunction<?, ?>> funcClass = getterAnno.value();
-            function = Reflection.instantiate(funcClass);
+            function = Reflection.instantiateClass(funcClass);
             Type genType = funcClass.getGenericSuperclass();
             Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
             TypeToken<?> inputToken = TypeToken.of(params[0]);

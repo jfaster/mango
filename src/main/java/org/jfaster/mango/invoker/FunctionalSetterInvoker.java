@@ -56,7 +56,7 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
 
         if (setterAnno != null) { // 启用函数式调用功能
             Class<? extends SetterFunction<?, ?>> funcClass = setterAnno.value();
-            function = Reflection.instantiate(funcClass);
+            function = Reflection.instantiateClass(funcClass);
             Type genType = funcClass.getGenericSuperclass();
             Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
             TypeToken<?> inputToken = TypeToken.of(params[0]);

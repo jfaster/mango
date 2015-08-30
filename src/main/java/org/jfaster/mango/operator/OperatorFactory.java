@@ -170,12 +170,12 @@ public class OperatorFactory {
         Class<? extends TablePartition> tpc = dbAnno.tablePartition();
         TablePartition tablePartition = null;
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
-            tablePartition = Reflection.instantiate(tpc);
+            tablePartition = Reflection.instantiateClass(tpc);
         }
         Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
         DataSourceRouter dataSourceRouter = null;
         if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
-            dataSourceRouter = Reflection.instantiate(dsrc);
+            dataSourceRouter = Reflection.instantiateClass(dsrc);
         }
 
         if (tablePartition != null && globalTable == null) { // 使用了分表但没有使用全局表名则抛出异常

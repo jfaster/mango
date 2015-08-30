@@ -319,7 +319,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                             "but found 0");
                 }
                 prefix = cacheAnno.prefix();
-                cacheExpire = Reflection.instantiate(cacheAnno.expire());
+                cacheExpire = Reflection.instantiateClass(cacheAnno.expire());
                 expireNum = cacheAnno.num();
                 cacheNullObject = cacheAnno.cacheNullObject();
                 cacheEmptyList = cacheAnno.cacheEmptyList();

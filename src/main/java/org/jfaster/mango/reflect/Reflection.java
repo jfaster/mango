@@ -19,8 +19,7 @@ package org.jfaster.mango.reflect;
 
 import org.jfaster.mango.exception.BeanInstantiationException;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 
 /**
  * @author ash
@@ -40,6 +39,36 @@ public class Reflection {
         }
     }
 
+    public static <T> T instantiateClass(Class<T> clazz) throws BeanInstantiationException {
+        if (clazz.isInterface()) {
+            throw new BeanInstantiationException(clazz, "Specified class is an interface");
+        }
+        try {
+            return instantiateClass(clazz.getDeclaredConstructor());
+        } catch (NoSuchMethodException ex) {
+            throw new BeanInstantiationException(clazz, "No default constructor found", ex);
+        }
+    }
+
+    public static <T> T instantiateClass(Constructor<T> ctor, Object... args) throws BeanInstantiationException {
+        try {
+            makeAccessible(ctor);
+            return ctor.newInstance(args);
+        } catch (InstantiationException ex) {
+            throw new BeanInstantiationException(ctor.getDeclaringClass(),
+                    "Is it an abstract class?", ex);
+        } catch (IllegalAccessException ex) {
+            throw new BeanInstantiationException(ctor.getDeclaringClass(),
+                    "Is the constructor accessible?", ex);
+        } catch (IllegalArgumentException ex) {
+            throw new BeanInstantiationException(ctor.getDeclaringClass(),
+                    "Illegal arguments for constructor", ex);
+        } catch (InvocationTargetException ex) {
+            throw new BeanInstantiationException(ctor.getDeclaringClass(),
+                    "Constructor threw exception", ex.getTargetException());
+        }
+    }
+
     public static <T> T newProxy(
             Class<T> interfaceType, InvocationHandler handler) {
         if (!interfaceType.isInterface()) {
@@ -52,5 +81,11 @@ public class Reflection {
         return interfaceType.cast(object);
     }
 
+    public static void makeAccessible(Constructor<?> ctor) {
+        if ((!Modifier.isPublic(ctor.getModifiers()) || !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) &&
+                !ctor.isAccessible()) {
+            ctor.setAccessible(true);
+        }
+    }
 
 }
