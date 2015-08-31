@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -37,8 +38,15 @@ public class StringToLongArrayFunctionTest {
         A a = new A();
         Method m = A.class.getDeclaredMethod("setX", long[].class);
         SetterInvoker invoker = FunctionalSetterInvoker.create("x", m);
+
         invoker.invoke(a, "1000000000000000000,2,3");
         assertThat(Arrays.toString(a.getX()), is(Arrays.toString(new long[] {1000000000000000000L, 2, 3})));
+
+        invoker.invoke(a, null);
+        assertThat(a.getX(), nullValue());
+
+        invoker.invoke(a, "");
+        assertThat(Arrays.toString(a.getX()), is(Arrays.toString(new long[] {})));
     }
 
     static class A {

@@ -44,6 +44,9 @@ public class IntArrayToStringFunctionTest {
         a.setX(null);
         assertThat(invoker.invoke(a), nullValue());
 
+        a.setX(new int[] {});
+        assertThat((String) invoker.invoke(a), is(""));
+
     }
 
     static class A {

@@ -23,9 +23,11 @@ import org.jfaster.mango.invoker.SetterInvoker;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -38,9 +40,16 @@ public class StringToLongListFunctionTest {
         A a = new A();
         Method m = A.class.getDeclaredMethod("setX", List.class);
         SetterInvoker invoker = FunctionalSetterInvoker.create("x", m);
+
         invoker.invoke(a, "100000000000000000,2,3");
         List<Long> list = Lists.newArrayList(100000000000000000L, 2L, 3L);
         assertThat(a.getX().toString(), is(list.toString()));
+
+        invoker.invoke(a, null);
+        assertThat(a.getX(), nullValue());
+
+        invoker.invoke(a, "");
+        assertThat(a.getX().toString(), is(new ArrayList<Long>().toString()));
     }
 
     static class A {
