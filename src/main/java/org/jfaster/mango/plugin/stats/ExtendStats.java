@@ -16,8 +16,11 @@
 
 package org.jfaster.mango.plugin.stats;
 
+import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.OperatorStats;
+import org.jfaster.mango.partition.IgnoreTablePartition;
+import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.ToStringHelper;
 
 import java.lang.reflect.Method;
@@ -48,7 +51,16 @@ public class ExtendStats {
     }
 
     public String getSql() {
-        return method.getAnnotation(SQL.class).value();
+        String sql = method.getAnnotation(SQL.class).value();
+        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+        String table = dbAnno.table();
+        if (Strings.isNotEmpty(table)) {
+            if (!IgnoreTablePartition.class.equals(dbAnno.tablePartition())) {
+                table = table + "_#";
+            }
+            sql = sql.replaceAll("#table", table);
+        }
+        return sql;
     }
 
     public List<String> getStrParameterTypes() {
