@@ -24,6 +24,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -34,11 +35,15 @@ public class IntArrayToStringFunctionTest {
     @Test
     public void testApply() throws Exception {
         A a = new A();
-        a.setX(new int[] {1, 2, 3});
         Method m = A.class.getDeclaredMethod("getX");
         GetterInvoker invoker = FunctionalGetterInvoker.create("x", m);
-        String r = (String) invoker.invoke(a);
-        assertThat(r, is("1,2,3"));
+
+        a.setX(new int[] {1, 2, 3});
+        assertThat((String) invoker.invoke(a), is("1,2,3"));
+
+        a.setX(null);
+        assertThat(invoker.invoke(a), nullValue());
+
     }
 
     static class A {

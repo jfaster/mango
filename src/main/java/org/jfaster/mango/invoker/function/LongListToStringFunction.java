@@ -33,10 +33,13 @@ public class LongListToStringFunction extends GetterFunction<List<Long>, String>
     @Nullable
     @Override
     public String apply(@Nullable List<Long> input) {
-        if (input == null || input.size() == 0) {
+        if (input == null) {
+            return null;
+        }
+        if (input.size() == 0) {
             return "";
         }
-        StringBuilder builder = new StringBuilder(input.size() * 5);
+        StringBuilder builder = new StringBuilder();
         builder.append(input.get(0));
         for (int i = 1; i < input.size(); i++) {
             builder.append(SEPARATOR).append(input.get(i));

@@ -17,7 +17,6 @@
 package org.jfaster.mango.invoker.function;
 
 import org.jfaster.mango.invoker.SimpleSetterFunction;
-import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 
@@ -33,7 +32,10 @@ public class StringToLongArrayFunction extends SimpleSetterFunction<String, long
     @Nullable
     @Override
     public long[] apply(@Nullable String input) {
-        if (Strings.isEmpty(input)) {
+        if (input == null) {
+            return null;
+        }
+        if (input.length() == 0) {
             return new long[0];
         }
         String[] ss = input.split(SEPARATOR);

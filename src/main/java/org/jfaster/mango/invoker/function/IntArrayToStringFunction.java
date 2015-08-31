@@ -32,10 +32,13 @@ public class IntArrayToStringFunction extends GetterFunction<int[], String> {
     @Nullable
     @Override
     public String apply(@Nullable int[] input) {
-        if (input == null || input.length == 0) {
+        if (input == null) {
+            return null;
+        }
+        if (input.length == 0) {
             return "";
         }
-        StringBuilder builder = new StringBuilder(input.length * 5);
+        StringBuilder builder = new StringBuilder();
         builder.append(input[0]);
         for (int i = 1; i < input.length; i++) {
             builder.append(SEPARATOR).append(input[i]);

@@ -17,7 +17,6 @@
 package org.jfaster.mango.invoker.function;
 
 import org.jfaster.mango.invoker.SimpleSetterFunction;
-import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -35,7 +34,10 @@ public class StringToIntegerListFunction extends SimpleSetterFunction<String, Li
     @Nullable
     @Override
     public List<Integer> apply(@Nullable String input) {
-        if (Strings.isEmpty(input)) {
+        if (input == null) {
+            return null;
+        }
+        if (input.length() == 0) {
             return new ArrayList<Integer>();
         }
         String[] ss = input.split(SEPARATOR);
