@@ -22,7 +22,6 @@ import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.ToStringHelper;
 
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.util.*;
 
@@ -45,8 +44,8 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     @Override
     public Object execute(Object[] values) {
-        Iterables iterables = getNotEmptyIterables(values);
-        if (iterables == null) {
+        Iterables iterables = getIterables(values);
+        if (iterables.isEmpty()) {
             return transformer.transform(new int[] {});
         }
 
@@ -78,16 +77,12 @@ public class BatchUpdateOperator extends AbstractOperator {
         group.add(sql, args, position);
     }
 
-    @Nullable
-    protected Iterables getNotEmptyIterables(Object[] values) {
+    protected Iterables getIterables(Object[] values) {
         Object firstValue = values[0];
         if (firstValue == null) {
             throw new NullPointerException("batchUpdate's parameter can't be null");
         }
         Iterables iterables = new Iterables(firstValue);
-        if (iterables.isEmpty()) {
-            return null;
-        }
         return iterables;
     }
 

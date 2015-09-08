@@ -46,8 +46,8 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
     @Override
     public Object execute(Object[] values) {
-        Iterables iterables = getNotEmptyIterables(values);
-        if (iterables == null) {
+        Iterables iterables = getIterables(values);
+        if (iterables.isEmpty()) {
             return transformer.transform(new int[] {});
         }
 
