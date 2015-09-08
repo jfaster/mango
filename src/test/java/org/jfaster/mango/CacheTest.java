@@ -16,6 +16,7 @@
 
 package org.jfaster.mango;
 
+import com.google.common.collect.Lists;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.operator.cache.Day;
@@ -319,6 +320,14 @@ public class CacheTest {
         List<User> actual = dao.getUserList(ids);
         assertThat(actual, hasSize(users.size()));
         assertThat(actual, containsInAnyOrder(users.toArray()));
+    }
+
+    @Test
+    public void testBatchUpdateEmpetyList() {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        UserDao dao = mango.create(UserDao.class, cacheHandler);
+        List<User> users = Lists.newArrayList();
+        assertThat(dao.batchUpdate(users).length, equalTo(0));
     }
 
     @Test

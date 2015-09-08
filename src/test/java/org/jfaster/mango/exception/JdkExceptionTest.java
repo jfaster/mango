@@ -69,14 +69,6 @@ public class JdkExceptionTest {
     }
 
     @Test
-    public void testBatchUpdateParameterEmpty() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("batchUpdate's parameter can't be empty");
-        MsgDao dao = mango.create(MsgDao.class);
-        dao.batchInsert(new ArrayList<Msg>());
-    }
-
-    @Test
     public void testIterableParameterNull() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("value of :1 can't be null");

@@ -46,13 +46,9 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
 
     @Override
     public Object execute(Object[] values) {
-        Object firstValue = values[0];
-        if (firstValue == null) {
-            throw new NullPointerException("batchUpdate's parameter can't be null");
-        }
-        Iterables iterables = new Iterables(firstValue);
-        if (iterables.isEmpty()) {
-            throw new IllegalArgumentException("batchUpdate's parameter can't be empty");
+        Iterables iterables = getNotEmptyIterables(values);
+        if (iterables == null) {
+            return transformer.transform(new int[] {});
         }
 
         Set<String> keys = new HashSet<String>(iterables.size() * 2);

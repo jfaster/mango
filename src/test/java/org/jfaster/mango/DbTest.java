@@ -16,6 +16,7 @@
 
 package org.jfaster.mango;
 
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Rename;
@@ -387,6 +388,12 @@ public class DbTest {
             actual.get(i).setId(0);
         }
         assertThat(actual, contains(users.toArray()));
+    }
+
+    @Test
+    public void testBatchUpdateEmptyList() throws Exception {
+        List<User> users = Lists.newArrayList();
+        assertThat(dao.batchInsertUserList(users).length, equalTo(0));
     }
 
     @Test
