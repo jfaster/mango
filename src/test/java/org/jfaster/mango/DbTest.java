@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -296,6 +297,13 @@ public class DbTest {
         assertThat(actual, containsInAnyOrder(users.toArray()));
     }
 
+    @Test
+    public void testEmpty() throws Exception {
+        assertThat(dao.getUsersInList(new ArrayList<Integer>()).size(), equalTo(0));
+        assertThat(dao.getUsersInArray(new int[] {}).length, equalTo(0));
+        assertThat(dao.getUsersInArray2(new int[]{}), nullValue());
+        assertThat(dao.getUsersInSet(new HashSet<Integer>()).size(), equalTo(0));
+    }
 
 /********************************测试更新开始***************************************/
 
@@ -510,6 +518,12 @@ public class DbTest {
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
         public List<User> getUsersInList(List<Integer> ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public User[] getUsersInArray(int[] ids);
+
+        @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+        public User getUsersInArray2(int[] ids);
 
         @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
         public ArrayList<User> getUsersInArrayList(ArrayList<Integer> ids);

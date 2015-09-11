@@ -77,14 +77,6 @@ public class JdkExceptionTest {
     }
 
     @Test
-    public void testIterableParameterEmpty() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("value of :1 can't be empty");
-        MsgDao dao = mango.create(MsgDao.class);
-        dao.getMsgs(new ArrayList<Integer>());
-    }
-
-    @Test
     public void testIterableParameterNullWithCache() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("parameter :1 need a non-null value");
