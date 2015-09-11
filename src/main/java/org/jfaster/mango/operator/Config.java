@@ -16,30 +16,21 @@
 
 package org.jfaster.mango.operator;
 
-
-import org.jfaster.mango.jdbc.JdbcOperations;
-
 /**
- * db操作接口
+ * mango全局配置信息
  *
  * @author ash
  */
-public interface Operator {
+public class Config {
 
-    public Object execute(Object[] values);
+    private boolean isCompatibleWithEmptyList = true;
 
-    public void setJdbcOperations(JdbcOperations jdbcOperations);
+    public boolean isCompatibleWithEmptyList() {
+        return isCompatibleWithEmptyList;
+    }
 
-    public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory);
-
-    public void setTableGenerator(TableGenerator tableGenerator);
-
-    public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator);
-
-    public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain);
-
-    public void setStatsCounter(StatsCounter statsCounter);
-
-    public void setConfig(Config config);
+    public void setCompatibleWithEmptyList(boolean compatibleWithEmptyList) {
+        isCompatibleWithEmptyList = compatibleWithEmptyList;
+    }
 
 }

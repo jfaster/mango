@@ -8,7 +8,7 @@ import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.support.CacheHandlerImpl;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.User;
@@ -44,7 +44,7 @@ public class HttpServer {
     }
 
     private static void init() throws Exception {
-        DataSource ds = Config.getDataSource();
+        DataSource ds = DataSourceConfig.getDataSource();
         Connection conn = ds.getConnection();
         Table.USER.load(conn);
         conn.close();

@@ -20,9 +20,9 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.exception.jdbc.IncorrectResultSetColumnCountException;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Person;
-import org.jfaster.mango.support.Config;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +38,7 @@ import java.sql.Connection;
  */
 public class IncorrectResultSetColumnCountExceptionTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
     static {
         mango.setDefaultLazyInit(true);

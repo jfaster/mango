@@ -21,7 +21,7 @@ import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.support.CacheHandlerImpl;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Position;
 import org.junit.Before;
@@ -39,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class MultiCacheByTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
 
     @Before

@@ -34,7 +34,8 @@ public interface JdbcOperations {
                                     ListSupplier listSupplier, RowMapper<T> rowMapper)
             throws DataAccessException;
 
-    public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper)
+    public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args,
+                                  SetSupplier setSupplier, RowMapper<T> rowMapper)
             throws DataAccessException;
 
     public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper)

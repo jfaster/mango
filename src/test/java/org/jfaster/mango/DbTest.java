@@ -23,7 +23,7 @@ import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.User;
@@ -45,7 +45,7 @@ import static org.hamcrest.Matchers.*;
  */
 public class DbTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
     private final static UserDao dao = mango.create(UserDao.class, true);
 

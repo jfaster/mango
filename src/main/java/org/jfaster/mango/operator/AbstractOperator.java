@@ -66,6 +66,11 @@ public abstract class AbstractOperator implements Operator {
      */
     protected JdbcOperations jdbcOperations;
 
+    /**
+     * mango全局配置信息
+     */
+    protected Config config;
+
     @Override
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
@@ -96,4 +101,8 @@ public abstract class AbstractOperator implements Operator {
         this.statsCounter = statsCounter;
     }
 
+    @Override
+    public void setConfig(Config config) {
+        this.config = config;
+    }
 }

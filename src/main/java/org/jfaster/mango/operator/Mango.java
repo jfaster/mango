@@ -63,7 +63,7 @@ public class Mango {
     /**
      * 全局懒加载，默认为false
      */
-    private boolean defaultLazyInit = false;
+    private boolean isDefaultLazyInit = false;
 
     /**
      * 拦截器链，默认为空
@@ -85,6 +85,11 @@ public class Mango {
      */
     private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap =
             new ConcurrentHashMap<Method, StatsCounter>();
+
+    /**
+     * mango全局配置信息
+     */
+    private final Config config = new Config();
 
     /**
      * mango实例
@@ -145,27 +150,27 @@ public class Mango {
      * 创建代理DAO类
      */
     public <T> T create(Class<T> daoClass) {
-        return create(daoClass, defaultCacheHandler, defaultLazyInit);
+        return create(daoClass, defaultCacheHandler, isDefaultLazyInit);
     }
 
     /**
      * 创建代理DAO类，使用特定的{@link CacheHandler}
      */
     public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler) {
-        return create(daoClass, cacheHandler, defaultLazyInit);
+        return create(daoClass, cacheHandler, isDefaultLazyInit);
     }
 
     /**
      * 创建代理DAO类，自定义是否懒加载
      */
-    public <T> T create(Class<T> daoClass, boolean lazyInit) {
-        return create(daoClass, defaultCacheHandler, lazyInit);
+    public <T> T create(Class<T> daoClass, boolean isLazyInit) {
+        return create(daoClass, defaultCacheHandler, isLazyInit);
     }
 
     /**
      * 创建代理DAO类，使用特定的{@link CacheHandler}，自定义是否懒加载
      */
-    public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler, boolean lazyInit) {
+    public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler, boolean isLazyInit) {
         if (daoClass == null) {
             throw new NullPointerException("dao interface can't be null");
         }
@@ -194,7 +199,7 @@ public class Mango {
         }
 
         MangoInvocationHandler handler = new MangoInvocationHandler(this, cacheHandler);
-        if (!lazyInit) { // 不使用懒加载，则提前加载
+        if (!isLazyInit) { // 不使用懒加载，则提前加载
             Method[] methods = daoClass.getMethods();
             for (Method method : methods) {
                 try {
@@ -263,7 +268,7 @@ public class Mango {
         private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
             statsCounterMap = mango.statsCounterMap;
             operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
-                    mango.interceptorChain, mango.jdbcOperations);
+                    mango.interceptorChain, mango.jdbcOperations, mango.config);
             parameterNameDiscover = mango.parameterNameDiscover;
         }
 
@@ -331,11 +336,11 @@ public class Mango {
     }
 
     public boolean isDefaultLazyInit() {
-        return defaultLazyInit;
+        return isDefaultLazyInit;
     }
 
-    public Mango setDefaultLazyInit(boolean defaultLazyInit) {
-        this.defaultLazyInit = defaultLazyInit;
+    public Mango setDefaultLazyInit(boolean isDefaultLazyInit) {
+        this.isDefaultLazyInit = isDefaultLazyInit;
         return this;
     }
 
@@ -368,6 +373,11 @@ public class Mango {
             throw new NullPointerException("parameterNameDiscover can't be null");
         }
         this.parameterNameDiscover = parameterNameDiscover;
+        return this;
+    }
+
+    public Mango setCompatibleWithEmptyList(boolean isCompatibleWithEmptyList) {
+        config.setCompatibleWithEmptyList(isCompatibleWithEmptyList);
         return this;
     }
 

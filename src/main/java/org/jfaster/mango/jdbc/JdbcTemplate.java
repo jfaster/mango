@@ -56,10 +56,11 @@ public class JdbcTemplate implements JdbcOperations {
     }
 
     @Override
-    public <T> Set<T> queryForSet(DataSource dataSource, String sql, Object[] args, RowMapper<T> rowMapper)
+    public <T> Set<T> queryForSet(DataSource dataSource, String sql, Object[] args,
+                                  SetSupplier setSupplier, RowMapper<T> rowMapper)
             throws DataAccessException {
 
-        return executeQuery(dataSource, sql, args, new SetResultSetExtractor<T>(rowMapper));
+        return executeQuery(dataSource, sql, args, new SetResultSetExtractor<T>(setSupplier, rowMapper));
     }
 
     @Override

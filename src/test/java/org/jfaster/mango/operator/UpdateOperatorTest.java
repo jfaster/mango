@@ -310,7 +310,8 @@ public class UpdateOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain(), null);
+                new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
+                null, new InterceptorChain(), null, new Config());
 
         Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;
@@ -329,7 +330,8 @@ public class UpdateOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain(), null);
+                new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
+                null, new InterceptorChain(), null, new Config());
 
         Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;

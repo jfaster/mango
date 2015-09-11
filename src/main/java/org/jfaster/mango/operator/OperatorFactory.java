@@ -52,13 +52,15 @@ public class OperatorFactory {
     private final CacheHandler cacheHandler;
     private final InterceptorChain interceptorChain;
     private final JdbcOperations jdbcOperations;
+    private final Config config;
 
     public OperatorFactory(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
-                           InterceptorChain interceptorChain, JdbcOperations jdbcOperations) {
+                           InterceptorChain interceptorChain, JdbcOperations jdbcOperations, Config config) {
         this.dataSourceFactory = dataSourceFactory;
         this.cacheHandler = cacheHandler;
         this.interceptorChain = interceptorChain;
         this.jdbcOperations = jdbcOperations;
+        this.config = config;
     }
 
     public Operator getOperator(MethodDescriptor md, StatsCounter statsCounter)  {
@@ -152,6 +154,7 @@ public class OperatorFactory {
         operator.setInvocationInterceptorChain(chain);
         operator.setJdbcOperations(jdbcOperations);
         operator.setStatsCounter(statsCounter);
+        operator.setConfig(config);
         return operator;
     }
 

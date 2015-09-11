@@ -20,7 +20,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.BT;
 import org.junit.Before;
@@ -28,7 +28,6 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class BTTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
     private final static BTDao dao = mango.create(BTDao.class);
 

@@ -20,7 +20,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.junit.Before;
@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.*;
  */
 public class BeanPropertyRowMapperTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
 
     @Before

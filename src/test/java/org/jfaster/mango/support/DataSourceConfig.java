@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 /**
  * @author ash
  */
-public class Config {
+public class DataSourceConfig {
 
     private static String DIR = "hsqldb";
     private static Configuration[] CONFIGS;

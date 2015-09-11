@@ -20,7 +20,7 @@ import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.support.CacheHandlerImpl;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.annotation.SQL;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class JdkExceptionTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
     static {
         mango.setDefaultLazyInit(true);

@@ -26,7 +26,7 @@ import org.jfaster.mango.datasource.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.partition.ModTenTablePartition;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
@@ -62,7 +62,7 @@ public class DataSourceRouterTest {
         Table[] tables = new Table[]{Table.MSG_ROUTER1, Table.MSG_ROUTER2, Table.MSG_ROUTER3};
         Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
         for (int i = 0; i < 3; i++) {
-            DataSource ds = Config.getDataSource(i + 1);
+            DataSource ds = DataSourceConfig.getDataSource(i + 1);
             Connection conn = ds.getConnection();
             tables[i].load(conn);
             conn.close();

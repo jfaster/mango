@@ -19,7 +19,7 @@ package org.jfaster.mango.transaction;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Account;
 import org.junit.Before;
@@ -40,7 +40,7 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class TransactionTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
     private final static AccountDao dao = mango.create(AccountDao.class);
 

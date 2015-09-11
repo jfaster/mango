@@ -18,13 +18,11 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
+import org.jfaster.mango.parser.RuntimeEmptyParameter;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ash
@@ -39,6 +37,8 @@ public class InvocationContext {
     private final List<Object> args = new LinkedList<Object>();
 
     private String globalTable;
+
+    private List<RuntimeEmptyParameter> runtimeEmptyParameters;
 
     public void addParameter(String parameterName, Object parameterValue) {
         parameterMap.put(parameterName, parameterValue);
@@ -98,6 +98,18 @@ public class InvocationContext {
 
     public List<Object> getParameterValues() {
         return parameterValues;
+    }
+
+    public void addRuntimeEmptyParameter(RuntimeEmptyParameter rep) {
+        if (runtimeEmptyParameters == null) {
+            runtimeEmptyParameters = new ArrayList<RuntimeEmptyParameter>();
+        }
+        runtimeEmptyParameters.add(rep);
+    }
+
+    @Nullable
+    public List<RuntimeEmptyParameter> getRuntimeEmptyParameters() {
+        return runtimeEmptyParameters;
     }
 
     private String getCacheKey(String parameterName, GetterInvokerGroup invokerGroup) {

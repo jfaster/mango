@@ -19,11 +19,12 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.RowMapper;
+import org.jfaster.mango.jdbc.SetSupplier;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;
 import org.jfaster.mango.support.MockSQL;
@@ -110,7 +111,8 @@ public class QueryOperatorTest {
         operator.setStatsCounter(sc);
         operator.setJdbcOperations(new JdbcOperationsAdapter() {
             @Override
-            public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+            public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args,
+                                          SetSupplier setSupplier, RowMapper<T> rowMapper) {
                 String descSql = "select * from user where id=? and name=?";
                 assertThat(sql, equalTo(descSql));
                 assertThat(args.length, equalTo(2));
@@ -264,7 +266,8 @@ public class QueryOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()), null, new InterceptorChain(), null);
+                new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
+                null, new InterceptorChain(), null, new Config());
 
         Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;

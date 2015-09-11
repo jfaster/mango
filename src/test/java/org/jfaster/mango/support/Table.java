@@ -50,7 +50,7 @@ public enum Table {
 
     public void load(Connection conn) throws IOException, SQLException {
         ScriptRunner sr = new ScriptRunner(conn, false, true);
-        InputStream is = DbTest.class.getResourceAsStream("/" + Config.getDir() + "/" + name);
+        InputStream is = DbTest.class.getResourceAsStream("/" + DataSourceConfig.getDir() + "/" + name);
         sr.runScript(new InputStreamReader(is));
     }
 

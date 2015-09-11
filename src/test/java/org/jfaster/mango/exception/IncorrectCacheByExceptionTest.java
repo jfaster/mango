@@ -23,7 +23,7 @@ import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.CacheHandlerImpl;
-import org.jfaster.mango.support.Config;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class IncorrectCacheByExceptionTest {
 
-    private final static Mango mango = Mango.newInstance(Config.getDataSource());
+    private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
     static {
         mango.setDefaultLazyInit(true);
     }

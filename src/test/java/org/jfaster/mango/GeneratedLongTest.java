@@ -20,8 +20,8 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
-import org.jfaster.mango.support.Config;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.greaterThan;
  */
 public class GeneratedLongTest {
 
-    private final static DataSource ds = Config.getDataSource();
+    private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
     private final static MsgDao dao = mango.create(MsgDao.class);
 

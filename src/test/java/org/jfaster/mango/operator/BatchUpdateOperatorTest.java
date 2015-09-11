@@ -286,8 +286,8 @@ public class BatchUpdateOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()),
-                null, new InterceptorChain(), null);
+                new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
+                null, new InterceptorChain(), null, new Config());
 
         Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;
@@ -307,10 +307,10 @@ public class BatchUpdateOperatorTest {
 
 
         Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();
-        map.put("l50", new SimpleDataSourceFactory(Config.getDataSource(0)));
-        map.put("g50", new SimpleDataSourceFactory(Config.getDataSource(1)));
+        map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
+        map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
         DataSourceFactory dsf = new MultipleDataSourceFactory(map);
-        OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null);
+        OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new Config());
         Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;
     }

@@ -26,6 +26,7 @@ import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.ReturnDescriptor;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class QueryOperator extends AbstractOperator {
     protected RowMapper<?> rowMapper;
     protected ReturnDescriptor returnDescriptor;
     protected ListSupplier listSupplier;
+    protected SetSupplier setSupplier;
 
     protected QueryOperator(ASTRootNode rootNode, MethodDescriptor md) {
         super(rootNode);
@@ -52,6 +54,8 @@ public class QueryOperator extends AbstractOperator {
             listSupplier = new LinkedListSuppliter();
         } else if (returnDescriptor.isArrayList()) {
             listSupplier = new ArrayListSuppliter();
+        } else if (returnDescriptor.isSetAssignable()) {
+            setSupplier = new HashSetSupplier();
         }
     }
 
@@ -63,40 +67,56 @@ public class QueryOperator extends AbstractOperator {
 
     protected Object execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
-        DataSource ds = dataSourceGenerator.getDataSource(context);
-
         rootNode.render(context);
+
+        if (context.getRuntimeEmptyParameters() != null) {
+            if (config.isCompatibleWithEmptyList()) {
+                return EmptyObject();
+            } else {
+                throw new RuntimeException(); // TODO
+            }
+        }
+
         PreparedSql preparedSql = context.getPreparedSql();
         invocationInterceptorChain.intercept(preparedSql, context); // 拦截器
 
         String sql = preparedSql.getSql();
         Object[] args = preparedSql.getArgs().toArray();
+
+        DataSource ds = dataSourceGenerator.getDataSource(context);
         return executeFromDb(ds, sql, args);
     }
 
-    private Object executeFromDb(DataSource ds, String sql, Object[] args) {
+    private Object executeFromDb(final DataSource ds, final String sql, final Object[] args) {
         Object r;
         boolean success = false;
         long now = System.nanoTime();
         try {
-            if (returnDescriptor.isCollection()
-                    || returnDescriptor.isListAssignable()) {
 
-                r = jdbcOperations.queryForList(ds, sql, args, listSupplier, rowMapper);
+            r = new QueryVisitor() {
 
-            } else if (returnDescriptor.isSetAssignable()) {
+                @Override
+                Object visitForList() {
+                    return jdbcOperations.queryForList(ds, sql, args, listSupplier, rowMapper);
+                }
 
-                r = jdbcOperations.queryForSet(ds, sql, args, rowMapper);
+                @Override
+                Object visitForSet() {
+                    return jdbcOperations.queryForSet(ds, sql, args, setSupplier, rowMapper);
+                }
 
-            } else if (returnDescriptor.isArray()) {
+                @Override
+                Object visitForArray() {
+                    return jdbcOperations.queryForArray(ds, sql, args, rowMapper);
 
-                r = jdbcOperations.queryForArray(ds, sql, args, rowMapper);
+                }
 
-            } else {
+                @Override
+                Object visitForObject() {
+                    return jdbcOperations.queryForObject(ds, sql, args, rowMapper);
+                }
+            }.visit();
 
-                r = jdbcOperations.queryForObject(ds, sql, args, rowMapper);
-
-            }
             success = true;
         } finally {
             long cost = System.nanoTime() - now;
@@ -131,6 +151,54 @@ public class QueryOperator extends AbstractOperator {
             }
         }
         return new BeanPropertyRowMapper<T>(clazz, ptc);
+    }
+
+    private Object EmptyObject() {
+        return new QueryVisitor() {
+            @Override
+            Object visitForList() {
+                return listSupplier.get(rowMapper.getMappedClass());
+            }
+
+            @Override
+            Object visitForSet() {
+                return setSupplier.get(rowMapper.getMappedClass());
+            }
+
+            @Override
+            Object visitForArray() {
+                return Array.newInstance(rowMapper.getMappedClass(), 0);
+            }
+
+            @Override
+            Object visitForObject() {
+                return null;
+            }
+        }.visit();
+    }
+
+    abstract class QueryVisitor {
+
+        public Object visit() {
+            Object r;
+            if (returnDescriptor.isCollection()
+                    || returnDescriptor.isListAssignable()) {
+                r = visitForList();
+            } else if (returnDescriptor.isSetAssignable()) {
+                r = visitForSet();
+            } else if (returnDescriptor.isArray()) {
+                r = visitForArray();
+            } else {
+                r = visitForObject();
+            }
+            return r;
+        }
+
+        abstract Object visitForList();
+        abstract Object visitForSet();
+        abstract Object visitForArray();
+        abstract Object visitForObject();
+
     }
 
 }

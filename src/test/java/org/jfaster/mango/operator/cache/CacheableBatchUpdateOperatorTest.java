@@ -17,10 +17,7 @@
 package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
-import org.jfaster.mango.operator.InterceptorChain;
-import org.jfaster.mango.operator.Operator;
-import org.jfaster.mango.operator.OperatorFactory;
-import org.jfaster.mango.operator.StatsCounter;
+import org.jfaster.mango.operator.*;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
@@ -92,7 +89,8 @@ public class CacheableBatchUpdateOperatorTest {
         MethodDescriptor md = new MethodDescriptor(rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(Config.getDataSource()), ch, new InterceptorChain(), null);
+                new SimpleDataSourceFactory(DataSourceConfig.getDataSource()), ch,
+                new InterceptorChain(), null, new Config());
 
         Operator operator = factory.getOperator(md, sc);
         return operator;
