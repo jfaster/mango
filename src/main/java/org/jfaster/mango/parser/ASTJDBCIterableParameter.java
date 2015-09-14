@@ -73,8 +73,6 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
         Iterables iterables = new Iterables(objs);
         if (iterables.isEmpty()) {
             context.addRuntimeEmptyParameter(new RuntimeEmptyParameter(parameterName, propertyPath));
-//            throw new IllegalArgumentException("value of " +
-//                    Strings.getFullName(parameterName, propertyPath) + " can't be empty");
         }
         context.writeToSqlBuffer("in (");
         int t = 0;

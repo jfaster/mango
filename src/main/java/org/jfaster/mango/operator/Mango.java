@@ -376,6 +376,10 @@ public class Mango {
         return this;
     }
 
+    public boolean isCompatibleWithEmptyList() {
+        return config.isCompatibleWithEmptyList();
+    }
+
     public Mango setCompatibleWithEmptyList(boolean isCompatibleWithEmptyList) {
         config.setCompatibleWithEmptyList(isCompatibleWithEmptyList);
         return this;

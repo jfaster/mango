@@ -28,7 +28,9 @@ import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -299,10 +301,27 @@ public class DbTest {
 
     @Test
     public void testEmpty() throws Exception {
+        boolean old = mango.isCompatibleWithEmptyList();
+        mango.setCompatibleWithEmptyList(true);
         assertThat(dao.getUsersInList(new ArrayList<Integer>()).size(), equalTo(0));
         assertThat(dao.getUsersInArray(new int[] {}).length, equalTo(0));
         assertThat(dao.getUsersInArray2(new int[]{}), nullValue());
         assertThat(dao.getUsersInSet(new HashSet<Integer>()).size(), equalTo(0));
+        mango.setCompatibleWithEmptyList(old);
+    }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void testEmpty2() throws Exception {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("value of :1 can't be empty, " +
+                "error SQL [select id, name, age, gender, money, update_time from user where id in ()]");
+        boolean old = mango.isCompatibleWithEmptyList();
+        mango.setCompatibleWithEmptyList(false);
+        dao.getUsersInList(new ArrayList<Integer>());
+        mango.setCompatibleWithEmptyList(old);
     }
 
 /********************************测试更新开始***************************************/
