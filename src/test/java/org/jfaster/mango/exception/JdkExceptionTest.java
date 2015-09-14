@@ -18,12 +18,12 @@ package org.jfaster.mango.exception;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
+import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.annotation.SQL;
+import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.support.CacheHandlerImpl;
 import org.jfaster.mango.support.DataSourceConfig;
-import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
 import org.junit.Before;
@@ -33,7 +33,6 @@ import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,14 +81,6 @@ public class JdkExceptionTest {
         thrown.expectMessage("parameter :1 need a non-null value");
         MsgCacheDao dao = mango.create(MsgCacheDao.class, new CacheHandlerImpl());
         dao.getMsgs(null);
-    }
-
-    @Test
-    public void testIterableParameterEmptyWithCache() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("value of :1 can't be empty");
-        MsgCacheDao dao = mango.create(MsgCacheDao.class, new CacheHandlerImpl());
-        dao.getMsgs(new ArrayList<Integer>());
     }
 
     @Test

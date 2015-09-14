@@ -153,7 +153,7 @@ public class QueryOperator extends AbstractOperator {
         return new BeanPropertyRowMapper<T>(clazz, ptc);
     }
 
-    private Object EmptyObject() {
+    protected Object EmptyObject() {
         return new QueryVisitor() {
             @Override
             Object visitForList() {

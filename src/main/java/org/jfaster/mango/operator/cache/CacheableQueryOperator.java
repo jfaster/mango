@@ -82,6 +82,9 @@ public class CacheableQueryOperator extends QueryOperator {
         boolean isDebugEnabled = logger.isDebugEnabled();
         boolean isCacheNullObj = driver.isCacheNullObject();
         Set<String> keys = driver.getCacheKeys(context);
+        if (keys.isEmpty()) {
+            return EmptyObject();
+        }
 
         // 从缓存中批量取数据
         Map<String, Object> cachedResults = driver.getBulkFromCache(keys);

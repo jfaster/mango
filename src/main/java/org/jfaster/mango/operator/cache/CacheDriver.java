@@ -249,11 +249,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public Set<String> getCacheKeys(InvocationContext context) {
         Iterables iterables = new Iterables(getOnlyCacheByObj(context));
-        if (iterables.isEmpty()) {
-            CacheByItem item = getOnlyCacheByItem(cacheByItems);
-            throw new IllegalArgumentException("value of " + item.getFullName() + " can't be empty");
-        }
-        Set<String> keys = new HashSet<String>(iterables.size() * 2);
+        Set<String> keys = new HashSet<String>();
         for (Object obj : iterables) {
             String key = getCacheKey(obj);
             keys.add(key);

@@ -55,10 +55,12 @@ public class CacheableUpdateOperator extends UpdateOperator {
         Object r = execute(context);
         if (driver.isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
             Set<String> keys = driver.getCacheKeys(context);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Cache delete for multiple keys {}", keys);
+            if (!keys.isEmpty()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Cache delete for multiple keys {}", keys);
+                }
+                driver.batchDeleteFromCache(keys);
             }
-            driver.batchDeleteFromCache(keys);
         } else { // 单个key，例如：update table set name='ash' where id ＝ 1;
             String key = driver.getCacheKey(context);
             if (logger.isDebugEnabled()) {

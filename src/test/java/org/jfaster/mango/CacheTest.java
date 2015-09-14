@@ -414,6 +414,26 @@ public class CacheTest {
         assertThat(actual, contains(msgs.toArray()));
     }
 
+    @Test
+    public void testQueryEmpty() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        UserDao dao = mango.create(UserDao.class, cacheHandler);
+        boolean old = mango.isCompatibleWithEmptyList();
+        mango.setCompatibleWithEmptyList(true);
+        assertThat(dao.getUserArray(new ArrayList<Integer>()).length, equalTo(0));
+        mango.setCompatibleWithEmptyList(old);
+    }
+
+    @Test
+    public void testUpdateEmpty() throws Exception {
+        CacheHandler cacheHandler = new CacheHandlerImpl();
+        UserDao dao = mango.create(UserDao.class, cacheHandler);
+        boolean old = mango.isCompatibleWithEmptyList();
+        mango.setCompatibleWithEmptyList(true);
+        assertThat(dao.updateWithInStatement(new ArrayList<Integer>(), "ash"), equalTo(0));
+        mango.setCompatibleWithEmptyList(old);
+    }
+
     private String getUserKey(int id) {
         return "user_" + id;
     }
