@@ -300,7 +300,7 @@ public class DbTest {
     }
 
     @Test
-    public void testEmpty() throws Exception {
+    public void testQueryEmpty() throws Exception {
         boolean old = mango.isCompatibleWithEmptyList();
         mango.setCompatibleWithEmptyList(true);
         assertThat(dao.getUsersInList(new ArrayList<Integer>()).size(), equalTo(0));
@@ -314,7 +314,7 @@ public class DbTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void testEmpty2() throws Exception {
+    public void testQueryEmpty2() throws Exception {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("value of :1 can't be empty, " +
                 "error SQL [select id, name, age, gender, money, update_time from user where id in ()]");
@@ -395,6 +395,24 @@ public class DbTest {
         assertThat(r2, equalTo(1));
         Long r3 = dao.getLongObjMoney(id);
         assertThat(r3, equalTo(null));
+    }
+
+    @Test
+    public void testUpdateEmpty() {
+        boolean old = mango.isCompatibleWithEmptyList();
+        mango.setCompatibleWithEmptyList(true);
+        assertThat(dao.updateUsers(new ArrayList<Integer>(), "ash"), equalTo(0));
+        mango.setCompatibleWithEmptyList(old);
+    }
+
+    @Test
+    public void testUpdateEmpty2() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("value of :ids can't be empty, error SQL [update user set name=? where id in ()]");
+        boolean old = mango.isCompatibleWithEmptyList();
+        mango.setCompatibleWithEmptyList(false);
+        dao.updateUsers(new ArrayList<Integer>(), "ash");
+        mango.setCompatibleWithEmptyList(old);
     }
 
 /********************************测试批量更新开始***************************************/
@@ -587,6 +605,9 @@ public class DbTest {
 
         @SQL("delete from user where age=:1")
         public int deleteUserByAge(int age);
+
+        @SQL("update user set name=:name where id in (:ids)")
+        public int updateUsers(@Rename("ids") List<Integer> ids, @Rename("name") String name);
 
         /***********************************************************************/
 

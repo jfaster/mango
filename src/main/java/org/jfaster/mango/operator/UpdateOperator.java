@@ -77,14 +77,23 @@ public class UpdateOperator extends AbstractOperator {
 
     public Object execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
-        DataSource ds = dataSourceGenerator.getDataSource(context);
-
         rootNode.render(context);
+
+        if (context.getRuntimeEmptyParameters() != null) {
+            if (config.isCompatibleWithEmptyList()) {
+                return transformer.transform(0);
+            } else {
+                throwEmptyParametersException(context);
+            }
+        }
+
         PreparedSql preparedSql = context.getPreparedSql();
         invocationInterceptorChain.intercept(preparedSql, context);  // 拦截器
 
         String sql = preparedSql.getSql();
         Object[] args = preparedSql.getArgs().toArray();
+
+        DataSource ds = dataSourceGenerator.getDataSource(context);
         Number r = executeDb(ds, sql, args);
         return transformer.transform(r);
     }

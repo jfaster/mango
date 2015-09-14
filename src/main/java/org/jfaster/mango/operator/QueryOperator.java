@@ -21,17 +21,13 @@ import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
 import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.parser.RuntimeEmptyParameter;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.ReturnDescriptor;
-import org.jfaster.mango.util.Strings;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,13 +73,7 @@ public class QueryOperator extends AbstractOperator {
             if (config.isCompatibleWithEmptyList()) {
                 return EmptyObject();
             } else {
-                List<String> fullNames = new ArrayList<String>();
-                for (RuntimeEmptyParameter rep : context.getRuntimeEmptyParameters()) {
-                    fullNames.add(Strings.getFullName(rep.getParameterName(), rep.getPropertyPath()));
-                }
-                String str = fullNames.size() == 1 ? fullNames.get(0) : fullNames.toString();
-                throw new IllegalArgumentException("value of " +
-                    str + " can't be empty, error SQL [" + context.getPreparedSql().getSql() + "]");
+                throwEmptyParametersException(context);
             }
         }
 
