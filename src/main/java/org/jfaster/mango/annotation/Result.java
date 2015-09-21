@@ -19,6 +19,10 @@ package org.jfaster.mango.annotation;
 import java.lang.annotation.*;
 
 /**
+ * 自定义数据库表字段到类属性的映射
+ *
+ * @see Results
+ *
  * @author ash
  */
 @Target({ElementType.METHOD, ElementType.TYPE})

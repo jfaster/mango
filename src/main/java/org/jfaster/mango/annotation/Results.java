@@ -19,9 +19,9 @@ package org.jfaster.mango.annotation;
 import java.lang.annotation.*;
 
 /**
- * 自定义数据库表字段到类属性的映射
+ * 自定义数据库表字段到类属性的映射，和{@link Result}配合使用
  *
- * <p>比如我们需要将数据库user表中的user_id,user_name字段，分别映射到类User的id,
+ * <p>比如我们需要将数据库user表中的user_id,user_name字段，分别映射到类User的id,name属性
  *
  * <pre>
  * interface UserDao {
