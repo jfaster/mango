@@ -18,6 +18,9 @@ package org.jfaster.mango.invoker.function.enums;
 
 import org.jfaster.mango.invoker.GenericSetterFunction;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.concurrent.cache.CacheLoader;
+import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
+import org.jfaster.mango.util.concurrent.cache.LoadingCache;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -30,7 +33,12 @@ import java.util.EnumSet;
  */
 public class IntegerToEnumFunction extends GenericSetterFunction<Integer, Enum> {
 
-    private static volatile EnumSet es;
+    private final static LoadingCache<Class, EnumSet> cache = new DoubleCheckCache<Class, EnumSet>(
+            new CacheLoader<Class, EnumSet>() {
+                public EnumSet load(Class enumType) {
+                    return EnumSet.allOf(enumType);
+                }
+            });
 
     @Nullable
     @Override
@@ -39,24 +47,13 @@ public class IntegerToEnumFunction extends GenericSetterFunction<Integer, Enum> 
             return null;
         }
         Class<?> rawType = TypeToken.of(runtimeOutputType).getRawType();
-        EnumSet<?> es = getEnumSet(rawType);
+        EnumSet<?> es = cache.get(rawType);
         for (Enum<?> e : es) {
             if (e.ordinal() == input) {
                 return e;
             }
         }
         throw new IllegalStateException("cant' trans Integer(" + input + ") to " + runtimeOutputType);
-    }
-
-    private static EnumSet getEnumSet(Class enumType) {
-        if (es == null) {
-            synchronized (IntegerToEnumFunction.class) {
-                if (es == null) {
-                    es = EnumSet.allOf(enumType);
-                }
-            }
-        }
-        return es;
     }
 
 }

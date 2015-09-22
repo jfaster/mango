@@ -38,10 +38,18 @@ public class IntegerToEnumFunctionTest {
         SetterInvoker invoker = FunctionalSetterInvoker.create("e", m);
         invoker.invoke(a, 2);
         assertThat(a.getE(), is(E.Z));
+
+
+        Method m2 = A.class.getDeclaredMethod("setE2", E2.class);
+        SetterInvoker invoker2 = FunctionalSetterInvoker.create("e2", m2);
+        invoker2.invoke(a, 2);
+        assertThat(a.getE2(), is(E2.C));
     }
 
     static class A {
         private E e;
+
+        private E2 e2;
 
         E getE() {
             return e;
@@ -51,10 +59,23 @@ public class IntegerToEnumFunctionTest {
         void setE(E e) {
             this.e = e;
         }
+
+        E2 getE2() {
+            return e2;
+        }
+
+        @Setter(IntegerToEnumFunction.class)
+        void setE2(E2 e2) {
+            this.e2 = e2;
+        }
     }
 
     enum E {
         X, Y, Z;
+    }
+
+    enum E2 {
+        A, B, C;
     }
 
 }
