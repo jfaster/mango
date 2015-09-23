@@ -27,6 +27,33 @@ public enum SQLErrorCodes {
         }
     },
 
+    DB2 {
+        @Override
+        void init() {
+            setDatabaseProductName("DB2*");
+            setBadSqlGrammarCodes(parse("-007,-029,-097,-104,-109,-115,-128,-199,-204,-206,-301,-408,-441,-491"));
+            setDuplicateKeyCodes(parse("-803"));
+            setDataIntegrityViolationCodes(parse("-407,-530,-531,-532,-543,-544,-545,-603,-667"));
+            setDataAccessResourceFailureCodes(parse("-904,-971"));
+            setTransientDataAccessResourceCodes(parse("-1035,-1218,-30080,-30081"));
+            setDeadlockLoserCodes(parse("-911,-913"));
+        }
+    },
+
+    Derby {
+        @Override
+        void init() {
+            setDatabaseProductName("Apache Derby");
+            setUseSqlStateForTranslation(true);
+            setBadSqlGrammarCodes(parse("42802,42821,42X01,42X02,42X03,42X04,42X05,42X06,42X07,42X08"));
+            setDuplicateKeyCodes(parse("23505"));
+            setDataIntegrityViolationCodes(parse("22001,22005,23502,23503,23513,X0Y32"));
+            setDataAccessResourceFailureCodes(parse("04501,08004,42Y07"));
+            setCannotAcquireLockCodes(parse("40XL1"));
+            setDeadlockLoserCodes(parse("40001"));
+        }
+    },
+
     HSQL {
         @Override
         void init() {
@@ -48,7 +75,23 @@ public enum SQLErrorCodes {
             setCannotAcquireLockCodes(parse("1205"));
             setDeadlockLoserCodes(parse("1213"));
         }
-    }
+    },
+
+    Oracle {
+        @Override
+        void init() {
+            setBadSqlGrammarCodes(parse("900,903,904,917,936,942,17006,6550"));
+            setInvalidResultSetAccessCodes(parse("17003"));
+            setDuplicateKeyCodes(parse("1"));
+            setDataIntegrityViolationCodes(parse("1400,1722,2291,2292"));
+            setDataAccessResourceFailureCodes(parse("17002,17447"));
+            setCannotAcquireLockCodes(parse("54,30006"));
+            setCannotSerializeTransactionCodes(parse("8177"));
+            setDeadlockLoserCodes(parse("60"));
+        }
+    },
+
+
     ;
 
     private String[] databaseProductNames = new String[0];
