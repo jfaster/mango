@@ -42,7 +42,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FunctionalGetterInvokerTest {
 
-    public static class IntegerToStringFunction extends GetterFunction<Integer, String> {
+    public static class IntegerToStringFunction extends SimpleGetterFunction<Integer, String> {
 
         @Nullable
         @Override
@@ -138,7 +138,7 @@ public class FunctionalGetterInvokerTest {
         assertThat((String) invoker.invoke(b), is("string100"));
     }
 
-    public static class StringToIntegerFunction extends GetterFunction<String, Integer> {
+    public static class StringToIntegerFunction extends SimpleGetterFunction<String, Integer> {
 
         @Nullable
         @Override
@@ -191,7 +191,7 @@ public class FunctionalGetterInvokerTest {
         assertThat((Integer) invoker.invoke(c), is(952700));
     }
 
-    public static class IntegerListToStringFunction extends GetterFunction<List<Integer>, String> {
+    public static class IntegerListToStringFunction extends SimpleGetterFunction<List<Integer>, String> {
 
         @Nullable
         @Override
@@ -301,7 +301,7 @@ public class FunctionalGetterInvokerTest {
         FunctionalGetterInvoker.create("x", method);
     }
 
-    public static class IntArrayToStringFunction extends GetterFunction<int[], String> {
+    public static class IntArrayToStringFunction extends SimpleGetterFunction<int[], String> {
 
         @Nullable
         @Override

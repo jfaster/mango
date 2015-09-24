@@ -14,23 +14,13 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker.function.enums;
-
-import org.jfaster.mango.invoker.SimpleGetterFunction;
-
-import javax.annotation.Nullable;
+package org.jfaster.mango.invoker;
 
 /**
- * Enum --> String
- *
  * @author ash
  */
-public class EnumToStringFunction extends SimpleGetterFunction<Enum, String> {
+public abstract class SimpleGetterFunction<I, O> extends GetterFunction<I, O> {
 
-    @Nullable
-    @Override
-    public String apply(@Nullable Enum input) {
-        return input == null ? null : input.name();
-    }
+    // 与SimpleSetterFunction对称
 
 }

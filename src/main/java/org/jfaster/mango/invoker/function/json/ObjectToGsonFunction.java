@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function.json;
 
 import com.google.gson.Gson;
-import org.jfaster.mango.invoker.GetterFunction;
+import org.jfaster.mango.invoker.SimpleGetterFunction;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class ObjectToGsonFunction extends GetterFunction<Object, String> {
+public class ObjectToGsonFunction extends SimpleGetterFunction<Object, String> {
 
     @Nullable
     @Override
