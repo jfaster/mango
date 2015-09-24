@@ -54,6 +54,43 @@ public enum SQLErrorCodes {
         }
     },
 
+    H2 {
+        @Override
+        void init() {
+            setBadSqlGrammarCodes(parse("42000,42001,42101,42102,42111,42112,42121,42122,42132"));
+            setDuplicateKeyCodes(parse("23001,23505"));
+            setDataIntegrityViolationCodes(parse("22001,22003,22012,22018,22025,23000,23002,23003,23502,23503,23506,23507,23513"));
+            setDataAccessResourceFailureCodes(parse("90046,90100,90117,90121,90126"));
+            setCannotAcquireLockCodes(parse("50200"));
+        }
+    },
+
+    Informix {
+        @Override
+        void init() {
+            setDatabaseProductName("Informix Dynamic Server");
+            setBadSqlGrammarCodes(parse("-201,-217,-696"));
+            setDuplicateKeyCodes(parse("-239,-268,-6017"));
+            setDataIntegrityViolationCodes(parse("-692,-11030"));
+        }
+    },
+
+    MSSQL {
+        @Override
+        void init() {
+            setDatabaseProductNames(new String[] {
+                  "MS-SQL", "Microsoft SQL Server"
+            });
+            setBadSqlGrammarCodes(parse("156,170,207,208,209"));
+            setPermissionDeniedCodes(parse("229"));
+            setDuplicateKeyCodes(parse("2601,2627"));
+            setDataIntegrityViolationCodes(parse("544,8114,8115"));
+            setDataAccessResourceFailureCodes(parse("4060"));
+            setCannotAcquireLockCodes(parse("1222"));
+            setDeadlockLoserCodes(parse("1205"));
+        }
+    },
+
     HSQL {
         @Override
         void init() {
@@ -91,6 +128,54 @@ public enum SQLErrorCodes {
         }
     },
 
+    PostgreSQL {
+        @Override
+        void init() {
+            setUseSqlStateForTranslation(true);
+            setBadSqlGrammarCodes(parse("03000,42000,42601,42602,42622,42804,42P01"));
+            setDuplicateKeyCodes(parse("23505"));
+            setDataIntegrityViolationCodes(parse("23000,23502,23503,23514"));
+            setDataAccessResourceFailureCodes(parse("53000,53100,53200,53300"));
+            setCannotAcquireLockCodes(parse("55P03"));
+            setCannotSerializeTransactionCodes(parse("40001"));
+            setDeadlockLoserCodes(parse("40P01"));
+        }
+    },
+
+    Sybase {
+        @Override
+        void init() {
+            setDatabaseProductNames(new String[] {
+                    "Sybase SQL Server",
+                    "SQL Server",
+                    "Adaptive Server Enterprise",
+                    "ASE",
+                    "sql server"
+            });
+            setBadSqlGrammarCodes(parse("101,102,103,104,105,106,107,108,109,110,111,112,113,116,120,121,123,207,208,213,257,512"));
+            setDuplicateKeyCodes(parse("2601,2615,2626"));
+            setDataIntegrityViolationCodes(parse("233,511,515,530,546,547,2615,2714"));
+            setTransientDataAccessResourceCodes(parse("921,1105"));
+            setCannotAcquireLockCodes(parse("12205"));
+            setDeadlockLoserCodes(parse("1205"));
+        }
+    },
+
+    Hana {
+        @Override
+        void init() {
+            setDatabaseProductName("SAP DB");
+            setBadSqlGrammarCodes(parse("257,259,260,261,262,263,264,267,268,269,270,271,272,273,275,276,277,278,278,279,280,281,282,283,284,285,286,288,289,290,294,295,296,297,299,308,309,313,315,316,318,319,320,321,322,323,324,328,329,330,333,335,336,337,338,340,343,350,351,352,362,368"));
+            setPermissionDeniedCodes(parse("10,258"));
+            setDuplicateKeyCodes(parse("301"));
+            setDataIntegrityViolationCodes(parse("461,462"));
+            setDataAccessResourceFailureCodes(parse("-813,-709,-708,1024,1025,1026,1027,1029,1030,1031"));
+            setInvalidResultSetAccessCodes(parse("-11210,582,587,588,594"));
+            setCannotAcquireLockCodes(parse("131"));
+            setCannotSerializeTransactionCodes(parse("138,143"));
+            setDeadlockLoserCodes(parse("133"));
+        }
+    },
 
     ;
 
