@@ -25,7 +25,7 @@ import javax.servlet.ServletContextListener;
 /**
  * @author ash
  */
-public class Log4JLoggerListener implements ServletContextListener {
+public class Log4jLoggerListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
