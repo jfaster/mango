@@ -40,7 +40,7 @@ public class ModTenTablePartition implements TablePartition {
             throw new IllegalArgumentException("shard parameter need int or Integer or long or Long but "
                     + shardParam.getClass());
         }
-        return table + "_" + mod;
+        return table + "_" + Math.abs(mod);
     }
 
 }
