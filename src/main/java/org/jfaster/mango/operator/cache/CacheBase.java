@@ -71,4 +71,9 @@ public interface CacheBase {
     @Nullable
     public Map<String, Object> getBulkFromCache(Set<String> keys);
 
+    /**
+     * 获得缓存过期时间，单位为秒
+     */
+    public int getExpTimeSeconds();
+
 }

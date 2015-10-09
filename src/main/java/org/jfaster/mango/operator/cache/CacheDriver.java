@@ -122,7 +122,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            cacheHandler.set(key, value, cacheExpire.getExpireTime() * expireNum);
+            cacheHandler.set(key, value, getExpTimeSeconds());
             success = true;
         } finally {
             long cost = System.nanoTime() - now;
@@ -139,7 +139,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            cacheHandler.add(key, value, cacheExpire.getExpireTime() * expireNum);
+            cacheHandler.add(key, value, getExpTimeSeconds());
             success = true;
         } finally {
             long cost = System.nanoTime() - now;
@@ -281,6 +281,11 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public String getPropertyOfMapper() {
         return propertyOfMapper;
+    }
+
+    @Override
+    public int getExpTimeSeconds() {
+        return cacheExpire.getExpireTime() * expireNum;
     }
 
     private void init(MethodDescriptor md, ASTRootNode rootNode, ParameterContext context) {

@@ -71,9 +71,9 @@ public class LocalCacheHandler extends SimpleCacheHandler {
     }
 
     @Override
-    public void set(String key, Object value, int expires) {
+    public void set(String key, Object value, int expTimeSeconds) {
         long now = ticker.read();
-        Entry entry = new Entry(value, now + TimeUnit.SECONDS.toNanos(expires));
+        Entry entry = new Entry(value, now + TimeUnit.SECONDS.toNanos(expTimeSeconds));
         cache.put(key, entry);
     }
 
@@ -83,9 +83,9 @@ public class LocalCacheHandler extends SimpleCacheHandler {
     }
 
     @Override
-    public void add(String key, Object value, int expires) {
+    public void add(String key, Object value, int expTimeSeconds) {
         long now = ticker.read();
-        Entry entry = new Entry(value, now + TimeUnit.SECONDS.toNanos(expires));
+        Entry entry = new Entry(value, now + TimeUnit.SECONDS.toNanos(expTimeSeconds));
         cache.putIfAbsent(key, entry);
     }
 

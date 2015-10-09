@@ -30,9 +30,9 @@ public interface CacheHandler {
 
     public Map<String, Object> getBulk(Set<String> keys);
 
-    public void set(String key, Object value, int expires);
+    public void set(String key, Object value, int expTimeSeconds);
 
-    public void add(String key, Object value, int expires);
+    public void add(String key, Object value, int expTimeSeconds);
 
     public void delete(String key);
 
