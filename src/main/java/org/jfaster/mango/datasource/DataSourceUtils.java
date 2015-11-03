@@ -59,11 +59,11 @@ public class DataSourceUtils {
                 if (!conn.getAutoCommit()) {
                     conn.setAutoCommit(true);
                 }
-            } catch (SQLException e) {
-                logger.error("Could not set autoCommit of JDBC Connection after get Connection, so close it");
+            } catch (Throwable e) {
+                logger.error("Could not set autoCommit of JDBC Connection after get Connection, so close it", e);
                 releaseConnection(conn, dataSource);
                 throw new CannotGetJdbcConnectionException("Could not set autoCommit of JDBC Connection " +
-                        "after get Connection, so close it");
+                        "after get Connection, so close it", e);
             }
         }
         return conn;
