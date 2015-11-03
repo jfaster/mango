@@ -283,7 +283,7 @@ public class BatchUpdateOperatorTest {
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
-        MethodDescriptor md = new MethodDescriptor(rd, pds);
+        MethodDescriptor md = new MethodDescriptor(null, rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
@@ -303,7 +303,7 @@ public class BatchUpdateOperatorTest {
         methodAnnos.add(new MockDB("", "user", ModHundredTablePartition.class, MyDataSourceRouter.class));
         methodAnnos.add(new MockSQL(srcSql));
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
-        MethodDescriptor md = new MethodDescriptor(rd, pds);
+        MethodDescriptor md = new MethodDescriptor(null, rd, pds);
 
 
         Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();

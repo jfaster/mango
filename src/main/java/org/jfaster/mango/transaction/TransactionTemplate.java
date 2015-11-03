@@ -30,7 +30,7 @@ public class TransactionTemplate {
         execute(TransactionFactory.newTransaction(mango, dataSourceName, level), action);
     }
 
-    public static void execute( Mango mango, String dataSourceName, TransactionAction action)
+    public static void execute(Mango mango, String dataSourceName, TransactionAction action)
             throws TransactionException {
         execute(TransactionFactory.newTransaction(mango, dataSourceName), action);
     }

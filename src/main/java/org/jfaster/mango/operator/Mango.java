@@ -18,13 +18,12 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.InitializationException;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
+import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.reflect.*;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
@@ -241,7 +240,7 @@ public class Mango {
      * 根据数据源名字获得主库数据源
      */
     public DataSource getMasterDataSource(String dataSourceName) {
-        return dataSourceFactory.getDataSource(dataSourceName, DataSourceType.MASTER);
+        return dataSourceFactory.getMasterDataSource(dataSourceName);
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {

@@ -40,8 +40,13 @@ public class MasterSlaveDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public DataSource getDataSource(String name, DataSourceType dataSourceType) {
-        return dataSourceType == DataSourceType.MASTER ? master : slaves.get(random.nextInt(slaves.size()));
+    public DataSource getMasterDataSource(String dataSourceName) {
+       return master;
+    }
+
+    @Override
+    public DataSource getSlaveDataSource(String dataSourceName, Class<?> daoClass) {
+        return slaves.get(random.nextInt(slaves.size()));
     }
 
     public DataSource getMaster() {

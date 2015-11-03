@@ -263,7 +263,7 @@ public class QueryOperatorTest {
             methodAnnos.add(anno);
         }
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
-        MethodDescriptor md = new MethodDescriptor(rd, pds);
+        MethodDescriptor md = new MethodDescriptor(null, rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),

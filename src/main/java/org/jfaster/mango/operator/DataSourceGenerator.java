@@ -36,15 +36,17 @@ public class DataSourceGenerator {
         this.dataSourceRouter = dataSourceRouter;
     }
 
-    public DataSource getDataSource(InvocationContext context) {
-        return getDataSource(getDataSourceName(context));
+    public DataSource getDataSource(InvocationContext context, Class<?> daoClass) {
+        return getDataSource(getDataSourceName(context), daoClass);
     }
 
-    public DataSource getDataSource(String dataSourceName) {
+    private DataSource getDataSource(String dataSourceName, Class<?> daoClass) {
         if (logger.isDebugEnabled()) {
             logger.debug("The name of Datasource is [" + dataSourceName + "]");
         }
-        DataSource ds = dataSourceFactory.getDataSource(dataSourceName, dataSourceType);
+        DataSource ds = dataSourceType == DataSourceType.MASTER ?
+                dataSourceFactory.getMasterDataSource(dataSourceName) :
+                dataSourceFactory.getSlaveDataSource(dataSourceName, daoClass);
         if (ds == null) {
             throw new IncorrectDefinitionException("can't find datasource for name [" + dataSourceName + "]");
         }

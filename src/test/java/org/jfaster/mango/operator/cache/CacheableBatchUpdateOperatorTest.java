@@ -86,7 +86,7 @@ public class CacheableBatchUpdateOperatorTest {
         methodAnnos.add(new MockCache("user", Day.class));
         methodAnnos.add(new MockSQL(srcSql));
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
-        MethodDescriptor md = new MethodDescriptor(rd, pds);
+        MethodDescriptor md = new MethodDescriptor(null, rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()), ch,

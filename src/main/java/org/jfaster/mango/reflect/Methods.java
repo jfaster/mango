@@ -51,7 +51,7 @@ public class Methods {
             pds.add(new ParameterDescriptor(i, type, Arrays.asList(pas), name));
         }
 
-        return new MethodDescriptor(rd, pds);
+        return new MethodDescriptor(method.getDeclaringClass(), rd, pds);
     }
 
 }

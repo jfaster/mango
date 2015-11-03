@@ -29,13 +29,20 @@ import java.util.List;
  */
 public class MethodDescriptor {
 
+    private final Class<?> daoClass;
     private final ReturnDescriptor returnDescriptor;
     private final List<ParameterDescriptor> parameterDescriptors;
 
-    public MethodDescriptor(ReturnDescriptor returnDescriptor,
+    public MethodDescriptor(Class<?> daoClass,
+                            ReturnDescriptor returnDescriptor,
                             List<ParameterDescriptor> parameterDescriptors) {
+        this.daoClass = daoClass;
         this.returnDescriptor = returnDescriptor;
         this.parameterDescriptors = Collections.unmodifiableList(parameterDescriptors);
+    }
+
+    public Class<?> getDaoClass() {
+        return daoClass;
     }
 
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {

@@ -39,13 +39,24 @@ public class MultipleDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public DataSource getDataSource(String name, DataSourceType dataSourceType) {
-        DataSourceFactory factory = factories.get(name);
+    public DataSource getMasterDataSource(String dataSourceName) {
+        DataSourceFactory factory = getDataSourceFactory(dataSourceName);
+        return factory.getMasterDataSource(dataSourceName);
+    }
+
+    @Override
+    public DataSource getSlaveDataSource(String dataSourceName, Class<?> daoClass) {
+        DataSourceFactory factory = getDataSourceFactory(dataSourceName);
+        return factory.getSlaveDataSource(dataSourceName, daoClass);
+    }
+
+    private DataSourceFactory getDataSourceFactory(String dataSourceName) {
+        DataSourceFactory factory = factories.get(dataSourceName);
         if (factory == null) {
-            throw new IllegalArgumentException("can not find the data source factory by name [" + name + "], " +
+            throw new IllegalArgumentException("can not find the data source factory by name [" + dataSourceName + "], " +
                     "available data sources name is " + factories.keySet());
         }
-        return factory.getDataSource(name, dataSourceType);
+        return factory;
     }
 
     public Map<String, DataSourceFactory> getFactories() {

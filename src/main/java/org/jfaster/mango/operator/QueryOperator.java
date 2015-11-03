@@ -41,7 +41,7 @@ public class QueryOperator extends AbstractOperator {
     protected SetSupplier setSupplier;
 
     protected QueryOperator(ASTRootNode rootNode, MethodDescriptor md) {
-        super(rootNode);
+        super(rootNode, md.getDaoClass());
         init(md);
     }
 
@@ -83,7 +83,7 @@ public class QueryOperator extends AbstractOperator {
         String sql = preparedSql.getSql();
         Object[] args = preparedSql.getArgs().toArray();
 
-        DataSource ds = dataSourceGenerator.getDataSource(context);
+        DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
         return executeFromDb(ds, sql, args);
     }
 

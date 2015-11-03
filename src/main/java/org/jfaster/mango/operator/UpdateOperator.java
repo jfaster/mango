@@ -40,7 +40,7 @@ public class UpdateOperator extends AbstractOperator {
     private Class<? extends Number> numberRawType;
 
     protected UpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
-        super(rootNode);
+        super(rootNode, md.getDaoClass());
         init(md, rootNode.getSQLType());
     }
 
@@ -93,7 +93,7 @@ public class UpdateOperator extends AbstractOperator {
         String sql = preparedSql.getSql();
         Object[] args = preparedSql.getArgs().toArray();
 
-        DataSource ds = dataSourceGenerator.getDataSource(context);
+        DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
         Number r = executeDb(ds, sql, args);
         return transformer.transform(r);
     }

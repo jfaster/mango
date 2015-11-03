@@ -33,7 +33,7 @@ public class BatchUpdateOperator extends AbstractOperator {
     protected Transformer transformer;
 
     protected BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
-        super(rootNode);
+        super(rootNode, md.getDaoClass());
         transformer = TRANSFORMERS.get(md.getReturnRawType());
         if (transformer == null) {
             String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
@@ -61,7 +61,7 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     protected void group(InvocationContext context, Map<DataSource, Group> groupMap, int position) {
         context.setGlobalTable(tableGenerator.getTable(context));
-        DataSource ds = dataSourceGenerator.getDataSource(context);
+        DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
         Group group = groupMap.get(ds);
         if (group == null) {
             group = new Group();

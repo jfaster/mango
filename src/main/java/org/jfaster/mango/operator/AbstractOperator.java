@@ -35,10 +35,16 @@ public abstract class AbstractOperator implements Operator {
     protected final ASTRootNode rootNode;
 
     /**
+     * dao操作所在类
+     */
+    protected final Class<?> daoClass;
+
+    /**
      * 用于对db进行操作
      */
-    protected AbstractOperator(ASTRootNode rootNode) {
+    protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass) {
         this.rootNode = rootNode;
+        this.daoClass = daoClass;
     }
 
     /**
