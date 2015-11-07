@@ -1,11 +1,14 @@
 <html>
 <head>
     <title>mango统计信息</title>
-    <link href="http://static.jfaster.org/bootstrap-3.2.0/css/bootstrap.min.css" rel="stylesheet" >
-    <link href="http://static.jfaster.org/bootstrap-table-1.8.1/bootstrap-table.min.css" rel="stylesheet" >
-    <script src="http://static.jfaster.org/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="http://static.jfaster.org/bootstrap-3.2.0/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="http://static.jfaster.org/bootstrap-table-1.8.1/bootstrap-table.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="http://static.jfaster.org/jquery/1.11.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <link href="http://static.jfaster.org/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
+    <script src="http://static.jfaster.org/bootstrap/3.2.0/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <link href="http://static.jfaster.org/bootstrap-table/1.8.1/bootstrap-table.min.css" rel="stylesheet" >
+    <script src="http://static.jfaster.org/bootstrap-table/1.8.1/bootstrap-table.min.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 
