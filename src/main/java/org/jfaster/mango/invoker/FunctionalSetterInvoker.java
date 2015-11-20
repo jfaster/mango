@@ -35,7 +35,7 @@ import java.lang.reflect.Type;
  */
 public class FunctionalSetterInvoker extends MethodNamedObject implements SetterInvoker {
 
-    private SetterFunction function;
+    private TypedSetterFunction function;
     private Type parameterType;
     private Class<?> parameterRawType;
 
@@ -55,7 +55,7 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
         Setter setterAnno = method.getAnnotation(Setter.class);
 
         if (setterAnno != null) { // 启用函数式调用功能
-            Class<? extends SetterFunction<?, ?>> funcClass = setterAnno.value();
+            Class<? extends TypedSetterFunction<?, ?>> funcClass = setterAnno.value();
             function = Reflection.instantiateClass(funcClass);
             Type genType = funcClass.getGenericSuperclass();
             Type[] params = ((ParameterizedType) genType).getActualTypeArguments();

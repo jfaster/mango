@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.invoker.SetterFunction;
+import org.jfaster.mango.invoker.TypedSetterFunction;
 
 import java.lang.annotation.*;
 
@@ -28,6 +28,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Setter {
 
-    Class<? extends SetterFunction<?, ?>> value();
+    Class<? extends TypedSetterFunction<?, ?>> value();
 
 }

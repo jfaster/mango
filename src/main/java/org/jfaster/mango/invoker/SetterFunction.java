@@ -22,11 +22,20 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public abstract class SetterFunction<I, O> {
+public abstract class SetterFunction<I, O> extends TypedSetterFunction<I, O> {
 
     @Nullable
-    public abstract O apply(@Nullable I input, Type runtimeOutputType);
+    @Override
+    public O apply(@Nullable I input, Type runtimeOutputType) {
+        return apply(input);
+    }
 
-    public abstract boolean outputTypeIsGeneric();
+    @Nullable
+    public abstract O apply(@Nullable I input);
+
+    @Override
+    public boolean outputTypeIsGeneric() {
+        return false;
+    }
 
 }

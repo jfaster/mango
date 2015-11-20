@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.invoker.SimpleGetterFunction;
+import org.jfaster.mango.invoker.GetterFunction;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class IntArrayToStringFunction extends SimpleGetterFunction<int[], String> {
+public class IntArrayToStringFunction extends GetterFunction<int[], String> {
 
     private final static String SEPARATOR = ",";
 

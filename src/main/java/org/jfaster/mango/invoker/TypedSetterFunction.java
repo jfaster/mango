@@ -16,11 +16,17 @@
 
 package org.jfaster.mango.invoker;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.Type;
+
 /**
  * @author ash
  */
-public abstract class SimpleGetterFunction<I, O> extends GetterFunction<I, O> {
+public abstract class TypedSetterFunction<I, O> {
 
-    // 与SimpleSetterFunction对称
+    @Nullable
+    public abstract O apply(@Nullable I input, Type runtimeOutputType);
+
+    public abstract boolean outputTypeIsGeneric();
 
 }

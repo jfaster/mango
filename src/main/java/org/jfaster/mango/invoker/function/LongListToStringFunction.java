@@ -17,7 +17,6 @@
 package org.jfaster.mango.invoker.function;
 
 import org.jfaster.mango.invoker.GetterFunction;
-import org.jfaster.mango.invoker.SimpleGetterFunction;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.List;
  *
  * @author ash
  */
-public class LongListToStringFunction extends SimpleGetterFunction<List<Long>, String> {
+public class LongListToStringFunction extends GetterFunction<List<Long>, String> {
 
     private final static String SEPARATOR = ",";
 

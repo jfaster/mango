@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.invoker.SimpleGetterFunction;
+import org.jfaster.mango.invoker.GetterFunction;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class EnumToIntegerFunction extends SimpleGetterFunction<Enum, Integer> {
+public class EnumToIntegerFunction extends GetterFunction<Enum, Integer> {
 
     @Nullable
     @Override

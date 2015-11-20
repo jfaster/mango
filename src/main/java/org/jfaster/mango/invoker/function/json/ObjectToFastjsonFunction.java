@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function.json;
 
 import com.alibaba.fastjson.JSON;
-import org.jfaster.mango.invoker.SimpleGetterFunction;
+import org.jfaster.mango.invoker.GetterFunction;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class ObjectToFastjsonFunction extends SimpleGetterFunction<Object, String> {
+public class ObjectToFastjsonFunction extends GetterFunction<Object, String> {
 
     @Nullable
     @Override

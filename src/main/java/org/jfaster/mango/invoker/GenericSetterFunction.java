@@ -19,7 +19,7 @@ package org.jfaster.mango.invoker;
 /**
  * @author ash
  */
-public abstract class GenericSetterFunction<I, O> extends SetterFunction<I, O> {
+public abstract class GenericSetterFunction<I, O> extends TypedSetterFunction<I, O> {
 
     @Override
     public boolean outputTypeIsGeneric() {

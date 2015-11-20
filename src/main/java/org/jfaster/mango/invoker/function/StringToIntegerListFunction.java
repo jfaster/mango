@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function;
 
-import org.jfaster.mango.invoker.SimpleSetterFunction;
+import org.jfaster.mango.invoker.SetterFunction;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author ash
  */
-public class StringToIntegerListFunction extends SimpleSetterFunction<String, List<Integer>> {
+public class StringToIntegerListFunction extends SetterFunction<String, List<Integer>> {
 
     private final static String SEPARATOR = ",";
 
