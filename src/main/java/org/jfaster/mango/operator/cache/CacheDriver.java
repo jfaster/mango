@@ -54,6 +54,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     private StatsCounter statsCounter;
 
+    private Class<?> daoClass;
+
     /**
      * 缓存key前缀
      */
@@ -99,6 +101,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         this.cacheHandler = cacheHandler;
         this.nameProvider = nameProvider;
         this.statsCounter = statsCounter;
+        this.daoClass = md.getDaoClass();
         init(md, rootNode, context);
     }
 
@@ -122,7 +125,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            cacheHandler.set(key, value, getExpTimeSeconds());
+            cacheHandler.set(key, value, getExptimeSeconds(), daoClass);
             success = true;
         } finally {
             long cost = System.nanoTime() - now;
@@ -139,7 +142,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            cacheHandler.add(key, value, getExpTimeSeconds());
+            cacheHandler.add(key, value, getExptimeSeconds(), daoClass);
             success = true;
         } finally {
             long cost = System.nanoTime() - now;
@@ -156,7 +159,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            cacheHandler.delete(key);
+            cacheHandler.delete(key, daoClass);
             success = true;
         } finally {
             long cost = System.nanoTime() - now;
@@ -174,7 +177,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             boolean success = false;
             long now = System.nanoTime();
             try {
-                cacheHandler.batchDelete(keys);
+                cacheHandler.batchDelete(keys, daoClass);
                 success = true;
             } finally {
                 long cost = System.nanoTime() - now;
@@ -193,7 +196,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            Object value = cacheHandler.get(key);
+            Object value = cacheHandler.get(key, daoClass);
             success = true;
             return value;
         } finally {
@@ -213,7 +216,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             boolean success = false;
             long now = System.nanoTime();
             try {
-                Map<String, Object> values = cacheHandler.getBulk(keys);
+                Map<String, Object> values = cacheHandler.getBulk(keys, daoClass);
                 success = true;
                 return values;
             } finally {
@@ -284,7 +287,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     }
 
     @Override
-    public int getExpTimeSeconds() {
+    public int getExptimeSeconds() {
         return cacheExpire.getExpireTime() * expireNum;
     }
 

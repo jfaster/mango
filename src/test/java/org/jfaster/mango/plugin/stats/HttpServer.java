@@ -7,7 +7,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.support.CacheHandlerImpl;
+import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
@@ -49,7 +49,7 @@ public class HttpServer {
         Table.USER.load(conn);
         conn.close();
         Mango mango = Mango.newInstance(ds);
-        mango.setDefaultCacheHandler(new CacheHandlerImpl() {
+        mango.setDefaultCacheHandler(new LocalCacheHandler() {
             void sleep() {
                 try {
                     Thread.sleep(10);

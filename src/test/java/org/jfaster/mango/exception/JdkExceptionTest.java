@@ -22,7 +22,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.support.CacheHandlerImpl;
+import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
@@ -79,7 +79,7 @@ public class JdkExceptionTest {
     public void testIterableParameterNullWithCache() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("parameter :1 need a non-null value");
-        MsgCacheDao dao = mango.create(MsgCacheDao.class, new CacheHandlerImpl());
+        MsgCacheDao dao = mango.create(MsgCacheDao.class, new LocalCacheHandler());
         dao.getMsgs(null);
     }
 

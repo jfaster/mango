@@ -154,7 +154,7 @@ public class CacheableQueryOperator extends QueryOperator {
             }
             if (isDebugEnabled && !needSetKeys.isEmpty()) {
                 logger.debug("Cache set for multiple keys {}, exptime: {}",
-                        needSetKeys, driver.getExpTimeSeconds());
+                        needSetKeys, driver.getExptimeSeconds());
             }
 
             if (isCacheNullObj && !missCacheByActualObjs.isEmpty()) {
@@ -169,7 +169,7 @@ public class CacheableQueryOperator extends QueryOperator {
                 }
                 if (isDebugEnabled && !needAddKeys.isEmpty()) {
                     logger.debug("Cache add for multiple keys {}, exptime: {}",
-                            needAddKeys, driver.getExpTimeSeconds());
+                            needAddKeys, driver.getExptimeSeconds());
                 }
             }
         }
@@ -191,14 +191,14 @@ public class CacheableQueryOperator extends QueryOperator {
                     driver.setToCache(key, value);
                     if (isDebugEnabled) {
                         logger.debug("Cache set for single key [{}], exptime: {}",
-                                key, driver.getExpTimeSeconds());
+                                key, driver.getExptimeSeconds());
                     }
                 }
             } else if (driver.isCacheNullObject()) { // 缓存null对象
                 driver.addToCache(key, createNullObject());
                 if (isDebugEnabled) {
                     logger.debug("Cache add for single key [{}], exptime: {}",
-                            key, driver.getExpTimeSeconds());
+                            key, driver.getExptimeSeconds());
                 }
             }
         } else {

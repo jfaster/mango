@@ -20,9 +20,9 @@ import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.CacheHandlerImpl;
+import org.jfaster.mango.operator.cache.Day;
+import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class IncorrectCacheByExceptionTest {
     public void test() {
         thrown.expect(IncorrectCacheByException.class);
         thrown.expectMessage("CacheBy :2 can't match any db parameter");
-        Dao dao = mango.create(Dao.class, new CacheHandlerImpl());
+        Dao dao = mango.create(Dao.class, new LocalCacheHandler());
         dao.add(1, 2);
     }
 
@@ -58,7 +58,7 @@ public class IncorrectCacheByExceptionTest {
     public void test2() {
         thrown.expect(IncorrectCacheByException.class);
         thrown.expectMessage("CacheBy :1 can't match any db parameter");
-        Dao dao = mango.create(Dao.class, new CacheHandlerImpl());
+        Dao dao = mango.create(Dao.class, new LocalCacheHandler());
         dao.batchAdd(new ArrayList<Integer>());
     }
 

@@ -27,32 +27,32 @@ import java.util.Set;
 public class CacheHandlerAdapter implements CacheHandler {
 
     @Override
-    public Object get(String key) {
+    public Object get(String key, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Map<String, Object> getBulk(Set<String> keys) {
+    public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void set(String key, Object value, int expires) {
+    public void set(String key, Object value, int expires, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void add(String key, Object value, int expires) {
+    public void delete(String key, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void batchDelete(Set<String> keys) {
+    public void add(String key, Object value, int expires, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void delete(String key) {
+    public void batchDelete(Set<String> keys, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 

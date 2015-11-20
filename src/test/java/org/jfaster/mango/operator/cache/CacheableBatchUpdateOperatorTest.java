@@ -46,7 +46,7 @@ public class CacheableBatchUpdateOperatorTest {
         StatsCounter sc = new StatsCounter();
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public void batchDelete(Set<String> keys) {
+            public void batchDelete(Set<String> keys, Class<?> daoClass) {
                 Set<String> set = new HashSet<String>();
                 set.add("user_100");
                 set.add("user_200");

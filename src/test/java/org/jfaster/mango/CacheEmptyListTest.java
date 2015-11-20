@@ -18,9 +18,8 @@ package org.jfaster.mango;
 
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.support.CacheHandlerImpl;
+import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
@@ -56,7 +55,7 @@ public class CacheEmptyListTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSingleKeyReturnList() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;

@@ -18,9 +18,8 @@ package org.jfaster.mango;
 
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.support.CacheHandlerImpl;
+import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Position;
@@ -52,7 +51,7 @@ public class MultiCacheByTest {
 
     @Test
     public void test() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         PositionDao dao = mango.create(PositionDao.class, cacheHandler);
         Position p = createRandomPosition();
         dao.insert(p);

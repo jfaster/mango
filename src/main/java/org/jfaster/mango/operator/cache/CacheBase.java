@@ -74,6 +74,6 @@ public interface CacheBase {
     /**
      * 获得缓存过期时间，单位为秒
      */
-    public int getExpTimeSeconds();
+    public int getExptimeSeconds();
 
 }

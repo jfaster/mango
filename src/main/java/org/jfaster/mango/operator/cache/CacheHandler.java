@@ -26,16 +26,16 @@ import java.util.Set;
  */
 public interface CacheHandler {
 
-    public Object get(String key);
+    public Object get(String key, Class<?> daoClass);
 
-    public Map<String, Object> getBulk(Set<String> keys);
+    public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass);
 
-    public void set(String key, Object value, int expTimeSeconds);
+    public void set(String key, Object value, int exptimeSeconds, Class<?> daoClass);
 
-    public void add(String key, Object value, int expTimeSeconds);
+    public void delete(String key, Class<?> daoClass);
 
-    public void delete(String key);
+    public void add(String key, Object value, int exptimeSeconds, Class<?> daoClass);
 
-    public void batchDelete(Set<String> keys);
+    public void batchDelete(Set<String> keys, Class<?> daoClass);
 
 }

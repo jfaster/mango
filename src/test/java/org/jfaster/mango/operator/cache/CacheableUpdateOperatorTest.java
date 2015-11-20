@@ -48,7 +48,7 @@ public class CacheableUpdateOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public void delete(String key) {
+            public void delete(String key, Class<?> daoClass) {
                 assertThat(key, equalTo("user_100"));
             }
         }, new MockCacheBy("id"), sc);
@@ -81,7 +81,7 @@ public class CacheableUpdateOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public void batchDelete(Set<String> keys) {
+            public void batchDelete(Set<String> keys, Class<?> daoClass) {
                 Set<String> set = new HashSet<String>();
                 set.add("user_100");
                 set.add("user_200");

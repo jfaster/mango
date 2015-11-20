@@ -52,7 +52,7 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Object get(String key) {
+            public Object get(String key, Class<?> daoClass) {
                 assertThat(key, Matchers.equalTo("user_1"));
                 return new User();
             }
@@ -73,13 +73,13 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Object get(String key) {
+            public Object get(String key, Class<?> daoClass) {
                 assertThat(key, Matchers.equalTo("user_1"));
                 return null;
             }
 
             @Override
-            public void set(String key, Object value, int expires) {
+            public void set(String key, Object value, int expires, Class<?> daoClass) {
                 assertThat(key, Matchers.equalTo("user_1"));
                 assertThat(expires, Matchers.equalTo((int) TimeUnit.DAYS.toSeconds(1)));
             }
@@ -110,7 +110,7 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Map<String, Object> getBulk(Set<String> keys) {
+            public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("user_1", new User());
                 map.put("user_2", new User());
@@ -141,12 +141,12 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Map<String, Object> getBulk(Set<String> keys) {
+            public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
                 assertThat(keys, Matchers.equalTo(keys));
                 return null;
             }
             @Override
-            public void set(String key, Object value, int expires) {
+            public void set(String key, Object value, int expires, Class<?> daoClass) {
                 setKeys.add(key);
             }
         }, new MockCacheBy(""), sc);
@@ -189,14 +189,14 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Map<String, Object> getBulk(Set<String> keys) {
+            public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
                 assertThat(keys, Matchers.equalTo(keys));
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("user_2", new User());
                 return map;
             }
             @Override
-            public void set(String key, Object value, int expires) {
+            public void set(String key, Object value, int expires, Class<?> daoClass) {
                 setKeys.add(key);
             }
         }, new MockCacheBy(""), sc);

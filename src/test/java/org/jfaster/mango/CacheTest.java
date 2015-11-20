@@ -18,10 +18,9 @@ package org.jfaster.mango;
 
 import com.google.common.collect.Lists;
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.operator.cache.CacheHandler;
-import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.CacheHandlerImpl;
+import org.jfaster.mango.operator.cache.Day;
+import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
@@ -61,7 +60,7 @@ public class CacheTest {
 
     @Test
     public void testSingleKey() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         User user = createRandomUser();
         int id = dao.insert(user);
@@ -85,7 +84,7 @@ public class CacheTest {
 
     @Test
     public void testMultiKeysReturnList() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -113,7 +112,7 @@ public class CacheTest {
 
     @Test
     public void testMultiKeysReturnSet() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -141,7 +140,7 @@ public class CacheTest {
 
     @Test
     public void testMultiKeysReturnArray() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -169,7 +168,7 @@ public class CacheTest {
 
     @Test
     public void testSingleKeyReturnList() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -212,7 +211,7 @@ public class CacheTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSingleKeyReturnList2() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -246,7 +245,7 @@ public class CacheTest {
 
     @Test
     public void testUpdateWithInStatement() {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -280,7 +279,7 @@ public class CacheTest {
 
     @Test
     public void testBatchUpdate() {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -324,7 +323,7 @@ public class CacheTest {
 
     @Test
     public void testBatchUpdateEmpetyList() {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = Lists.newArrayList();
         assertThat(dao.batchUpdate(users).length, equalTo(0));
@@ -332,7 +331,7 @@ public class CacheTest {
 
     @Test
     public void testReturnArrayList() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -374,7 +373,7 @@ public class CacheTest {
 
     @Test
     public void testReturnLinkedList() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -416,7 +415,7 @@ public class CacheTest {
 
     @Test
     public void testQueryEmpty() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         boolean old = mango.isCompatibleWithEmptyList();
         mango.setCompatibleWithEmptyList(true);
@@ -426,7 +425,7 @@ public class CacheTest {
 
     @Test
     public void testUpdateEmpty() throws Exception {
-        CacheHandler cacheHandler = new CacheHandlerImpl();
+        LocalCacheHandler cacheHandler = new LocalCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         boolean old = mango.isCompatibleWithEmptyList();
         mango.setCompatibleWithEmptyList(true);

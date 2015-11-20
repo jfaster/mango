@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,11 +25,47 @@ import java.util.Set;
 public abstract class SimpleCacheHandler implements CacheHandler {
 
     @Override
-    public void add(String key, Object value, int expires) {
-        throw new UnsupportedOperationException("If @Cache.cacheNullObject is true, please override add method");
+    public Object get(String key, Class<?> daoClass) {
+        return get(key);
     }
 
     @Override
+    public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
+        return getBulk(keys);
+    }
+
+    @Override
+    public void set(String key, Object value, int exptimeSeconds, Class<?> daoClass) {
+        set(key, value, exptimeSeconds);
+    }
+
+    @Override
+    public void add(String key, Object value, int exptimeSeconds, Class<?> daoClass) {
+        add(key, value, exptimeSeconds);
+    }
+
+    @Override
+    public void delete(String key, Class<?> daoClass) {
+        delete(key);
+    }
+
+    @Override
+    public void batchDelete(Set<String> keys, Class<?> daoClass) {
+        batchDelete(keys);
+    }
+
+    public abstract Object get(String key);
+
+    public abstract Map<String, Object> getBulk(Set<String> keys);
+
+    public abstract void set(String key, Object value, int exptimeSeconds);
+
+    public abstract void delete(String key);
+
+    public void add(String key, Object value, int exptimeSeconds) {
+        throw new UnsupportedOperationException("If @Cache.cacheNullObject is true, please override add method");
+    }
+
     public void batchDelete(Set<String> keys) {
         for (String key : keys) {
             delete(key);
