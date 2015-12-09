@@ -188,11 +188,6 @@ public class OperatorFactory {
             throw new IncorrectDefinitionException("if @DB.tablePartition is defined, sql need has one or more #table");
         }
 
-        if (dataSourceRouter != null && tablePartition == null) { // 使用了数据源路由但没有使用分表则抛出异常
-            throw new IncorrectDefinitionException("if @DB.dataSourceRouter is defined, " +
-                    "@DB.tablePartition must be defined");
-        }
-
         int shardByNum = 0;
         String shardParameterName = null;
         GetterInvokerGroup shardByInvokerGroup = null;
@@ -205,7 +200,7 @@ public class OperatorFactory {
                 shardByNum++;
             }
         }
-        if (tablePartition != null) {
+        if (tablePartition != null || dataSourceRouter != null) {
             if (shardByNum == 1) {
                 shardByInvokerGroup = context.getInvokerGroup(shardParameterName, shardParameterProperty);
                 Type shardType = shardByInvokerGroup.getFinalType();
