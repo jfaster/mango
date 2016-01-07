@@ -22,9 +22,9 @@ import java.util.Date;
 /**
  * @author ash
  */
-public class SystemLogger extends AbstractInternalLogger {
+public class ConsoleLogger extends AbstractInternalLogger {
 
-    protected SystemLogger(String name) {
+    protected ConsoleLogger(String name) {
         super(name);
     }
 

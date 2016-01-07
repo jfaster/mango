@@ -21,11 +21,11 @@ import org.junit.Test;
 /**
  * @author ash
  */
-public class SystemLoggerTest {
+public class ConsoleLoggerTest {
 
     @Test
     public void testMsg() throws Exception {
-        SystemLogger logger = new SystemLogger("org");
+        ConsoleLogger logger = new ConsoleLogger("org");
         logger.trace("ok");
     }
 

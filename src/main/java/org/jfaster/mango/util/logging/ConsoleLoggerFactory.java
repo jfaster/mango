@@ -14,26 +14,16 @@
  * under the License.
  */
 
-package org.jfaster.mango.plugin.listener;
-
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.util.logging.SystemLoggerFactory;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+package org.jfaster.mango.util.logging;
 
 /**
  * @author ash
  */
-public class SystemLoggerListener implements ServletContextListener {
+public class ConsoleLoggerFactory extends InternalLoggerFactory {
 
     @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        InternalLoggerFactory.setDefaultFactory(new SystemLoggerFactory());
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    protected InternalLogger newInstance(String name) {
+        return new ConsoleLogger(name);
     }
 
 }
