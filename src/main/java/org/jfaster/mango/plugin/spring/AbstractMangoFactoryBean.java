@@ -26,11 +26,17 @@ public abstract class AbstractMangoFactoryBean implements FactoryBean {
 
     private Class<?> daoClass;
 
-    public abstract Mango getMangoInstance();
+    private static volatile Mango mango;
+
+    public abstract Mango createMango();
+
+    public Object createDao(Mango mango, Class<?> daoClass) {
+        return mango.create(daoClass);
+    }
 
     @Override
     public Object getObject() throws Exception {
-        Mango mango = getMangoInstance();
+        Mango mango = getMango();
         return mango.create(daoClass);
     }
 
@@ -42,6 +48,17 @@ public abstract class AbstractMangoFactoryBean implements FactoryBean {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    public Mango getMango() {
+        if (mango == null) {
+            synchronized (AbstractMangoFactoryBean.class) {
+                if (mango == null) {
+                    mango = createMango();
+                }
+            }
+        }
+        return mango;
     }
 
     public void setDaoClass(Class<?> daoClass) {

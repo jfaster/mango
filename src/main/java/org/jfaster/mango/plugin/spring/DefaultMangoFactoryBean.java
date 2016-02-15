@@ -29,7 +29,7 @@ public class DefaultMangoFactoryBean extends AbstractMangoFactoryBean implements
     private ApplicationContext applicationContext;
 
     @Override
-    public Mango getMangoInstance() {
+    public Mango createMango() {
         return applicationContext.getBean(Mango.class);
     }
 
