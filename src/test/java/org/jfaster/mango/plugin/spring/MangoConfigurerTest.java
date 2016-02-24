@@ -41,7 +41,7 @@ public class MangoConfigurerTest {
 
     @Test
     public void testSetPackages() throws Exception {
-        MangoConfigurer mc = new MangoConfigurer();
+        MangoDaoScanner mc = new MangoDaoScanner();
         List<String> packages = Lists.newArrayList("org.jfaster.mango", "", "org.jfaster");
         mc.setPackages(packages);
         assertThat(mc.locationPatterns.get(0), is("classpath*:org/jfaster/mango/**/*Dao.class"));

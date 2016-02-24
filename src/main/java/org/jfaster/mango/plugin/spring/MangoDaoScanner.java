@@ -41,9 +41,9 @@ import java.util.List;
 /**
  * @author ash
  */
-final public class MangoConfigurer implements BeanFactoryPostProcessor {
+final public class MangoDaoScanner implements BeanFactoryPostProcessor {
 
-    private final static InternalLogger logger = InternalLoggerFactory.getInstance(MangoConfigurer.class);
+    private final static InternalLogger logger = InternalLoggerFactory.getInstance(MangoDaoScanner.class);
 
     private static final List<String> DAO_ENDS = Arrays.asList("Dao", "DAO");
 

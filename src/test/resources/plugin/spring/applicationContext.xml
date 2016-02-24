@@ -2,7 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <beans>
-    <bean class="org.jfaster.mango.plugin.spring.MangoConfigurer">
+    <bean class="org.jfaster.mango.plugin.spring.MangoDaoScanner">
         <property name="packages">
             <list>
                 <value>org.jfaster.mango.plugin.spring</value>
