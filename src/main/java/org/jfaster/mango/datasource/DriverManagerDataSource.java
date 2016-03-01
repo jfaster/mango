@@ -32,6 +32,7 @@ import java.util.logging.Logger;
  */
 public class DriverManagerDataSource implements DataSource {
 
+    private String driverClassName;
     private String url;
     private String username;
     private String password;
@@ -43,6 +44,7 @@ public class DriverManagerDataSource implements DataSource {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
         }
+        this.driverClassName = driverClassNameToUse;
         this.url = url;
         this.username = username;
         this.password = password;
@@ -93,5 +95,43 @@ public class DriverManagerDataSource implements DataSource {
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        String driverClassNameToUse = driverClassName.trim();
+        try {
+            Class.forName(driverClassNameToUse);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
+        }
+        this.driverClassName = driverClassNameToUse;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
