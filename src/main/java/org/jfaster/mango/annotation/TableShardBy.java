@@ -20,15 +20,14 @@ import java.lang.annotation.*;
 
 /**
  * 用此注解修饰的方法参数或参数中的某个属性将被作为参数传入
- * {@link org.jfaster.mango.partition.TablePartition#getPartitionedTable(String, Object)}和
- * {@link org.jfaster.mango.partition.DataSourceRouter#getDataSourceName(Object)}中
+ * {@link org.jfaster.mango.partition.TablePartition#getPartitionedTable(String, Object)}中
  *
  * @author ash
  */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ShardBy {
+public @interface TableShardBy {
 
     /**
      * 如果value等于""，直接取被修饰的参数<br>
