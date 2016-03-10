@@ -1,0 +1,55 @@
+/*
+ * Copyright 2014 mango.jfaster.org
+ *
+ * The Mango Project licenses this file to you under the Apache License,
+ * version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.jfaster.mango.operator;
+
+import org.jfaster.mango.invoker.GetterInvokerGroup;
+import org.jfaster.mango.partition.TablePartition;
+
+import javax.annotation.Nullable;
+
+/**
+ * 分表表名生成器，以从{@link org.jfaster.mango.annotation.DB#table()}取得的表名作为原始表名，
+ * 使用{@link org.jfaster.mango.annotation.TableShardBy}或{@link org.jfaster.mango.annotation.ShardBy}
+ * 修饰的参数作为分表参数，
+ * 使用{@link org.jfaster.mango.partition.TablePartition}作为分表策略，
+ * 共同生成分表后表名
+ *
+ * @author ash
+ */
+public class PartitionalTableGenerator implements TableGenerator {
+
+    private final String table; // 原始表名称
+    private final String shardParameterName;
+    private final GetterInvokerGroup shardByInvokerGroup;
+    private final TablePartition tablePartition; // 分表策略
+
+    public PartitionalTableGenerator(String table, String shardParameterName,
+                                     GetterInvokerGroup shardByInvokerGroup, TablePartition tablePartition) {
+        this.table = table;
+        this.shardParameterName = shardParameterName;
+        this.shardByInvokerGroup = shardByInvokerGroup;
+        this.tablePartition = tablePartition;
+    }
+
+    @Nullable
+    @Override
+    public String getTable(InvocationContext context) {
+        Object shardParam = context.getPropertyValue(shardParameterName, shardByInvokerGroup);
+        return tablePartition.getPartitionedTable(table, shardParam);
+    }
+
+}

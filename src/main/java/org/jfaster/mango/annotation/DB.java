@@ -41,7 +41,7 @@ public @interface DB {
     String dataSource() default "";
 
     /**
-     * 全局表名，在{@link SQL}的字符串参数，可以通过${:table}的方式引用此全局表名。
+     * 全局表名，在{@link SQL}的字符串参数，可以通过#table的方式引用此全局表名。
      *
      * @return
      */

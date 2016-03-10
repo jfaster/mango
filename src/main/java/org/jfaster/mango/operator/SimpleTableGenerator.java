@@ -19,13 +19,22 @@ package org.jfaster.mango.operator;
 import javax.annotation.Nullable;
 
 /**
- * 表名生成器，生成的表名用于替换掉SQL中的#table
+ * 简单表名生成器，返回从{@link org.jfaster.mango.annotation.DB#table()}取得的表名
  *
  * @author ash
  */
-public interface TableGenerator {
+public class SimpleTableGenerator implements TableGenerator {
+
+    private final String table;
+
+    public SimpleTableGenerator(String table) {
+        this.table = table;
+    }
 
     @Nullable
-    public String getTable(InvocationContext context);
+    @Override
+    public String getTable(InvocationContext context) {
+        return table;
+    }
 
 }

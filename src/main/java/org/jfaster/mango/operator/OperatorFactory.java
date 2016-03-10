@@ -99,8 +99,7 @@ public class OperatorFactory {
         rootNode.checkAndBind(context); // 绑定GetterInvoker
 
         DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
-        TableGenerator tableGenerator = new TableGenerator(dbInfo.globalTable, dbInfo.shardParameterName,
-                dbInfo.shardByInvokerGroup, dbInfo.tablePartition);
+        TableGenerator tableGenerator = getTableGenerator(md, rootNode, nameProvider, context);
         DataSourceType dst = DataSourceType.SLAVE;
         if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
             dst = DataSourceType.MASTER;
@@ -223,6 +222,79 @@ public class OperatorFactory {
 
         return new DbInfo(shardParameterName, shardByInvokerGroup, globalTable,
                 dataSourceName, tablePartition, dataSourceRouter);
+    }
+
+    TableGenerator getTableGenerator(MethodDescriptor md, ASTRootNode rootNode, NameProvider nameProvider, ParameterContext context) {
+        DB dbAnno = md.getAnnotation(DB.class);
+        if (dbAnno == null) {
+            throw new IllegalStateException("dao interface expected one @DB " +
+                    "annotation but not found");
+        }
+        String table = null;
+        if (Strings.isNotEmpty(dbAnno.table())) {
+            table = dbAnno.table();
+        }
+        Class<? extends TablePartition> tpc = dbAnno.tablePartition();
+        TablePartition tablePartition = null;
+        if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
+            tablePartition = Reflection.instantiateClass(tpc);
+        }
+
+        // 在@DB注解中定义了table
+        boolean dbAnnoSetGlobalTable = table != null;
+
+        // 在@DB竹节中定义了tablePartition
+        boolean dbAnnoSetTablePartition = tablePartition != null;
+
+        // 在SQL中使用了#table
+        boolean sqlUseGlobalTable = !rootNode.getASTGlobalTables().isEmpty();
+
+        if (sqlUseGlobalTable && !dbAnnoSetGlobalTable) {
+            throw new IncorrectDefinitionException("if sql use global table '#table', @DB.table must be defined");
+        }
+        if (dbAnnoSetTablePartition && !dbAnnoSetGlobalTable) {
+            throw new IncorrectDefinitionException("if @DB.tablePartition is defined, @DB.table must be defined");
+        }
+
+        int shardByNum = 0;
+        String shardParameterName = null;
+        String shardParameterProperty = null;
+        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+            ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
+            TableShardBy tableShardByAnno = pd.getAnnotation(TableShardBy.class);
+            if (shardByAnno != null) {
+                shardParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardParameterProperty = shardByAnno.value();
+                shardByNum++;
+            }
+            if (tableShardByAnno != null) {
+                shardParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardParameterProperty = tableShardByAnno.value();
+                shardByNum++;
+            }
+        }
+        TableGenerator tableGenerator;
+        if (dbAnnoSetTablePartition) {
+            if (shardByNum == 1) {
+                GetterInvokerGroup shardByInvokerGroup = context.getInvokerGroup(shardParameterName, shardParameterProperty);
+                Type shardType = shardByInvokerGroup.getFinalType();
+                TypeWrapper tw = new TypeWrapper(shardType);
+                Class<?> mappedClass = tw.getMappedClass();
+                if (mappedClass == null || tw.isIterable()) {
+                    throw new IncorrectParameterTypeException("the type of parameter Modified @TableShardBy is error, " +
+                            "type is " + shardType + ", " +
+                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                }
+                tableGenerator = new PartitionalTableGenerator(table, shardParameterName, shardByInvokerGroup, tablePartition);
+            } else {
+                throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
+                        "need one and only one @TableShardBy on method's parameter but found " + shardByNum + ", " +
+                        "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+            }
+        } else {
+            tableGenerator = new SimpleTableGenerator(table);
+        }
+        return tableGenerator;
     }
 
     static class DbInfo {
