@@ -98,14 +98,12 @@ public class OperatorFactory {
         rootNode.expandParameter(context); // 扩展简化的参数节点
         rootNode.checkAndBind(context); // 绑定GetterInvoker
 
-        DbInfo dbInfo = getDbInfo(md, rootNode, nameProvider, context);
         TableGenerator tableGenerator = getTableGenerator(md, rootNode, nameProvider, context);
         DataSourceType dst = DataSourceType.SLAVE;
         if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
             dst = DataSourceType.MASTER;
         }
-        DataSourceGenerator dataSourceGenerator = new DataSourceGenerator(dataSourceFactory, dst,
-               dbInfo.dataSourceName, dbInfo.shardParameterName, dbInfo.shardByInvokerGroup, dbInfo.dataSourceRouter);
+        DataSourceGenerator dataSourceGenerator = getDataSourceGenerator(dataSourceFactory, dst, md, nameProvider, context);
 
         Operator operator;
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
@@ -155,73 +153,6 @@ public class OperatorFactory {
         operator.setStatsCounter(statsCounter);
         operator.setConfig(config);
         return operator;
-    }
-
-    DbInfo getDbInfo(MethodDescriptor md, ASTRootNode rootNode, NameProvider nameProvider, ParameterContext context) {
-        DB dbAnno = md.getAnnotation(DB.class);
-        if (dbAnno == null) {
-            throw new IllegalStateException("dao interface expected one @DB " +
-                    "annotation but not found");
-        }
-        String dataSourceName = dbAnno.dataSource();
-        String globalTable = null;
-        if (Strings.isNotEmpty(dbAnno.table())) {
-            globalTable = dbAnno.table();
-        }
-
-        Class<? extends TablePartition> tpc = dbAnno.tablePartition();
-        TablePartition tablePartition = null;
-        if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
-            tablePartition = Reflection.instantiateClass(tpc);
-        }
-        Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
-        DataSourceRouter dataSourceRouter = null;
-        if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
-            dataSourceRouter = Reflection.instantiateClass(dsrc);
-        }
-
-        if (tablePartition != null && globalTable == null) { // 使用了分表但没有使用全局表名则抛出异常
-            throw new IncorrectDefinitionException("if @DB.tablePartition is defined, @DB.table must be defined");
-        }
-        if (tablePartition != null && rootNode.getASTGlobalTables().isEmpty()) {
-            throw new IncorrectDefinitionException("if @DB.tablePartition is defined, sql need has one or more #table");
-        }
-
-        int shardByNum = 0;
-        String shardParameterName = null;
-        GetterInvokerGroup shardByInvokerGroup = null;
-        String shardParameterProperty = null;
-        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
-            ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
-            if (shardByAnno != null) {
-                shardParameterName = nameProvider.getParameterName(pd.getPosition());
-                shardParameterProperty = shardByAnno.value();
-                shardByNum++;
-            }
-        }
-        if (tablePartition != null || dataSourceRouter != null) {
-            if (shardByNum == 1) {
-                shardByInvokerGroup = context.getInvokerGroup(shardParameterName, shardParameterProperty);
-                Type shardType = shardByInvokerGroup.getFinalType();
-                TypeWrapper tw = new TypeWrapper(shardType);
-                Class<?> mappedClass = tw.getMappedClass();
-                if (mappedClass == null || tw.isIterable()) {
-                    throw new IncorrectParameterTypeException("the type of parameter Modified @ShardBy is error, " +
-                            "type is " + shardType);
-                }
-            } else {
-                throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
-                        "need one and only one @ShardBy on method's parameter but found " + shardByNum);
-            }
-        } else {
-            if (shardByNum > 0) {
-                throw new IncorrectDefinitionException("if @DB.tablePartition is not defined, " +
-                        "@ShardBy can not on method's parameter but found " + shardByNum);
-            }
-        }
-
-        return new DbInfo(shardParameterName, shardByInvokerGroup, globalTable,
-                dataSourceName, tablePartition, dataSourceRouter);
     }
 
     TableGenerator getTableGenerator(MethodDescriptor md, ASTRootNode rootNode, NameProvider nameProvider, ParameterContext context) {
@@ -295,6 +226,61 @@ public class OperatorFactory {
             tableGenerator = new SimpleTableGenerator(table);
         }
         return tableGenerator;
+    }
+
+    DataSourceGenerator getDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
+                                               MethodDescriptor md, NameProvider nameProvider, ParameterContext context) {
+        DB dbAnno = md.getAnnotation(DB.class);
+        if (dbAnno == null) {
+            throw new IllegalStateException("dao interface expected one @DB " +
+                    "annotation but not found");
+        }
+        String dataSourceName = dbAnno.dataSource();
+        Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
+        DataSourceRouter dataSourceRouter = null;
+        if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
+            dataSourceRouter = Reflection.instantiateClass(dsrc);
+        }
+
+        int shardByNum = 0;
+        String shardParameterName = null;
+        String shardParameterProperty = null;
+        for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+            ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
+            DataSourceShardBy tableShardByAnno = pd.getAnnotation(DataSourceShardBy.class);
+            if (shardByAnno != null) {
+                shardParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardParameterProperty = shardByAnno.value();
+                shardByNum++;
+            }
+            if (tableShardByAnno != null) {
+                shardParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardParameterProperty = tableShardByAnno.value();
+                shardByNum++;
+            }
+        }
+        DataSourceGenerator dataSourceGenerator;
+        if (dataSourceRouter != null) {
+            if (shardByNum == 1) {
+                GetterInvokerGroup shardByInvokerGroup = context.getInvokerGroup(shardParameterName, shardParameterProperty);
+                Type shardType = shardByInvokerGroup.getFinalType();
+                TypeWrapper tw = new TypeWrapper(shardType);
+                Class<?> mappedClass = tw.getMappedClass();
+                if (mappedClass == null || tw.isIterable()) {
+                    throw new IncorrectParameterTypeException("the type of parameter Modified @DataSourceShardBy is error, " +
+                            "type is " + shardType + ", " +
+                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                }
+                dataSourceGenerator = new RoutableDataSourceGenerator(dataSourceFactory, dataSourceType, shardParameterName, shardByInvokerGroup, dataSourceRouter);
+            } else {
+                throw new IncorrectDefinitionException("if @DB.dataSourceRouter is defined, " +
+                        "need one and only one @DataSourceShardBy on method's parameter but found " + shardByNum + ", " +
+                        "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+            }
+        } else {
+            dataSourceGenerator = new SimpleDataSourceGenerator(dataSourceFactory, dataSourceType, dataSourceName);
+        }
+        return dataSourceGenerator;
     }
 
     static class DbInfo {
