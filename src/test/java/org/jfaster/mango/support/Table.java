@@ -40,6 +40,7 @@ public enum Table {
     ACCOUNT("account.sql"),
     POSITION("position.sql"),
     BT("bt.sql"),
+    ORDER_PARTITION("order_partition.sql"),
     ;
 
     private String name;

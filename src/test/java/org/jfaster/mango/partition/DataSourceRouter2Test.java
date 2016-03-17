@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.partition;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;

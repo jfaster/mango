@@ -14,16 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango;
+package org.jfaster.mango.partition;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.ShardBy;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.partition.DataSourceRouter;
-import org.jfaster.mango.datasource.MultipleDataSourceFactory;
-import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.partition.ModTenTablePartition;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -38,61 +34,48 @@ import org.junit.Test;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 /**
- * 测试数据源路由
+ * 测试分表
  *
  * @author ash
  */
-public class DataSourceRouterTest {
+public class TablePartitionTest {
 
-    private static Mango mango;
-    private static String[] dsns = new String[] {"ds1", "ds2", "ds3"};
+    private final static DataSource ds = DataSourceConfig.getDataSource();
+    private final static Mango mango = Mango.newInstance(ds);
+    private final static MsgDao dao = mango.create(MsgDao.class);
 
     @Before
     public void before() throws Exception {
-        Table[] tables = new Table[]{Table.MSG_ROUTER1, Table.MSG_ROUTER2, Table.MSG_ROUTER3};
-        Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
-        for (int i = 0; i < 3; i++) {
-            DataSource ds = DataSourceConfig.getDataSource(i + 1);
-            Connection conn = ds.getConnection();
-            tables[i].load(conn);
-            conn.close();
-            factories.put(dsns[i], new SimpleDataSourceFactory(ds));
-        }
-        DataSourceFactory dsf = new MultipleDataSourceFactory(factories);
-        mango = Mango.newInstance(dsf);
+        Connection conn = ds.getConnection();
+        Table.MSG_PARTITION.load(conn);
+        conn.close();
     }
 
     @Test
     public void testRandomPartition() {
-        MsgDao dao = mango.create(MsgDao.class);
-        int num = 100;
+        int num = 10;
         List<Msg> msgs = Msg.createRandomMsgs(num);
         for (Msg msg : msgs) {
             int id = dao.insert(msg);
             assertThat(id, greaterThan(0));
             msg.setId(id);
         }
-        check(msgs, dao);
+        check(msgs);
         for (Msg msg : msgs) {
             msg.setContent(Randoms.randomString(20));
         }
         dao.batchUpdate(msgs);
-        check(msgs, dao);
+        check(msgs);
     }
 
     @Test
     public void testOnePartition() {
-        MsgDao dao = mango.create(MsgDao.class);
         int num = 10;
         int uid = 100;
         List<Msg> msgs = new ArrayList<Msg>();
@@ -104,15 +87,15 @@ public class DataSourceRouterTest {
             int id = dao.insert(msg);
             msg.setId(id);
         }
-        check(msgs, dao);
+        check(msgs);
         for (Msg msg : msgs) {
             msg.setContent(Randoms.randomString(20));
         }
         dao.batchUpdate(msgs);
-        check(msgs, dao);
+        check(msgs);
     }
 
-    private void check(List<Msg> msgs, MsgDao dao) {
+    private void check(List<Msg> msgs) {
         List<Msg> dbMsgs = new ArrayList<Msg>();
         Multiset<Integer> ms = HashMultiset.create();
         for (Msg msg : msgs) {
@@ -125,8 +108,7 @@ public class DataSourceRouterTest {
         assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
     }
 
-
-    @DB(table = "msg", tablePartition = ModTenTablePartition.class, dataSourceRouter = DataSourceRouterImpl.class)
+    @DB(table = "msg", tablePartition = ModTenTablePartition.class)
     interface MsgDao {
 
         @ReturnGeneratedId
@@ -139,21 +121,6 @@ public class DataSourceRouterTest {
         @SQL("select id, uid, content from #table where uid=:1")
         public List<Msg> getMsgs(@ShardBy int uid);
 
-    }
-
-    public static class DataSourceRouterImpl implements DataSourceRouter {
-        @Override
-        public String getDataSourceName(Object shardParam) {
-            Integer uid = (Integer) shardParam;
-            int tail = uid % 10;
-            if (tail >= 0 && tail <= 2) {
-                return dsns[0];
-            } else if (tail >=3 && tail <= 5) {
-                return dsns[1];
-            } else {
-                return dsns[2];
-            }
-        }
     }
 
 }

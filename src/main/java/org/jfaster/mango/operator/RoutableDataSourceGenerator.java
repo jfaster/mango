@@ -24,6 +24,12 @@ import org.jfaster.mango.partition.DataSourceRouter;
 import javax.annotation.Nullable;
 
 /**
+ * 分库数据源生成器，
+ * 使用{@link org.jfaster.mango.annotation.DataSourceShardBy}或{@link org.jfaster.mango.annotation.ShardBy}
+ * 修饰的参数作为分库参数，
+ * 使用{@link org.jfaster.mango.partition.DataSourceRouter}作为分库策略，
+ * 共同生成分库后数据源
+ *
  * @author ash
  */
 public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
