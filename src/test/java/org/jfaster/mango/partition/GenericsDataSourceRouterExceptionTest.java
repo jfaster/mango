@@ -34,7 +34,7 @@ import java.sql.Connection;
 /**
  * @author ash
  */
-public class GenericsTablePartitionExceptionTest {
+public class GenericsDataSourceRouterExceptionTest {
 
     private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
@@ -52,12 +52,12 @@ public class GenericsTablePartitionExceptionTest {
     @Test
     public void testException() throws Exception {
         thrown.expect(ClassCastException.class);
-        thrown.expectMessage("TablePartiion[class org.jfaster.mango.partition.GenericsTablePartitionExceptionTest$UserTablePartition]'s generic type[class java.lang.String] must be assignable from the type of parameter Modified @TableShardBy [long], please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+        thrown.expectMessage("DataSourceRouter[class org.jfaster.mango.partition.GenericsDataSourceRouterExceptionTest$UserDataSourceRouter]'s generic type[class java.lang.String] must be assignable from the type of parameter Modified @DataSourceShardBy [long], please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
         UserDao dao = mango.create(UserDao.class, true);
         System.out.println(dao.getUser(1));
     }
 
-    @DB(table = "user", tablePartition = UserTablePartition.class)
+    @DB(table = "user", dataSourceRouter = UserDataSourceRouter.class)
     static interface UserDao {
 
         @SQL("select id, name, age, gender, money, update_time from #table where id = :1")
@@ -65,13 +65,11 @@ public class GenericsTablePartitionExceptionTest {
 
     }
 
-    static class UserTablePartition implements TablePartition<String> {
-
+    static class UserDataSourceRouter implements DataSourceRouter<String> {
         @Override
-        public String getPartitionedTable(String table, String shardParam) {
-            return table;
+        public String getDataSourceName(String uid) {
+            return "xx";
         }
-
     }
 
 

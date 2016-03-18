@@ -21,8 +21,8 @@ package org.jfaster.mango.partition;
  *
  * @author ash
  */
-public interface DataSourceRouter {
+public interface DataSourceRouter<T> {
 
-    public String getDataSourceName(Object shardParam);
+    public String getDataSourceName(T shardParam);
 
 }

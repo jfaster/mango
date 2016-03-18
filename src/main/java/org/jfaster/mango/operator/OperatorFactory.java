@@ -253,8 +253,18 @@ public class OperatorFactory {
         String dataSourceName = dbAnno.dataSource();
         Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
         DataSourceRouter dataSourceRouter = null;
+        TypeToken<?> dataSourceRouterToken = null;
         if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
             dataSourceRouter = Reflection.instantiateClass(dsrc);
+            Type genType = dsrc.getGenericInterfaces()[0]; // 假设只实现了DataSourceRouter接口
+            if (genType instanceof ParameterizedType) {
+                Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+                dataSourceRouterToken = TypeToken.of(params[0]);
+            } else if (genType instanceof Class) {
+                dataSourceRouterToken = TypeToken.of(Object.class);
+            } else {
+                throw new IllegalStateException();
+            }
         }
 
         int shardByNum = 0;
@@ -284,6 +294,13 @@ public class OperatorFactory {
                 if (mappedClass == null || tw.isIterable()) {
                     throw new IncorrectParameterTypeException("the type of parameter Modified @DataSourceShardBy is error, " +
                             "type is " + shardType + ", " +
+                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                }
+                TypeToken<?> shardToken = TypeToken.of(shardType);
+                if (!dataSourceRouterToken.isAssignableFrom(shardToken.wrap())) {
+                    throw new ClassCastException("DataSourceRouter[" + dsrc + "]'s " +
+                            "generic type[" + dataSourceRouterToken.getType() + "] must be assignable from " +
+                            "the type of parameter Modified @DataSourceShardBy [" + shardToken.getType() + "], " +
                             "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
                 }
                 dataSourceGenerator = new RoutableDataSourceGenerator(dataSourceFactory, dataSourceType, shardParameterName, shardByInvokerGroup, dataSourceRouter);

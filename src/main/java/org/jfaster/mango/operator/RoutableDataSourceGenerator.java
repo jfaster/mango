@@ -47,6 +47,7 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
         this.dataSourceRouter = dataSourceRouter;
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public String getDataSourceName(InvocationContext context) {

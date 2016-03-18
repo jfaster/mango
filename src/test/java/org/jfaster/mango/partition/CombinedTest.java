@@ -149,11 +149,10 @@ public class CombinedTest {
 
     }
 
-    static class OrderDataSourceRouter implements DataSourceRouter {
+    static class OrderDataSourceRouter implements DataSourceRouter<Integer> {
 
         @Override
-        public String getDataSourceName(Object shardParam) {
-            int cid = (Integer) shardParam;
+        public String getDataSourceName(Integer cid) {
             return getDataSourceNameByCid(cid);
         }
 
