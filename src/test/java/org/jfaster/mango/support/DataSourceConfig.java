@@ -33,11 +33,12 @@ public class DataSourceConfig {
 
     static {
         try {
-            CONFIGS = new Configuration[4];
+            CONFIGS = new Configuration[5];
             CONFIGS[0] = new PropertiesConfiguration(DIR + "/database.properties");
             CONFIGS[1] = new PropertiesConfiguration(DIR + "/database1.properties");
             CONFIGS[2] = new PropertiesConfiguration(DIR + "/database2.properties");
             CONFIGS[3] = new PropertiesConfiguration(DIR + "/database3.properties");
+            CONFIGS[4] = new PropertiesConfiguration(DIR + "/database4.properties");
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }

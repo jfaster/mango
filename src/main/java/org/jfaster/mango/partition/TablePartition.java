@@ -21,7 +21,7 @@ package org.jfaster.mango.partition;
  *
  * @author ash
  */
-public interface TablePartition {
+public interface TablePartition<T> {
 
     /**
      * 获得分表后的表名
@@ -32,6 +32,6 @@ public interface TablePartition {
      *          取{@link org.jfaster.mango.annotation.ShardBy}修饰的参数
      * @return
      */
-    public String getPartitionedTable(String table, Object shardParam);
+    public String getPartitionedTable(String table, T shardParam);
 
 }

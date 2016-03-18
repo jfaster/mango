@@ -31,13 +31,11 @@ import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.partition.IgnoreDataSourceRouter;
 import org.jfaster.mango.partition.IgnoreTablePartition;
 import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.TypeWrapper;
+import org.jfaster.mango.reflect.*;
 import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.Strings;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -167,8 +165,18 @@ public class OperatorFactory {
         }
         Class<? extends TablePartition> tpc = dbAnno.tablePartition();
         TablePartition tablePartition = null;
+        TypeToken<?> tablePartitionToken = null;
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
             tablePartition = Reflection.instantiateClass(tpc);
+            Type genType = tpc.getGenericInterfaces()[0]; // 假设只实现了TablePartition接口
+            if (genType instanceof ParameterizedType) {
+                Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+                tablePartitionToken = TypeToken.of(params[0]);
+            } else if (genType instanceof Class) {
+                tablePartitionToken = TypeToken.of(Object.class);
+            } else {
+                throw new IllegalStateException();
+            }
         }
 
         // 在@DB注解中定义了table
@@ -214,6 +222,13 @@ public class OperatorFactory {
                 if (mappedClass == null || tw.isIterable()) {
                     throw new IncorrectParameterTypeException("the type of parameter Modified @TableShardBy is error, " +
                             "type is " + shardType + ", " +
+                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                }
+                TypeToken<?> shardToken = TypeToken.of(shardType);
+                if (!tablePartitionToken.isAssignableFrom(shardToken.wrap())) {
+                    throw new ClassCastException("TablePartiion[" + tpc + "]'s " +
+                            "generic type[" + tablePartitionToken.getType() + "] must be assignable from " +
+                            "the type of parameter Modified @TableShardBy [" + shardToken.getType() + "], " +
                             "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
                 }
                 tableGenerator = new PartitionalTableGenerator(table, shardParameterName, shardByInvokerGroup, tablePartition);
