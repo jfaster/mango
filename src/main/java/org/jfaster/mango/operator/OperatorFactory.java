@@ -168,7 +168,8 @@ public class OperatorFactory {
         TypeToken<?> tablePartitionToken = null;
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
             tablePartition = Reflection.instantiateClass(tpc);
-            Type genType = tpc.getGenericInterfaces()[0]; // 假设只实现了TablePartition接口
+            Type[] types = tpc.getGenericInterfaces();
+            Type genType = types.length > 0 ? types[0] : tpc.getGenericSuperclass();
             if (genType instanceof ParameterizedType) {
                 Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
                 tablePartitionToken = TypeToken.of(params[0]);
@@ -259,7 +260,8 @@ public class OperatorFactory {
         TypeToken<?> dataSourceRouterToken = null;
         if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
             dataSourceRouter = Reflection.instantiateClass(dsrc);
-            Type genType = dsrc.getGenericInterfaces()[0]; // 假设只实现了DataSourceRouter接口
+            Type[] types = dsrc.getGenericInterfaces();
+            Type genType = types.length > 0 ? types[0] : dsrc.getGenericSuperclass();
             if (genType instanceof ParameterizedType) {
                 Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
                 dataSourceRouterToken = TypeToken.of(params[0]);

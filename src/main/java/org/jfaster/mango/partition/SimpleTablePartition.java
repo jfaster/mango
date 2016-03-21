@@ -27,7 +27,7 @@ public abstract class SimpleTablePartition<T> implements TablePartition<T> {
 
     @Override
     public String getPartitionedTable(String table, T shardParam, int type) {
-        return getPartitionedTable(table, shardParam, 0);
+        return getPartitionedTable(table, shardParam);
     }
 
 }
