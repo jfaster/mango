@@ -37,14 +37,16 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
     private final String shardParameterName;
     private final GetterInvokerGroup shardByInvokerGroup;
     private final DataSourceRouter dataSourceRouter;
+    private final int type;
 
     protected RoutableDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
                                           String shardParameterName, GetterInvokerGroup shardByInvokerGroup,
-                                          DataSourceRouter dataSourceRouter) {
+                                          DataSourceRouter dataSourceRouter, int type) {
         super(dataSourceFactory, dataSourceType);
         this.shardParameterName = shardParameterName;
         this.shardByInvokerGroup = shardByInvokerGroup;
         this.dataSourceRouter = dataSourceRouter;
+        this.type = type;
     }
 
     @SuppressWarnings("unchecked")
@@ -52,7 +54,7 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
     @Override
     public String getDataSourceName(InvocationContext context) {
         Object shardParam = context.getPropertyValue(shardParameterName, shardByInvokerGroup);
-        return dataSourceRouter.getDataSourceName(shardParam);
+        return dataSourceRouter.getDataSourceName(shardParam, type);
     }
 
 }

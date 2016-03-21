@@ -17,21 +17,17 @@
 package org.jfaster.mango.partition;
 
 /**
- * 分表
+ * 简单数据源路由
  *
  * @author ash
  */
-public interface TablePartition<T> {
+public abstract class SimpleDataSourceRouter<T> implements DataSourceRouter<T> {
 
-    /**
-     * 获得分表后的表名
-     *
-     * @param table
-     *          取{@link org.jfaster.mango.annotation.DB#table()}中的值
-     * @param shardParam
-     *          取{@link org.jfaster.mango.annotation.ShardBy}修饰的参数
-     * @return
-     */
-    public String getPartitionedTable(String table, T shardParam, int type);
+    public abstract String getDataSourceName(T shardParam);
+
+    @Override
+    public String getDataSourceName(T shardParam, int type) {
+        return getDataSourceName(shardParam);
+    }
 
 }

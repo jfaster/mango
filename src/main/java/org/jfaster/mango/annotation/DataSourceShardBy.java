@@ -37,4 +37,6 @@ public @interface DataSourceShardBy {
      */
     String value() default "";
 
+    int type() default 0;
+
 }

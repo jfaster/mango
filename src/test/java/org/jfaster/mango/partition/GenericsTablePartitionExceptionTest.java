@@ -65,7 +65,7 @@ public class GenericsTablePartitionExceptionTest {
 
     }
 
-    static class UserTablePartition implements TablePartition<String> {
+    static class UserTablePartition extends SimpleTablePartition<String> {
 
         @Override
         public String getPartitionedTable(String table, String shardParam) {

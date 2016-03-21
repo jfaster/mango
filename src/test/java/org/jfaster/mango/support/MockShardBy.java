@@ -37,6 +37,11 @@ public class MockShardBy implements Annotation, ShardBy {
     }
 
     @Override
+    public int type() {
+        return 0;
+    }
+
+    @Override
     public Class<? extends Annotation> annotationType() {
         throw new UnsupportedOperationException();
     }

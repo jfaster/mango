@@ -137,7 +137,7 @@ public class DataSourceRouter2Test {
 
     }
 
-    public static class DataSourceRouterImpl implements DataSourceRouter {
+    public static class DataSourceRouterImpl extends SimpleDataSourceRouter {
         @Override
         public String getDataSourceName(Object shardParam) {
             Integer uid = (Integer) shardParam;

@@ -21,7 +21,7 @@ package org.jfaster.mango.partition;
  *
  * @author ash
  */
-public class LongModHundredTablePartition implements TablePartition<Long> {
+public class LongModHundredTablePartition extends SimpleTablePartition<Long> {
 
     @Override
     public String getPartitionedTable(String table, Long shardParam) {

@@ -16,22 +16,20 @@
 
 package org.jfaster.mango.partition;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.ShardBy;
 import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.datasource.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.partition.ModTenTablePartition;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,9 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 /**
  * 测试数据源路由
@@ -141,7 +137,7 @@ public class DataSourceRouterTest {
 
     }
 
-    public static class DataSourceRouterImpl implements DataSourceRouter {
+    public static class DataSourceRouterImpl extends SimpleDataSourceRouter {
         @Override
         public String getDataSourceName(Object shardParam) {
             Integer uid = (Integer) shardParam;

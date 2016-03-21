@@ -198,17 +198,20 @@ public class OperatorFactory {
         int shardByNum = 0;
         String shardParameterName = null;
         String shardParameterProperty = null;
+        int type = 0;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
             TableShardBy tableShardByAnno = pd.getAnnotation(TableShardBy.class);
             if (shardByAnno != null) {
                 shardParameterName = nameProvider.getParameterName(pd.getPosition());
                 shardParameterProperty = shardByAnno.value();
+                type = shardByAnno.type();
                 shardByNum++;
             }
             if (tableShardByAnno != null) {
                 shardParameterName = nameProvider.getParameterName(pd.getPosition());
                 shardParameterProperty = tableShardByAnno.value();
+                type = tableShardByAnno.type();
                 shardByNum++;
             }
         }
@@ -231,7 +234,7 @@ public class OperatorFactory {
                             "the type of parameter Modified @TableShardBy [" + shardToken.getType() + "], " +
                             "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
                 }
-                tableGenerator = new PartitionalTableGenerator(table, shardParameterName, shardByInvokerGroup, tablePartition);
+                tableGenerator = new PartitionalTableGenerator(table, shardParameterName, shardByInvokerGroup, tablePartition, type);
             } else {
                 throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
                         "need one and only one @TableShardBy on method's parameter but found " + shardByNum + ", " +
@@ -270,17 +273,20 @@ public class OperatorFactory {
         int shardByNum = 0;
         String shardParameterName = null;
         String shardParameterProperty = null;
+        int type = 0;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
             DataSourceShardBy tableShardByAnno = pd.getAnnotation(DataSourceShardBy.class);
             if (shardByAnno != null) {
                 shardParameterName = nameProvider.getParameterName(pd.getPosition());
                 shardParameterProperty = shardByAnno.value();
+                type = shardByAnno.type();
                 shardByNum++;
             }
             if (tableShardByAnno != null) {
                 shardParameterName = nameProvider.getParameterName(pd.getPosition());
                 shardParameterProperty = tableShardByAnno.value();
+                type = tableShardByAnno.type();
                 shardByNum++;
             }
         }
@@ -303,7 +309,7 @@ public class OperatorFactory {
                             "the type of parameter Modified @DataSourceShardBy [" + shardToken.getType() + "], " +
                             "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
                 }
-                dataSourceGenerator = new RoutableDataSourceGenerator(dataSourceFactory, dataSourceType, shardParameterName, shardByInvokerGroup, dataSourceRouter);
+                dataSourceGenerator = new RoutableDataSourceGenerator(dataSourceFactory, dataSourceType, shardParameterName, shardByInvokerGroup, dataSourceRouter, type);
             } else {
                 throw new IncorrectDefinitionException("if @DB.dataSourceRouter is defined, " +
                         "need one and only one @DataSourceShardBy on method's parameter but found " + shardByNum + ", " +

@@ -23,6 +23,6 @@ package org.jfaster.mango.partition;
  */
 public interface DataSourceRouter<T> {
 
-    public String getDataSourceName(T shardParam);
+    public String getDataSourceName(T shardParam, int type);
 
 }

@@ -38,4 +38,6 @@ public @interface ShardBy {
      */
     String value() default "";
 
+    int type() default 0;
+
 }

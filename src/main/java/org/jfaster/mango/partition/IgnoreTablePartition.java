@@ -26,7 +26,7 @@ import org.jfaster.mango.exception.UnreachableCodeException;
 public final class IgnoreTablePartition implements TablePartition {
 
     @Override
-    public String getPartitionedTable(String table, Object shardByParam) {
+    public String getPartitionedTable(String table, Object shardByParam, int type) {
         throw new UnreachableCodeException();
     }
 

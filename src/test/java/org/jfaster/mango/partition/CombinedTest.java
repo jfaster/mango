@@ -149,7 +149,7 @@ public class CombinedTest {
 
     }
 
-    static class OrderDataSourceRouter implements DataSourceRouter<Integer> {
+    static class OrderDataSourceRouter extends SimpleDataSourceRouter<Integer> {
 
         @Override
         public String getDataSourceName(Integer cid) {
@@ -158,7 +158,7 @@ public class CombinedTest {
 
     }
 
-    static class OrderTablePartition implements TablePartition<Integer> {
+    static class OrderTablePartition extends SimpleTablePartition<Integer> {
 
         @Override
         public String getPartitionedTable(String table, Integer uid) {

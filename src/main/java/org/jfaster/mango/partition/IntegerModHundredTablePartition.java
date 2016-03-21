@@ -24,7 +24,7 @@ package org.jfaster.mango.partition;
 public class IntegerModHundredTablePartition implements TablePartition<Integer> {
 
     @Override
-    public String getPartitionedTable(String table, Integer shardParam) {
+    public String getPartitionedTable(String table, Integer shardParam, int type) {
         return table + "_" + Math.abs(shardParam % 100);
     }
 

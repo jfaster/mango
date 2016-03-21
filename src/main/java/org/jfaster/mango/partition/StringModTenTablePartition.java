@@ -21,7 +21,7 @@ package org.jfaster.mango.partition;
  *
  * @author ash
  */
-public class StringModTenTablePartition implements TablePartition<String> {
+public class StringModTenTablePartition extends SimpleTablePartition<String> {
 
     @Override
     public String getPartitionedTable(String table, String shardParam) {

@@ -16,18 +16,17 @@
 
 package org.jfaster.mango.partition;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.ShardBy;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.partition.ModTenTablePartition;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 import org.junit.Before;
 import org.junit.Test;
 

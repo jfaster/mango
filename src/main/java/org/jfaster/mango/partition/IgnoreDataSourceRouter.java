@@ -26,7 +26,7 @@ import org.jfaster.mango.exception.UnreachableCodeException;
 public final class IgnoreDataSourceRouter implements DataSourceRouter {
 
     @Override
-    public String getDataSourceName(Object shardByParam) {
+    public String getDataSourceName(Object shardByParam, int type) {
         throw new UnreachableCodeException();
     }
 
