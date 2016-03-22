@@ -26,7 +26,6 @@ import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
@@ -137,9 +136,9 @@ public class DataSourceRouter2Test {
 
     }
 
-    public static class DataSourceRouterImpl extends SimpleDataSourceRouter {
+    public static class DataSourceRouterImpl implements DataSourceRouter {
         @Override
-        public String getDataSourceName(Object shardParam) {
+        public String getDataSourceName(Object shardParam, int type) {
             Integer uid = (Integer) shardParam;
             int tail = uid % 10;
             if (tail >= 0 && tail <= 2) {

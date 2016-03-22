@@ -21,10 +21,10 @@ package org.jfaster.mango.partition;
  *
  * @author ash
  */
-public class StringModTenTablePartition extends SimpleTablePartition<String> {
+public class StringModTenTablePartition implements TablePartition<String> {
 
     @Override
-    public String getPartitionedTable(String table, String shardParam) {
+    public String getPartitionedTable(String table, String shardParam, int type) {
         try {
             int mod = (int) (Long.parseLong(shardParam) % 10);
             return table + "_" + Math.abs(mod);

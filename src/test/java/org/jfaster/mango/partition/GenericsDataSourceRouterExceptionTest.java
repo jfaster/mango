@@ -65,9 +65,9 @@ public class GenericsDataSourceRouterExceptionTest {
 
     }
 
-    static class UserDataSourceRouter extends SimpleDataSourceRouter<String> {
+    static class UserDataSourceRouter implements DataSourceRouter<String> {
         @Override
-        public String getDataSourceName(String uid) {
+        public String getDataSourceName(String uid, int type) {
             return "xx";
         }
     }

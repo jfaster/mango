@@ -137,9 +137,9 @@ public class DataSourceRouterTest {
 
     }
 
-    public static class DataSourceRouterImpl extends SimpleDataSourceRouter {
+    public static class DataSourceRouterImpl implements DataSourceRouter {
         @Override
-        public String getDataSourceName(Object shardParam) {
+        public String getDataSourceName(Object shardParam, int type) {
             Integer uid = (Integer) shardParam;
             int tail = uid % 10;
             if (tail >= 0 && tail <= 2) {

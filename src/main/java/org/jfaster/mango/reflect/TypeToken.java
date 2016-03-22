@@ -21,7 +21,9 @@ import org.jfaster.mango.util.Primitives;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class TypeToken<T> extends TypeCapture<T> implements Serializable {
@@ -123,6 +125,62 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
     @Override
     public String toString() {
         return Types.toString(runtimeType);
+    }
+
+    public Set<TypeToken<? super T>> getTypes() {
+        Set<TypeToken<? super T>> tokens = new HashSet<TypeToken<? super T>>();
+        tokens.add(this);
+        TypeToken<? super T> superclass = getGenericSuperclass();
+        if (superclass != null) {
+            tokens.add(superclass);
+            tokens.addAll(superclass.getTypes());
+        }
+        List<TypeToken<? super T>> interfaces = getGenericInterfaces();
+        for (TypeToken<? super T> anInterface : interfaces) {
+            tokens.add(anInterface);
+            tokens.addAll(anInterface.getTypes());
+        }
+        return tokens;
+    }
+
+    final List<TypeToken<? super T>> getGenericInterfaces() {
+        if (runtimeType instanceof TypeVariable) {
+            throw new IllegalStateException();
+        }
+        if (runtimeType instanceof WildcardType) {
+            throw new IllegalStateException();
+        }
+        List<TypeToken<? super T>> tokens = new ArrayList<TypeToken<? super T>>();
+        for (Type interfaceType : getRawType().getGenericInterfaces()) {
+            @SuppressWarnings("unchecked") // interface of T
+                    TypeToken<? super T> resolvedInterface = (TypeToken<? super T>) resolveSupertype(interfaceType);
+            tokens.add(resolvedInterface);
+        }
+        return tokens;
+    }
+
+    @Nullable
+    final TypeToken<? super T> getGenericSuperclass() {
+        if (runtimeType instanceof TypeVariable) {
+            throw new IllegalStateException();
+        }
+        if (runtimeType instanceof WildcardType) {
+            throw new IllegalStateException();
+        }
+        Type superclass = getRawType().getGenericSuperclass();
+        if (superclass == null) {
+            return null;
+        }
+        @SuppressWarnings("unchecked") // super class of T
+                TypeToken<? super T> superToken = (TypeToken<? super T>) resolveSupertype(superclass);
+        return superToken;
+    }
+
+    private TypeToken<?> resolveSupertype(Type type) {
+        TypeToken<?> supertype = resolveType(type);
+        // super types' type mapping is a subset of type mapping of this type.
+        supertype.typeResolver = typeResolver;
+        return supertype;
     }
 
     private static boolean isAssignable(Type from, Type to) {

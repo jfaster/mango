@@ -20,8 +20,8 @@ import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
+import org.jfaster.mango.partition.DataSourceRouter;
 import org.jfaster.mango.partition.ModHundredTablePartition;
-import org.jfaster.mango.partition.SimpleDataSourceRouter;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
@@ -315,9 +315,10 @@ public class BatchUpdateOperatorTest {
         return operator;
     }
 
-    public static class MyDataSourceRouter extends SimpleDataSourceRouter {
+    public static class MyDataSourceRouter implements DataSourceRouter {
+
         @Override
-        public String getDataSourceName(Object shardParam) {
+        public String getDataSourceName(Object shardParam, int type) {
             Integer i = (Integer) shardParam;
             if (i < 50) {
                 return "l50";
