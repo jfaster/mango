@@ -18,7 +18,9 @@ package org.jfaster.mango.reflect;
 
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -56,5 +58,16 @@ public class TypeTokenTest {
         assertThat(token.getRawType().equals(String.class), is(true));
     }
 
+    @Test
+    public void testResolveType() throws Exception {
+        TypeToken<HashMap<String, Integer>> mapToken = new TypeToken<HashMap<String, Integer>>() {};
+        TypeToken<?> entrySetToken = mapToken.resolveType(Map.class.getMethod("entrySet").getGenericReturnType());
+        assertThat(entrySetToken.toString(), equalTo("java.util.Set<java.util.Map.java.util.Map$Entry<java.lang.String, java.lang.Integer>>"));
+    }
 
 }
+
+
+
+
+

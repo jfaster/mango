@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
+import org.jfaster.mango.util.Joiner;
 import org.jfaster.mango.util.Objects;
 import org.jfaster.mango.util.Primitives;
 
@@ -30,6 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Types {
 
+    private static final Joiner COMMA_JOINER = Joiner.on(", ").useForNull("null");
 
     /**
      * Returns the array type of {@code componentType}.
@@ -285,6 +287,27 @@ public class Types {
         @Override
         public Type getOwnerType() {
             return ownerType;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            if (ownerType != null) {
+                builder.append(JavaVersion.CURRENT.typeName(ownerType)).append('.');
+            }
+            builder.append(rawType.getName())
+                    .append('<')
+                    .append(COMMA_JOINER.join(getTypeNames(argumentsList)))
+                    .append('>');
+            return builder.toString();
+        }
+
+        private List<String> getTypeNames(List<Type> argumentsList) {
+            List<String> names = new ArrayList<String>();
+            for (Type type : argumentsList) {
+                names.add(JavaVersion.CURRENT.typeName(type));
+            }
+            return names;
         }
 
         @Override
