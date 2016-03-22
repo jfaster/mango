@@ -127,40 +127,39 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
         return Types.toString(runtimeType);
     }
 
-    public Set<TypeToken<? super T>> getTypes() {
-        Set<TypeToken<? super T>> tokens = new HashSet<TypeToken<? super T>>();
+    public Set<TypeToken<?>> getTypes() {
+        Set<TypeToken<?>> tokens = new HashSet<TypeToken<?>>();
         tokens.add(this);
-        TypeToken<? super T> superclass = getGenericSuperclass();
+        TypeToken<?> superclass = getGenericSuperclass();
         if (superclass != null) {
             tokens.add(superclass);
             tokens.addAll(superclass.getTypes());
         }
-        List<TypeToken<? super T>> interfaces = getGenericInterfaces();
-        for (TypeToken<? super T> anInterface : interfaces) {
+        List<TypeToken<?>> interfaces = getGenericInterfaces();
+        for (TypeToken<?> anInterface : interfaces) {
             tokens.add(anInterface);
             tokens.addAll(anInterface.getTypes());
         }
         return tokens;
     }
 
-    final List<TypeToken<? super T>> getGenericInterfaces() {
+    final List<TypeToken<?>> getGenericInterfaces() {
         if (runtimeType instanceof TypeVariable) {
             throw new IllegalStateException();
         }
         if (runtimeType instanceof WildcardType) {
             throw new IllegalStateException();
         }
-        List<TypeToken<? super T>> tokens = new ArrayList<TypeToken<? super T>>();
+        List<TypeToken<?>> tokens = new ArrayList<TypeToken<?>>();
         for (Type interfaceType : getRawType().getGenericInterfaces()) {
-            @SuppressWarnings("unchecked") // interface of T
-                    TypeToken<? super T> resolvedInterface = (TypeToken<? super T>) resolveSupertype(interfaceType);
+            TypeToken<?> resolvedInterface = resolveSupertype(interfaceType);
             tokens.add(resolvedInterface);
         }
         return tokens;
     }
 
     @Nullable
-    final TypeToken<? super T> getGenericSuperclass() {
+    final TypeToken<?> getGenericSuperclass() {
         if (runtimeType instanceof TypeVariable) {
             throw new IllegalStateException();
         }
@@ -171,8 +170,7 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
         if (superclass == null) {
             return null;
         }
-        @SuppressWarnings("unchecked") // super class of T
-                TypeToken<? super T> superToken = (TypeToken<? super T>) resolveSupertype(superclass);
+        TypeToken<?> superToken = resolveSupertype(superclass);
         return superToken;
     }
 

@@ -68,7 +68,7 @@ public class TypeTokenTest {
     public void testGetTypes() throws Exception {
         TypeToken<HashMap<String,Integer>> t = new TypeToken<HashMap<String, Integer>>() {
         };
-        Set<TypeToken<? super HashMap<String, Integer>>> types = t.getTypes();
+        Set<TypeToken<?>> types = t.getTypes();
         assertThat(types.size(), equalTo(6));
         types.contains(new TypeToken<Map<String, Integer>>() {
         });

@@ -35,9 +35,9 @@ import org.jfaster.mango.reflect.*;
 import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.Strings;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Operator工厂
@@ -168,14 +168,16 @@ public class OperatorFactory {
         TypeToken<?> tablePartitionToken = null;
         if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
             tablePartition = Reflection.instantiateClass(tpc);
-            Type[] types = tpc.getGenericInterfaces();
-            Type genType = types.length > 0 ? types[0] : tpc.getGenericSuperclass();
-            if (genType instanceof ParameterizedType) {
-                Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-                tablePartitionToken = TypeToken.of(params[0]);
-            } else if (genType instanceof Class) {
-                tablePartitionToken = TypeToken.of(Object.class);
-            } else {
+            Set<TypeToken<?>> fathers = TypeToken.of(tpc).getTypes();
+            for (TypeToken<?> father : fathers) {
+                if (TablePartition.class.equals(father.getRawType())) {
+                    tablePartitionToken = father.resolveType(TablePartition.class.getTypeParameters()[0]);
+                    if (Object.class.equals(tablePartitionToken.getRawType())) { // 处理范型T
+                        tablePartitionToken = TypeToken.of(Object.class);
+                    }
+                }
+            }
+            if (tablePartitionToken == null) {
                 throw new IllegalStateException();
             }
         }
@@ -260,14 +262,16 @@ public class OperatorFactory {
         TypeToken<?> dataSourceRouterToken = null;
         if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
             dataSourceRouter = Reflection.instantiateClass(dsrc);
-            Type[] types = dsrc.getGenericInterfaces();
-            Type genType = types.length > 0 ? types[0] : dsrc.getGenericSuperclass();
-            if (genType instanceof ParameterizedType) {
-                Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-                dataSourceRouterToken = TypeToken.of(params[0]);
-            } else if (genType instanceof Class) {
-                dataSourceRouterToken = TypeToken.of(Object.class);
-            } else {
+            Set<TypeToken<?>> fathers = TypeToken.of(dsrc).getTypes();
+            for (TypeToken<?> father : fathers) {
+                if (DataSourceRouter.class.equals(father.getRawType())) {
+                    dataSourceRouterToken = father.resolveType(DataSourceRouter.class.getTypeParameters()[0]);
+                    if (Object.class.equals(dataSourceRouterToken.getRawType())) { // 处理范型T
+                        dataSourceRouterToken = TypeToken.of(Object.class);
+                    }
+                }
+            }
+            if (dataSourceRouterToken == null) {
                 throw new IllegalStateException();
             }
         }
