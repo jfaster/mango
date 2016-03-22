@@ -41,6 +41,7 @@ public enum Table {
     POSITION("position.sql"),
     BT("bt.sql"),
     ORDER_PARTITION("order_partition.sql"),
+    PRODUCT_PARTITION("product_partition.sql"),
     ;
 
     private String name;
