@@ -33,7 +33,9 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -65,6 +67,7 @@ public class TupleShardStrategyTest {
     @Test
     public void test() throws Exception {
         int price = 0;
+        List<Order> orders = new ArrayList<Order>();
         for (int cid = 0; cid < 10; cid++) {
             for (int intUid = 10; intUid < 20; intUid++) {
                 String uid = String.valueOf(intUid);
@@ -75,7 +78,13 @@ public class TupleShardStrategyTest {
                 o.setPrice(price);
                 orderDao.insert(o);
                 assertThat(orderDao.getOrder(cid, uid), equalTo(o));
+                o.setPrice(9527);
+                orders.add(o);
             }
+        }
+        orderDao.batchUpdate(orders);
+        for (Order o : orders) {
+            assertThat(orderDao.getOrder(o.getCid(), o.getUid()), equalTo(o));
         }
     }
 
@@ -87,6 +96,9 @@ public class TupleShardStrategyTest {
 
         @SQL("select cid, uid, price from #table where cid = :1 and uid = :2")
         public Order getOrder(@DataSourceShardBy int cid, @TableShardBy String uid);
+
+        @SQL("update #table set price = :price where cid = :cid and uid = :uid")
+        public int batchUpdate(@DataSourceShardBy("cid") @TableShardBy("uid") List<Order> orders);
 
     }
 
