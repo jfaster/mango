@@ -71,7 +71,8 @@ public class CombinedTest {
     public void test() throws Exception {
         int price = 0;
         for (int cid = 0; cid < 10; cid++) {
-            for (int uid = 10; uid < 20; uid++) {
+            for (int intUid = 10; intUid < 20; intUid++) {
+                String uid = String.valueOf(intUid);
                 price++;
                 Order o = new Order();
                 o.setCid(cid);
@@ -83,11 +84,12 @@ public class CombinedTest {
             }
         }
         for (int cid = 100; cid < 110; cid++) {
-            for (int uid = 110; uid < 120; uid++) {
+            for (int intUid = 110; intUid < 120; intUid++) {
+                String uid = String.valueOf(intUid);
                 price++;
                 Order o = new Order();
                 o.setCid(cid);
-                o.setUid(uid);
+                o.setUid(String.valueOf(uid));
                 o.setPrice(price);
                 getDaoByCid(cid).insert(getTableByUid(uid), o);
                 assertThat(orderDao.getOrder(cid, uid), equalTo(o));
@@ -99,7 +101,7 @@ public class CombinedTest {
     interface IOrderDao {
         int insert(String table, Order order);
 
-        public Order getOrder(String table, int cid, int uid);
+        public Order getOrder(String table, int cid, String uid);
     }
 
     @DB(dataSource = "ds1")
@@ -108,7 +110,7 @@ public class CombinedTest {
         int insert(@Rename("table") String table, Order order);
 
         @SQL("select cid, uid, price from #{:1} where cid = :2 and uid = :3")
-        public Order getOrder(String table, int cid, int uid);
+        public Order getOrder(String table, int cid, String uid);
     }
 
     @DB(dataSource = "ds2")
@@ -117,7 +119,7 @@ public class CombinedTest {
         int insert(@Rename("table") String table, Order order);
 
         @SQL("select cid, uid, price from #{:1} where cid = :2 and uid = :3")
-        public Order getOrder(String table, int cid, int uid);
+        public Order getOrder(String table, int cid, String uid);
     }
 
     @DB(dataSource = "ds3")
@@ -126,7 +128,7 @@ public class CombinedTest {
         int insert(@Rename("table") String table, Order order);
 
         @SQL("select cid, uid, price from #{:1} where cid = :2 and uid = :3")
-        public Order getOrder(String table, int cid, int uid);
+        public Order getOrder(String table, int cid, String uid);
     }
 
     @DB(dataSource = "ds4")
@@ -135,7 +137,7 @@ public class CombinedTest {
         int insert(@Rename("table") String table, Order order);
 
         @SQL("select cid, uid, price from #{:1} where cid = :2 and uid = :3")
-        public Order getOrder(String table, int cid, int uid);
+        public Order getOrder(String table, int cid, String uid);
     }
 
     @DB(table = "order", dataSourceRouter = OrderDataSourceRouter.class, tablePartition = OrderTablePartition.class)
@@ -145,7 +147,7 @@ public class CombinedTest {
         int insert(@DataSourceShardBy("cid") @TableShardBy("uid") Order order);
 
         @SQL("select cid, uid, price from #table where cid = :1 and uid = :2")
-        public Order getOrder(@DataSourceShardBy int cid, @TableShardBy Integer uid);
+        public Order getOrder(@DataSourceShardBy int cid, @TableShardBy String uid);
 
     }
 
@@ -158,11 +160,11 @@ public class CombinedTest {
 
     }
 
-    static class OrderTablePartition implements TablePartition<Integer> {
+    static class OrderTablePartition implements TablePartition<String> {
 
         @Override
-        public String getPartitionedTable(String table, Integer uid, int type) {
-            return table + "_" + uid % 10;
+        public String getPartitionedTable(String table, String uid, int type) {
+            return table + "_" + Integer.valueOf(uid) % 10;
         }
 
     }
@@ -172,8 +174,8 @@ public class CombinedTest {
         return "ds" + (hash % 4 + 1);
     }
 
-    private static String getTableByUid(int uid) {
-        return "order_" + uid % 10;
+    private static String getTableByUid(String uid) {
+        return "order_" + Integer.valueOf(uid) % 10;
     }
 
     private static IOrderDao getDaoByCid(int cid) {

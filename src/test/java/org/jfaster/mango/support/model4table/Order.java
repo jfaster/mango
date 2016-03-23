@@ -25,7 +25,7 @@ import com.google.common.base.Objects;
 public class Order {
 
     private int cid;
-    private int uid;
+    private String uid;
     private int price;
 
     public int getCid() {
@@ -36,11 +36,11 @@ public class Order {
         this.cid = cid;
     }
 
-    public int getUid() {
+    public String getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(String uid) {
         this.uid = uid;
     }
 

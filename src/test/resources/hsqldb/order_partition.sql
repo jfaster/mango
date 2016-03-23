@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS order_9;
 CREATE TABLE order_0
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -20,7 +20,7 @@ CREATE TABLE order_0
 CREATE TABLE order_1
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -28,7 +28,7 @@ CREATE TABLE order_1
 CREATE TABLE order_2
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -36,7 +36,7 @@ CREATE TABLE order_2
 CREATE TABLE order_3
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -44,7 +44,7 @@ CREATE TABLE order_3
 CREATE TABLE order_4
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -52,7 +52,7 @@ CREATE TABLE order_4
 CREATE TABLE order_5
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -60,7 +60,7 @@ CREATE TABLE order_5
 CREATE TABLE order_6
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -68,7 +68,7 @@ CREATE TABLE order_6
 CREATE TABLE order_7
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -76,7 +76,7 @@ CREATE TABLE order_7
 CREATE TABLE order_8
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
@@ -84,10 +84,12 @@ CREATE TABLE order_8
 CREATE TABLE order_9
 (
     cid INTEGER,
-    uid INTEGER,
+    uid VARCHAR(100),
     price INTEGER,
     PRIMARY KEY (cid, uid)
 );
+
+
 
 
 
