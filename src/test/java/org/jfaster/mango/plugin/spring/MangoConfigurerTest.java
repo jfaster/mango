@@ -17,6 +17,7 @@
 package org.jfaster.mango.plugin.spring;
 
 import com.google.common.collect.Lists;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:/plugin/spring/applicationContext.xml")
+@Ignore
 public class MangoConfigurerTest {
 
     @Autowired
