@@ -37,6 +37,9 @@ public class DriverManagerDataSource implements DataSource {
     private String username;
     private String password;
 
+    public DriverManagerDataSource() {
+    }
+
     public DriverManagerDataSource(String driverClassName, String url, String username, String password) {
         String driverClassNameToUse = driverClassName.trim();
         try {
