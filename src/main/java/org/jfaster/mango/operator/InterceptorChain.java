@@ -46,6 +46,10 @@ public class InterceptorChain {
         return interceptors;
     }
 
+    public void setInterceptors(List<Interceptor> interceptors) {
+        this.interceptors = interceptors;
+    }
+
     private void initInterceptorList() {
         if (interceptors == null) {
             interceptors = new LinkedList<Interceptor>();
