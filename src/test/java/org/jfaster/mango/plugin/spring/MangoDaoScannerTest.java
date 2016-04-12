@@ -36,7 +36,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:/plugin/spring/applicationContext.xml")
 @Ignore
-public class MangoConfigurerTest {
+public class MangoDaoScannerTest {
 
     @Autowired
     TestDao testDao;
