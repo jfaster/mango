@@ -69,10 +69,10 @@ public abstract class TransactionFactory {
 
     private static Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level) {
         if (dataSource == null) {
-            new IllegalArgumentException("DataSource can't be null");
+            throw new IllegalArgumentException("DataSource can't be null");
         }
         if (level == null) {
-            new IllegalArgumentException("TransactionIsolationLevel can't be null");
+            throw new IllegalArgumentException("TransactionIsolationLevel can't be null");
         }
         ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
         return connHolder != null ?
