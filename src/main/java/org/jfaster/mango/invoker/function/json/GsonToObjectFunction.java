@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function.json;
 
 import com.google.gson.Gson;
-import org.jfaster.mango.invoker.GenericSetterFunction;
+import org.jfaster.mango.invoker.RuntimeSetterFunction;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
  *
  * @author ash
  */
-public class GsonToObjectFunction extends GenericSetterFunction<String, Object> {
+public class GsonToObjectFunction implements RuntimeSetterFunction<String, Object> {
 
     @Nullable
     @Override

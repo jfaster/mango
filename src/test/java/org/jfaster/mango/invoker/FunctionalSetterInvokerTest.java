@@ -40,7 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FunctionalSetterInvokerTest {
 
-    public static class StringToIntegerFunction extends SetterFunction<String, Integer> {
+    public static class StringToIntegerFunction implements SetterFunction<String, Integer> {
 
         @Nullable
         @Override
@@ -136,7 +136,7 @@ public class FunctionalSetterInvokerTest {
         assertThat(b.getY() , is(100));
     }
 
-    public static class IntegerToStringFunction extends SetterFunction<Integer, String> {
+    public static class IntegerToStringFunction implements SetterFunction<Integer, String> {
 
         @Nullable
         @Override
@@ -189,7 +189,7 @@ public class FunctionalSetterInvokerTest {
         assertThat(c.getY() , is("xx100"));
     }
 
-    public static class StringToIntegerListFunction extends SetterFunction<String, List<Integer>> {
+    public static class StringToIntegerListFunction implements SetterFunction<String, List<Integer>> {
 
         @Nullable
         @Override
@@ -297,7 +297,7 @@ public class FunctionalSetterInvokerTest {
         FunctionalSetterInvoker.create("x", method);
     }
 
-    public static class StringIntArrayFunction extends SetterFunction<String, int[]> {
+    public static class StringIntArrayFunction implements SetterFunction<String, int[]> {
 
         @Nullable
         @Override

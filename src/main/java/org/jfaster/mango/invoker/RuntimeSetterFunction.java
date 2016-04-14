@@ -22,11 +22,9 @@ import java.lang.reflect.Type;
 /**
  * @author ash
  */
-public abstract class TypedSetterFunction<I, O> {
+public interface RuntimeSetterFunction<I, O> extends DummySetterFunction<I, O> {
 
     @Nullable
     public abstract O apply(@Nullable I input, Type runtimeOutputType);
-
-    public abstract boolean outputTypeIsGeneric();
 
 }

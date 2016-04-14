@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.invoker.GenericSetterFunction;
+import org.jfaster.mango.invoker.RuntimeSetterFunction;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
@@ -31,7 +31,7 @@ import java.util.EnumSet;
  *
  * @author ash
  */
-public class IntegerToEnumFunction extends GenericSetterFunction<Integer, Enum> {
+public class IntegerToEnumFunction implements RuntimeSetterFunction<Integer, Enum> {
 
     private final static LoadingCache<Class, EnumSet> cache = new DoubleCheckCache<Class, EnumSet>(
             new CacheLoader<Class, EnumSet>() {

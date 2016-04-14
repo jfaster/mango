@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author ash
  */
-public class StringToLongListFunction extends SetterFunction<String, List<Long>> {
+public class StringToLongListFunction implements SetterFunction<String, List<Long>> {
 
     private final static String SEPARATOR = ",";
 

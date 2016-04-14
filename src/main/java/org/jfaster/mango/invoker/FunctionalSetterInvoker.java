@@ -27,15 +27,15 @@ import org.jfaster.mango.reflect.Types;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Set;
 
 /**
  * @author ash
  */
 public class FunctionalSetterInvoker extends MethodNamedObject implements SetterInvoker {
 
-    private TypedSetterFunction function;
+    private FunctionAdapter functionAdapter;
     private Type parameterType;
     private Class<?> parameterRawType;
 
@@ -55,22 +55,43 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
         Setter setterAnno = method.getAnnotation(Setter.class);
 
         if (setterAnno != null) { // 启用函数式调用功能
-            Class<? extends TypedSetterFunction<?, ?>> funcClass = setterAnno.value();
-            function = Reflection.instantiateClass(funcClass);
-            Type genType = funcClass.getGenericSuperclass();
-            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-            TypeToken<?> inputToken = TypeToken.of(params[0]);
-            TypeToken<?> outputToken = TypeToken.of(params[1]);
+            Class<? extends DummySetterFunction<?, ?>> funcClass = setterAnno.value();
+            if (SetterFunction.class.isAssignableFrom(funcClass)) {
+                functionAdapter = new SetterFunctionAdapter((SetterFunction) Reflection.instantiateClass(funcClass));
+            } else if (RuntimeSetterFunction.class.isAssignableFrom(funcClass)) {
+                functionAdapter = new RuntimeSetterFunctionAdapter((RuntimeSetterFunction) Reflection.instantiateClass(funcClass));
+            } else {
+                throw new IllegalArgumentException(); // TODO
+            }
+
+            TypeToken<?> inputToken = null;
+            TypeToken<?> outputToken = null;
+            Set<TypeToken<?>> fathers = TypeToken.of(funcClass).getTypes();
+            for (TypeToken<?> father : fathers) {
+                if (DummySetterFunction.class.equals(father.getRawType())) {
+                    inputToken = father.resolveType(DummySetterFunction.class.getTypeParameters()[0]);
+                    if (Object.class.equals(inputToken.getRawType())) { // 处理范型T
+                        inputToken = TypeToken.of(Object.class);
+                    }
+                    outputToken = father.resolveType(DummySetterFunction.class.getTypeParameters()[1]);
+                    if (Object.class.equals(outputToken.getRawType())) { // 处理范型T
+                        outputToken = TypeToken.of(Object.class);
+                    }
+                }
+            }
+            if (inputToken == null || outputToken == null) {
+                throw new IllegalStateException();
+            }
             TypeToken<?> wrapParameterToken = parameterToken.wrap();
-            if (function.outputTypeIsGeneric()) { // 针对继承GenericSetterFunction的
+            if (functionAdapter instanceof RuntimeSetterFunctionAdapter) { // 针对继承RuntimeSetterFunction的
                 if (!outputToken.isAssignableFrom(wrapParameterToken)) {
-                    throw new ClassCastException("function[" + function.getClass() + "] " +
+                    throw new ClassCastException("function[" + functionAdapter.getFunction().getClass() + "] " +
                             "on method[" + method + "] error, function's outputType[" + outputToken.getType() + "] " +
                             "must be assignable from method's parameterType[" + parameterToken.getType() + "]");
                 }
             } else { // 针对继承LiteSetterFunction的
                 if (!wrapParameterToken.isAssignableFrom(outputToken)) {
-                    throw new ClassCastException("function[" + function.getClass() + "] " +
+                    throw new ClassCastException("function[" + functionAdapter.getFunction().getClass() + "] " +
                             "on method[" + method + "] error, method's parameterType[" + parameterToken.getType() + "] " +
                             "must be assignable from function's outputType[" + outputToken.getType() + "]");
                 }
@@ -85,12 +106,11 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
         return new FunctionalSetterInvoker(name, method);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void invoke(Object object, @Nullable Object parameter) {
         try {
-            if (function != null) {
-                parameter = function.apply(parameter, runtimeOutputType);
+            if (functionAdapter != null) {
+                parameter = functionAdapter.apply(parameter, runtimeOutputType);
             }
             if (parameter == null && runtimeOutputRawType.isPrimitive()) {
                 throw new NullPointerException("property " + getName() + " of " +
@@ -117,6 +137,59 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
     @Override
     public Class<?> getParameterRawType() {
         return parameterRawType;
+    }
+
+    interface FunctionAdapter {
+
+        @Nullable
+        public Object apply(@Nullable Object input, Type runtimeOutputType);
+
+        public DummySetterFunction getFunction();
+
+    }
+
+    static class SetterFunctionAdapter implements FunctionAdapter {
+
+        private final SetterFunction function;
+
+        SetterFunctionAdapter(SetterFunction function) {
+            this.function = function;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Nullable
+        @Override
+        public Object apply(@Nullable Object input, Type runtimeOutputType) {
+            return function.apply(input);
+        }
+
+        @Override
+        public DummySetterFunction getFunction() {
+            return function;
+        }
+
+    }
+
+    static class RuntimeSetterFunctionAdapter implements FunctionAdapter {
+
+        private final RuntimeSetterFunction function;
+
+        RuntimeSetterFunctionAdapter(RuntimeSetterFunction function) {
+            this.function = function;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Nullable
+        @Override
+        public Object apply(@Nullable Object input, Type runtimeOutputType) {
+            return function.apply(input, runtimeOutputType);
+        }
+
+        @Override
+        public DummySetterFunction getFunction() {
+            return function;
+        }
+
     }
 
 }

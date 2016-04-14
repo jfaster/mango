@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class StringToIntArrayFunction extends SetterFunction<String, int[]> {
+public class StringToIntArrayFunction implements SetterFunction<String, int[]> {
 
     private final static String SEPARATOR = ",";
 

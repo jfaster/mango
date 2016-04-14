@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.invoker.GenericSetterFunction;
+import org.jfaster.mango.invoker.RuntimeSetterFunction;
 import org.jfaster.mango.reflect.TypeToken;
 
 import javax.annotation.Nullable;
@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
  *
  * @author ash
  */
-public class StringToEnumFunction extends GenericSetterFunction<String, Enum> {
+public class StringToEnumFunction implements RuntimeSetterFunction<String, Enum> {
 
     @Nullable
     @Override

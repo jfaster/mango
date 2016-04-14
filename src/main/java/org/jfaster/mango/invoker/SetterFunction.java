@@ -17,25 +17,13 @@
 package org.jfaster.mango.invoker;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public abstract class SetterFunction<I, O> extends TypedSetterFunction<I, O> {
+public interface SetterFunction<I, O> extends DummySetterFunction<I, O> {
 
     @Nullable
-    @Override
-    public O apply(@Nullable I input, Type runtimeOutputType) {
-        return apply(input);
-    }
-
-    @Nullable
-    public abstract O apply(@Nullable I input);
-
-    @Override
-    public boolean outputTypeIsGeneric() {
-        return false;
-    }
+    public O apply(@Nullable I input);
 
 }
