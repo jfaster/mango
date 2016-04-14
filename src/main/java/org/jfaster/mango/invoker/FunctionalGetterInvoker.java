@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Set;
 
 /**
  * 函数式getter方法调用器
@@ -51,10 +52,25 @@ public class FunctionalGetterInvoker extends MethodNamedObject implements Getter
         if (getterAnno != null) { // 启用函数式调用功能
             Class<? extends GetterFunction<?, ?>> funcClass = getterAnno.value();
             function = Reflection.instantiateClass(funcClass);
-            Type genType = funcClass.getGenericSuperclass();
-            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-            TypeToken<?> inputToken = TypeToken.of(params[0]);
-            TypeToken<?> outputToken = TypeToken.of(params[1]);
+
+            TypeToken<?> inputToken = null;
+            TypeToken<?> outputToken = null;
+            Set<TypeToken<?>> fathers = TypeToken.of(funcClass).getTypes();
+            for (TypeToken<?> father : fathers) {
+                if (GetterFunction.class.equals(father.getRawType())) {
+                    inputToken = father.resolveType(GetterFunction.class.getTypeParameters()[0]);
+                    if (Object.class.equals(inputToken.getRawType())) { // 处理范型T
+                        inputToken = TypeToken.of(Object.class);
+                    }
+                    outputToken = father.resolveType(GetterFunction.class.getTypeParameters()[1]);
+                    if (Object.class.equals(outputToken.getRawType())) { // 处理范型T
+                        outputToken = TypeToken.of(Object.class);
+                    }
+                }
+            }
+            if (inputToken == null || outputToken == null) {
+                throw new IllegalStateException();
+            }
             TypeToken<?> wrapReturnToken = returnToken.wrap();
             if (!inputToken.isAssignableFrom(wrapReturnToken)) {
                 throw new ClassCastException("function[" + function.getClass() + "] " +

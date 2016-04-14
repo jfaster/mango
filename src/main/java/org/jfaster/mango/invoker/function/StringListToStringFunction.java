@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author ash
  */
-public class StringListToStringFunction extends GetterFunction<List<String>, String> {
+public class StringListToStringFunction implements GetterFunction<List<String>, String> {
 
     private final static String SEPARATOR = ",";
 

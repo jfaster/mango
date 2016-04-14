@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class ObjectToGsonFunction extends GetterFunction<Object, String> {
+public class ObjectToGsonFunction implements GetterFunction<Object, String> {
 
     @Nullable
     @Override

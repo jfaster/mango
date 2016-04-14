@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class EnumToIntegerFunction extends GetterFunction<Enum, Integer> {
+public class EnumToIntegerFunction implements GetterFunction<Enum, Integer> {
 
     @Nullable
     @Override

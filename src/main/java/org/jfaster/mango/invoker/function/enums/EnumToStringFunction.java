@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class EnumToStringFunction extends GetterFunction<Enum, String> {
+public class EnumToStringFunction implements GetterFunction<Enum, String> {
 
     @Nullable
     @Override

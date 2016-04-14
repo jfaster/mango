@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class ObjectToFastjsonFunction extends GetterFunction<Object, String> {
+public class ObjectToFastjsonFunction implements GetterFunction<Object, String> {
 
     @Nullable
     @Override
