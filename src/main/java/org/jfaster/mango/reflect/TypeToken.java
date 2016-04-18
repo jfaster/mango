@@ -127,7 +127,7 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
         return Types.toString(runtimeType);
     }
 
-    public Set<TypeToken<?>> getTypes() {
+    Set<TypeToken<?>> getTypes() {
         Set<TypeToken<?>> tokens = new HashSet<TypeToken<?>>();
         tokens.add(this);
         TypeToken<?> superclass = getGenericSuperclass();
@@ -141,6 +141,45 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
             tokens.addAll(anInterface.getTypes());
         }
         return tokens;
+    }
+
+    public TypeToken<?> resolveFatherClass(Class<?> clazz) {
+        Set<TypeToken<?>> fathers = getTypes();
+        TypeToken<?> token = null;
+        for (TypeToken<?> father : fathers) {
+            if (clazz.equals(father.getRawType())) {
+                token = father.resolveType(clazz.getTypeParameters()[0]);
+                if (Object.class.equals(token.getRawType())) { // 处理范型T
+                    token = TypeToken.of(Object.class);
+                }
+            }
+        }
+        if (token == null) {
+            throw new IllegalStateException();
+        }
+        return token;
+    }
+
+    public TokenTuple resolveFatherClassTuple(Class<?> clazz) {
+        Set<TypeToken<?>> fathers = getTypes();
+        TypeToken firstToken = null;
+        TypeToken secondToken = null;
+        for (TypeToken<?> father : fathers) {
+            if (clazz.equals(father.getRawType())) {
+                firstToken = father.resolveType(clazz.getTypeParameters()[0]);
+                if (Object.class.equals(firstToken.getRawType())) { // 处理范型T
+                    firstToken = TypeToken.of(Object.class);
+                }
+                secondToken = father.resolveType(clazz.getTypeParameters()[1]);
+                if (Object.class.equals(secondToken.getRawType())) { // 处理范型T
+                    secondToken = TypeToken.of(Object.class);
+                }
+            }
+        }
+        if (firstToken == null || secondToken == null) {
+            throw new IllegalStateException();
+        }
+        return new TokenTuple(firstToken, secondToken);
     }
 
     final List<TypeToken<?>> getGenericInterfaces() {

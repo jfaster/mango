@@ -21,6 +21,7 @@ import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.exception.IncorrectGetterAnnotationException;
 import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.reflect.TokenTuple;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.Types;
 
@@ -28,7 +29,6 @@ import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Set;
 
 /**
  * @author ash
@@ -64,24 +64,10 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
                 throw new IllegalArgumentException(); // TODO
             }
 
-            TypeToken<?> inputToken = null;
-            TypeToken<?> outputToken = null;
-            Set<TypeToken<?>> fathers = TypeToken.of(funcClass).getTypes();
-            for (TypeToken<?> father : fathers) {
-                if (DummySetterFunction.class.equals(father.getRawType())) {
-                    inputToken = father.resolveType(DummySetterFunction.class.getTypeParameters()[0]);
-                    if (Object.class.equals(inputToken.getRawType())) { // 处理范型T
-                        inputToken = TypeToken.of(Object.class);
-                    }
-                    outputToken = father.resolveType(DummySetterFunction.class.getTypeParameters()[1]);
-                    if (Object.class.equals(outputToken.getRawType())) { // 处理范型T
-                        outputToken = TypeToken.of(Object.class);
-                    }
-                }
-            }
-            if (inputToken == null || outputToken == null) {
-                throw new IllegalStateException();
-            }
+            TokenTuple tokenTuple = TypeToken.of(funcClass).resolveFatherClassTuple(DummySetterFunction.class);
+            TypeToken<?> inputToken = tokenTuple.getFirst();
+            TypeToken<?> outputToken = tokenTuple.getSecond();
+
             TypeToken<?> wrapParameterToken = parameterToken.wrap();
             if (functionAdapter instanceof RuntimeSetterFunctionAdapter) { // 针对继承RuntimeSetterFunction的
                 if (!outputToken.isAssignableFrom(wrapParameterToken)) {
