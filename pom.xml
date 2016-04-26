@@ -268,6 +268,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/util/logging/**</exclude>
+                        <exclude>**/parser/Parser.class</exclude>
+                        <exclude>**/parser/ParserTokenManager.class</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
