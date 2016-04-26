@@ -16,7 +16,9 @@
     <name>mango</name>
     <url>http://mango.jfaster.org/</url>
     <description>
-        mango is a dao framework.
+        Mango is a high-performance data access layer framework.
+        It has a strong ability to Object/Relational Mapping,
+        natively supports datasource router and table partiion.
     </description>
 
     <licenses>
@@ -36,13 +38,13 @@
     <developers>
         <developer>
             <name>ash</name>
-            <email>liangyanghe@gmail.com</email>
-            <url>http://github.com/jfaster</url>
+            <email>ash266@163.com</email>
+            <url>http://github.com/liangyanghe</url>
         </developer>
     </developers>
 
     <dependencies>
-        <!-- spring插件 -->
+        <!-- spring plugin -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -50,15 +52,13 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- 性能统计servlet插件 -->
+        <!-- for performance statistics widget -->
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.22</version>
             <optional>true</optional>
         </dependency>
-
-        <!-- 插件使用 -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -66,7 +66,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- findbug相关 -->
+        <!-- findbug -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
@@ -74,7 +74,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- 可选的log工具 -->
+        <!-- Optional logging tool -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
