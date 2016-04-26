@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/jfaster/mango.svg?branch=master)](https://travis-ci.org/jfaster/mango)
 [![Coverage Status](https://coveralls.io/repos/github/jfaster/mango/badge.svg?branch=master)](https://coveralls.io/github/jfaster/mango?branch=master)
+[![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 Fast, simple, reliable. Mango is a "zero-overhead" production ready data access layer framework.
 Now more and more large-scale projects using mango as their core framework.
