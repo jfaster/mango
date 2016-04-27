@@ -270,9 +270,18 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>**/util/logging/**</exclude>
+                        <exclude>**/parser/JJTParserState.class</exclude>
+                        <exclude>**/parser/ParseException.class</exclude>
                         <exclude>**/parser/Parser.class</exclude>
                         <exclude>**/parser/ParserTokenManager.class</exclude>
+                        <exclude>**/parser/SimpleCharStream.class</exclude>
+                        <exclude>**/parser/SimpleNode.class</exclude>
+                        <exclude>**/parser/Token.class</exclude>
+                        <exclude>**/parser/TokenMgrError.class</exclude>
+                        <exclude>**/util/logging/**</exclude>
+                        <exclude>**/util/concurrent/atomic/**</exclude>
+                        <exclude>**/mango/plugin/**</exclude>
+                        <exclude>**/mango/exception/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
