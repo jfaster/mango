@@ -45,3 +45,12 @@ JMH Benchmarks
 Microbenchmarks were created to isolate and measure the overhead of ORM framework using the [JMH microbenchmark framework](http://openjdk.java.net/projects/code-tools/jmh/) developed by the Oracle JVM performance team. You can checkout the [Mango benchmark project for details](https://github.com/jfaster/mango-benchmark) and review/run the benchmarks yourself.
 
 ![](https://raw.githubusercontent.com/jfaster/mango-benchmark/master/benchmark.png)
+
+ * jdbc means using native jdbc, do not use ORM framework.
+ * One *Query Cycle* is defined as single ``select id, name, age from user where id = ?``.
+ * One *Update Cycle* is defined as single ``update user set age = ? where id = ?``.
+
+<sup>
+<sup>1</sup> Versions: mango 1.3.5, spring-jdbc 4.0.5, mybatis 3.4.0, hsqldb 2.3.1, Java 1.7.0_25 <br/>
+<sup>2</sup> Java options: -server -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms1096m -Xmx1096m <br/>
+</sup>
