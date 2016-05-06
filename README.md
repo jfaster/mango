@@ -39,3 +39,9 @@ dependencies {
 
 Or [download from here](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.jfaster%22%20AND%20a%3A%22mango%22).
 
+JMH Benchmarks
+--------------
+
+Microbenchmarks were created to isolate and measure the overhead of ORM framework using the [JMH microbenchmark framework](http://openjdk.java.net/projects/code-tools/jmh/) developed by the Oracle JVM performance team. You can checkout the [Mango benchmark project for details](https://github.com/jfaster/mango-benchmark) and review/run the benchmarks yourself.
+
+![](https://raw.githubusercontent.com/jfaster/mango-benchmark/master/benchmark.png)
