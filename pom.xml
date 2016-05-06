@@ -15,11 +15,7 @@
 
     <name>mango</name>
     <url>http://mango.jfaster.org/</url>
-    <description>
-        Mango is a high-performance data access layer framework.
-        It has a strong ability to Object/Relational Mapping,
-        natively supports datasource router and table partiion.
-    </description>
+    <description>Ultimate SQL Mapper Framework</description>
 
     <licenses>
         <license>

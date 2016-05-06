@@ -1,12 +1,13 @@
-Mango Project
-=============
+Mango SQL Mapper Framework for Java
+===================================
 
 [![Build Status](https://travis-ci.org/jfaster/mango.svg?branch=master)](https://travis-ci.org/jfaster/mango)
 [![Coverage Status](https://coveralls.io/repos/github/jfaster/mango/badge.svg?branch=master)](https://coveralls.io/github/jfaster/mango?branch=master)
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-Fast, simple, reliable. Mango is a "zero-overhead" production ready data access layer framework.
-Now more and more large-scale projects using mango as their core framework.
+Fast, simple, reliable. Mango is a high-performance SQL Mapper Framework.
+Mango makes it easier to use a relational database with object-oriented applications.
+Performance and Simplicity are the biggest advantage of the Mango data mapper over object relational mapping tools.
 In our payment system, we use mango to build a distributed payment order system
 that can handle 120000+ payment order per second.
 
@@ -46,7 +47,7 @@ Microbenchmarks were created to isolate and measure the overhead of ORM framewor
 
 ![](https://raw.githubusercontent.com/jfaster/mango-benchmark/master/benchmark.png)
 
- * jdbc means using native jdbc, do not use ORM framework.
+ * Jdbc means using only native jdbc API, do not use any ORM frameworks.
  * One *Query Cycle* is defined as single ``select id, name, age from user where id = ?``.
  * One *Update Cycle* is defined as single ``update user set age = ? where id = ?``.
 
