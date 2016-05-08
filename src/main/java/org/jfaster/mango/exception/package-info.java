@@ -15,6 +15,6 @@
  */
 
 /**
- * 异常
+ * Exceptions
  */
 package org.jfaster.mango.exception;

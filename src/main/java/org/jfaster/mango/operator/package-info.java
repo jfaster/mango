@@ -15,6 +15,6 @@
  */
 
 /**
- * 核心代码，包含db与cache的操作
+ * core code
  */
 package org.jfaster.mango.operator;

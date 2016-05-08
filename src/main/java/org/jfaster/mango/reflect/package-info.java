@@ -15,6 +15,6 @@
  */
 
 /**
- * 反射
+ * reflect
  */
 package org.jfaster.mango.reflect;

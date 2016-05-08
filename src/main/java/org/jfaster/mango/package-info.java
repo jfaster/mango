@@ -15,6 +15,6 @@
  */
 
 /**
- * 极速数据层访问框架
+ * Mango SQL Mapper Framework
  */
 package org.jfaster.mango;

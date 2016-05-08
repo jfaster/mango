@@ -15,6 +15,6 @@
  */
 
 /**
- * 注解
+ * Annotations for Mango
  */
 package org.jfaster.mango.annotation;

@@ -15,6 +15,6 @@
  */
 
 /**
- * 事务
+ * transaction
  */
 package org.jfaster.mango.transaction;

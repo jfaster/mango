@@ -15,6 +15,6 @@
  */
 
 /**
- * jdbc访问数据库
+ * jdbc
  */
 package org.jfaster.mango.jdbc;

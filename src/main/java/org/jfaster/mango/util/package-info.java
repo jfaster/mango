@@ -15,6 +15,6 @@
  */
 
 /**
- * 工具
+ * utils
  */
 package org.jfaster.mango.util;
