@@ -15,6 +15,6 @@
  */
 
 /**
- * 本地缓存
+ * local cache
  */
 package org.jfaster.mango.util.concurrent.cache;

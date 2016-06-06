@@ -15,6 +15,6 @@
  */
 
 /**
- * copy from jdk8
+ * logger type
  */
-package org.jfaster.mango.util.concurrent.atomic;
+package org.jfaster.mango.plugin.listener;

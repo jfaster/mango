@@ -15,6 +15,6 @@
  */
 
 /**
- * copy from jdk8
+ * plugins
  */
-package org.jfaster.mango.util.concurrent.atomic;
+package org.jfaster.mango.plugin;
