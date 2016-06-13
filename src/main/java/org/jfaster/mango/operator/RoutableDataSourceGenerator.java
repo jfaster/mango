@@ -37,22 +37,20 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
     private final String shardParameterName;
     private final GetterInvokerGroup shardByInvokerGroup;
     private final DatabaseShardingStrategy dataSourceRouter;
-    private final int type;
 
     protected RoutableDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
                                           String shardParameterName, GetterInvokerGroup shardByInvokerGroup,
-                                          DatabaseShardingStrategy dataSourceRouter, int type) {
+                                          DatabaseShardingStrategy dataSourceRouter) {
         super(dataSourceFactory, dataSourceType);
         this.shardParameterName = shardParameterName;
         this.shardByInvokerGroup = shardByInvokerGroup;
         this.dataSourceRouter = dataSourceRouter;
-        this.type = type;
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public String getDataSourceName(InvocationContext context) {
+    public String getDatabase(InvocationContext context) {
         Object shardParam = context.getPropertyValue(shardParameterName, shardByInvokerGroup);
         return dataSourceRouter.getDatabase(shardParam);
     }

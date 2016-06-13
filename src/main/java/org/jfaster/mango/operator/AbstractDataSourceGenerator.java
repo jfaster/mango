@@ -44,23 +44,23 @@ public abstract class AbstractDataSourceGenerator implements DataSourceGenerator
 
     @Override
     public DataSource getDataSource(InvocationContext context, Class<?> daoClass) {
-        return getDataSource(getDataSourceName(context), daoClass);
+        return getDataSource(getDatabase(context), daoClass);
     }
 
-    private DataSource getDataSource(String dataSourceName, Class<?> daoClass) {
+    private DataSource getDataSource(String database, Class<?> daoClass) {
         if (logger.isDebugEnabled()) {
-            logger.debug("The name of Datasource is [" + dataSourceName + "]");
+            logger.debug("The name of database is [" + database + "]");
         }
         DataSource ds = dataSourceType == DataSourceType.MASTER ?
-                dataSourceFactory.getMasterDataSource(dataSourceName) :
-                dataSourceFactory.getSlaveDataSource(dataSourceName, daoClass);
+                dataSourceFactory.getMasterDataSource(database) :
+                dataSourceFactory.getSlaveDataSource(database, daoClass);
         if (ds == null) {
-            throw new IncorrectDefinitionException("can't find datasource for name [" + dataSourceName + "]");
+            throw new IncorrectDefinitionException("can't find database for name [" + database + "]");
         }
         return ds;
     }
 
     @Nullable
-    public abstract String getDataSourceName(InvocationContext context);
+    public abstract String getDatabase(InvocationContext context);
 
 }

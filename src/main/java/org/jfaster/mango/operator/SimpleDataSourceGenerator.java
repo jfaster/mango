@@ -37,7 +37,7 @@ public class SimpleDataSourceGenerator extends AbstractDataSourceGenerator {
 
     @Nullable
     @Override
-    public String getDataSourceName(InvocationContext context) {
+    public String getDatabase(InvocationContext context) {
         return dataSourceName;
     }
 
