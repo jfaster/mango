@@ -14,42 +14,25 @@
  * under the License.
  */
 
-package org.jfaster.mango.support;
-
-import org.jfaster.mango.annotation.DB;
-
-import java.lang.annotation.Annotation;
+package org.jfaster.mango.sharding;
 
 /**
+ * {@link org.jfaster.mango.annotation.DB#tablePartition()}的默认值，表示不使用分表
+ *
  * @author ash
  */
-public class MockDB implements Annotation, DB {
+public final class NotUseShardingStrategy implements ShardingStrategy {
 
-    private String database = "";
-
-    private String table = "";
-
-    public MockDB() {
-    }
-
-    public MockDB(String database, String table) {
-        this.database = database;
-        this.table = table;
+    @Override
+    public String getDatabase(Object shardParam) {
+        // TODO msg
+        throw new IllegalStateException();
     }
 
     @Override
-    public String database() {
-        return database;
-    }
-
-    @Override
-    public String table() {
-        return table;
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
+    public String getTargetTable(String table, Object shardingParam) {
+        // TODO msg
+        throw new IllegalStateException();
     }
 
 }

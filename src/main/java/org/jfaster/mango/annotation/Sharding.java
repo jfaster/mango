@@ -16,30 +16,39 @@
 
 package org.jfaster.mango.annotation;
 
+import org.jfaster.mango.sharding.*;
+
 import java.lang.annotation.*;
 
 /**
- * 修饰DAO接口，只有使用此注解修饰的DAO接口，才能被mango识别
+ * 分库分表相关
  *
  * @author ash
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface DB {
+public @interface Sharding {
 
     /**
-     * 使用数据源，只有在使用{@link org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory}时，database的值才有意义。
+     * 表切分策略
      *
      * @return
      */
-    String database() default "";
+    Class<? extends TableShardingStrategy> tableShardingStrategy() default NotUseTableShardingStrategy.class;
 
     /**
-     * 全局表名，在{@link SQL}的字符串参数，可以通过#table的方式引用此全局表名。
+     * 数据库切分策略
      *
      * @return
      */
-    String table() default "";
+    Class<? extends DatabaseShardingStrategy> databaseShardingStrategy() default NotUseDatabaseShardingStrategy.class;
+
+    /**
+     * 表切分策略和数据库切分策略
+     *
+     * @return
+     */
+    Class<? extends ShardingStrategy> shardingStrategy() default NotUseShardingStrategy.class;
 
 }

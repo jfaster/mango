@@ -16,10 +16,7 @@
 
 package org.jfaster.mango.sharding;
 
-import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.annotation.DatabaseShardingBy;
-import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.annotation.TableShardingBy;
+import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
@@ -88,7 +85,8 @@ public class TupleShardStrategyTest {
         }
     }
 
-    @DB(table = "order", dataSourceRouter = OrderShardingStrategy.class, tablePartition = OrderShardingStrategy.class)
+    @DB(table = "order")
+    @Sharding(databaseShardingStrategy = OrderShardingStrategy.class, tableShardingStrategy = OrderShardingStrategy.class)
     interface OrderDao {
 
         @SQL("insert into #table(cid, uid, price) values(:cid, :uid, :price)")

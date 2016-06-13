@@ -36,16 +36,14 @@ public class PartitionalTableGenerator implements TableGenerator {
     private final String shardParameterName;
     private final GetterInvokerGroup shardByInvokerGroup;
     private final TableShardingStrategy tablePartition; // 分表策略
-    private final int type;
 
     public PartitionalTableGenerator(String table, String shardParameterName,
                                      GetterInvokerGroup shardByInvokerGroup,
-                                     TableShardingStrategy tablePartition, int type) {
+                                     TableShardingStrategy tablePartition) {
         this.table = table;
         this.shardParameterName = shardParameterName;
         this.shardByInvokerGroup = shardByInvokerGroup;
         this.tablePartition = tablePartition;
-        this.type = type;
     }
 
     @SuppressWarnings("unchecked")

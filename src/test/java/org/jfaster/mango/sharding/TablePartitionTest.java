@@ -18,10 +18,7 @@ package org.jfaster.mango.sharding;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.annotation.ReturnGeneratedId;
-import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.annotation.ShardingBy;
+import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
@@ -107,7 +104,8 @@ public class TablePartitionTest {
         assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
     }
 
-    @DB(table = "msg", tablePartition = ModTenTableShardingStrategy.class)
+    @DB(table = "msg")
+    @Sharding(tableShardingStrategy = ModTenTableShardingStrategy.class)
     interface MsgDao {
 
         @ReturnGeneratedId

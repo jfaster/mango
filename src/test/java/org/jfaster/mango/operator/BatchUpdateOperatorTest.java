@@ -300,7 +300,8 @@ public class BatchUpdateOperatorTest {
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
-        methodAnnos.add(new MockDB("", "user", ModHundredTableShardingStrategy.class, MyDatabaseShardingStrategy.class));
+        methodAnnos.add(new MockDB("", "user"));
+        methodAnnos.add(new MockSharding(ModHundredTableShardingStrategy.class, MyDatabaseShardingStrategy.class, null));
         methodAnnos.add(new MockSQL(srcSql));
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
         MethodDescriptor md = new MethodDescriptor(null, rd, pds);

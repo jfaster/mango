@@ -55,9 +55,10 @@ public class ExtendStats {
         DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
         String table = dbAnno.table();
         if (Strings.isNotEmpty(table)) {
-            if (!NotUseTableShardingStrategy.class.equals(dbAnno.tablePartition())) {
-                table = table + "_#";
-            }
+            // TODO
+//            if (!NotUseTableShardingStrategy.class.equals(dbAnno.tablePartition())) {
+//                table = table + "_#";
+//            }
             sql = sql.replaceAll("#table", table);
         }
         return sql;
