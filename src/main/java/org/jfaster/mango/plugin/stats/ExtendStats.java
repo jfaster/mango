@@ -19,7 +19,7 @@ package org.jfaster.mango.plugin.stats;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.OperatorStats;
-import org.jfaster.mango.partition.IgnoreTablePartition;
+import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.ToStringHelper;
 
@@ -55,7 +55,7 @@ public class ExtendStats {
         DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
         String table = dbAnno.table();
         if (Strings.isNotEmpty(table)) {
-            if (!IgnoreTablePartition.class.equals(dbAnno.tablePartition())) {
+            if (!NotUseTableShardingStrategy.class.equals(dbAnno.tablePartition())) {
                 table = table + "_#";
             }
             sql = sql.replaceAll("#table", table);

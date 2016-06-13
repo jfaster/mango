@@ -17,15 +17,15 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.invoker.GetterInvokerGroup;
-import org.jfaster.mango.partition.TablePartition;
+import org.jfaster.mango.sharding.TableShardingStrategy;
 
 import javax.annotation.Nullable;
 
 /**
  * 分表表名生成器，以从{@link org.jfaster.mango.annotation.DB#table()}取得的表名作为原始表名，
- * 使用{@link org.jfaster.mango.annotation.TableShardBy}或{@link org.jfaster.mango.annotation.ShardBy}
+ * 使用{@link org.jfaster.mango.annotation.TableShardingBy}或{@link org.jfaster.mango.annotation.ShardingBy}
  * 修饰的参数作为分表参数，
- * 使用{@link org.jfaster.mango.partition.TablePartition}作为分表策略，
+ * 使用{@link org.jfaster.mango.sharding.TableShardingStrategy}作为分表策略，
  * 共同生成分表后表名
  *
  * @author ash
@@ -35,12 +35,12 @@ public class PartitionalTableGenerator implements TableGenerator {
     private final String table; // 原始表名称
     private final String shardParameterName;
     private final GetterInvokerGroup shardByInvokerGroup;
-    private final TablePartition tablePartition; // 分表策略
+    private final TableShardingStrategy tablePartition; // 分表策略
     private final int type;
 
     public PartitionalTableGenerator(String table, String shardParameterName,
                                      GetterInvokerGroup shardByInvokerGroup,
-                                     TablePartition tablePartition, int type) {
+                                     TableShardingStrategy tablePartition, int type) {
         this.table = table;
         this.shardParameterName = shardParameterName;
         this.shardByInvokerGroup = shardByInvokerGroup;
@@ -53,7 +53,7 @@ public class PartitionalTableGenerator implements TableGenerator {
     @Override
     public String getTable(InvocationContext context) {
         Object shardParam = context.getPropertyValue(shardParameterName, shardByInvokerGroup);
-        return tablePartition.getPartitionedTable(table, shardParam, type);
+        return tablePartition.getTargetTable(table, shardParam);
     }
 
 }

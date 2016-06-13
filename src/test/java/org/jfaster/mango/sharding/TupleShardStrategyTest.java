@@ -14,12 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
+package org.jfaster.mango.sharding;
 
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.annotation.DataSourceShardBy;
+import org.jfaster.mango.annotation.DatabaseShardingBy;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.annotation.TableShardBy;
+import org.jfaster.mango.annotation.TableShardingBy;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
@@ -88,30 +88,30 @@ public class TupleShardStrategyTest {
         }
     }
 
-    @DB(table = "order", dataSourceRouter = OrderShardStrategy.class, tablePartition = OrderShardStrategy.class)
+    @DB(table = "order", dataSourceRouter = OrderShardingStrategy.class, tablePartition = OrderShardingStrategy.class)
     interface OrderDao {
 
         @SQL("insert into #table(cid, uid, price) values(:cid, :uid, :price)")
-        int insert(@DataSourceShardBy("cid") @TableShardBy("uid") Order order);
+        int insert(@DatabaseShardingBy("cid") @TableShardingBy("uid") Order order);
 
         @SQL("select cid, uid, price from #table where cid = :1 and uid = :2")
-        public Order getOrder(@DataSourceShardBy int cid, @TableShardBy String uid);
+        public Order getOrder(@DatabaseShardingBy int cid, @TableShardingBy String uid);
 
         @SQL("update #table set price = :price where cid = :cid and uid = :uid")
-        public int batchUpdate(@DataSourceShardBy("cid") @TableShardBy("uid") List<Order> orders);
+        public int batchUpdate(@DatabaseShardingBy("cid") @TableShardingBy("uid") List<Order> orders);
 
     }
 
-    static class OrderShardStrategy implements TupleShardStrategy<Integer, String> {
+    static class OrderShardingStrategy implements ShardingStrategy<Integer, String> {
 
         @Override
-        public String getDataSourceName(Integer cid, int type) {
+        public String getDatabase(Integer cid) {
             long hash = HashUtil.fnv1_31(cid);
             return "ds" + (hash % 4 + 1);
         }
 
         @Override
-        public String getPartitionedTable(String table, String uid, int type) {
+        public String getTargetTable(String table, String uid) {
             return table + "_" + Integer.valueOf(uid) % 10;
         }
 

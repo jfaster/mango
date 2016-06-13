@@ -16,14 +16,14 @@
 
 package org.jfaster.mango.support;
 
-import org.jfaster.mango.annotation.ShardBy;
+import org.jfaster.mango.annotation.ShardingBy;
 
 import java.lang.annotation.Annotation;
 
 /**
  * @author ash
  */
-public class MockShardBy implements Annotation, ShardBy {
+public class MockShardBy implements Annotation, ShardingBy {
 
     private String value;
 

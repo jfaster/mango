@@ -20,12 +20,12 @@ import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
-import org.jfaster.mango.partition.DataSourceRouter;
-import org.jfaster.mango.partition.ModHundredTablePartition;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.sharding.DatabaseShardingStrategy;
+import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Rule;
@@ -300,7 +300,7 @@ public class BatchUpdateOperatorTest {
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
-        methodAnnos.add(new MockDB("", "user", ModHundredTablePartition.class, MyDataSourceRouter.class));
+        methodAnnos.add(new MockDB("", "user", ModHundredTableShardingStrategy.class, MyDatabaseShardingStrategy.class));
         methodAnnos.add(new MockSQL(srcSql));
         ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
         MethodDescriptor md = new MethodDescriptor(null, rd, pds);
@@ -315,10 +315,10 @@ public class BatchUpdateOperatorTest {
         return operator;
     }
 
-    public static class MyDataSourceRouter implements DataSourceRouter {
+    public static class MyDatabaseShardingStrategy implements DatabaseShardingStrategy {
 
         @Override
-        public String getDataSourceName(Object shardParam, int type) {
+        public String getDatabase(Object shardParam) {
             Integer i = (Integer) shardParam;
             if (i < 50) {
                 return "l50";

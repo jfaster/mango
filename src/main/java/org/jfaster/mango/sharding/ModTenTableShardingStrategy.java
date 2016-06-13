@@ -14,20 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
-
-import org.jfaster.mango.exception.UnreachableCodeException;
+package org.jfaster.mango.sharding;
 
 /**
- * {@link org.jfaster.mango.annotation.DB#tablePartition()}的默认值，表示不使用分表
+ * 长整模十分表
  *
  * @author ash
  */
-public final class IgnoreTablePartition implements TablePartition {
+public class ModTenTableShardingStrategy implements TableShardingStrategy<Number> {
 
     @Override
-    public String getPartitionedTable(String table, Object shardByParam, int type) {
-        throw new UnreachableCodeException();
+    public String getTargetTable(String table, Number shardingParam) {
+        return table + "_" + Math.abs(shardingParam.longValue() % 10);
     }
 
 }

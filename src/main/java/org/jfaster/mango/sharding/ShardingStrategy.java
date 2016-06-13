@@ -14,17 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
+package org.jfaster.mango.sharding;
 
 /**
  * @author ash
  */
-public interface TupleShardStrategy<D, T> extends DataSourceRouter<D>, TablePartition<T> {
+public interface ShardingStrategy<D, T> extends DatabaseShardingStrategy<D>, TableShardingStrategy<T> {
 
     @Override
-    public String getDataSourceName(D shardParam, int type);
+    public String getDatabase(D shardParam);
 
     @Override
-    public String getPartitionedTable(String table, T shardParam, int type);
+    public String getTargetTable(String table, T shardParam);
 
 }

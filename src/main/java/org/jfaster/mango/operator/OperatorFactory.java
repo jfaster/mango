@@ -27,10 +27,10 @@ import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
-import org.jfaster.mango.partition.DataSourceRouter;
-import org.jfaster.mango.partition.IgnoreDataSourceRouter;
-import org.jfaster.mango.partition.IgnoreTablePartition;
-import org.jfaster.mango.partition.TablePartition;
+import org.jfaster.mango.sharding.DatabaseShardingStrategy;
+import org.jfaster.mango.sharding.NotUseDatabaseShardingStrategy;
+import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
+import org.jfaster.mango.sharding.TableShardingStrategy;
 import org.jfaster.mango.reflect.*;
 import org.jfaster.mango.util.SQLType;
 import org.jfaster.mango.util.Strings;
@@ -162,12 +162,12 @@ public class OperatorFactory {
         if (Strings.isNotEmpty(dbAnno.table())) {
             table = dbAnno.table();
         }
-        Class<? extends TablePartition> tpc = dbAnno.tablePartition();
-        TablePartition tablePartition = null;
+        Class<? extends TableShardingStrategy> tpc = dbAnno.tablePartition();
+        TableShardingStrategy tablePartition = null;
         TypeToken<?> tablePartitionToken = null;
-        if (tpc != null && !tpc.equals(IgnoreTablePartition.class)) {
+        if (tpc != null && !tpc.equals(NotUseTableShardingStrategy.class)) {
             tablePartition = Reflection.instantiateClass(tpc);
-            tablePartitionToken = TypeToken.of(tpc).resolveFatherClass(TablePartition.class);
+            tablePartitionToken = TypeToken.of(tpc).resolveFatherClass(TableShardingStrategy.class);
         }
 
         // 在@DB注解中定义了table
@@ -191,8 +191,8 @@ public class OperatorFactory {
         String shardParameterProperty = null;
         int type = 0;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
-            ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
-            TableShardBy tableShardByAnno = pd.getAnnotation(TableShardBy.class);
+            ShardingBy shardByAnno = pd.getAnnotation(ShardingBy.class);
+            TableShardingBy tableShardByAnno = pd.getAnnotation(TableShardingBy.class);
             if (shardByAnno != null) {
                 shardParameterName = nameProvider.getParameterName(pd.getPosition());
                 shardParameterProperty = shardByAnno.value();
@@ -245,12 +245,12 @@ public class OperatorFactory {
                     "annotation but not found");
         }
         String dataSourceName = dbAnno.dataSource();
-        Class<? extends DataSourceRouter> dsrc = dbAnno.dataSourceRouter();
-        DataSourceRouter dataSourceRouter = null;
+        Class<? extends DatabaseShardingStrategy> dsrc = dbAnno.dataSourceRouter();
+        DatabaseShardingStrategy dataSourceRouter = null;
         TypeToken<?> dataSourceRouterToken = null;
-        if (dsrc != null && !dsrc.equals(IgnoreDataSourceRouter.class)) {
+        if (dsrc != null && !dsrc.equals(NotUseDatabaseShardingStrategy.class)) {
             dataSourceRouter = Reflection.instantiateClass(dsrc);
-            dataSourceRouterToken = TypeToken.of(dsrc).resolveFatherClass(DataSourceRouter.class);
+            dataSourceRouterToken = TypeToken.of(dsrc).resolveFatherClass(DatabaseShardingStrategy.class);
         }
 
         int shardByNum = 0;
@@ -258,8 +258,8 @@ public class OperatorFactory {
         String shardParameterProperty = null;
         int type = 0;
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
-            ShardBy shardByAnno = pd.getAnnotation(ShardBy.class);
-            DataSourceShardBy tableShardByAnno = pd.getAnnotation(DataSourceShardBy.class);
+            ShardingBy shardByAnno = pd.getAnnotation(ShardingBy.class);
+            DatabaseShardingBy tableShardByAnno = pd.getAnnotation(DatabaseShardingBy.class);
             if (shardByAnno != null) {
                 shardParameterName = nameProvider.getParameterName(pd.getPosition());
                 shardParameterProperty = shardByAnno.value();
@@ -309,11 +309,11 @@ public class OperatorFactory {
         GetterInvokerGroup shardByInvokerGroup;
         String globalTable;
         String dataSourceName;
-        TablePartition tablePartition;
-        DataSourceRouter dataSourceRouter;
+        TableShardingStrategy tablePartition;
+        DatabaseShardingStrategy dataSourceRouter;
 
         DbInfo(String shardParameterName, GetterInvokerGroup shardByInvokerGroup, String globalTable,
-               String dataSourceName, TablePartition tablePartition, DataSourceRouter dataSourceRouter) {
+               String dataSourceName, TableShardingStrategy tablePartition, DatabaseShardingStrategy dataSourceRouter) {
             this.shardParameterName = shardParameterName;
             this.shardByInvokerGroup = shardByInvokerGroup;
             this.globalTable = globalTable;

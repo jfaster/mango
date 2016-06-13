@@ -17,10 +17,10 @@
 package org.jfaster.mango.support;
 
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.partition.DataSourceRouter;
-import org.jfaster.mango.partition.IgnoreDataSourceRouter;
-import org.jfaster.mango.partition.IgnoreTablePartition;
-import org.jfaster.mango.partition.TablePartition;
+import org.jfaster.mango.sharding.DatabaseShardingStrategy;
+import org.jfaster.mango.sharding.NotUseDatabaseShardingStrategy;
+import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
+import org.jfaster.mango.sharding.TableShardingStrategy;
 
 import java.lang.annotation.Annotation;
 
@@ -33,15 +33,15 @@ public class MockDB implements Annotation, DB {
 
     private String table = "";
 
-    private Class<? extends TablePartition> tablePartition = IgnoreTablePartition.class;
+    private Class<? extends TableShardingStrategy> tablePartition = NotUseTableShardingStrategy.class;
 
-    private Class<? extends DataSourceRouter> dataSourceRouter = IgnoreDataSourceRouter.class;
+    private Class<? extends DatabaseShardingStrategy> dataSourceRouter = NotUseDatabaseShardingStrategy.class;
 
     public MockDB() {
     }
 
-    public MockDB(String dataSource, String table, Class<? extends TablePartition> tablePartition,
-                  Class<? extends DataSourceRouter> dataSourceRouter) {
+    public MockDB(String dataSource, String table, Class<? extends TableShardingStrategy> tablePartition,
+                  Class<? extends DatabaseShardingStrategy> dataSourceRouter) {
         this.dataSource = dataSource;
         this.table = table;
         this.tablePartition = tablePartition;
@@ -59,12 +59,12 @@ public class MockDB implements Annotation, DB {
     }
 
     @Override
-    public Class<? extends TablePartition> tablePartition() {
+    public Class<? extends TableShardingStrategy> tablePartition() {
         return tablePartition;
     }
 
     @Override
-    public Class<? extends DataSourceRouter> dataSourceRouter() {
+    public Class<? extends DatabaseShardingStrategy> dataSourceRouter() {
         return dataSourceRouter;
     }
 

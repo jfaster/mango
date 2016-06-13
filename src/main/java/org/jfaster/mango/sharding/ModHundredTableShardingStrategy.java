@@ -14,28 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
+package org.jfaster.mango.sharding;
 
 /**
- * 分表
+ * 长整模百分表
  *
  * @author ash
  */
-public interface TablePartition<T> {
+public class ModHundredTableShardingStrategy implements TableShardingStrategy<Number> {
 
-    /**
-     * 获得分表后的表名
-     *
-     * @param table
-     *          取{@link org.jfaster.mango.annotation.DB#table()}中的值
-     * @param shardParam
-     *          取{@link org.jfaster.mango.annotation.ShardBy}修饰的参数
-     *
-     * @param type
-     *          取{@link org.jfaster.mango.annotation.ShardBy#type()}中的值
-     *
-     * @return
-     */
-    public String getPartitionedTable(String table, T shardParam, int type);
+    @Override
+    public String getTargetTable(String table, Number shardingParam) {
+        return table + "_" + Math.abs(shardingParam.longValue() % 100);
+    }
 
 }

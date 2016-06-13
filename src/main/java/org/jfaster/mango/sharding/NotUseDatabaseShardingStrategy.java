@@ -14,29 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.annotation;
-
-import java.lang.annotation.*;
+package org.jfaster.mango.sharding;
 
 /**
- * 用此注解修饰的方法参数或参数中的某个属性将被作为参数传入
- * {@link org.jfaster.mango.partition.TablePartition#getPartitionedTable(String, Object)}中
+ * {@link org.jfaster.mango.annotation.DB#dataSourceRouter()}的默认值，表示不使用数据源路由
  *
  * @author ash
  */
-@Target({ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface TableShardBy {
+public final class NotUseDatabaseShardingStrategy implements DatabaseShardingStrategy {
 
-    /**
-     * 如果value等于""，直接取被修饰的参数<br>
-     * 如果value不等于""，取被修饰参数的value属性
-     *
-     * @return
-     */
-    String value() default "";
-
-    int type() default 0;
+    @Override
+    public String getDatabase(Object shardingParam) {
+        // TODO msg
+        throw new IllegalStateException();
+    }
 
 }

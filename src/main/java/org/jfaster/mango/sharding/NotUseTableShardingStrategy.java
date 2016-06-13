@@ -14,17 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
+package org.jfaster.mango.sharding;
 
 /**
+ * {@link org.jfaster.mango.annotation.DB#tablePartition()}的默认值，表示不使用分表
+ *
  * @author ash
  */
-public interface ShardStrategy<T> extends DataSourceRouter<T>, TablePartition<T> {
+public final class NotUseTableShardingStrategy implements TableShardingStrategy {
 
     @Override
-    public String getDataSourceName(T shardParam, int type);
-
-    @Override
-    public String getPartitionedTable(String table, T shardParam, int type);
+    public String getTargetTable(String table, Object shardingParam) {
+        // TODO msg
+        throw new IllegalStateException();
+    }
 
 }

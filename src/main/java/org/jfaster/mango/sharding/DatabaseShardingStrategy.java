@@ -14,23 +14,23 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
+package org.jfaster.mango.sharding;
 
 /**
- * 字符串模百分表
+ * 数据源路由
  *
  * @author ash
  */
-public class StringModHundredTablePartition implements TablePartition<String> {
+public interface DatabaseShardingStrategy<T> {
 
-    @Override
-    public String getPartitionedTable(String table, String shardParam, int type) {
-        try {
-            int mod = (int) (Long.parseLong(shardParam) % 100);
-            return table + "_" + Math.abs(mod);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("can't convert shard parameter [" + shardParam + "] to digital");
-        }
-    }
+    /**
+     * 获得数据源名称
+     *
+     * @param shardParam
+     *          取{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
+     *
+     * @return
+     */
+    public String getDatabase(T shardingParam);
 
 }

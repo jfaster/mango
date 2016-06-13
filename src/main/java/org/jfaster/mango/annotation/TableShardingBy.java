@@ -14,18 +14,29 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
+package org.jfaster.mango.annotation;
+
+import java.lang.annotation.*;
 
 /**
- * 长整模百分表
+ * 用此注解修饰的方法参数或参数中的某个属性将被作为参数传入
+ * {@link org.jfaster.mango.sharding.TableShardingStrategy#getPartitionedTable(String, Object)}中
  *
  * @author ash
  */
-public class LongModHundredTablePartition implements TablePartition<Long> {
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface TableShardingBy {
 
-    @Override
-    public String getPartitionedTable(String table, Long shardParam, int type) {
-        return table + "_" + Math.abs(shardParam % 100);
-    }
+    /**
+     * 如果value等于""，直接取被修饰的参数<br>
+     * 如果value不等于""，取被修饰参数的value属性
+     *
+     * @return
+     */
+    String value() default "";
+
+    int type() default 0;
 
 }

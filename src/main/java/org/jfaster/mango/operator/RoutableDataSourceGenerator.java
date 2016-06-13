@@ -19,15 +19,15 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
-import org.jfaster.mango.partition.DataSourceRouter;
+import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 
 import javax.annotation.Nullable;
 
 /**
  * 分库数据源生成器，
- * 使用{@link org.jfaster.mango.annotation.DataSourceShardBy}或{@link org.jfaster.mango.annotation.ShardBy}
+ * 使用{@link org.jfaster.mango.annotation.DatabaseShardingBy}或{@link org.jfaster.mango.annotation.ShardingBy}
  * 修饰的参数作为分库参数，
- * 使用{@link org.jfaster.mango.partition.DataSourceRouter}作为分库策略，
+ * 使用{@link org.jfaster.mango.sharding.DatabaseShardingStrategy}作为分库策略，
  * 共同生成分库后数据源
  *
  * @author ash
@@ -36,12 +36,12 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
 
     private final String shardParameterName;
     private final GetterInvokerGroup shardByInvokerGroup;
-    private final DataSourceRouter dataSourceRouter;
+    private final DatabaseShardingStrategy dataSourceRouter;
     private final int type;
 
     protected RoutableDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
                                           String shardParameterName, GetterInvokerGroup shardByInvokerGroup,
-                                          DataSourceRouter dataSourceRouter, int type) {
+                                          DatabaseShardingStrategy dataSourceRouter, int type) {
         super(dataSourceFactory, dataSourceType);
         this.shardParameterName = shardParameterName;
         this.shardByInvokerGroup = shardByInvokerGroup;
@@ -54,7 +54,7 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
     @Override
     public String getDataSourceName(InvocationContext context) {
         Object shardParam = context.getPropertyValue(shardParameterName, shardByInvokerGroup);
-        return dataSourceRouter.getDataSourceName(shardParam, type);
+        return dataSourceRouter.getDatabase(shardParam);
     }
 
 }

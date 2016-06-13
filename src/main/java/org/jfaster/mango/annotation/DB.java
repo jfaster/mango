@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.partition.IgnoreTablePartition;
-import org.jfaster.mango.partition.TablePartition;
-import org.jfaster.mango.partition.DataSourceRouter;
-import org.jfaster.mango.partition.IgnoreDataSourceRouter;
+import org.jfaster.mango.sharding.DatabaseShardingStrategy;
+import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
+import org.jfaster.mango.sharding.NotUseDatabaseShardingStrategy;
+import org.jfaster.mango.sharding.TableShardingStrategy;
 
 import java.lang.annotation.*;
 
@@ -52,13 +52,13 @@ public @interface DB {
      *
      * @return
      */
-    Class<? extends TablePartition> tablePartition() default IgnoreTablePartition.class;
+    Class<? extends TableShardingStrategy> tablePartition() default NotUseTableShardingStrategy.class;
 
     /**
      * 数据源路由
      *
      * @return
      */
-    Class<? extends DataSourceRouter> dataSourceRouter() default IgnoreDataSourceRouter.class;
+    Class<? extends DatabaseShardingStrategy> dataSourceRouter() default NotUseDatabaseShardingStrategy.class;
 
 }

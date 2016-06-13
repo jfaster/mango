@@ -17,7 +17,6 @@
 package org.jfaster.mango.support;
 
 import org.jfaster.mango.annotation.CacheBy;
-import org.jfaster.mango.annotation.ShardBy;
 
 import java.lang.annotation.Annotation;
 

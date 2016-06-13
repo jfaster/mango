@@ -14,18 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
-
 /**
- * 长整模十分表
- *
- * @author ash
+ * Sharding, include database sharding and table sharding
  */
-public class LongModTenTablePartition implements TablePartition<Long> {
-
-    @Override
-    public String getPartitionedTable(String table, Long shardParam, int type) {
-        return table + "_" + Math.abs(shardParam % 10);
-    }
-
-}
+package org.jfaster.mango.sharding;

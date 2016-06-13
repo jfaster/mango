@@ -14,26 +14,26 @@
  * under the License.
  */
 
-package org.jfaster.mango.partition;
+package org.jfaster.mango.sharding;
 
 /**
- * 数据源路由
+ * 分表
  *
  * @author ash
  */
-public interface DataSourceRouter<T> {
+public interface TableShardingStrategy<T> {
 
     /**
-     * 获得数据源名称
+     * 获得分表后的表名
+     *
+     * @param table
+     *          取{@link org.jfaster.mango.annotation.DB#table()}中的值
      *
      * @param shardParam
-     *          取{@link org.jfaster.mango.annotation.ShardBy}修饰的参数
-     *
-     * @param type
-     *          取{@link org.jfaster.mango.annotation.ShardBy#type()}中的值
+     *          取{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
      *
      * @return
      */
-    public String getDataSourceName(T shardParam, int type);
+    public String getTargetTable(String table, T shardingParam);
 
 }
