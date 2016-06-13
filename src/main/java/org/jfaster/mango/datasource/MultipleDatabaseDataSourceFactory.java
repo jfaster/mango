@@ -27,33 +27,34 @@ import java.util.Map;
  *
  * @author ash
  */
-public class MultipleDataSourceFactory implements DataSourceFactory {
+public class MultipleDatabaseDataSourceFactory implements DataSourceFactory {
 
     private Map<String, DataSourceFactory> factories;
 
-    public MultipleDataSourceFactory() {
+    public MultipleDatabaseDataSourceFactory() {
     }
 
-    public MultipleDataSourceFactory(Map<String, DataSourceFactory> factories) {
+    public MultipleDatabaseDataSourceFactory(Map<String, DataSourceFactory> factories) {
         this.factories = factories;
     }
 
     @Override
-    public DataSource getMasterDataSource(String dataSourceName) {
-        DataSourceFactory factory = getDataSourceFactory(dataSourceName);
-        return factory.getMasterDataSource(dataSourceName);
+    public DataSource getMasterDataSource(String database) {
+        DataSourceFactory factory = getDataSourceFactory(database);
+        return factory.getMasterDataSource(database);
     }
 
     @Override
-    public DataSource getSlaveDataSource(String dataSourceName, Class<?> daoClass) {
-        DataSourceFactory factory = getDataSourceFactory(dataSourceName);
-        return factory.getSlaveDataSource(dataSourceName, daoClass);
+    public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
+        DataSourceFactory factory = getDataSourceFactory(database);
+        return factory.getSlaveDataSource(database, daoClass);
     }
 
-    private DataSourceFactory getDataSourceFactory(String dataSourceName) {
-        DataSourceFactory factory = factories.get(dataSourceName);
+    private DataSourceFactory getDataSourceFactory(String database) {
+        DataSourceFactory factory = factories.get(database);
         if (factory == null) {
-            throw new IllegalArgumentException("can not find the data source factory by name [" + dataSourceName + "], " +
+            // TODO msg
+            throw new IllegalArgumentException("can not find the data source factory by name [" + database + "], " +
                     "available data sources name is " + factories.keySet());
         }
         return factory;

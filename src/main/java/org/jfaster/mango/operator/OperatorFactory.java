@@ -244,7 +244,8 @@ public class OperatorFactory {
             throw new IllegalStateException("dao interface expected one @DB " +
                     "annotation but not found");
         }
-        String dataSourceName = dbAnno.dataSource();
+        // TODO name
+        String dataSourceName = dbAnno.database();
         Class<? extends DatabaseShardingStrategy> dsrc = dbAnno.dataSourceRouter();
         DatabaseShardingStrategy dataSourceRouter = null;
         TypeToken<?> dataSourceRouterToken = null;

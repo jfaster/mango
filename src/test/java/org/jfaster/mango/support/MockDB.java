@@ -29,7 +29,7 @@ import java.lang.annotation.Annotation;
  */
 public class MockDB implements Annotation, DB {
 
-    private String dataSource = "";
+    private String database = "";
 
     private String table = "";
 
@@ -40,17 +40,17 @@ public class MockDB implements Annotation, DB {
     public MockDB() {
     }
 
-    public MockDB(String dataSource, String table, Class<? extends TableShardingStrategy> tablePartition,
+    public MockDB(String database, String table, Class<? extends TableShardingStrategy> tablePartition,
                   Class<? extends DatabaseShardingStrategy> dataSourceRouter) {
-        this.dataSource = dataSource;
+        this.database = database;
         this.table = table;
         this.tablePartition = tablePartition;
         this.dataSourceRouter = dataSourceRouter;
     }
 
     @Override
-    public String dataSource() {
-        return dataSource;
+    public String database() {
+        return database;
     }
 
     @Override

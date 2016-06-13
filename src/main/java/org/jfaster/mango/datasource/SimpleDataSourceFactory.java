@@ -35,12 +35,12 @@ public class SimpleDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public DataSource getMasterDataSource(String dataSourceName) {
+    public DataSource getMasterDataSource(String database) {
         return dataSource;
     }
 
     @Override
-    public DataSource getSlaveDataSource(String dataSourceName, Class<?> daoClass) {
+    public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
         return dataSource;
     }
 

@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.MultipleDataSourceFactory;
+import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.reflect.MethodDescriptor;
@@ -309,7 +309,7 @@ public class BatchUpdateOperatorTest {
         Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();
         map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
         map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
-        DataSourceFactory dsf = new MultipleDataSourceFactory(map);
+        DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
         OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new Config());
         Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;

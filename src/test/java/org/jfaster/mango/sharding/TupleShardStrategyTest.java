@@ -21,7 +21,7 @@ import org.jfaster.mango.annotation.DatabaseShardingBy;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.TableShardingBy;
 import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.MultipleDataSourceFactory;
+import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -59,7 +59,7 @@ public class TupleShardStrategyTest {
             conn.close();
             factories.put(dsns[i], new SimpleDataSourceFactory(ds));
         }
-        DataSourceFactory dsf = new MultipleDataSourceFactory(factories);
+        DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
         Mango mango = Mango.newInstance(dsf);
         orderDao = mango.create(OrderDao.class);
     }

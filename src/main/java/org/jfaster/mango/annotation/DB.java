@@ -34,11 +34,11 @@ import java.lang.annotation.*;
 public @interface DB {
 
     /**
-     * 使用数据源，只有在使用{@link org.jfaster.mango.datasource.MultipleDataSourceFactory}时，dataSource的值才有意义。
+     * 使用数据源，只有在使用{@link org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory}时，database的值才有意义。
      *
      * @return
      */
-    String dataSource() default "";
+    String database() default "";
 
     /**
      * 全局表名，在{@link SQL}的字符串参数，可以通过#table的方式引用此全局表名。
