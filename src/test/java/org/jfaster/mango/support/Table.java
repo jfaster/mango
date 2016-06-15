@@ -40,6 +40,7 @@ public enum Table {
     ACCOUNT("account.sql"),
     POSITION("position.sql"),
     BT("bt.sql"),
+    BILL_PARTITION("bill_partition.sql"),
     ORDER_PARTITION("order_partition.sql"),
     PRODUCT_PARTITION("product_partition.sql"),
     ;

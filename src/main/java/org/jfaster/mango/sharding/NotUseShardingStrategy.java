@@ -24,13 +24,13 @@ package org.jfaster.mango.sharding;
 public final class NotUseShardingStrategy implements ShardingStrategy {
 
     @Override
-    public String getDatabase(Object shardParam) {
+    public String getDatabase(Object shardingParameter) {
         // TODO msg
         throw new IllegalStateException();
     }
 
     @Override
-    public String getTargetTable(String table, Object shardingParam) {
+    public String getTargetTable(String table, Object shardingParameter) {
         // TODO msg
         throw new IllegalStateException();
     }

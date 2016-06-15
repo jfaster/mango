@@ -24,7 +24,7 @@ package org.jfaster.mango.sharding;
 public final class NotUseTableShardingStrategy implements TableShardingStrategy {
 
     @Override
-    public String getTargetTable(String table, Object shardingParam) {
+    public String getTargetTable(String table, Object shardingParameter) {
         // TODO msg
         throw new IllegalStateException();
     }

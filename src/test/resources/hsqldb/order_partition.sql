@@ -11,82 +11,82 @@ DROP TABLE IF EXISTS order_9;
 
 CREATE TABLE order_0
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_1
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_2
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_3
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_4
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_5
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_6
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_7
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_8
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE order_9
 (
-    cid INTEGER,
+    id INTEGER,
     uid VARCHAR(100),
     price INTEGER,
-    PRIMARY KEY (cid, uid)
+    PRIMARY KEY (id)
 );
 
 

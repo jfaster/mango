@@ -29,11 +29,11 @@ public interface TableShardingStrategy<T> {
      * @param table
      *          取{@link org.jfaster.mango.annotation.DB#table()}中的值
      *
-     * @param shardParam
+     * @param shardingParameter
      *          取{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
      *
      * @return
      */
-    public String getTargetTable(String table, T shardingParam);
+    public String getTargetTable(String table, T shardingParameter);
 
 }

@@ -22,25 +22,25 @@ import com.google.common.base.Objects;
 /**
  * @author ash
  */
-public class Order {
+public class Bill {
 
-    private String id;
-    private int uid;
+    private int cid;
+    private String uid;
     private int price;
 
-    public String getId() {
-        return id;
+    public int getCid() {
+        return cid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCid(int cid) {
+        this.cid = cid;
     }
 
-    public int getUid() {
+    public String getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(String uid) {
         this.uid = uid;
     }
 
@@ -58,15 +58,15 @@ public class Order {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final Order other = (Order) obj;
-        return Objects.equal(this.id, other.id)
+        final Bill other = (Bill) obj;
+        return Objects.equal(this.cid, other.cid)
                 && Objects.equal(this.uid, other.uid)
                 && Objects.equal(this.price, other.price);
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("uid", uid).add("price", price).toString();
+        return MoreObjects.toStringHelper(this).add("cid", cid).add("uid", uid).add("price", price).toString();
     }
 
 }

@@ -40,7 +40,7 @@ import static org.hamcrest.Matchers.*;
  *
  * @author ash
  */
-public class TablePartitionTest {
+public class TableShardingTest {
 
     private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);

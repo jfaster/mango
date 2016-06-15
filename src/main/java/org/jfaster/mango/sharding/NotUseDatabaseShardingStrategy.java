@@ -24,7 +24,7 @@ package org.jfaster.mango.sharding;
 public final class NotUseDatabaseShardingStrategy implements DatabaseShardingStrategy {
 
     @Override
-    public String getDatabase(Object shardingParam) {
+    public String getDatabase(Object shardingParameter) {
         // TODO msg
         throw new IllegalStateException();
     }

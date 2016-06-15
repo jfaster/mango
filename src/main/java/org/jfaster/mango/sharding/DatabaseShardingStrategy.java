@@ -26,11 +26,11 @@ public interface DatabaseShardingStrategy<T> {
     /**
      * 获得数据源名称
      *
-     * @param shardParam
+     * @param shardingParameter
      *          取{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
      *
      * @return
      */
-    public String getDatabase(T shardingParam);
+    public String getDatabase(T shardingParameter);
 
 }
