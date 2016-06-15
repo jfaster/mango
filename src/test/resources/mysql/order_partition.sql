@@ -10,71 +10,71 @@ DROP TABLE IF EXISTS order_8;
 DROP TABLE IF EXISTS order_9;
 
 CREATE TABLE `order_0` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_1` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_2` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_3` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_4` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_5` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_6` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_7` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_8` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `order_9` (
-  `cid` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  PRIMARY KEY (`cid`, `uid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

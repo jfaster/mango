@@ -35,24 +35,24 @@ import javax.annotation.Nullable;
 public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
 
     private final String shardParameterName;
-    private final GetterInvokerGroup shardByInvokerGroup;
-    private final DatabaseShardingStrategy dataSourceRouter;
+    private final GetterInvokerGroup shardingParameterInvoker;
+    private final DatabaseShardingStrategy databaseShardingStrategy;
 
     protected RoutableDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
-                                          String shardParameterName, GetterInvokerGroup shardByInvokerGroup,
-                                          DatabaseShardingStrategy dataSourceRouter) {
+                                          String shardParameterName, GetterInvokerGroup shardingParameterInvoker,
+                                          DatabaseShardingStrategy databaseShardingStrategy) {
         super(dataSourceFactory, dataSourceType);
         this.shardParameterName = shardParameterName;
-        this.shardByInvokerGroup = shardByInvokerGroup;
-        this.dataSourceRouter = dataSourceRouter;
+        this.shardingParameterInvoker = shardingParameterInvoker;
+        this.databaseShardingStrategy = databaseShardingStrategy;
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public String getDatabase(InvocationContext context) {
-        Object shardParam = context.getPropertyValue(shardParameterName, shardByInvokerGroup);
-        return dataSourceRouter.getDatabase(shardParam);
+        Object shardParam = context.getPropertyValue(shardParameterName, shardingParameterInvoker);
+        return databaseShardingStrategy.getDatabase(shardParam);
     }
 
 }

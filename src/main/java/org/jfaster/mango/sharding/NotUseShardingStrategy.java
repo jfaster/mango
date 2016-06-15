@@ -17,7 +17,7 @@
 package org.jfaster.mango.sharding;
 
 /**
- * {@link org.jfaster.mango.annotation.DB#tablePartition()}的默认值，表示不使用分表
+ * {@link org.jfaster.mango.annotation.Sharding#shardingStrategy()}的默认值，表示不使用分表
  *
  * @author ash
  */

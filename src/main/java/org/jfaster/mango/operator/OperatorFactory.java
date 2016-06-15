@@ -206,28 +206,28 @@ public class OperatorFactory {
         TableGenerator tableGenerator;
         if (isUseTableShardingStrategy) {
             if (shardingParameterNum == 1) {
-                GetterInvokerGroup shardingParameterInvokerGroup
+                GetterInvokerGroup shardingParameterInvoker
                         = context.getInvokerGroup(shardingParameterName, shardingParameterProperty);
-                Type shardingParameterType = shardingParameterInvokerGroup.getFinalType();
+                Type shardingParameterType = shardingParameterInvoker.getFinalType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {
-                    throw new IncorrectParameterTypeException("the type of parameter Modified @TableShardBy is error, " +
+                    throw new IncorrectParameterTypeException("the type of parameter Modified @TableShardingBy is error, " +
                             "type is " + shardingParameterType + ", " +
-                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                            "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
                 }
                 TypeToken<?> shardToken = TypeToken.of(shardingParameterType);
                 if (!strategyToken.isAssignableFrom(shardToken.wrap())) {
-                    throw new ClassCastException("TablePartiion[" + strategy + "]'s " +
+                    throw new ClassCastException("TableShardingStrategy[" + strategy.getClass() + "]'s " +
                             "generic type[" + strategyToken.getType() + "] must be assignable from " +
-                            "the type of parameter Modified @TableShardBy [" + shardToken.getType() + "], " +
-                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                            "the type of parameter Modified @TableShardingBy [" + shardToken.getType() + "], " +
+                            "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
                 }
-                tableGenerator = new PartitionalTableGenerator(table, shardingParameterName, shardingParameterInvokerGroup, strategy);
+                tableGenerator = new PartitionalTableGenerator(table, shardingParameterName, shardingParameterInvoker, strategy);
             } else {
-                throw new IncorrectDefinitionException("if @DB.tablePartition is defined, " +
-                        "need one and only one @TableShardBy on method's parameter but found " + shardingParameterNum + ", " +
-                        "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                throw new IncorrectDefinitionException("if @Sharding.tableShardingStrategy is defined, " +
+                        "need one and only one @TableShardingBy on method's parameter but found " + shardingParameterNum + ", " +
+                        "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
             }
         } else {
             tableGenerator = new SimpleTableGenerator(table);
@@ -291,28 +291,28 @@ public class OperatorFactory {
         DataSourceGenerator dataSourceGenerator;
         if (strategy != null) {
             if (shardingParameterNum == 1) {
-                GetterInvokerGroup shardingParameterInvokerGroup
+                GetterInvokerGroup shardingParameterInvoker
                         = context.getInvokerGroup(shardingParameterName, shardingParameterProperty);
-                Type shardingParameterType = shardingParameterInvokerGroup.getFinalType();
+                Type shardingParameterType = shardingParameterInvoker.getFinalType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {
-                    throw new IncorrectParameterTypeException("the type of parameter Modified @DataSourceShardBy is error, " +
+                    throw new IncorrectParameterTypeException("the type of parameter Modified @DatabaseShardingBy is error, " +
                             "type is " + shardingParameterType + ", " +
-                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                            "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
                 }
                 TypeToken<?> shardToken = TypeToken.of(shardingParameterType);
                 if (!strategyToken.isAssignableFrom(shardToken.wrap())) {
-                    throw new ClassCastException("DataSourceRouter[" + strategy.getClass() + "]'s " +
+                    throw new ClassCastException("DatabaseShardingStrategy[" + strategy.getClass() + "]'s " +
                             "generic type[" + strategyToken.getType() + "] must be assignable from " +
-                            "the type of parameter Modified @DataSourceShardBy [" + shardToken.getType() + "], " +
-                            "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                            "the type of parameter Modified @DatabaseShardingBy [" + shardToken.getType() + "], " +
+                            "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
                 }
-                dataSourceGenerator = new RoutableDataSourceGenerator(dataSourceFactory, dataSourceType, shardingParameterName, shardingParameterInvokerGroup, strategy);
+                dataSourceGenerator = new RoutableDataSourceGenerator(dataSourceFactory, dataSourceType, shardingParameterName, shardingParameterInvoker, strategy);
             } else {
-                throw new IncorrectDefinitionException("if @DB.dataSourceRouter is defined, " +
-                        "need one and only one @DataSourceShardBy on method's parameter but found " + shardingParameterNum + ", " +
-                        "please note that @ShardBy = @TableShardBy + @DataSourceShardBy");
+                throw new IncorrectDefinitionException("if @Sharding.databaseShardingStrategy is defined, " +
+                        "need one and only one @DatabaseShardingBy on method's parameter but found " + shardingParameterNum + ", " +
+                        "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
             }
         } else {
             dataSourceGenerator = new SimpleDataSourceGenerator(dataSourceFactory, dataSourceType, database);
@@ -337,25 +337,6 @@ public class OperatorFactory {
             return strategy;
         }
         return null;
-    }
-
-    static class DbInfo {
-        String shardParameterName;
-        GetterInvokerGroup shardByInvokerGroup;
-        String globalTable;
-        String dataSourceName;
-        TableShardingStrategy tablePartition;
-        DatabaseShardingStrategy dataSourceRouter;
-
-        DbInfo(String shardParameterName, GetterInvokerGroup shardByInvokerGroup, String globalTable,
-               String dataSourceName, TableShardingStrategy tablePartition, DatabaseShardingStrategy dataSourceRouter) {
-            this.shardParameterName = shardParameterName;
-            this.shardByInvokerGroup = shardByInvokerGroup;
-            this.globalTable = globalTable;
-            this.dataSourceName = dataSourceName;
-            this.tablePartition = tablePartition;
-            this.dataSourceRouter = dataSourceRouter;
-        }
     }
 
 }

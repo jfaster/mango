@@ -33,30 +33,30 @@ public abstract class TransactionFactory {
 
     private final static InternalLogger logger = InternalLoggerFactory.getInstance(TransactionFactory.class);
 
-    public static Transaction newTransaction(Mango mango, String dataSourceName, TransactionIsolationLevel level) {
-        DataSource dataSource = mango.getMasterDataSource(dataSourceName);
+    public static Transaction newTransaction(Mango mango, String database, TransactionIsolationLevel level) {
+        DataSource dataSource = mango.getMasterDataSource(database);
         if (dataSource == null) {
             throw new IllegalArgumentException("Can't find master DataSource from mango [" + mango + "] " +
-                    "with DataSourceName [" + dataSourceName + "]");
+                    "with database [" + database + "]");
         }
         return newTransaction(dataSource, level);
     }
 
-    public static Transaction newTransaction(Mango mango, String dataSourceName) {
-        return newTransaction(mango, dataSourceName, TransactionIsolationLevel.DEFAULT);
+    public static Transaction newTransaction(Mango mango, String database) {
+        return newTransaction(mango, database, TransactionIsolationLevel.DEFAULT);
     }
 
-    public static Transaction newTransaction(String dataSourceName, TransactionIsolationLevel level) {
+    public static Transaction newTransaction(String database, TransactionIsolationLevel level) {
         List<Mango> mangos = Mango.getInstances();
         if (mangos.size() != 1) {
             throw new IllegalStateException("The number of instances mango expected 1 but " + mangos.size() + ", " +
                     "Please specify mango instance");
         }
-        return newTransaction(mangos.get(0), dataSourceName, level);
+        return newTransaction(mangos.get(0), database, level);
     }
 
-    public static Transaction newTransaction(String dataSourceName) {
-        return newTransaction(dataSourceName, TransactionIsolationLevel.DEFAULT);
+    public static Transaction newTransaction(String database) {
+        return newTransaction(database, TransactionIsolationLevel.DEFAULT);
     }
 
     public static Transaction newTransaction(TransactionIsolationLevel level) {

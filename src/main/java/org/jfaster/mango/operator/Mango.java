@@ -239,8 +239,8 @@ public class Mango {
     /**
      * 根据数据源名字获得主库数据源
      */
-    public DataSource getMasterDataSource(String dataSourceName) {
-        return dataSourceFactory.getMasterDataSource(dataSourceName);
+    public DataSource getMasterDataSource(String database) {
+        return dataSourceFactory.getMasterDataSource(database);
     }
 
     private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {

@@ -295,7 +295,7 @@ public class BatchUpdateOperatorTest {
 
     private Operator getOperator2(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
-        pAnnos.add(new MockShardBy("id"));
+        pAnnos.add(new MockShardingBy("id"));
         ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pAnnos, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 

@@ -28,17 +28,17 @@ import javax.annotation.Nullable;
  */
 public class SimpleDataSourceGenerator extends AbstractDataSourceGenerator {
 
-    private final String dataSourceName;
+    private final String database;
 
-    public SimpleDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType, String dataSourceName) {
+    public SimpleDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType, String database) {
         super(dataSourceFactory, dataSourceType);
-        this.dataSourceName = dataSourceName;
+        this.database = database;
     }
 
     @Nullable
     @Override
     public String getDatabase(InvocationContext context) {
-        return dataSourceName;
+        return database;
     }
 
 }

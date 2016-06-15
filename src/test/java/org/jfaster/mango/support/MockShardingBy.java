@@ -23,11 +23,11 @@ import java.lang.annotation.Annotation;
 /**
  * @author ash
  */
-public class MockShardBy implements Annotation, ShardingBy {
+public class MockShardingBy implements Annotation, ShardingBy {
 
     private String value;
 
-    public MockShardBy(String value) {
+    public MockShardingBy(String value) {
         this.value = value;
     }
 
