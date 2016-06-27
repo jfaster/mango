@@ -16,8 +16,7 @@
 
 package org.jfaster.mango.plugin.listener;
 
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
-import org.jfaster.mango.util.logging.Log4JLoggerFactory;
+import org.jfaster.mango.operator.MangoLogger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -29,7 +28,7 @@ public class Log4JLoggerListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
+        MangoLogger.useLog4JLogger();
     }
 
     @Override

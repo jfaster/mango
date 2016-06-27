@@ -14,25 +14,29 @@
  * under the License.
  */
 
-package org.jfaster.mango.plugin.listener;
+package org.jfaster.mango.operator;
 
-import org.jfaster.mango.operator.MangoLogger;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import org.jfaster.mango.util.logging.*;
 
 /**
  * @author ash
  */
-public class Slf4JLoggerListener implements ServletContextListener {
+public class MangoLogger {
 
-    @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        MangoLogger.useSlf4JLogger();
+    public static void useConsoleLogger() {
+        InternalLoggerFactory.setDefaultFactory(new ConsoleLoggerFactory());
     }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    public static void useJdkLogger() {
+        InternalLoggerFactory.setDefaultFactory(new JdkLoggerFactory());
+    }
+
+    public static void useLog4JLogger() {
+        InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
+    }
+
+    public static void useSlf4JLogger() {
+        InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
     }
 
 }
