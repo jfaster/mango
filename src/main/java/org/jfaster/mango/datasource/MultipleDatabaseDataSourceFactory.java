@@ -53,9 +53,8 @@ public class MultipleDatabaseDataSourceFactory implements DataSourceFactory {
     private DataSourceFactory getDataSourceFactory(String database) {
         DataSourceFactory factory = factories.get(database);
         if (factory == null) {
-            // TODO msg
-            throw new IllegalArgumentException("can not find the data source factory by name [" + database + "], " +
-                    "available data sources name is " + factories.keySet());
+            throw new IllegalArgumentException("can not find the datasource factory by database [" + database + "], " +
+                    "available database is " + factories.keySet());
         }
         return factory;
     }

@@ -25,8 +25,7 @@ public final class NotUseTableShardingStrategy implements TableShardingStrategy 
 
     @Override
     public String getTargetTable(String table, Object shardingParameter) {
-        // TODO msg
-        throw new IllegalStateException();
+        throw new UnsupportedOperationException("error, unreachable code");
     }
 
 }

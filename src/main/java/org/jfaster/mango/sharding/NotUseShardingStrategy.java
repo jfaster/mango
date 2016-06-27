@@ -25,14 +25,12 @@ public final class NotUseShardingStrategy implements ShardingStrategy {
 
     @Override
     public String getDatabase(Object shardingParameter) {
-        // TODO msg
-        throw new IllegalStateException();
+        throw new UnsupportedOperationException("error, unreachable code");
     }
 
     @Override
     public String getTargetTable(String table, Object shardingParameter) {
-        // TODO msg
-        throw new IllegalStateException();
+        throw new UnsupportedOperationException("error, unreachable code");
     }
 
 }

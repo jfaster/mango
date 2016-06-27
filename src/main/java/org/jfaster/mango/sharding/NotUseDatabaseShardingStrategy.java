@@ -25,8 +25,7 @@ public final class NotUseDatabaseShardingStrategy implements DatabaseShardingStr
 
     @Override
     public String getDatabase(Object shardingParameter) {
-        // TODO msg
-        throw new IllegalStateException();
+        throw new UnsupportedOperationException("error, unreachable code");
     }
 
 }
