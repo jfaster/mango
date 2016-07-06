@@ -28,7 +28,7 @@ import javax.sql.DataSource;
  */
 public class DataSourceConfig {
 
-    private static String DIR = "hsqldb";
+    private static String DIR = "mysql";
     private static Configuration[] CONFIGS;
 
     static {
@@ -49,10 +49,14 @@ public class DataSourceConfig {
     }
 
     public static DataSource getDataSource() {
-        return getDataSource(0);
+        return getDataSource(0, true, 1);
     }
 
     public static DataSource getDataSource(int i) {
+        return getDataSource(i, true, 1);
+    }
+
+    public static DataSource getDataSource(int i, boolean autoCommit, int maxActive) {
         String driverClassName = getDriverClassName(i);
         String url = getUrl(i);
         String username = getUsername(i);
@@ -63,8 +67,9 @@ public class DataSourceConfig {
         ds.setUsername(username);
         ds.setPassword(password);
         ds.setInitialSize(1);
-        ds.setMaxActive(1);
+        ds.setMaxActive(maxActive);
         ds.setDriverClassName(driverClassName);
+        ds.setDefaultAutoCommit(autoCommit);
         return ds;
     }
 

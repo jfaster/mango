@@ -182,11 +182,11 @@ public class ConsoleLogger extends AbstractInternalLogger {
     }
 
     private void println(String msg) {
-        System.out.println(formatDate(new Date()) + " * " + msg);
+        System.out.println(formatDate(new Date()) + " [" + Thread.currentThread() + "] " + msg);
     }
 
     private void println(String msg, Throwable t) {
-        System.err.println(formatDate(new Date()) + " * " + msg);
+        System.err.println(formatDate(new Date()) + " [" + Thread.currentThread() + "] " + msg);
         t.printStackTrace();
     }
 

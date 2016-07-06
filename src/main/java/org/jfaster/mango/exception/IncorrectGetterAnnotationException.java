@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.exception;
 
-import org.jfaster.mango.exception.NestedRuntimeException;
-
 /**
  * 不正确的使用{@link org.jfaster.mango.annotation.Getter}注解异常
  *

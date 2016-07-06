@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,9 +43,7 @@ public class TransactionTemplateTest {
 
     @Before
     public void before() throws Exception {
-        Connection conn = ds.getConnection();
-        Table.ACCOUNT.load(conn);
-        conn.close();
+        Table.ACCOUNT.load(ds);
     }
 
     @Test

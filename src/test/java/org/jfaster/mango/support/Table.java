@@ -19,6 +19,7 @@ package org.jfaster.mango.support;
 import org.jfaster.mango.DbTest;
 import org.jfaster.mango.util.ScriptRunner;
 
+import javax.sql.DataSource;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -55,6 +56,12 @@ public enum Table {
         ScriptRunner sr = new ScriptRunner(conn, false, true);
         InputStream is = DbTest.class.getResourceAsStream("/" + DataSourceConfig.getDir() + "/" + name);
         sr.runScript(new InputStreamReader(is));
+    }
+
+    public void load(DataSource ds) throws IOException, SQLException {
+        Connection conn = ds.getConnection();
+        load(conn);
+        conn.close();
     }
 
 }
