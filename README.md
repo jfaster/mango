@@ -1,5 +1,5 @@
-Mango SQL Mapper Framework for Java
-===================================
+Mango: Distributed ORM Framework for Java
+=========================================
 
 [![Build Status](https://travis-ci.org/jfaster/mango.svg?branch=master)](https://travis-ci.org/jfaster/mango)
 [![Coverage Status](https://coveralls.io/repos/github/jfaster/mango/badge.svg?branch=master)](https://coveralls.io/github/jfaster/mango?branch=master)
