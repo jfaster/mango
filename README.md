@@ -5,7 +5,7 @@ Mango SQL Mapper Framework for Java
 [![Coverage Status](https://coveralls.io/repos/github/jfaster/mango/badge.svg?branch=master)](https://coveralls.io/github/jfaster/mango?branch=master)
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-Fast, simple, reliable. Mango is a high-performance SQL Mapper Framework.
+Fast, simple, reliable. Mango is a high-performance Distributed ORM Framework.
 Mango makes it easier to use a relational database with object-oriented applications.
 Performance and Simplicity are the biggest advantage of the Mango data mapper over object relational mapping tools.
 In our payment system, we use mango to build a distributed payment order system
