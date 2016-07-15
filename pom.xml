@@ -15,7 +15,7 @@
 
     <name>mango</name>
     <url>http://mango.jfaster.org/</url>
-    <description>Ultimate SQL Mapper Framework</description>
+    <description>Distributed ORM Framework for Java</description>
 
     <licenses>
         <license>
