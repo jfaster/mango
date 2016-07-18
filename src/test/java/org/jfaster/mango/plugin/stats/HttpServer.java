@@ -8,13 +8,14 @@ import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.cache.LocalCacheHandler;
+import org.jfaster.mango.sharding.ModTenTableShardingStrategy;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
+import org.jfaster.mango.support.model4table.Msg;
 import org.jfaster.mango.support.model4table.User;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -45,9 +46,8 @@ public class HttpServer {
 
     private static void init() throws Exception {
         DataSource ds = DataSourceConfig.getDataSource();
-        Connection conn = ds.getConnection();
-        Table.USER.load(conn);
-        conn.close();
+        Table.USER.load(ds);
+        Table.MSG_PARTITION.load(ds);
         Mango mango = Mango.newInstance(ds);
         mango.setDefaultCacheHandler(new LocalCacheHandler() {
             void sleep() {
@@ -92,42 +92,45 @@ public class HttpServer {
                 super.delete(key);
             }
         });
-        final UserDao dao = mango.create(UserDao.class, true);
+        final UserDao userDao = mango.create(UserDao.class, true);
+        final MsgDao msgDao = mango.create(MsgDao.class, true);
 
         int id = 1;
-        dao.getIntegerId(id);
-        dao.getName(id);
-        dao.getBoolObjGender(id);
+        userDao.getIntegerId(id);
+        userDao.getName(id);
+        userDao.getBoolObjGender(id);
 
-        int id1 = dao.insertUser(createRandomUser());
-        int id2 = dao.insertUser(createRandomUser());
+        int id1 = userDao.insertUser(createRandomUser());
+        int id2 = userDao.insertUser(createRandomUser());
         List<Integer> ids = Lists.newArrayList(id1, id2);
-        dao.getUser(id1);
-        dao.getUser(id1);
-        dao.getUsers(ids);
-        dao.getUsers(ids);
-        dao.delete(id1);
-        dao.getUser(id1);
-        dao.delete(id1);
-        dao.getUsers(ids);
-        dao.deletes(ids);
-        dao.deletes2(ids);
+        userDao.getUser(id1);
+        userDao.getUser(id1);
+        userDao.getUsers(ids);
+        userDao.getUsers(ids);
+        userDao.delete(id1);
+        userDao.getUser(id1);
+        userDao.delete(id1);
+        userDao.getUsers(ids);
+        userDao.deletes(ids);
+        userDao.deletes2(ids);
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 int id = 1;
-                dao.getIntegerId(id);
-                dao.getName(id);
-                dao.getBoolObjGender(id);
+                userDao.getIntegerId(id);
+                userDao.getName(id);
+                userDao.getBoolObjGender(id);
                 for (int i = 0; i < 1500; i++) {
-                    dao.getLongObjMoney(id, null, null);
+                    userDao.getLongObjMoney(id, null, null);
+                    msgDao.getMsgs(id);
                 }
             }
         }, 0, 10, TimeUnit.SECONDS);
     }
 
     @DB(table = "user")
+    @Sharding
     @Cache(prefix = "user", expire = Day.class, cacheNullObject = true)
     static interface UserDao {
 
@@ -167,6 +170,15 @@ public class HttpServer {
         @SQL("insert into user(name, age, gender, money, update_time) " +
                 "values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
         public int insertUser(User user);
+
+    }
+
+    @DB(table = "msg")
+    @Sharding(tableShardingStrategy = ModTenTableShardingStrategy.class)
+    interface MsgDao {
+
+        @SQL("select id, uid, content from #table where uid=:1")
+        public List<Msg> getMsgs(@ShardingBy int uid);
 
     }
 
