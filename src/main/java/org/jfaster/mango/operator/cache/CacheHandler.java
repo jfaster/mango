@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,9 +27,9 @@ import java.util.Set;
  */
 public interface CacheHandler {
 
-    public Object get(String key, Class<?> daoClass);
+    public Object get(String key, Type type, Class<?> daoClass);
 
-    public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass);
+    public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass);
 
     public void set(String key, Object value, int exptimeSeconds, Class<?> daoClass);
 

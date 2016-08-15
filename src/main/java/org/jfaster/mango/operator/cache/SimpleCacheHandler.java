@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,13 +26,13 @@ import java.util.Set;
 public abstract class SimpleCacheHandler implements CacheHandler {
 
     @Override
-    public Object get(String key, Class<?> daoClass) {
-        return get(key);
+    public Object get(String key, Type type, Class<?> daoClass) {
+        return get(key, type);
     }
 
     @Override
-    public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
-        return getBulk(keys);
+    public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
+        return getBulk(keys, type);
     }
 
     @Override
@@ -54,9 +55,9 @@ public abstract class SimpleCacheHandler implements CacheHandler {
         batchDelete(keys);
     }
 
-    public abstract Object get(String key);
+    public abstract Object get(String key, Type type);
 
-    public abstract Map<String, Object> getBulk(Set<String> keys);
+    public abstract Map<String, Object> getBulk(Set<String> keys, Type type);
 
     public abstract void set(String key, Object value, int exptimeSeconds);
 

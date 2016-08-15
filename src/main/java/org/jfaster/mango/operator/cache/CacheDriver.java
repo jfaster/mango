@@ -56,6 +56,10 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     private Class<?> daoClass;
 
+    private Type returnType;
+
+    private Type elementType;
+
     /**
      * 缓存key前缀
      */
@@ -102,6 +106,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         this.nameProvider = nameProvider;
         this.statsCounter = statsCounter;
         this.daoClass = md.getDaoClass();
+        this.returnType = md.getReturnType();
+        this.elementType = md.getReturnDescriptor().getMappedType();
         init(md, rootNode, context);
     }
 
@@ -196,7 +202,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         boolean success = false;
         long now = System.nanoTime();
         try {
-            Object value = cacheHandler.get(key, daoClass);
+            Object value = cacheHandler.get(key, returnType, daoClass);
             success = true;
             return value;
         } finally {
@@ -216,7 +222,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             boolean success = false;
             long now = System.nanoTime();
             try {
-                Map<String, Object> values = cacheHandler.getBulk(keys, daoClass);
+                Map<String, Object> values = cacheHandler.getBulk(keys, elementType, daoClass);
                 success = true;
                 return values;
             } finally {

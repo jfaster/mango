@@ -18,6 +18,7 @@ package org.jfaster.mango.support;
 
 import org.jfaster.mango.operator.cache.CacheHandler;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,12 +28,12 @@ import java.util.Set;
 public class CacheHandlerAdapter implements CacheHandler {
 
     @Override
-    public Object get(String key, Class<?> daoClass) {
+    public Object get(String key, Type type, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
+    public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
         throw new UnsupportedOperationException();
     }
 

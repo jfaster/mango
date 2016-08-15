@@ -20,8 +20,9 @@ import com.google.common.collect.Lists;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.operator.cache.LocalCacheHandler;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.DataSourceConfig;
+import org.jfaster.mango.support.MockRedisCacheHandler;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
@@ -30,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.util.*;
 
@@ -43,7 +45,7 @@ import static org.hamcrest.Matchers.*;
  *
  * @author ash
  */
-public class CacheTest {
+public class CacheRedisTest {
 
     private final static DataSource ds = DataSourceConfig.getDataSource();
     private final static Mango mango = Mango.newInstance(ds);
@@ -56,34 +58,33 @@ public class CacheTest {
         conn.close();
     }
 
-
     @Test
     public void testSingleKey() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         User user = createRandomUser();
         int id = dao.insert(user);
         String key = getUserKey(id);
         user.setId(id);
-        assertThat(cacheHandler.get(key), nullValue());
+        assertThat(cacheHandler.get(key, TypeToken.of(User.class).getType()), nullValue());
         assertThat(dao.select(id), equalTo(user));
-        assertThat((User) cacheHandler.get(key), equalTo(user));
+        assertThat((User) cacheHandler.get(key, TypeToken.of(User.class).getType()), equalTo(user));
         assertThat(dao.select(id), equalTo(user));
 
         user.setName("lulu");
         dao.update(user);
-        assertThat(cacheHandler.get(key), nullValue());
+        assertThat(cacheHandler.get(key, TypeToken.of(User.class).getType()), nullValue());
         assertThat(dao.select(id), equalTo(user));
-        assertThat((User) cacheHandler.get(key), equalTo(user));
+        assertThat((User) cacheHandler.get(key, TypeToken.of(User.class).getType()), equalTo(user));
 
         dao.delete(id);
-        assertThat(cacheHandler.get(key), nullValue());
+        assertThat(cacheHandler.get(key, TypeToken.of(User.class).getType()), nullValue());
         assertThat(dao.select(id), nullValue());
     }
 
     @Test
     public void testMultiKeysReturnList() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -98,7 +99,7 @@ public class CacheTest {
         for (int i = 0; i < ids.size(); i++) {
             Integer id = ids.get(i);
             User user = users.get(i);
-            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+            assertThat((User) cacheHandler.get(getUserKey(id), TypeToken.of(User.class).getType()), equalTo(user));
         }
         actual = dao.getUserList(ids);
         assertThat(actual, hasSize(users.size()));
@@ -111,7 +112,7 @@ public class CacheTest {
 
     @Test
     public void testMultiKeysReturnSet() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -126,7 +127,7 @@ public class CacheTest {
         for (int i = 0; i < ids.size(); i++) {
             Integer id = ids.get(i);
             User user = users.get(i);
-            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+            assertThat((User) cacheHandler.get(getUserKey(id), TypeToken.of(User.class).getType()), equalTo(user));
         }
         actual = dao.getUserSet(ids);
         assertThat(actual, hasSize(users.size()));
@@ -139,7 +140,7 @@ public class CacheTest {
 
     @Test
     public void testMultiKeysReturnArray() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -154,7 +155,7 @@ public class CacheTest {
         for (int i = 0; i < ids.size(); i++) {
             Integer id = ids.get(i);
             User user = users.get(i);
-            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+            assertThat((User) cacheHandler.get(getUserKey(id), TypeToken.of(User.class).getType()), equalTo(user));
         }
         actual = Arrays.asList(dao.getUserArray(ids));
         assertThat(actual, hasSize(users.size()));
@@ -167,7 +168,9 @@ public class CacheTest {
 
     @Test
     public void testSingleKeyReturnList() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        Type type = new TypeToken<List<Msg>>() {
+        }.getType();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -177,12 +180,12 @@ public class CacheTest {
             Msg msg = createRandomMsg(uid);
             msgs.add(msg);
             msg.setId(dao.insert(msg));
-            assertThat(cacheHandler.get(key), nullValue());
+            assertThat(cacheHandler.get(key, type), nullValue());
             List<Msg> actual = dao.getMsgs(uid);
             assertThat(actual, hasSize(msgs.size()));
             assertThat(actual, contains(msgs.toArray()));
             @SuppressWarnings("unchecked")
-            List<Msg> cacheActual = (List<Msg>) cacheHandler.get(key);
+            List<Msg> cacheActual = (List<Msg>) cacheHandler.get(key, type);
             assertThat(cacheActual, hasSize(msgs.size()));
             assertThat(cacheActual, contains(msgs.toArray()));
         }
@@ -194,7 +197,7 @@ public class CacheTest {
         Msg msg = msgs.get(0);
         msg.setContent("ash");
         dao.update(msg);
-        assertThat(cacheHandler.get(key), nullValue());
+        assertThat(cacheHandler.get(key, type), nullValue());
 
         actual = dao.getMsgs(uid);
         assertThat(actual, hasSize(msgs.size()));
@@ -210,7 +213,9 @@ public class CacheTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSingleKeyReturnList2() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        Type type = new TypeToken<List<Msg>>() {
+        }.getType();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -218,7 +223,7 @@ public class CacheTest {
 
         List<Msg> actual = dao.getMsgs(uid);
         assertThat(actual, hasSize(0));
-        List<Msg> cacheActual = (List<Msg>) cacheHandler.get(key);
+        List<Msg> cacheActual = (List<Msg>) cacheHandler.get(key, type);
         assertThat(cacheActual, hasSize(0));
 
         Msg msg = createRandomMsg(uid);
@@ -228,7 +233,7 @@ public class CacheTest {
         actual = dao.getMsgs(uid);
         assertThat(actual, hasSize(msgs.size()));
         assertThat(actual, contains(msgs.toArray()));
-        cacheActual = (List<Msg>) cacheHandler.get(key);
+        cacheActual = (List<Msg>) cacheHandler.get(key, type);
         assertThat(cacheActual, hasSize(msgs.size()));
         assertThat(cacheActual, contains(msgs.toArray()));
 
@@ -237,14 +242,15 @@ public class CacheTest {
         dao.delete(msg.getUid(), msg.getId());
         actual = dao.getMsgs(uid);
         assertThat(actual, hasSize(0));
-        cacheActual = (List<Msg>) cacheHandler.get(key);
+        cacheActual = (List<Msg>) cacheHandler.get(key, type);
         assertThat(cacheActual, hasSize(0));
     }
 
 
     @Test
-    public void testUpdateWithInStatement() {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+    public void testUpdateWithInStatement() throws Exception {
+        Type type = TypeToken.of(User.class).getType();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -254,20 +260,20 @@ public class CacheTest {
             ids.add(id);
         }
         for (Integer id : ids) {
-            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+            assertThat(cacheHandler.get(getUserKey(id), type), nullValue());
         }
         dao.getUserList(ids);
         for (int i = 0; i < ids.size(); i++) {
             int id = ids.get(i);
             User user = users.get(i);
-            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+            assertThat((User) cacheHandler.get(getUserKey(id), type), equalTo(user));
         }
         String name = "ash";
         int r = dao.updateWithInStatement(ids, name);
         assertThat(r, greaterThan(0));
         for (int i = 0; i < ids.size(); i++) {
             int id = ids.get(i);
-            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+            assertThat(cacheHandler.get(getUserKey(id), type), nullValue());
             users.get(i).setName(name);
         }
 
@@ -277,8 +283,9 @@ public class CacheTest {
     }
 
     @Test
-    public void testBatchUpdate() {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+    public void testBatchUpdate() throws Exception {
+        Type type = TypeToken.of(User.class).getType();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = createRandomUsers(5);
         List<Integer> ids = new ArrayList<Integer>();
@@ -288,13 +295,13 @@ public class CacheTest {
             ids.add(id);
         }
         for (Integer id : ids) {
-            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+            assertThat(cacheHandler.get(getUserKey(id), type), nullValue());
         }
         dao.getUserList(ids);
         for (int i = 0; i < ids.size(); i++) {
             int id = ids.get(i);
             User user = users.get(i);
-            assertThat((User) cacheHandler.get(getUserKey(id)), equalTo(user));
+            assertThat((User) cacheHandler.get(getUserKey(id), type), equalTo(user));
         }
 
         List<User> newUsers = new ArrayList<User>();
@@ -312,7 +319,7 @@ public class CacheTest {
         assertThat(r.length, greaterThan(0));
         for (int i = 0; i < ids.size(); i++) {
             int id = ids.get(i);
-            assertThat(cacheHandler.get(getUserKey(id)), nullValue());
+            assertThat(cacheHandler.get(getUserKey(id), type), nullValue());
         }
 
         List<User> actual = dao.getUserList(ids);
@@ -321,8 +328,8 @@ public class CacheTest {
     }
 
     @Test
-    public void testBatchUpdateEmpetyList() {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+    public void testBatchUpdateEmpetyList() throws Exception {
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         List<User> users = Lists.newArrayList();
         assertThat(dao.batchUpdate(users).length, equalTo(0));
@@ -330,7 +337,9 @@ public class CacheTest {
 
     @Test
     public void testReturnArrayList() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        Type type = new TypeToken<ArrayList<Msg>>() {
+        }.getType();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -340,12 +349,12 @@ public class CacheTest {
             Msg msg = createRandomMsg(uid);
             msgs.add(msg);
             msg.setId(dao.insert(msg));
-            assertThat(cacheHandler.get(key), nullValue());
+            assertThat(cacheHandler.get(key, type), nullValue());
             ArrayList<Msg> actual = dao.getArrayMsgs(uid);
             assertThat(actual, hasSize(msgs.size()));
             assertThat(actual, contains(msgs.toArray()));
             @SuppressWarnings("unchecked")
-            ArrayList<Msg> cacheActual = (ArrayList<Msg>) cacheHandler.get(key);
+            ArrayList<Msg> cacheActual = (ArrayList<Msg>) cacheHandler.get(key, type);
             assertThat(cacheActual, hasSize(msgs.size()));
             assertThat(cacheActual, contains(msgs.toArray()));
         }
@@ -357,7 +366,7 @@ public class CacheTest {
         Msg msg = msgs.get(0);
         msg.setContent("ash");
         dao.update(msg);
-        assertThat(cacheHandler.get(key), nullValue());
+        assertThat(cacheHandler.get(key, type), nullValue());
 
         actual = dao.getArrayMsgs(uid);
         assertThat(actual, hasSize(msgs.size()));
@@ -372,7 +381,9 @@ public class CacheTest {
 
     @Test
     public void testReturnLinkedList() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        Type type = new TypeToken<LinkedList<Msg>>() {
+        }.getType();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         List<Msg> msgs = new ArrayList<Msg>();
         MsgDao dao = mango.create(MsgDao.class, cacheHandler);
         int uid = 100;
@@ -382,12 +393,12 @@ public class CacheTest {
             Msg msg = createRandomMsg(uid);
             msgs.add(msg);
             msg.setId(dao.insert(msg));
-            assertThat(cacheHandler.get(key), nullValue());
+            assertThat(cacheHandler.get(key, type), nullValue());
             LinkedList<Msg> actual = dao.getLinkedMsgs(uid);
             assertThat(actual, hasSize(msgs.size()));
             assertThat(actual, contains(msgs.toArray()));
             @SuppressWarnings("unchecked")
-            LinkedList<Msg> cacheActual = (LinkedList<Msg>) cacheHandler.get(key);
+            LinkedList<Msg> cacheActual = (LinkedList<Msg>) cacheHandler.get(key, type);
             assertThat(cacheActual, hasSize(msgs.size()));
             assertThat(cacheActual, contains(msgs.toArray()));
         }
@@ -399,7 +410,7 @@ public class CacheTest {
         Msg msg = msgs.get(0);
         msg.setContent("ash");
         dao.update(msg);
-        assertThat(cacheHandler.get(key), nullValue());
+        assertThat(cacheHandler.get(key, type), nullValue());
 
         actual = dao.getLinkedMsgs(uid);
         assertThat(actual, hasSize(msgs.size()));
@@ -414,7 +425,7 @@ public class CacheTest {
 
     @Test
     public void testQueryEmpty() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         boolean old = mango.isCompatibleWithEmptyList();
         mango.setCompatibleWithEmptyList(true);
@@ -424,7 +435,7 @@ public class CacheTest {
 
     @Test
     public void testUpdateEmpty() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
+        MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
         UserDao dao = mango.create(UserDao.class, cacheHandler);
         boolean old = mango.isCompatibleWithEmptyList();
         mango.setCompatibleWithEmptyList(true);

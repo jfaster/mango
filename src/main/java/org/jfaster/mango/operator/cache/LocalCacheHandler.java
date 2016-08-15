@@ -18,6 +18,7 @@ package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.util.Ticker;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -43,8 +44,16 @@ public class LocalCacheHandler extends SimpleCacheHandler {
         this.ticker = ticker;
     }
 
-    @Override
     public Object get(String key) {
+        return get(key, null);
+    }
+
+    public Map<String, Object> getBulk(Set<String> keys) {
+        return getBulk(keys, null);
+    }
+
+    @Override
+    public Object get(String key, Type type) {
         Entry entry = cache.get(key);
         if (entry == null) {
             return null;
@@ -59,10 +68,10 @@ public class LocalCacheHandler extends SimpleCacheHandler {
     }
 
     @Override
-    public Map<String, Object> getBulk(Set<String> keys) {
+    public Map<String, Object> getBulk(Set<String> keys, Type type) {
         Map<String, Object> map = new HashMap<String, Object>();
         for (String key : keys) {
-            Object value = get(key);
+            Object value = get(key, type);
             if (value != null) {
                 map.put(key, value);
             }

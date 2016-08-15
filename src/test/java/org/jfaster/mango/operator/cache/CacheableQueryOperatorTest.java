@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +53,7 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Object get(String key, Class<?> daoClass) {
+            public Object get(String key, Type type, Class<?> daoClass) {
                 assertThat(key, Matchers.equalTo("user_1"));
                 return new User();
             }
@@ -73,7 +74,7 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Object get(String key, Class<?> daoClass) {
+            public Object get(String key, Type type, Class<?> daoClass) {
                 assertThat(key, Matchers.equalTo("user_1"));
                 return null;
             }
@@ -110,7 +111,7 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
+            public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("user_1", new User());
                 map.put("user_2", new User());
@@ -141,7 +142,7 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
+            public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
                 assertThat(keys, Matchers.equalTo(keys));
                 return null;
             }
@@ -189,7 +190,7 @@ public class CacheableQueryOperatorTest {
 
         Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
             @Override
-            public Map<String, Object> getBulk(Set<String> keys, Class<?> daoClass) {
+            public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
                 assertThat(keys, Matchers.equalTo(keys));
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("user_2", new User());

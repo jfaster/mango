@@ -134,4 +134,8 @@ public abstract class TypeWithAnnotationDescriptor {
         return typeWrapper.getMappedClass();
     }
 
+    public Type getMappedType() {
+        return typeWrapper.getMappedType();
+    }
+
 }
