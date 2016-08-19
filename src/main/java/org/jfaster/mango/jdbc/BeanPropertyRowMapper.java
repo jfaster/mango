@@ -17,8 +17,10 @@
 package org.jfaster.mango.jdbc;
 
 import org.jfaster.mango.invoker.InvokerCache;
+import org.jfaster.mango.invoker.MetaObject;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -43,13 +45,28 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     private Map<String, SetterInvoker> invokerMap;
 
+    private Map<String, PropertyTokenizer> columnToPropertyPathMap;
+
     public BeanPropertyRowMapper(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
         initialize(mappedClass, propertyToColumnMap);
     }
 
     protected void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
         this.mappedClass = mappedClass;
+        this.columnToPropertyPathMap = new HashMap<String, PropertyTokenizer>();
         this.invokerMap = new HashMap<String, SetterInvoker>();
+
+        // 初始化columnToPropertyPathMap
+        for (Map.Entry<String, String> entry : propertyToColumnMap.entrySet()) {
+            String property = entry.getKey();
+            PropertyTokenizer propToken = new PropertyTokenizer(property);
+            if (propToken.hasNext()) {
+                String column = entry.getValue();
+                columnToPropertyPathMap.put(column, propToken);
+            }
+        }
+
+        // 初始化invokerMap
         List<SetterInvoker> invokers = InvokerCache.getSetterInvokers(mappedClass);
         for (SetterInvoker invoker : invokers) {
             String column = propertyToColumnMap.get(invoker.getName().toLowerCase());
@@ -71,6 +88,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();
 
+        MetaObject mo = null;
         for (int index = 1; index <= columnCount; index++) {
             String column = JdbcUtils.lookupColumnName(rsmd, index);
             SetterInvoker invoker = invokerMap.get(column.trim().toLowerCase());

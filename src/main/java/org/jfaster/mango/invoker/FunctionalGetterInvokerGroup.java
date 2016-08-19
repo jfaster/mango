@@ -44,7 +44,7 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
             NestedProperty pnp = new NestedProperty();
             for (String propertyName : propertyPath.split("\\.")) {
                 np.append(propertyName);
-                GetterInvoker invoker = InvokerCache.getGetterInvoker(rawType, propertyName);
+                GetterInvoker invoker = InvokerCache.getNullableGetterInvoker(rawType, propertyName);
                 if (invoker == null) {
                     String fullName = Strings.getFullName(parameterName, np.getNestedProperty());
                     String pFullName = Strings.getFullName(parameterName, pnp.getNestedProperty());

@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.invoker;
 
+import org.jfaster.mango.exception.ReflectionException;
 import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
@@ -33,12 +34,33 @@ import java.util.*;
 public class InvokerCache {
 
     @Nullable
-    public static GetterInvoker getGetterInvoker(Class<?> clazz, String propertyName) {
+    public static GetterInvoker getNullableGetterInvoker(Class<?> clazz, String propertyName) {
         return cache.get(clazz).getGetterInvoker(propertyName);
+    }
+
+    public static GetterInvoker getGetterInvoker(Class<?> clazz, String propertyName) {
+        GetterInvoker invoker = getNullableGetterInvoker(clazz, propertyName);
+        if (invoker == null) {
+            throw new ReflectionException("There is no getter for property named '" + propertyName + "' in '" + clazz + "'");
+        }
+        return invoker;
     }
 
     public static List<GetterInvoker> getGetterInvokers(Class<?> clazz) {
         return cache.get(clazz).getGetterInvokers();
+    }
+
+    @Nullable
+    public static SetterInvoker getNullableSetterInvoker(Class<?> clazz, String propertyName) {
+        return cache.get(clazz).getSetterInvoker(propertyName);
+    }
+
+    public static SetterInvoker getSetterInvoker(Class<?> clazz, String propertyName) {
+        SetterInvoker invoker = cache.get(clazz).getSetterInvoker(propertyName);
+        if (invoker == null) {
+            throw new ReflectionException("There is no setter for property named '" + propertyName + "' in '" + clazz + "'");
+        }
+        return invoker;
     }
 
     public static List<SetterInvoker> getSetterInvokers(Class<?> clazz) {
