@@ -83,7 +83,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     public Object visit(ASTJDBCParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
         GetterInvokerGroup invokerGroup = context.getInvokerGroup(node.getParameterName(), node.getPropertyPath());
-        Type type = invokerGroup.getFinalType();
+        Type type = invokerGroup.getTargetType();
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
         if (mappedClass == null || tw.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
@@ -98,7 +98,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     public Object visit(ASTJDBCIterableParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
         GetterInvokerGroup invokerGroup = context.getInvokerGroup(node.getParameterName(), node.getPropertyPath());
-        Type type = invokerGroup.getFinalType();
+        Type type = invokerGroup.getTargetType();
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
         if (!tw.isIterable()) { // 不是集合或数组抛出异常

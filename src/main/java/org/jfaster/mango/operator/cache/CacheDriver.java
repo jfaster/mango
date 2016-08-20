@@ -306,7 +306,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                 for (String propertyPath : propertyPaths.split(",")) {
                     propertyPath = propertyPath.trim();
                     GetterInvokerGroup invokerGroup = context.getInvokerGroup(parameterName, propertyPath);
-                    Type cacheByType = invokerGroup.getFinalType();
+                    Type cacheByType = invokerGroup.getTargetType();
                     TypeWrapper tw = new TypeWrapper(cacheByType);
                     cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerGroup));
                     useMultipleKeys = useMultipleKeys || tw.isIterable();

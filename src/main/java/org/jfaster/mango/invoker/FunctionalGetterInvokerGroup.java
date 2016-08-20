@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.exception.NotReadablePropertyException;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.util.Strings;
 
 import java.lang.reflect.Type;
@@ -29,44 +29,46 @@ import java.util.List;
  */
 public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
 
-    private final Type finalType;
-    private final String parameterName;
+    private final Type originalType;
+    private final Type targetType;
     private String propertyPath;
     private final List<GetterInvoker> invokers;
 
-    private FunctionalGetterInvokerGroup(Type type, String parameterName, String propertyPath) {
-        this.parameterName = parameterName;
+    private FunctionalGetterInvokerGroup(Type originalType, String propertyPath) {
+        this.originalType = originalType;
         this.propertyPath = propertyPath;
         invokers = new ArrayList<GetterInvoker>();
-        Class<?> rawType = TypeToken.of(type).getRawType();
-        if (Strings.isNotEmpty(propertyPath)) {
-            NestedProperty np = new NestedProperty();
-            NestedProperty pnp = new NestedProperty();
-            for (String propertyName : propertyPath.split("\\.")) {
-                np.append(propertyName);
-                GetterInvoker invoker = InvokerCache.getNullableGetterInvoker(rawType, propertyName);
-                if (invoker == null) {
-                    String fullName = Strings.getFullName(parameterName, np.getNestedProperty());
-                    String pFullName = Strings.getFullName(parameterName, pnp.getNestedProperty());
-                    throw new NotReadablePropertyException("property " + fullName + " is not readable, " +
-                            "the type of " + pFullName + " is " + type + ", please check it's get method");
-                }
-                invokers.add(invoker);
-                type = invoker.getReturnType();
-                rawType = TypeToken.of(type).getRawType();
-                pnp.append(propertyName);
+        Type currentType = originalType;
+        Class<?> rawType = TypeToken.of(currentType).getRawType();
+        PropertyTokenizer prop = new PropertyTokenizer(propertyPath);
+        NestedProperty np = new NestedProperty();
+        while (prop.hasCurrent()) {
+            String propertyName = prop.getName();
+            np.append(propertyName);
+            GetterInvoker invoker = InvokerCache.getNullableGetterInvoker(rawType, propertyName);
+            if (invoker == null) {
+                throw new UnreachablePropertyException(originalType, currentType, propertyName, np.getNestedProperty());
             }
+            invokers.add(invoker);
+            currentType = invoker.getReturnType();
+            rawType = TypeToken.of(currentType).getRawType();
+            prop = prop.next();
         }
-        this.finalType = type;
+        targetType = currentType;
     }
 
-    public static FunctionalGetterInvokerGroup create(Type type, String parameterName, String propertyPath) {
-        return new FunctionalGetterInvokerGroup(type, parameterName, propertyPath);
+    public static FunctionalGetterInvokerGroup create(Type type, String propertyPath) {
+        return new FunctionalGetterInvokerGroup(type, propertyPath);
     }
 
     @Override
-    public Type getFinalType() {
-        return finalType;
+    public Type getOriginalType() {
+        return originalType;
+    }
+
+    @Override
+    public Type getTargetType() {
+        return targetType;
     }
 
     @Override
@@ -80,7 +82,8 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
                     np.append(invokers.get(i).getName());
                 }
                 String key = i == 0 ? "parameter" : "property";
-                String fullName = Strings.getFullName(parameterName, np.getNestedProperty());
+                // TODO
+                String fullName = Strings.getFullName("", np.getNestedProperty());
                 throw new NullPointerException(key + " " + fullName + " is null");
             }
             r = invokers.get(i).invoke(r);

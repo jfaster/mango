@@ -1,26 +1,9 @@
-/*
- * Copyright 2014 mango.jfaster.org
- *
- * The Mango Project licenses this file to you under the Apache License,
- * version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -32,11 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 测试{@link NotReadablePropertyException}
- *
  * @author ash
  */
-public class NotReadablePropertyExceptionTest {
+public class UnreadableParameterExceptionTest {
 
     private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
     static {
@@ -48,9 +29,9 @@ public class NotReadablePropertyExceptionTest {
 
     @Test
     public void test2() {
-        thrown.expect(NotReadablePropertyException.class);
-        thrown.expectMessage("property :1.c is not readable, " +
-                "the type of :1 is class org.jfaster.mango.exception.NotReadablePropertyExceptionTest$A, " +
+        thrown.expect(UnreadableParameterException.class);
+        thrown.expectMessage("The parameter ':1.c' is not readable; " +
+                "caused by the property 'c' of 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A' is unreachable, " +
                 "please check it's get method");
         Dao dao = mango.create(Dao.class);
         dao.add2(new A());
@@ -58,12 +39,28 @@ public class NotReadablePropertyExceptionTest {
 
     @Test
     public void test3() {
-        thrown.expect(NotReadablePropertyException.class);
+        thrown.expect(UnreadableParameterException.class);
         thrown.expectMessage("if use cache and sql has one in clause, property c of " +
-                "class org.jfaster.mango.exception.NotReadablePropertyExceptionTest$A " +
+                "class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A " +
                 "expected readable but not");
         Dao2 dao = mango.create(Dao2.class);
         dao.gets(new ArrayList<Integer>());
+    }
+
+    @Test
+    public void test4() {
+        thrown.expect(UnreadableParameterException.class);
+        thrown.expectMessage("The parameter ':1' is not readable");
+        Dao dao = mango.create(Dao.class);
+        dao.add();
+    }
+
+    @Test
+    public void test5() {
+        thrown.expect(UnreadableParameterException.class);
+        thrown.expectMessage("The parameter ':1' is not readable");
+        Dao dao = mango.create(Dao.class);
+        dao.gets();
     }
 
     @DB
@@ -73,6 +70,12 @@ public class NotReadablePropertyExceptionTest {
 
         @SQL("insert into user(uid) values (:1.c.d)")
         public int add2(A a);
+
+        @SQL("insert into user(uid) values(:1)")
+        public int add();
+
+        @SQL("select uid from user where uid in (:1)")
+        public int[] gets();
     }
 
     @DB

@@ -208,7 +208,7 @@ public class OperatorFactory {
             if (shardingParameterNum == 1) {
                 GetterInvokerGroup shardingParameterInvoker
                         = context.getInvokerGroup(shardingParameterName, shardingParameterProperty);
-                Type shardingParameterType = shardingParameterInvoker.getFinalType();
+                Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {
@@ -293,7 +293,7 @@ public class OperatorFactory {
             if (shardingParameterNum == 1) {
                 GetterInvokerGroup shardingParameterInvoker
                         = context.getInvokerGroup(shardingParameterName, shardingParameterProperty);
-                Type shardingParameterType = shardingParameterInvoker.getFinalType();
+                Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();
                 if (mappedClass == null || tw.isIterable()) {

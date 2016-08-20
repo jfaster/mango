@@ -16,17 +16,24 @@
 
 package org.jfaster.mango.util;
 
+import javax.annotation.Nullable;
+
 /**
  * @author ash
  */
 public class Strings {
 
-    public static boolean isEmpty(String str) {
+    public static boolean isEmpty(@Nullable String str) {
         return str == null || str.length() == 0; // string.isEmpty() in Java 6
     }
 
-    public static boolean isNotEmpty(String str) {
+    public static boolean isNotEmpty(@Nullable String str) {
         return !Strings.isEmpty(str);
+    }
+
+    @Nullable
+    public static String emptyToNull(@Nullable String string) {
+        return isEmpty(string) ? null : string;
     }
 
     public static String getFullName(String name, String path) {

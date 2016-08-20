@@ -23,7 +23,9 @@ import java.lang.reflect.Type;
  */
 public interface GetterInvokerGroup {
 
-    public Type getFinalType();
+    public Type getOriginalType();
+
+    public Type getTargetType();
 
     public Object invoke(Object obj);
 

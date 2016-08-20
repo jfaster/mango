@@ -14,16 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator;
+
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
- * 没有可读参数异常
+ * 没有可读属性异常
  *
  * @author ash
  */
-public class NotReadableParameterException extends NestedRuntimeException {
+public class UnreadableParameterException extends NestedRuntimeException {
 
-    public NotReadableParameterException(String message) {
+    public UnreadableParameterException(String message) {
         super(message);
     }
 }

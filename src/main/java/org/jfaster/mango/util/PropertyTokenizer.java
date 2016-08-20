@@ -15,6 +15,8 @@
  */
 package org.jfaster.mango.util;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Clinton Begin
  * @author ash
@@ -23,26 +25,39 @@ public class PropertyTokenizer {
     private String name;
     private String children;
 
-    public PropertyTokenizer(String fullname) {
-        int delim = fullname.indexOf('.');
-        if (delim > -1) {
-            name = fullname.substring(0, delim);
-            children = fullname.substring(delim + 1);
-        } else {
-            name = fullname;
-            children = null;
+    public PropertyTokenizer(@Nullable String fullname) {
+        if (fullname != null) {
+            int delim = fullname.indexOf('.');
+            if (delim > -1) {
+                name = fullname.substring(0, delim);
+                children = fullname.substring(delim + 1);
+            } else {
+                name = Strings.emptyToNull(fullname);
+                children = null;
+            }
         }
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
 
+    @Nullable
     public String getChildren() {
         return children;
+    }
+
+    public boolean hasCurrent() {
+        return name != null;
     }
 
     public boolean hasNext() {
         return children != null;
     }
+
+    public PropertyTokenizer next() {
+        return new PropertyTokenizer(children);
+    }
+
 }

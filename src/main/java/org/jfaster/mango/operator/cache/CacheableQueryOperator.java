@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
-import org.jfaster.mango.exception.NotReadablePropertyException;
+import org.jfaster.mango.operator.UnreadableParameterException;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.operator.InvocationContext;
@@ -64,7 +64,7 @@ public class CacheableQueryOperator extends QueryOperator {
             }
             if (propertyOfMapperInvoker == null) {
                 // 如果使用cache并且sql中有一个in语句，mappedClass必须含有特定属性，必须a in (...)，则mappedClass必须含有a属性
-                throw new NotReadablePropertyException("if use cache and sql has one in clause, property "
+                throw new UnreadableParameterException("if use cache and sql has one in clause, property "
                         + propertyOfMapper + " of " + returnDescriptor.getMappedClass() + " expected readable but not");
             }
         }

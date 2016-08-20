@@ -14,16 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.invoker;
+
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
- * 没有可读属性异常
- *
  * @author ash
  */
-public class NotReadablePropertyException extends NestedRuntimeException {
+public class InvokerException extends NestedRuntimeException {
 
-    public NotReadablePropertyException(String message) {
-        super(message);
+    public InvokerException(String msg) {
+        super(msg);
     }
+
+    public InvokerException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
 }

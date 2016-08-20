@@ -18,7 +18,6 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.model4table.User;
@@ -50,8 +49,8 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
-        assertThat(ctx.getInvokerGroup("1", "").getFinalType(), equalTo(t0.getType()));
-        assertThat(ctx.getInvokerGroup("2", "").getFinalType(), equalTo(t1.getType()));
+        assertThat(ctx.getInvokerGroup("1", "").getTargetType(), equalTo(t0.getType()));
+        assertThat(ctx.getInvokerGroup("2", "").getTargetType(), equalTo(t1.getType()));
         assertThat(ctx.getParameterDescriptors(), equalTo(pds));
     }
 
@@ -66,10 +65,10 @@ public class ParameterContextTest {
         ParameterContext ctx = new ParameterContext(pds, np, OperatorType.BATCHUPDATE);
         TypeToken<User> ut = TypeToken.of(User.class);
         ParameterDescriptor up = new ParameterDescriptor(0, ut.getType(), empty, "1");
-        assertThat(ctx.getInvokerGroup("1", "").getFinalType(), equalTo(ut.getType()));
-        assertThat(ctx.getInvokerGroup("1", "").getFinalType(), equalTo(ut.getType())); // test cache
-        assertThat(ctx.getInvokerGroup("1", "name").getFinalType(), equalTo((new TypeToken<String>() {}).getType()));
-        assertThat(ctx.getInvokerGroup("1", "name").getFinalType(), equalTo((new TypeToken<String>() {}).getType())); // test cache
+        assertThat(ctx.getInvokerGroup("1", "").getTargetType(), equalTo(ut.getType()));
+        assertThat(ctx.getInvokerGroup("1", "").getTargetType(), equalTo(ut.getType())); // test cache
+        assertThat(ctx.getInvokerGroup("1", "name").getTargetType(), equalTo((new TypeToken<String>() {}).getType()));
+        assertThat(ctx.getInvokerGroup("1", "name").getTargetType(), equalTo((new TypeToken<String>() {}).getType())); // test cache
         assertThat(ctx.getParameterDescriptors(), equalTo(Arrays.asList(up)));
     }
 
@@ -110,8 +109,8 @@ public class ParameterContextTest {
 
     @Test
     public void testNotReadableParameterException() throws Exception {
-        thrown.expect(NotReadableParameterException.class);
-        thrown.expectMessage("parameter :2 is not readable");
+        thrown.expect(UnreadableParameterException.class);
+        thrown.expectMessage("The parameter ':2' is not readable");
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t = new TypeToken<String>() {};

@@ -18,13 +18,10 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.exception.NotReadableParameterException;
-import org.jfaster.mango.invoker.FunctionalGetterInvokerGroup;
-import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
-import org.jfaster.mango.invoker.InvokerCache;
+import org.jfaster.mango.invoker.*;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -92,10 +89,19 @@ public class ParameterContext {
     public GetterInvokerGroup getInvokerGroup(String parameterName, String propertyPath) {
         Type type = typeMap.get(parameterName);
         if (type == null) {
-            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
+            throw new UnreadableParameterException("The parameter ':" + parameterName + "' is not readable");
         }
-        GetterInvokerGroup invokerGroup = FunctionalGetterInvokerGroup.create(type, parameterName, propertyPath);
-        return invokerGroup;
+        try {
+            GetterInvokerGroup invokerGroup = FunctionalGetterInvokerGroup.create(type, propertyPath);
+            return invokerGroup;
+        } catch (UnreachablePropertyException e) {
+            Type currentType = e.getCurrentType();
+            String unreachableProperty = e.getUnreachableProperty();
+            String unreachablePropertyPath = e.getUnreachablePropertyPath();
+            throw new UnreadableParameterException("The parameter '" + Strings.getFullName(parameterName, unreachablePropertyPath) +
+                    "' is not readable; caused by the property '" + unreachableProperty + "' of '" + currentType +
+                    "' is unreachable, please check it's get method");
+        }
     }
 
     @Nullable

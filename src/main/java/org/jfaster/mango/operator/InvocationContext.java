@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.NotReadableParameterException;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.parser.RuntimeEmptyParameter;
 import org.jfaster.mango.util.Strings;
@@ -62,7 +61,7 @@ public class InvocationContext {
             return cache.get(key);
         }
         if (!parameterMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
-            throw new NotReadableParameterException("parameter :" + parameterName + " is not readable");
+            throw new UnreadableParameterException("The parameter ':" + parameterName + "' is not readable");
         }
         Object obj = parameterMap.get(parameterName);
         Object value = invokerGroup.invoke(obj);
