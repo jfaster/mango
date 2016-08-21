@@ -17,6 +17,7 @@
 package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.NestedProperty;
 import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.util.Strings;
 
@@ -57,8 +58,8 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
         targetType = currentType;
     }
 
-    public static FunctionalGetterInvokerGroup create(Type type, String propertyPath) {
-        return new FunctionalGetterInvokerGroup(type, propertyPath);
+    public static FunctionalGetterInvokerGroup create(Type originalType, String propertyPath) {
+        return new FunctionalGetterInvokerGroup(originalType, propertyPath);
     }
 
     @Override
@@ -94,25 +95,6 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
     @Override
     public String getPropertyPath() {
         return propertyPath;
-    }
-
-    private static class NestedProperty {
-
-        private StringBuilder nestedProperty = new StringBuilder();
-        private int num = 0;
-
-        public void append(String property) {
-            if (num++ == 0) {
-                nestedProperty.append(property);
-            } else {
-                nestedProperty.append("." + property);
-            }
-        }
-
-        public String getNestedProperty() {
-            return nestedProperty.toString();
-        }
-
     }
 
 }

@@ -20,6 +20,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.operator.MangoLogger;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
@@ -69,6 +70,29 @@ public class BeanPropertyRowMapperTest {
         assertThat(dao.getMsg(msg.getIdxx()), equalTo(msg));
     }
 
+    @Test
+    public void test2() {
+        MangoLogger.useConsoleLogger();
+        MsgDao dao = mango.create(MsgDao.class);
+        MullMsg msg = MullMsg.createRandomMsg();
+        int id = dao.insert(msg.getUid(), msg.getYyCon());
+        assertThat(id, greaterThan(0));
+        MullMsg m = dao.getMsg2(id);
+        assertThat(m.getMsgItem().getContent(), equalTo(msg.getYyCon()));
+    }
+
+    @Test
+    public void test3() {
+        if (DataSourceConfig.isUseMySQL()) {
+            MsgDao dao = mango.create(MsgDao.class);
+            MullMsg msg = MullMsg.createRandomMsg();
+            int id = dao.insert(msg.getUid(), msg.getYyCon());
+            assertThat(id, greaterThan(0));
+            MullMsg m = dao.getMsg3(id);
+            assertThat(m.getMsgItem().uid, equalTo(msg.getUid()));
+        }
+    }
+
     @DB(table = "msg")
     @Results({
             @Result(column = "id", property = "idxx"),
@@ -90,6 +114,15 @@ public class BeanPropertyRowMapperTest {
         @SQL("select id, uid, content from #table where id = :1")
         public MullMsg getMsg(int id);
 
+        @Results({
+                @Result(column = "content", property = "msgItem.content")
+        })
+        @SQL("select content from #table where id = :1")
+        public MullMsg getMsg2(int id);
+
+        @SQL("select uid as 'msgItem.uid' from #table where id = :1")
+        public MullMsg getMsg3(int id);
+
     }
 
     public static class MullMsg {
@@ -97,6 +130,8 @@ public class BeanPropertyRowMapperTest {
         private int idxx;
         private int uid;
         private String yyCon;
+
+        private MsgItem msgItem;
 
         public static List<MullMsg> createRandomMsgs(int num) {
             List<MullMsg> msgs = new ArrayList<MullMsg>();
@@ -154,6 +189,38 @@ public class BeanPropertyRowMapperTest {
         public void setYyCon(String yyCon) {
             this.yyCon = yyCon;
         }
+
+        public MsgItem getMsgItem() {
+            return msgItem;
+        }
+
+        public void setMsgItem(MsgItem msgItem) {
+            this.msgItem = msgItem;
+        }
     }
+
+    public static class MsgItem {
+
+        private int uid;
+
+        private String content;
+
+        public int getUid() {
+            return uid;
+        }
+
+        public void setUid(int uid) {
+            this.uid = uid;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+    }
+
 
 }

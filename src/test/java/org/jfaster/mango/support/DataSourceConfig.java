@@ -44,6 +44,10 @@ public class DataSourceConfig {
         }
     }
 
+    public static boolean isUseMySQL() {
+        return "mysql".equals(DIR);
+    }
+
     public static String getDir() {
         return DIR;
     }

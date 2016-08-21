@@ -31,14 +31,14 @@ public class UnreachablePropertyExceptionTest {
     @Test
     public void test() throws Exception {
         UnreachablePropertyException e = new UnreachablePropertyException(String.class, "abc");
-        assertThat(e.getMessage(), equalTo("The property 'abc' of 'class java.lang.String' is unreachable, please check get method"));
+        assertThat(e.getMessage(), equalTo("The property 'abc' of 'class java.lang.String' is unreachable"));
         assertThat(e.getOriginalType(), equalTo((Type) String.class));
         assertThat(e.getCurrentType(), equalTo((Type) String.class));
         assertThat(e.getUnreachableProperty(), equalTo("abc"));
         assertThat(e.getUnreachablePropertyPath(), equalTo("abc"));
 
         e = new UnreachablePropertyException(String.class, Integer.class, "xyz", "abc.xyz");
-        assertThat(e.getMessage(), equalTo("The property 'abc.xyz' of 'class java.lang.String' is unreachable, please check get method"));
+        assertThat(e.getMessage(), equalTo("The property 'abc.xyz' of 'class java.lang.String' is unreachable"));
         assertThat(e.getOriginalType(), equalTo((Type) String.class));
         assertThat(e.getCurrentType(), equalTo((Type) Integer.class));
         assertThat(e.getUnreachableProperty(), equalTo("xyz"));

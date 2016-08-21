@@ -145,8 +145,8 @@ public class QueryOperator extends AbstractOperator {
             Result[] resultAnnos = resultsAnoo.value();
             if (resultAnnos != null) {
                 for (Result resultAnno : resultAnnos) {
-                    ptc.put(resultAnno.property().toLowerCase().trim(),
-                            resultAnno.column().toLowerCase().trim());
+                    ptc.put(resultAnno.property().trim(),
+                            resultAnno.column().trim());
                 }
             }
         }

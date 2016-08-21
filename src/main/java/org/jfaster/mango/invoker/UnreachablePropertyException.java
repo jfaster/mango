@@ -54,7 +54,7 @@ public class UnreachablePropertyException extends InvokerException {
 
     private static String buildMsg(Type originalType, String unreachablePropertyPath) {
         return "The property '" + unreachablePropertyPath + "' of '" + originalType +
-                        "' is unreachable, please check get method";
+                        "' is unreachable";
     }
 
     public Type getOriginalType() {

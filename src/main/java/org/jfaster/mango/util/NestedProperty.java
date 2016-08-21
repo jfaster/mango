@@ -19,20 +19,21 @@ package org.jfaster.mango.util;
 /**
  * @author ash
  */
-public class NestedExceptionUtils {
+public class NestedProperty {
 
-    public static String buildMessage(String message, Throwable cause) {
-        if (cause != null) {
-            StringBuilder sb = new StringBuilder();
-            if (message != null) {
-                sb.append(message).append("; ");
-            }
-            sb.append("nested exception is ").append(cause);
-            return sb.toString();
+    private StringBuilder nestedProperty = new StringBuilder();
+    private int num = 0;
+
+    public void append(String property) {
+        if (num++ == 0) {
+            nestedProperty.append(property);
+        } else {
+            nestedProperty.append("." + property);
         }
-        else {
-            return message;
-        }
+    }
+
+    public String getNestedProperty() {
+        return nestedProperty.toString();
     }
 
 }
