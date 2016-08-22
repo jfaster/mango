@@ -111,13 +111,13 @@ public class OperatorFactory {
             statsCounter.setCacheNullObject(driver.isCacheNullObject());
             switch (operatorType) {
                 case QUERY:
-                    operator = new CacheableQueryOperator(rootNode, md, driver);
+                    operator = new CacheableQueryOperator(rootNode, md, driver, config);
                     break;
                 case UPDATE:
-                    operator = new CacheableUpdateOperator(rootNode, md, driver);
+                    operator = new CacheableUpdateOperator(rootNode, md, driver, config);
                     break;
                 case BATCHUPDATE:
-                    operator = new CacheableBatchUpdateOperator(rootNode, md, driver);
+                    operator = new CacheableBatchUpdateOperator(rootNode, md, driver, config);
                     break;
                 default:
                     throw new IllegalStateException();
@@ -125,13 +125,13 @@ public class OperatorFactory {
         } else {
             switch (operatorType) {
                 case QUERY:
-                    operator = new QueryOperator(rootNode, md);
+                    operator = new QueryOperator(rootNode, md, config);
                     break;
                 case UPDATE:
-                    operator = new UpdateOperator(rootNode, md);
+                    operator = new UpdateOperator(rootNode, md, config);
                     break;
                 case BATCHUPDATE:
-                    operator = new BatchUpdateOperator(rootNode, md);
+                    operator = new BatchUpdateOperator(rootNode, md, config);
                     break;
                 default:
                     throw new IllegalStateException();
@@ -146,7 +146,6 @@ public class OperatorFactory {
         operator.setInvocationInterceptorChain(chain);
         operator.setJdbcOperations(jdbcOperations);
         operator.setStatsCounter(statsCounter);
-        operator.setConfig(config);
         return operator;
     }
 

@@ -39,8 +39,8 @@ public class UpdateOperator extends AbstractOperator {
 
     private Class<? extends Number> numberRawType;
 
-    protected UpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
-        super(rootNode, md.getDaoClass());
+    protected UpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+        super(rootNode, md.getDaoClass(), config);
         init(md, rootNode.getSQLType());
     }
 

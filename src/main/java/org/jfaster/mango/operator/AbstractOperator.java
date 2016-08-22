@@ -30,6 +30,15 @@ import java.util.List;
 public abstract class AbstractOperator implements Operator {
 
     /**
+     * 用于对db进行操作
+     */
+    protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, Config config) {
+        this.rootNode = rootNode;
+        this.daoClass = daoClass;
+        this.config = config;
+    }
+
+    /**
      * 渲染sql的树节点
      */
     protected final ASTRootNode rootNode;
@@ -38,14 +47,6 @@ public abstract class AbstractOperator implements Operator {
      * dao操作所在类
      */
     protected final Class<?> daoClass;
-
-    /**
-     * 用于对db进行操作
-     */
-    protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass) {
-        this.rootNode = rootNode;
-        this.daoClass = daoClass;
-    }
 
     /**
      * 拦截器链
@@ -110,11 +111,6 @@ public abstract class AbstractOperator implements Operator {
     @Override
     public void setStatsCounter(StatsCounter statsCounter) {
         this.statsCounter = statsCounter;
-    }
-
-    @Override
-    public void setConfig(Config config) {
-        this.config = config;
     }
 
     protected void throwEmptyParametersException(InvocationContext context) {

@@ -40,8 +40,8 @@ public class QueryOperator extends AbstractOperator {
     protected ListSupplier listSupplier;
     protected SetSupplier setSupplier;
 
-    protected QueryOperator(ASTRootNode rootNode, MethodDescriptor md) {
-        super(rootNode, md.getDaoClass());
+    protected QueryOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+        super(rootNode, md.getDaoClass(), config);
         init(md);
     }
 
@@ -150,7 +150,7 @@ public class QueryOperator extends AbstractOperator {
                 }
             }
         }
-        return new BeanPropertyRowMapper<T>(clazz, ptc);
+        return new BeanPropertyRowMapper<T>(clazz, ptc, config.isCheckColumn());
     }
 
     protected Object EmptyObject() {

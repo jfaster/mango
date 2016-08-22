@@ -19,6 +19,7 @@ package org.jfaster.mango.jdbc;
 import org.jfaster.mango.invoker.FunctionalSetterInvokerGroup;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.SetterInvoker;
+import org.jfaster.mango.invoker.UnreachablePropertyException;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.util.Strings;
@@ -47,12 +48,15 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     private Map<String, String> columnToPropertyMap;
 
-    public BeanPropertyRowMapper(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
-        initialize(mappedClass, propertyToColumnMap);
+    private boolean checkColumn;
+
+    public BeanPropertyRowMapper(Class<T> mappedClass, Map<String, String> propertyToColumnMap, boolean checkColumn) {
+        initialize(mappedClass, propertyToColumnMap, checkColumn);
     }
 
-    protected void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap) {
+    protected void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap, boolean checkColumn) {
         this.mappedClass = mappedClass;
+        this.checkColumn = checkColumn;
         this.columnToPropertyMap = new HashMap<String, String>();
         this.invokerMap = new HashMap<String, SetterInvoker>();
 
@@ -92,37 +96,58 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
             String column = originalColumn.toLowerCase();
             String propertyPath = columnToPropertyMap.get(column);
             if (propertyPath != null) { // 使用自定义多级映射
-                FunctionalSetterInvokerGroup g = FunctionalSetterInvokerGroup.create(mappedClass, propertyPath);
-                Object value = JdbcUtils.getResultSetValue(rs, index, g.getTargetType());
-                if (logger.isDebugEnabled() && rowNumber == 0) {
-                    logger.debug("Mapping column '" + originalColumn + "' to property '" +
-                            propertyPath + "' of type " + g.getTargetType());
-                }
-                g.invoke(mappedObject, value);
+                setValueByPropertyPath(mappedObject, propertyPath, rs, index, rowNumber, originalColumn);
             } else {
                 PropertyTokenizer prop = new PropertyTokenizer(originalColumn);
                 if (prop.hasNext()) { // select语句中的字段存在多级映射
-                    FunctionalSetterInvokerGroup g = FunctionalSetterInvokerGroup.create(mappedClass, originalColumn);
-                    Object value = JdbcUtils.getResultSetValue(rs, index, g.getTargetType());
-                    if (logger.isDebugEnabled() && rowNumber == 0) {
-                        logger.debug("Mapping column '" + originalColumn + "' to property '" +
-                                originalColumn + "' of type " + g.getTargetType());
-                    }
-                    g.invoke(mappedObject, value);
+                    setValueByPropertyPath(mappedObject, originalColumn, rs, index, rowNumber, originalColumn);
                 } else { // 单级映射（包含约定和自定义）
-                    SetterInvoker invoker = invokerMap.get(column);
-                    if (invoker != null) {
-                        Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getParameterRawType());
-                        if (logger.isDebugEnabled() && rowNumber == 0) {
-                            logger.debug("Mapping column '" + originalColumn + "' to property '" +
-                                    invoker.getName() + "' of type " + invoker.getParameterRawType());
-                        }
-                        invoker.invoke(mappedObject, value);
-                    }
+                    setValueByProperty(mappedObject, column, rs, index, rowNumber, originalColumn);
                 }
             }
         }
         return mappedObject;
+    }
+
+    private void setValueByPropertyPath(Object mappedObject, String propertyPath, ResultSet rs,
+                                    int index, int rowNumber, String originalColumn) throws SQLException {
+
+        FunctionalSetterInvokerGroup g = null;
+        try {
+            g = FunctionalSetterInvokerGroup.create(mappedClass, propertyPath);
+        } catch (UnreachablePropertyException e) {
+            if (checkColumn) {
+                throw new MappingException("Unable to map column '" + originalColumn +
+                        "' to property '" + propertyPath + "'; Cause: " + e.getMessage());
+            }
+        }
+        if (g != null) {
+            Object value = JdbcUtils.getResultSetValue(rs, index, g.getTargetType());
+            if (logger.isDebugEnabled() && rowNumber == 0) {
+                logger.debug("Mapping column '" + originalColumn + "' to property '" +
+                        propertyPath + "' of type " + g.getTargetType());
+            }
+            g.invoke(mappedObject, value);
+        }
+    }
+
+    private void setValueByProperty(Object mappedObject, String column, ResultSet rs,
+                                    int index, int rowNumber, String originalColumn) throws SQLException {
+
+        SetterInvoker invoker = invokerMap.get(column);
+        if (invoker != null) {
+            Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getParameterRawType());
+            if (logger.isDebugEnabled() && rowNumber == 0) {
+                logger.debug("Mapping column '" + originalColumn + "' to property '" +
+                        invoker.getName() + "' of type " + invoker.getParameterRawType());
+            }
+            invoker.invoke(mappedObject, value);
+        } else {
+            if (checkColumn) {
+                throw new MappingException("Unable to map column '" + originalColumn +
+                        "' to any property of '" + mappedClass + "'");
+            }
+        }
     }
 
     @Override

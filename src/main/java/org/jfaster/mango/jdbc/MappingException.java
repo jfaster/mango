@@ -14,14 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.jdbc;
+
+import org.jfaster.mango.exception.NestedRuntimeException;
 
 /**
  * @author ash
  */
-public class ReflectionException extends NestedRuntimeException {
+public class MappingException extends NestedRuntimeException {
 
-    public ReflectionException(String message) {
-        super(message);
+    public MappingException(String msg) {
+        super(msg);
     }
+
+    public MappingException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
 }

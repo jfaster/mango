@@ -40,6 +40,4 @@ public interface Operator {
 
     public void setStatsCounter(StatsCounter statsCounter);
 
-    public void setConfig(Config config);
-
 }

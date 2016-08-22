@@ -32,8 +32,8 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     protected Transformer transformer;
 
-    protected BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md) {
-        super(rootNode, md.getDaoClass());
+    protected BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+        super(rootNode, md.getDaoClass(), config);
         transformer = TRANSFORMERS.get(md.getReturnRawType());
         if (transformer == null) {
             String expected = ToStringHelper.toString(TRANSFORMERS.keySet());

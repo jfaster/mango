@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.util.NestedProperty;
 import org.jfaster.mango.util.PropertyTokenizer;
 
 /**
@@ -36,18 +35,14 @@ public class FunctionalSetterInvokerGroup implements SetterInvokerGroup {
             throw new IllegalStateException("property path '" + propertyPath + "' error");
         }
         Class<?> currentType = originalType;
-        NestedProperty np = new NestedProperty();
         while (prop.hasCurrent()) {
             String propertyName = prop.getName();
-            np.append(propertyName);
-            SetterInvoker setter = InvokerCache.getNullableSetterInvoker(currentType, propertyName);
-            if (setter == null) { // 没有set方法直接异常
-                throw new UnreachablePropertyException(originalType, currentType, propertyName, np.getNestedProperty());
-            }
+            SetterInvoker setter = InvokerCache.getSetterInvoker(currentType, propertyName);
             if (prop.hasNext()) { // 后续还有属性则需检测set方法
-                GetterInvoker getter = InvokerCache.getNullableGetterInvoker(currentType, propertyName);
-                if (getter == null || !setter.getParameterType().equals(getter.getReturnType())) { // 有set方法，但get方法不对，抛出异常
-                    throw new UnreachablePropertyException(originalType, currentType, propertyName, np.getNestedProperty());
+                GetterInvoker getter = InvokerCache.getGetterInvoker(currentType, propertyName);
+                if (!setter.getParameterType().equals(getter.getReturnType())) { // 有set方法，但get方法不对，抛出异常
+                    throw new UnreachablePropertyException("Inconsistent setter/getter type for property named '" +
+                            propertyName + "' in '" + currentType + "'");
                 }
             }
             currentType = setter.getParameterRawType();

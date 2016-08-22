@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator.cache;
 
 import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.UnreadableParameterException;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
@@ -43,8 +44,8 @@ public class CacheableQueryOperator extends QueryOperator {
 
     GetterInvoker propertyOfMapperInvoker;
 
-    public CacheableQueryOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver) {
-        super(rootNode, md);
+    public CacheableQueryOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver, Config config) {
+        super(rootNode, md, config);
 
         this.driver = cacheDriver;
 

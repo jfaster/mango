@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.exception.ReflectionException;
 import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.util.concurrent.cache.CacheLoader;
 import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
@@ -41,7 +40,7 @@ public class InvokerCache {
     public static GetterInvoker getGetterInvoker(Class<?> clazz, String propertyName) {
         GetterInvoker invoker = getNullableGetterInvoker(clazz, propertyName);
         if (invoker == null) {
-            throw new ReflectionException("There is no getter for property named '" + propertyName + "' in '" + clazz + "'");
+            throw new UnreachablePropertyException("There is no getter for property named '" + propertyName + "' in '" + clazz + "'");
         }
         return invoker;
     }
@@ -58,7 +57,7 @@ public class InvokerCache {
     public static SetterInvoker getSetterInvoker(Class<?> clazz, String propertyName) {
         SetterInvoker invoker = cache.get(clazz).getSetterInvoker(propertyName);
         if (invoker == null) {
-            throw new ReflectionException("There is no setter for property named '" + propertyName + "' in '" + clazz + "'");
+            throw new UnreachablePropertyException("There is no setter for property named '" + propertyName + "' in '" + clazz + "'");
         }
         return invoker;
     }

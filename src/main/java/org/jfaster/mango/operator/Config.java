@@ -23,14 +23,23 @@ package org.jfaster.mango.operator;
  */
 public class Config {
 
-    private boolean isCompatibleWithEmptyList = true;
+    private boolean compatibleWithEmptyList = true;
+
+    private boolean checkColumn = true;
 
     public boolean isCompatibleWithEmptyList() {
-        return isCompatibleWithEmptyList;
+        return compatibleWithEmptyList;
     }
 
     public void setCompatibleWithEmptyList(boolean compatibleWithEmptyList) {
-        isCompatibleWithEmptyList = compatibleWithEmptyList;
+        this.compatibleWithEmptyList = compatibleWithEmptyList;
     }
 
+    public boolean isCheckColumn() {
+        return checkColumn;
+    }
+
+    public void setCheckColumn(boolean checkColumn) {
+        this.checkColumn = checkColumn;
+    }
 }
