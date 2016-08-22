@@ -18,8 +18,6 @@ package org.jfaster.mango.invoker;
 
 import org.junit.Test;
 
-import java.lang.reflect.Type;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,10 +54,6 @@ public class FunctionalSetterInvokerGroupTest {
             FunctionalSetterInvokerGroup.create(A.class, "bb.i");
         } catch (UnreachablePropertyException e) {
             error = true;
-            assertThat(e.getOriginalType(), equalTo((Type) A.class));
-            assertThat(e.getCurrentType(), equalTo((Type) A.class));
-            assertThat(e.getUnreachableProperty(), equalTo("bb"));
-            assertThat(e.getUnreachablePropertyPath(), equalTo("bb"));
         }
         assertThat(error, equalTo(true));
 
@@ -68,10 +62,6 @@ public class FunctionalSetterInvokerGroupTest {
             FunctionalSetterInvokerGroup.create(A.class, "b.jj");
         } catch (UnreachablePropertyException e) {
             error = true;
-            assertThat(e.getOriginalType(), equalTo((Type) A.class));
-            assertThat(e.getCurrentType(), equalTo((Type) B.class));
-            assertThat(e.getUnreachableProperty(), equalTo("jj"));
-            assertThat(e.getUnreachablePropertyPath(), equalTo("b.jj"));
         }
         assertThat(error, equalTo(true));
     }
