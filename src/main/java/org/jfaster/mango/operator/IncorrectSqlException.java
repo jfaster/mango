@@ -14,16 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator;
+
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 错误的类型异常
+ * 不正确的sql异常
  *
  * @author ash
  */
-public class IncorrectTypeException extends NestedRuntimeException {
+public class IncorrectSqlException extends MangoException {
 
-    public IncorrectTypeException(String message) {
+    public IncorrectSqlException(String message) {
         super(message);
     }
 }

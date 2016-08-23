@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.exception.IncorrectTypeException;
-
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;

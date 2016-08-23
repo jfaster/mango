@@ -14,19 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.NestedRuntimeException;
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 不正确的使用{@link org.jfaster.mango.annotation.Setter}注解异常
+ * 不正确的定义异常
  *
  * @author ash
  */
-public class IncorrectSetterAnnotationException extends NestedRuntimeException {
+public class IncorrectDefinitionException extends MangoException {
 
-    public IncorrectSetterAnnotationException(String msg) {
-        super(msg);
+    public IncorrectDefinitionException(String message) {
+        super(message);
     }
 
 }

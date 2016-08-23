@@ -14,17 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator;
+
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 错误的使用{@link org.jfaster.mango.annotation.CacheBy}异常
+ * 错误的参数数量异常
  *
  * @author ash
  */
-public class IncorrectCacheByException extends NestedRuntimeException {
+public class IncorrectParameterCountException extends MangoException {
 
-    public IncorrectCacheByException(String message) {
+    public IncorrectParameterCountException(String message) {
         super(message);
     }
-
 }

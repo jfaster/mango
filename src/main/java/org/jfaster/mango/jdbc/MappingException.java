@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.NestedRuntimeException;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * @author ash
  */
-public class MappingException extends NestedRuntimeException {
+public class MappingException extends MangoException {
 
     public MappingException(String msg) {
         super(msg);

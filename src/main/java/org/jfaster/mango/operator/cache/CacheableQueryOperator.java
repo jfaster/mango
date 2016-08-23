@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.exception.IncorrectSqlException;
+import org.jfaster.mango.operator.IncorrectSqlException;
 import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.UnreadableParameterException;
 import org.jfaster.mango.invoker.GetterInvoker;

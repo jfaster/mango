@@ -14,17 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.reflect;
+
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 不正确的使用{@link org.jfaster.mango.annotation.Getter}注解异常
+ * 运行时实例化类异常
  *
  * @author ash
  */
-public class IncorrectGetterAnnotationException extends NestedRuntimeException {
+public class BeanInstantiationException extends MangoException {
 
-    public IncorrectGetterAnnotationException(String msg) {
-        super(msg);
+    private Class beanClass;
+
+    public BeanInstantiationException(Class beanClass, String msg) {
+        this(beanClass, msg, null);
+    }
+
+    public BeanInstantiationException(Class beanClass, String msg, Throwable cause) {
+        super("Could not instantiate bean class [" + beanClass.getName() + "]: " + msg, cause);
+        this.beanClass = beanClass;
+    }
+
+    public Class getBeanClass() {
+        return beanClass;
     }
 
 }

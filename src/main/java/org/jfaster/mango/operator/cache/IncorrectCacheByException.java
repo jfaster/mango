@@ -14,28 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator.cache;
+
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 运行时实例化类异常
+ * 错误的使用{@link org.jfaster.mango.annotation.CacheBy}异常
  *
  * @author ash
  */
-public class BeanInstantiationException extends NestedRuntimeException {
+public class IncorrectCacheByException extends MangoException {
 
-    private Class beanClass;
-
-    public BeanInstantiationException(Class beanClass, String msg) {
-        this(beanClass, msg, null);
-    }
-
-    public BeanInstantiationException(Class beanClass, String msg, Throwable cause) {
-        super("Could not instantiate bean class [" + beanClass.getName() + "]: " + msg, cause);
-        this.beanClass = beanClass;
-    }
-
-    public Class getBeanClass() {
-        return beanClass;
+    public IncorrectCacheByException(String message) {
+        super(message);
     }
 
 }

@@ -14,16 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.parser;
+
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 错误的参数数量异常
+ * 解析sql异常
  *
  * @author ash
  */
-public class IncorrectParameterCountException extends NestedRuntimeException {
+public class SqlParserException extends MangoException {
 
-    public IncorrectParameterCountException(String message) {
+    public SqlParserException(String message) {
         super(message);
     }
+
 }

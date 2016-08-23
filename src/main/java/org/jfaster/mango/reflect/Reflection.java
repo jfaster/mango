@@ -17,8 +17,6 @@
 package org.jfaster.mango.reflect;
 
 
-import org.jfaster.mango.exception.BeanInstantiationException;
-
 import java.lang.reflect.*;
 
 /**

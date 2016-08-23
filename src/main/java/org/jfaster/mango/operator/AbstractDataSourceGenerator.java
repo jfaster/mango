@@ -18,7 +18,6 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.exception.IncorrectDefinitionException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 

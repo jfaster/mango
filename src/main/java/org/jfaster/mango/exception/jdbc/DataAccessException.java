@@ -16,14 +16,14 @@
 
 package org.jfaster.mango.exception.jdbc;
 
-import org.jfaster.mango.exception.NestedRuntimeException;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * 所的数据访问异常继承此类
  *
  * @author ash
  */
-public abstract class DataAccessException extends NestedRuntimeException {
+public abstract class DataAccessException extends MangoException {
 
     public DataAccessException(String msg) {
         super(msg);

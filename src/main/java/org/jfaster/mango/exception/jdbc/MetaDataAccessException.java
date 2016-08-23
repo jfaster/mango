@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.exception.jdbc;
 
-import org.jfaster.mango.exception.NestedCheckedException;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * @author ash
  */
-public class MetaDataAccessException extends NestedCheckedException {
+public class MetaDataAccessException extends MangoException {
 
     public MetaDataAccessException(String message) {
         super(message);

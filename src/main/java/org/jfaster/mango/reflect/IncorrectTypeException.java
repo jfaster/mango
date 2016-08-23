@@ -14,28 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.util.NestedExceptionUtils;
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 所有的Checked异常继承此类
+ * 错误的类型异常
  *
  * @author ash
  */
-public abstract class NestedCheckedException extends Exception {
+public class IncorrectTypeException extends MangoException {
 
-    public NestedCheckedException(String message) {
+    public IncorrectTypeException(String message) {
         super(message);
     }
-
-    public NestedCheckedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    @Override
-    public String getMessage() {
-        return NestedExceptionUtils.buildMessage(super.getMessage(), getCause());
-    }
-
 }

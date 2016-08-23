@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.exception.transaction;
 
-import org.jfaster.mango.exception.NestedRuntimeException;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * @author ash
  */
-public abstract class TransactionException extends NestedRuntimeException {
+public abstract class TransactionException extends MangoException {
 
     public TransactionException(String msg) {
         super(msg);

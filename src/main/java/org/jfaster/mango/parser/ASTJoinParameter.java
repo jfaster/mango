@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.exception.UnreachableCodeException;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.util.Strings;
@@ -45,7 +44,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
         Pattern p = Pattern.compile("#\\{\\s*(:(\\w+)(\\.\\w+)*)\\s*\\}", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(str);
         if (!m.matches()) {
-            throw new UnreachableCodeException();
+            throw new IllegalStateException("Can't compile string '" + str + "'");
         }
         String fullName = m.group(1);
         parameterName = m.group(2);

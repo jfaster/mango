@@ -14,28 +14,23 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator;
 
-import org.jfaster.mango.util.NestedExceptionUtils;
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 所有的runtime异常继承此类
+ * 预加载异常
  *
  * @author ash
  */
-public abstract class NestedRuntimeException extends RuntimeException {
+public class InitializationException extends MangoException {
 
-    public NestedRuntimeException(String msg) {
+    public InitializationException(String msg) {
         super(msg);
     }
 
-    public NestedRuntimeException(String msg, Throwable cause) {
+    public InitializationException(String msg, Throwable cause) {
         super(msg, cause);
-    }
-
-    @Override
-    public String getMessage() {
-        return NestedExceptionUtils.buildMessage(super.getMessage(), getCause());
     }
 
 }

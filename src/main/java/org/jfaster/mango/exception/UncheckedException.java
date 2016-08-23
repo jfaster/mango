@@ -21,7 +21,7 @@ package org.jfaster.mango.exception;
  *
  * @author ash
  */
-public class UncheckedException extends NestedRuntimeException {
+public class UncheckedException extends MangoException {
 
     public UncheckedException(String message, Throwable cause) {
         super(message, cause);

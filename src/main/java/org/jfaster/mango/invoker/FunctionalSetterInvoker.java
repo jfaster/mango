@@ -16,9 +16,7 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.annotation.Setter;
-import org.jfaster.mango.exception.IncorrectGetterAnnotationException;
 import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TokenTuple;
@@ -48,10 +46,6 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
         runtimeOutputType = parameterToken.getType();
         runtimeOutputRawType = parameterToken.getRawType();
 
-        Getter getterAnno = method.getAnnotation(Getter.class);
-        if (getterAnno != null) {
-            throw new IncorrectGetterAnnotationException("@Getter annotation can not be placed on the set method [" + method + "]");
-        }
         Setter setterAnno = method.getAnnotation(Setter.class);
 
         if (setterAnno != null) { // 启用函数式调用功能

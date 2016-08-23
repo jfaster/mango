@@ -22,6 +22,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
+import org.jfaster.mango.operator.cache.IncorrectCacheByException;
 import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.junit.Rule;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 测试{@link IncorrectCacheByException}
+ * 测试{@link org.jfaster.mango.operator.cache.IncorrectCacheByException}
  *
  * @author ash
  */

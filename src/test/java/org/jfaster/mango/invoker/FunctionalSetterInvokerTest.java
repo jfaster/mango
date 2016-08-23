@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import org.jfaster.mango.annotation.Setter;
-import org.jfaster.mango.exception.IncorrectSetterAnnotationException;
 import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
@@ -366,14 +365,5 @@ public class FunctionalSetterInvokerTest {
             this.x = x;
         }
     }
-
-    @Test
-    public void testException3() throws Exception {
-        thrown.expect(IncorrectSetterAnnotationException.class);
-        thrown.expectMessage("@Setter annotation can not be placed on the get method [java.lang.String org.jfaster.mango.invoker.FunctionalSetterInvokerTest$H.getX()]");
-        Method method = H.class.getDeclaredMethod("getX");
-        FunctionalGetterInvoker.create("x", method);
-    }
-
 
 }

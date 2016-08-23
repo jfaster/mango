@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.IncorrectParameterCountException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.invoker.*;
 import org.jfaster.mango.jdbc.JdbcUtils;

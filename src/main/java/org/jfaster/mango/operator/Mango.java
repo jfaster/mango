@@ -20,7 +20,6 @@ import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
-import org.jfaster.mango.exception.InitializationException;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.operator.cache.CacheHandler;

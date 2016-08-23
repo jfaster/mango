@@ -19,8 +19,7 @@ package org.jfaster.mango.operator.cache;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
-import org.jfaster.mango.exception.IncorrectCacheByException;
-import org.jfaster.mango.exception.IncorrectDefinitionException;
+import org.jfaster.mango.operator.IncorrectDefinitionException;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.operator.InvocationContext;
 import org.jfaster.mango.operator.NameProvider;
@@ -372,7 +371,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     /**
      * 检测{@link CacheBy}定位到的参数db中是否有用到，如果db中没有用到，
-     * 则抛出{@link org.jfaster.mango.exception.IncorrectCacheByException}
+     * 则抛出{@link IncorrectCacheByException}
      */
     private static void checkCacheBy(ASTRootNode rootNode, List<CacheByItem> cacheByItems) {
         List<ASTJDBCParameter> jps = rootNode.getJDBCParameters();

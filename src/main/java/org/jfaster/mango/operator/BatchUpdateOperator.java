@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.IncorrectReturnTypeException;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.util.Iterables;

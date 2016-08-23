@@ -25,7 +25,9 @@ import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -93,6 +95,20 @@ public class BeanPropertyRowMapperTest {
         }
     }
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void testException() {
+        thrown.expect(MappingException.class);
+        thrown.expectMessage("Unable to map column 'ID' to any property of 'class org.jfaster.mango.jdbc.BeanPropertyRowMapperTest$MullMsg'");
+        Msg2Dao dao = mango.create(Msg2Dao.class);
+        MullMsg msg = MullMsg.createRandomMsg();
+        int id = dao.insert(msg.getUid(), msg.getYyCon());
+        assertThat(id, greaterThan(0));
+        System.out.println(dao.getMsg(id));
+    }
+
     @DB(table = "msg")
     @Results({
             @Result(column = "id", property = "idxx"),
@@ -122,6 +138,18 @@ public class BeanPropertyRowMapperTest {
 
         @SQL("select uid as 'msgItem.uid' from #table where id = :1")
         public MullMsg getMsg3(int id);
+
+    }
+
+    @DB(table = "msg")
+    interface Msg2Dao {
+
+        @ReturnGeneratedId
+        @SQL("insert into #table(uid, content) values(:1, :2)")
+        int insert(int uid, String content);
+
+        @SQL("select id, uid, content from #table where id = :1")
+        public MullMsg getMsg(int id);
 
     }
 

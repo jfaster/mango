@@ -14,16 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.operator;
+
+import org.jfaster.mango.exception.MangoException;
 
 /**
- * 不正确的定义异常
+ * 错误的返回类型异常
  *
  * @author ash
  */
-public class IncorrectDefinitionException extends NestedRuntimeException {
+public class IncorrectReturnTypeException extends MangoException {
 
-    public IncorrectDefinitionException(String message) {
+    public IncorrectReturnTypeException(String message) {
         super(message);
     }
 

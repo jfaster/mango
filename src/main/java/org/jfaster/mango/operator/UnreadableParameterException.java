@@ -16,14 +16,14 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.exception.NestedRuntimeException;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * 没有可读属性异常
  *
  * @author ash
  */
-public class UnreadableParameterException extends NestedRuntimeException {
+public class UnreadableParameterException extends MangoException {
 
     public UnreadableParameterException(String message) {
         super(message);

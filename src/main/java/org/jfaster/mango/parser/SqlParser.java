@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.exception.SqlParserException;
-
 /**
  * @author ash
  */

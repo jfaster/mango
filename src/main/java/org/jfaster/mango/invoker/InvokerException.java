@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.exception.NestedRuntimeException;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * @author ash
  */
-public class InvokerException extends NestedRuntimeException {
+public class InvokerException extends MangoException {
 
     public InvokerException(String msg) {
         super(msg);
