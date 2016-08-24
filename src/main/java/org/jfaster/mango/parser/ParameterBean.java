@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.parser;
 
+import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
 
 /**
@@ -23,18 +24,12 @@ import org.jfaster.mango.invoker.GetterInvokerGroup;
  */
 public interface ParameterBean {
 
-    public boolean hasProperty();
+    public BindingParameter getBindingParameter();
 
-    public String getParameterName();
-
-    public void setParameterName(String parameterName);
-
-    public String getPropertyPath();
-
-    public void setPropertyPath(String propertyPath);
-
-    public String getFullName();
+    public void setBindingParameter(BindingParameter bindingParameter);
 
     public void setInvokerGroup(GetterInvokerGroup invoker);
+
+    public String getFullName();
 
 }

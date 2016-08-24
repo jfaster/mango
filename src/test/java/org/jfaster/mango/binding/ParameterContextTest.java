@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.jdbc.MappingException;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Rule;
@@ -47,8 +46,8 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np);
-        assertThat(ctx.getInvokerGroup("1", "").getTargetType(), equalTo(t0.getType()));
-        assertThat(ctx.getInvokerGroup("2", "").getTargetType(), equalTo(t1.getType()));
+        assertThat(ctx.getInvokerGroup(BindingParameter.create("1", "")).getTargetType(), equalTo(t0.getType()));
+        assertThat(ctx.getInvokerGroup(BindingParameter.create("2", "")).getTargetType(), equalTo(t1.getType()));
         assertThat(ctx.getParameterDescriptors(), equalTo(pds));
     }
 
@@ -58,7 +57,7 @@ public class ParameterContextTest {
     @Test
     public void testNotReadableParameterException() throws Exception {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Parameter '3' not found, available parameters are [2, 1]");
+        thrown.expectMessage("Parameter '3' not found, available root parameters are [2, 1]");
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t = new TypeToken<String>() {};
@@ -68,13 +67,13 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np);
-        ctx.getInvokerGroup("3", "");
+        ctx.getInvokerGroup(BindingParameter.create("3", ""));
     }
 
     @Test
     public void testNotReadablePropertyException() throws Exception {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Property ':1.id' can't be readable; caused by: There is no getter for property named 'id' in 'class java.lang.String'");
+        thrown.expectMessage("Parameter ':1.id' can't be readable; caused by: There is no getter for property named 'id' in 'class java.lang.String'");
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t = new TypeToken<String>() {};
@@ -83,7 +82,7 @@ public class ParameterContextTest {
         NameProvider np = new NameProvider(pds);
 
         ParameterContext ctx = new ParameterContext(pds, np);
-        ctx.getInvokerGroup("1", "id");
+        ctx.getInvokerGroup(BindingParameter.create("1", "id"));
     }
 
 }

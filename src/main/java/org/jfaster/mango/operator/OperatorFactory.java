@@ -20,6 +20,7 @@ import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.base.sql.OperatorType;
 import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.binding.NameProvider;
 import org.jfaster.mango.binding.ParameterContext;
@@ -215,7 +216,7 @@ public class OperatorFactory {
         if (isUseTableShardingStrategy) {
             if (shardingParameterNum == 1) {
                 GetterInvokerGroup shardingParameterInvoker
-                        = context.getInvokerGroup(shardingParameterName, shardingParameterProperty);
+                        = context.getInvokerGroup(BindingParameter.create(shardingParameterName, shardingParameterProperty));
                 Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();
@@ -300,7 +301,7 @@ public class OperatorFactory {
         if (strategy != null) {
             if (shardingParameterNum == 1) {
                 GetterInvokerGroup shardingParameterInvoker
-                        = context.getInvokerGroup(shardingParameterName, shardingParameterProperty);
+                        = context.getInvokerGroup(BindingParameter.create(shardingParameterName, shardingParameterProperty));
                 Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();

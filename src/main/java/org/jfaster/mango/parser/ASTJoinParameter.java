@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.invoker.GetterInvokerGroup;
+import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.invoker.GetterInvokerGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,8 +28,7 @@ import java.util.regex.Pattern;
  */
 public class ASTJoinParameter extends AbstractRenderableNode implements ParameterBean {
 
-    private String parameterName;
-    private String propertyPath; // 为""的时候表示没有属性
+    private BindingParameter bindingParameter;
     private GetterInvokerGroup invokerGroup;
 
     public ASTJoinParameter(int id) {
@@ -47,11 +46,22 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
             throw new IllegalStateException("Can't compile string '" + str + "'");
         }
         String fullName = m.group(1);
-        parameterName = m.group(2);
-        propertyPath = fullName.substring(parameterName.length() + 1);
+        String parameterName = m.group(2);
+        String propertyPath = fullName.substring(parameterName.length() + 1);
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .property变为property
         }
+        bindingParameter = BindingParameter.create(parameterName, propertyPath);
+    }
+
+    @Override
+    public BindingParameter getBindingParameter() {
+        return bindingParameter;
+    }
+
+    @Override
+    public void setBindingParameter(BindingParameter bindingParameter) {
+        this.bindingParameter = bindingParameter;
     }
 
     @Override
@@ -59,7 +69,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
         if (invokerGroup == null) {
             throw new NullPointerException("invoker chain must set");
         }
-        Object obj = context.getPropertyValue(parameterName, invokerGroup);
+        Object obj = context.getPropertyValue(bindingParameter.getParameterName(), invokerGroup);
         context.writeToSqlBuffer(obj.toString());
         return true;
     }
@@ -68,8 +78,8 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     public String toString() {
         return super.toString() + "{" +
                 "fullName=" + getFullName() + ", " +
-                "parameterName=" + parameterName + ", " +
-                "propertyPath=" + propertyPath +
+                "parameterName=" + bindingParameter.getParameterName() + ", " +
+                "propertyPath=" + bindingParameter.getPropertyPath() +
                 "}";
     }
 
@@ -79,33 +89,8 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     }
 
     @Override
-    public boolean hasProperty() {
-        return Strings.isNotEmpty(propertyPath);
-    }
-
-    @Override
-    public String getParameterName() {
-        return parameterName;
-    }
-
-    @Override
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
-    }
-
-    @Override
-    public String getPropertyPath() {
-        return propertyPath;
-    }
-
-    @Override
-    public void setPropertyPath(String propertyPath) {
-        this.propertyPath = propertyPath;
-    }
-
-    @Override
     public String getFullName() {
-        return Strings.getFullName(parameterName, propertyPath);
+        return bindingParameter.getFullName();
     }
 
     @Override

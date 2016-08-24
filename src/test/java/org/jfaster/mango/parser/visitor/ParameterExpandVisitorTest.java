@@ -17,6 +17,7 @@
 package org.jfaster.mango.parser.visitor;
 
 import com.google.common.collect.Lists;
+import org.jfaster.mango.binding.BindingException;
 import org.jfaster.mango.binding.NameProvider;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -58,7 +59,7 @@ public class ParameterExpandVisitorTest {
 
     @Test
     public void testVisitJDBCParameter2() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(BindingException.class);
         thrown.expectMessage("parameters [1, 2] has the same property 'id', so can't expand");
 
         String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";

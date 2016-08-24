@@ -17,15 +17,15 @@
 package org.jfaster.mango.binding;
 
 import org.jfaster.mango.base.Strings;
-import org.jfaster.mango.invoker.*;
-import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.jdbc.MappingException;
+import org.jfaster.mango.invoker.FunctionalGetterInvokerGroup;
+import org.jfaster.mango.invoker.GetterInvokerGroup;
+import org.jfaster.mango.invoker.UnreachablePropertyException;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +35,7 @@ import java.util.Map;
 public class ParameterContext {
 
     private final List<ParameterDescriptor> parameterDescriptors;
-    private final Map<String, Type> typeMap = new HashMap<String, Type>();
-    private final Map<String, List<String>> propertyMap = new HashMap<String, List<String>>();
+    private final Map<String, Type> typeMap = new LinkedHashMap<String, Type>();
 
     public ParameterContext(List<ParameterDescriptor> parameterDescriptors, NameProvider nameProvider) {
         this.parameterDescriptors = parameterDescriptors;
@@ -44,54 +43,54 @@ public class ParameterContext {
             ParameterDescriptor pd = parameterDescriptors.get(i);
             String parameterName = nameProvider.getParameterName(i);
             typeMap.put(parameterName, pd.getType());
-
-            Class<?> parameterRawType = pd.getRawType();
-            if (!JdbcUtils.isSingleColumnClass(parameterRawType) // 方法参数不是单列
-                    && !pd.isIterable()) { // 方法参数不可迭代
-                List<GetterInvoker> invokers =
-                        InvokerCache.getGetterInvokers(parameterRawType);
-                for (GetterInvoker invoker : invokers) {
-                    String propertyName = invoker.getName();
-                    if (!nameProvider.isParameterName(propertyName)) { // 属性名和参数名相同则不扩展
-                        List<String> oldParameterNames = propertyMap.get(propertyName);
-                        if (oldParameterNames == null) {
-                            oldParameterNames = new ArrayList<String>();
-                            propertyMap.put(propertyName, oldParameterNames);
-                        }
-                        oldParameterNames.add(parameterName);
-                    }
-                }
-            }
         }
     }
 
     /**
      * 获得getter调用器
      */
-    public GetterInvokerGroup getInvokerGroup(String parameterName, String propertyPath) {
+    public GetterInvokerGroup getInvokerGroup(BindingParameter bindingParameter) {
+        String parameterName = bindingParameter.getParameterName();
+        String propertyPath = bindingParameter.getPropertyPath();
         Type type = typeMap.get(parameterName);
         if (type == null) {
-            throw new BindingException("Parameter '" + parameterName + "' not found, available parameters are " + typeMap.keySet());
+            throw new BindingException("Parameter '" + parameterName + "' not found, " +
+                    "available root parameters are " + typeMap.keySet());
         }
         try {
             GetterInvokerGroup invokerGroup = FunctionalGetterInvokerGroup.create(type, propertyPath);
             return invokerGroup;
         } catch (UnreachablePropertyException e) {
-            throw new BindingException("Property '" + Strings.getFullName(parameterName, propertyPath) + "' can't be readable", e);
+            throw new BindingException("Parameter '" + Strings.getFullName(parameterName, propertyPath) +
+                    "' can't be readable", e);
         }
     }
 
     @Nullable
-    public String getParameterNameByPropertyName(String propertyName) {
-        List<String> parameterNames = propertyMap.get(propertyName);
-        if (parameterNames == null) {
-            return null;
+    public String tryExpandParameterName(BindingParameter bindingParameter) {
+        if (!typeMap.containsKey(bindingParameter.getParameterName())) { // 根参数不存在才扩展
+            String propertyPath = bindingParameter.transToPropertyPath();
+            List<String> parameterNames = new ArrayList<String>();
+            for (Map.Entry<String, Type> entry : typeMap.entrySet()) {
+                Type type = entry.getValue();
+                try {
+                    FunctionalGetterInvokerGroup.create(type, propertyPath);
+                } catch (UnreachablePropertyException e) {
+                    // 异常说明扩展失败
+                    continue;
+                }
+                parameterNames.add(entry.getKey());
+            }
+            int num = parameterNames.size();
+            if (num > 0) {
+                if (num != 1) {
+                    throw new BindingException("parameters " + parameterNames +
+                            " has the same property '" + propertyPath + "', so can't expand");
+                }
+                return parameterNames.get(0);
+            }
         }
-        if (parameterNames.size() != 1) {
-            throw new IllegalArgumentException("parameters " + parameterNames +
-                    " has the same property '" + propertyName + "', so can't expand");
-        }
-        return parameterNames.get(0);
+        return null;
     }
 
     public List<ParameterDescriptor> getParameterDescriptors() {

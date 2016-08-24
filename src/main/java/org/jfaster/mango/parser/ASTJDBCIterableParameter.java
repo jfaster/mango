@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.invoker.GetterInvokerGroup;
-import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.base.Iterables;
-import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.binding.BindingParameter;
+import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.invoker.GetterInvokerGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,8 +31,7 @@ import java.util.regex.Pattern;
  */
 public class ASTJDBCIterableParameter extends AbstractRenderableNode implements ParameterBean {
 
-    private String parameterName;
-    private String propertyPath; // 为""的时候表示没有属性
+    private BindingParameter bindingParameter;
     private GetterInvokerGroup invokerGroup;
 
     private String propertyOfMapper; // "msg_id in (:1)"中的msg_id
@@ -52,11 +51,22 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
             throw new IllegalStateException("Can't compile string '" + str + "'");
         }
         String fullName = m.group(1);
-        parameterName = m.group(2);
-        propertyPath = fullName.substring(parameterName.length() + 1);
+        String parameterName = m.group(2);
+        String propertyPath = fullName.substring(parameterName.length() + 1);
         if (!propertyPath.isEmpty()) {
             propertyPath = propertyPath.substring(1);  // .property变为property
         }
+        bindingParameter = BindingParameter.create(parameterName, propertyPath);
+    }
+
+    @Override
+    public BindingParameter getBindingParameter() {
+        return bindingParameter;
+    }
+
+    @Override
+    public void setBindingParameter(BindingParameter bindingParameter) {
+        this.bindingParameter = bindingParameter;
     }
 
     @Override
@@ -64,14 +74,14 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
         if (invokerGroup == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object objs = context.getNullablePropertyValue(parameterName, invokerGroup);
+        Object objs = context.getNullablePropertyValue(bindingParameter.getParameterName(), invokerGroup);
         if (objs == null) {
             throw new NullPointerException("value of " +
-                    Strings.getFullName(parameterName, propertyPath) + " can't be null");
+                    bindingParameter.getFullName() + " can't be null");
         }
         Iterables iterables = new Iterables(objs);
         if (iterables.isEmpty()) {
-            context.addRuntimeEmptyParameter(new RuntimeEmptyParameter(parameterName, propertyPath));
+            context.addRuntimeEmptyParameter(new RuntimeEmptyParameter(bindingParameter.getParameterName(), bindingParameter.getPropertyPath()));
         }
         context.writeToSqlBuffer("in (");
         int t = 0;
@@ -92,8 +102,8 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     public String toString() {
         return super.toString() + "{" +
                 "fullName=" + getFullName() + ", " +
-                "parameterName=" + parameterName + ", " +
-                "propertyPath=" + propertyPath +
+                "parameterName=" + bindingParameter.getParameterName() + ", " +
+                "propertyPath=" + bindingParameter.getPropertyPath() +
                 "}";
     }
 
@@ -103,33 +113,8 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
 
     @Override
-    public boolean hasProperty() {
-        return Strings.isNotEmpty(propertyPath);
-    }
-
-    @Override
-    public String getParameterName() {
-        return parameterName;
-    }
-
-    @Override
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
-    }
-
-    @Override
-    public String getPropertyPath() {
-        return propertyPath;
-    }
-
-    @Override
-    public void setPropertyPath(String propertyPath) {
-        this.propertyPath = propertyPath;
-    }
-
-    @Override
     public String getFullName() {
-        return Strings.getFullName(parameterName, propertyPath);
+        return bindingParameter.getFullName();
     }
 
     @Override

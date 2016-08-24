@@ -19,6 +19,7 @@ package org.jfaster.mango.operator.cache;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
+import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.operator.IncorrectDefinitionException;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.binding.InvocationContext;
@@ -304,7 +305,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                 String propertyPaths = cacheByAnno.value();
                 for (String propertyPath : propertyPaths.split(",")) {
                     propertyPath = propertyPath.trim();
-                    GetterInvokerGroup invokerGroup = context.getInvokerGroup(parameterName, propertyPath);
+                    GetterInvokerGroup invokerGroup = context.getInvokerGroup(BindingParameter.create(parameterName, propertyPath));
                     Type cacheByType = invokerGroup.getTargetType();
                     TypeWrapper tw = new TypeWrapper(cacheByType);
                     cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerGroup));
@@ -353,8 +354,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         if (useMultipleKeys) {
             CacheByItem cacheByItem = getOnlyCacheByItem(cacheByItems);
             for (ASTJDBCIterableParameter jip : rootNode.getJDBCIterableParameters()) {
-                if (jip.getParameterName().equals(cacheByItem.getParameterName())
-                        && jip.getPropertyPath().equals(cacheByItem.getPropertyPath())) {
+                if (jip.getBindingParameter().getParameterName().equals(cacheByItem.getParameterName())
+                        && jip.getBindingParameter().getPropertyPath().equals(cacheByItem.getPropertyPath())) {
                     propertyOfMapper = jip.getPropertyOfMapper();
                     break;
                 }
@@ -380,16 +381,16 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             String propertyPath = cacheByItem.getPropertyPath();
             boolean pass = false;
             for (ASTJDBCParameter jp : jps) {
-                if (jp.getParameterName().equals(parameterName) &&
-                        jp.getPropertyPath().equals(propertyPath)) {
+                if (jp.getBindingParameter().getParameterName().equals(parameterName) &&
+                        jp.getBindingParameter().getPropertyPath().equals(propertyPath)) {
                     pass = true;
                     break;
                 }
             }
             List<ASTJDBCIterableParameter> jips = rootNode.getJDBCIterableParameters();
             for (ASTJDBCIterableParameter jip : jips) {
-                if (jip.getParameterName().equals(parameterName) &&
-                        jip.getPropertyPath().equals(propertyPath)) {
+                if (jip.getBindingParameter().getParameterName().equals(parameterName) &&
+                        jip.getBindingParameter().getPropertyPath().equals(propertyPath)) {
                     pass = true;
                     break;
                 }

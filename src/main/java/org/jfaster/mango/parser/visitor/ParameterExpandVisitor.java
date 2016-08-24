@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.parser.visitor;
 
+import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.*;
 
@@ -75,14 +76,14 @@ public enum ParameterExpandVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
+        ParameterContext context = transToParameterContext(data);
         expandParameter(node, context);
         return node.childrenAccept(this, data);
     }
 
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
+        ParameterContext context = transToParameterContext(data);
         expandParameter(node, context);
         return node.childrenAccept(this, data);
     }
@@ -94,7 +95,7 @@ public enum ParameterExpandVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
+        ParameterContext context = transToParameterContext(data);
         expandParameter(node, context);
         return node.childrenAccept(this, data);
     }
@@ -181,7 +182,7 @@ public enum ParameterExpandVisitor implements ParserVisitor {
 
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
-        ParameterContext context = getTypeContext(data);
+        ParameterContext context = transToParameterContext(data);
         expandParameter(node, context);
         return node.childrenAccept(this, data);
     }
@@ -212,17 +213,16 @@ public enum ParameterExpandVisitor implements ParserVisitor {
     }
 
     private void expandParameter(ParameterBean node, ParameterContext context) {
-        if (!node.hasProperty()) {
-            String currentParameterName = node.getParameterName();
-            String expandParameterName = context.getParameterNameByPropertyName(currentParameterName);
-            if (expandParameterName != null) { // 需要扩展
-                node.setParameterName(expandParameterName);
-                node.setPropertyPath(currentParameterName);
-            }
+        BindingParameter bindingParameter = node.getBindingParameter();
+        String parameterName = context.tryExpandParameterName(bindingParameter);
+        if (parameterName != null) { // 自动扩展
+            BindingParameter newBindingParameter =
+                    BindingParameter.create(parameterName, bindingParameter.transToPropertyPath());
+            node.setBindingParameter(newBindingParameter);
         }
     }
 
-    private ParameterContext getTypeContext(Object data) {
+    private ParameterContext transToParameterContext(Object data) {
         return (ParameterContext) data;
     }
 

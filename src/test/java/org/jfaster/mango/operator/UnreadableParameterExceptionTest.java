@@ -32,7 +32,7 @@ public class UnreadableParameterExceptionTest {
     @Test
     public void test2() {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Property ':1.c.d' can't be readable; caused by: There is no getter for property named 'c' in 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A'");
+        thrown.expectMessage("Parameter ':1.c.d' can't be readable; caused by: There is no getter for property named 'c' in 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A'");
         Dao dao = mango.create(Dao.class);
         dao.add2(new A());
     }
@@ -50,7 +50,7 @@ public class UnreadableParameterExceptionTest {
     @Test
     public void test4() {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Parameter '1' not found, available parameters are []");
+        thrown.expectMessage("Parameter '1' not found, available root parameters are []");
         Dao dao = mango.create(Dao.class);
         dao.add();
     }
@@ -58,7 +58,7 @@ public class UnreadableParameterExceptionTest {
     @Test
     public void test5() {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Parameter '1' not found, available parameters are []");
+        thrown.expectMessage("Parameter '1' not found, available root parameters are []");
         Dao dao = mango.create(Dao.class);
         dao.gets();
     }
