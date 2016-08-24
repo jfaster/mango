@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.util.Joiner;
-import org.jfaster.mango.util.Objects;
-import org.jfaster.mango.util.Primitives;
+import org.jfaster.mango.base.Joiner;
+import org.jfaster.mango.base.Objects;
+import org.jfaster.mango.base.Primitives;
 
 import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;

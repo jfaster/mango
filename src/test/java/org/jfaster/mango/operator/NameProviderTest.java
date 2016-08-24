@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.NameProvider;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.MockRename;

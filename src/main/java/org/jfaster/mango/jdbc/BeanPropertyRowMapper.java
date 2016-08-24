@@ -21,10 +21,10 @@ import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.invoker.UnreachablePropertyException;
 import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.util.PropertyTokenizer;
-import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.base.PropertyTokenizer;
+import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.base.logging.InternalLogger;
+import org.jfaster.mango.base.logging.InternalLoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

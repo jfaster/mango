@@ -17,8 +17,8 @@
 package org.jfaster.mango.plugin.spring;
 
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.base.logging.InternalLogger;
+import org.jfaster.mango.base.logging.InternalLoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.util.Arrays;
+import org.jfaster.mango.base.Arrays;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

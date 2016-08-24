@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.base.sql.OperatorType;
+
 import java.lang.reflect.Method;
 
 /**

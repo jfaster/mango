@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.operator.InvocationContext;
+import org.jfaster.mango.binding.InvocationContext;
 
 /**
  * @author ash

@@ -16,11 +16,18 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.reflect.Parameter;
+import org.jfaster.mango.base.sql.PreparedSql;
+import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.binding.InvocationContextFactory;
+import org.jfaster.mango.binding.NameProvider;
+import org.jfaster.mango.interceptor.Interceptor;
+import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.interceptor.InvocationInterceptorChain;
+import org.jfaster.mango.interceptor.Parameter;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.model4table.User;
-import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.base.sql.SQLType;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;

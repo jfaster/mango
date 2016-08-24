@@ -19,8 +19,8 @@ package org.jfaster.mango.datasource;
 import org.jfaster.mango.exception.jdbc.CannotGetJdbcConnectionException;
 import org.jfaster.mango.transaction.ConnectionHolder;
 import org.jfaster.mango.transaction.TransactionSynchronizationManager;
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.base.logging.InternalLogger;
+import org.jfaster.mango.base.logging.InternalLoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;

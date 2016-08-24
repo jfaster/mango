@@ -19,6 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.ReturnDescriptor;

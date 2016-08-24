@@ -17,7 +17,6 @@
 package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.annotation.Getter;
-import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TokenTuple;
@@ -40,7 +39,6 @@ public class FunctionalGetterInvoker extends MethodNamedObject implements Getter
 
     private FunctionalGetterInvoker(String name, Method method) {
         super(name, method);
-        Setter setterAnno = method.getAnnotation(Setter.class);
         Getter getterAnno = method.getAnnotation(Getter.class);
 
         TypeToken<?> returnToken = TypeToken.of(method.getGenericReturnType());

@@ -17,11 +17,13 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.ReturnGeneratedId;
+import org.jfaster.mango.base.sql.PreparedSql;
+import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.util.ToStringHelper;
+import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.base.ToStringHelper;
 
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;

@@ -18,15 +18,17 @@ package org.jfaster.mango.parser;
 
 import com.google.common.collect.Lists;
 import org.hamcrest.Matchers;
-import org.jfaster.mango.operator.*;
+import org.jfaster.mango.base.sql.PreparedSql;
+import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.binding.NameProvider;
+import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.util.SQLType;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -383,7 +385,7 @@ public class ParserTest {
             pds.add(pd);
         }
         NameProvider np = new NameProvider(pds);
-        ParameterContext ctx = new ParameterContext(pds, np, OperatorType.QUERY);
+        ParameterContext ctx = new ParameterContext(pds, np);
         return ctx;
     }
 

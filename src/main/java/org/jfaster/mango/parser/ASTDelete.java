@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.base.sql.SQLType;
 
 /**
  * @author ash

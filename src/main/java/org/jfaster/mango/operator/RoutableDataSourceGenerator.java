@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.invoker.GetterInvokerGroup;

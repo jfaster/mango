@@ -16,10 +16,11 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.base.logging.InternalLogger;
+import org.jfaster.mango.base.logging.InternalLoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;

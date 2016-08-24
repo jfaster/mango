@@ -21,8 +21,8 @@ import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.operator.OperatorStats;
 import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
-import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.util.ToStringHelper;
+import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.base.ToStringHelper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

@@ -17,9 +17,9 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.invoker.GetterInvokerGroup;
-import org.jfaster.mango.operator.InvocationContext;
-import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.base.Iterables;
+import org.jfaster.mango.base.Strings;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

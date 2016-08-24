@@ -16,10 +16,13 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.binding.InvocationContextFactory;
+import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.RuntimeEmptyParameter;
-import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.InvocationContext;
+import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTStringLiteral extends AbstractExpression {
 

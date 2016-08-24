@@ -1,9 +1,9 @@
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.operator.InvocationContext;
-import org.jfaster.mango.operator.ParameterContext;
+import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.visitor.*;
-import org.jfaster.mango.util.SQLType;
+import org.jfaster.mango.base.sql.SQLType;
 
 import java.util.List;
 

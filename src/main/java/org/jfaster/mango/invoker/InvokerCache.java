@@ -17,9 +17,9 @@
 package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.exception.UncheckedException;
-import org.jfaster.mango.util.concurrent.cache.CacheLoader;
-import org.jfaster.mango.util.concurrent.cache.DoubleCheckCache;
-import org.jfaster.mango.util.concurrent.cache.LoadingCache;
+import org.jfaster.mango.base.concurrent.cache.CacheLoader;
+import org.jfaster.mango.base.concurrent.cache.DoubleCheckCache;
+import org.jfaster.mango.base.concurrent.cache.LoadingCache;
 
 import javax.annotation.Nullable;
 import java.beans.Introspector;

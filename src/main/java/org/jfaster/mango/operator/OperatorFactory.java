@@ -17,21 +17,28 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.*;
+import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.base.sql.OperatorType;
+import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.binding.InvocationContextFactory;
+import org.jfaster.mango.binding.NameProvider;
+import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
+import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
-import org.jfaster.mango.sharding.*;
 import org.jfaster.mango.reflect.*;
-import org.jfaster.mango.util.SQLType;
-import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.sharding.*;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,12 +87,16 @@ public class OperatorFactory {
                 if (pd.isIterable() && rootNode.getJDBCIterableParameters().isEmpty()) {
                     // 参数可迭代，同时sql中没有in语句
                     operatorType = OperatorType.BATCHUPDATE;
+
+                    pds = new ArrayList<ParameterDescriptor>(1);
+                    pds.add(new ParameterDescriptor(0, pd.getMappedClass(), pd.getAnnotations(), pd.getName()));
+
                 }
             }
         }
 
         NameProvider nameProvider = new NameProvider(md.getParameterDescriptors());
-        ParameterContext context = new ParameterContext(md.getParameterDescriptors(), nameProvider, operatorType);
+        ParameterContext context = new ParameterContext(pds, nameProvider);
         statsCounter.setOperatorType(operatorType);
 
         rootNode.expandParameter(context); // 扩展简化的参数节点

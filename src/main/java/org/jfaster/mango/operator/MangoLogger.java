@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.util.logging.*;
+import org.jfaster.mango.base.logging.*;
 
 /**
  * @author ash

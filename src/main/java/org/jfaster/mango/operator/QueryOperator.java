@@ -19,6 +19,8 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
+import org.jfaster.mango.base.sql.PreparedSql;
+import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.MethodDescriptor;

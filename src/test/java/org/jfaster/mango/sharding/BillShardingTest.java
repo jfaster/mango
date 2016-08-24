@@ -24,7 +24,7 @@ import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Bill;
-import org.jfaster.mango.util.HashUtil;
+import org.jfaster.mango.base.HashUtil;
 import org.junit.Before;
 import org.junit.Test;
 

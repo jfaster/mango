@@ -19,7 +19,7 @@ package org.jfaster.mango.parser.visitor;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.operator.ParameterContext;
+import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.*;
 import org.jfaster.mango.reflect.TypeWrapper;
 

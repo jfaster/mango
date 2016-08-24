@@ -17,9 +17,9 @@
 package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.util.NestedProperty;
-import org.jfaster.mango.util.PropertyTokenizer;
-import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.base.NestedProperty;
+import org.jfaster.mango.base.PropertyTokenizer;
+import org.jfaster.mango.base.Strings;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -46,10 +46,7 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
         while (prop.hasCurrent()) {
             String propertyName = prop.getName();
             np.append(propertyName);
-            GetterInvoker invoker = InvokerCache.getNullableGetterInvoker(rawType, propertyName);
-            if (invoker == null) {
-                throw new UnreachablePropertyException(originalType, currentType, propertyName, np.getNestedProperty());
-            }
+            GetterInvoker invoker = InvokerCache.getGetterInvoker(rawType, propertyName);
             invokers.add(invoker);
             currentType = invoker.getReturnType();
             rawType = TypeToken.of(currentType).getRawType();

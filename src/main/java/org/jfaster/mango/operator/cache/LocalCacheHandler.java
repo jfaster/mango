@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.util.Ticker;
+import org.jfaster.mango.base.Ticker;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

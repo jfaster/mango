@@ -4,6 +4,8 @@ import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
+import org.jfaster.mango.binding.BindingException;
+import org.jfaster.mango.jdbc.MappingException;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -29,10 +31,8 @@ public class UnreadableParameterExceptionTest {
 
     @Test
     public void test2() {
-        thrown.expect(UnreadableParameterException.class);
-        thrown.expectMessage("The parameter ':1.c' is not readable; " +
-                "caused by the property 'c' of 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A' is unreachable, " +
-                "please check it's get method");
+        thrown.expect(BindingException.class);
+        thrown.expectMessage("Property ':1.c.d' can't be readable; caused by: There is no getter for property named 'c' in 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A'");
         Dao dao = mango.create(Dao.class);
         dao.add2(new A());
     }
@@ -49,16 +49,16 @@ public class UnreadableParameterExceptionTest {
 
     @Test
     public void test4() {
-        thrown.expect(UnreadableParameterException.class);
-        thrown.expectMessage("The parameter ':1' is not readable");
+        thrown.expect(BindingException.class);
+        thrown.expectMessage("Parameter '1' not found, available parameters are []");
         Dao dao = mango.create(Dao.class);
         dao.add();
     }
 
     @Test
     public void test5() {
-        thrown.expect(UnreadableParameterException.class);
-        thrown.expectMessage("The parameter ':1' is not readable");
+        thrown.expect(BindingException.class);
+        thrown.expectMessage("Parameter '1' not found, available parameters are []");
         Dao dao = mango.create(Dao.class);
         dao.gets();
     }
