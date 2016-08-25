@@ -18,8 +18,8 @@ package org.jfaster.mango.parser;
 
 import org.jfaster.mango.base.Iterables;
 import org.jfaster.mango.binding.BindingParameter;
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class ASTJDBCIterableParameter extends AbstractRenderableNode implements ParameterBean {
 
     private BindingParameter bindingParameter;
-    private GetterInvokerGroup invokerGroup;
+    private BindingParameterInvoker invokerGroup;
 
     private String propertyOfMapper; // "msg_id in (:1)"中的msg_id
 
@@ -74,14 +74,20 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
         if (invokerGroup == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object objs = context.getNullablePropertyValue(bindingParameter.getParameterName(), invokerGroup);
+        Object objs = context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
         if (objs == null) {
             throw new NullPointerException("value of " +
                     bindingParameter.getFullName() + " can't be null");
         }
         Iterables iterables = new Iterables(objs);
         if (iterables.isEmpty()) {
-            context.addRuntimeEmptyParameter(new RuntimeEmptyParameter(bindingParameter.getParameterName(), bindingParameter.getPropertyPath()));
+            if (iterables.isCollection()) {
+                throw new EmptyCollectionException("value of " +
+                        bindingParameter.getFullName() + " can't be empty");
+            } else {
+                throw new EmptyArrayException("value of " +
+                        bindingParameter.getFullName() + " can't be empty");
+            }
         }
         context.writeToSqlBuffer("in (");
         int t = 0;
@@ -118,7 +124,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
 
     @Override
-    public void setInvokerGroup(GetterInvokerGroup invokerGroup) {
+    public void setInvokerGroup(BindingParameterInvoker invokerGroup) {
         this.invokerGroup = invokerGroup;
     }
 

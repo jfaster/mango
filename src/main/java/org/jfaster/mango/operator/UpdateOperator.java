@@ -17,13 +17,14 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.ReturnGeneratedId;
+import org.jfaster.mango.base.ToStringHelper;
 import org.jfaster.mango.base.sql.PreparedSql;
+import org.jfaster.mango.base.sql.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.parser.EmptyObjectException;
 import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.base.sql.SQLType;
-import org.jfaster.mango.base.ToStringHelper;
 
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;
@@ -78,13 +79,14 @@ public class UpdateOperator extends AbstractOperator {
 
     public Object execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
-        rootNode.render(context);
 
-        if (context.getRuntimeEmptyParameters() != null) {
+        try {
+            rootNode.render(context);
+        } catch (EmptyObjectException e) {
             if (config.isCompatibleWithEmptyList()) {
                 return transformer.transform(0);
             } else {
-                throwEmptyParametersException(context);
+                throw e;
             }
         }
 

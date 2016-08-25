@@ -17,8 +17,8 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.binding.BindingParameter;
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class ASTJDBCParameter extends AbstractRenderableNode implements ParameterBean {
 
     private BindingParameter bindingParameter;
-    private GetterInvokerGroup invokerGroup;
+    private BindingParameterInvoker invokerGroup;
 
     public ASTJDBCParameter(int i) {
         super(i);
@@ -72,7 +72,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
             throw new NullPointerException("invoker must set");
         }
         context.writeToSqlBuffer("?");
-        Object obj = context.getNullablePropertyValue(bindingParameter.getParameterName(), invokerGroup);
+        Object obj = context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
         context.appendToArgs(obj);
         return true;
     }
@@ -97,7 +97,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
     }
 
     @Override
-    public void setInvokerGroup(GetterInvokerGroup invokerGroup) {
+    public void setInvokerGroup(BindingParameterInvoker invokerGroup) {
         this.invokerGroup = invokerGroup;
     }
 }

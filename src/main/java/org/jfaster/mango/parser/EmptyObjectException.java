@@ -16,20 +16,19 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.binding.BindingParameter;
-import org.jfaster.mango.binding.BindingParameterInvoker;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * @author ash
  */
-public interface ParameterBean {
+public class EmptyObjectException extends MangoException {
 
-    public BindingParameter getBindingParameter();
+    public EmptyObjectException(String msg) {
+        super(msg);
+    }
 
-    public void setBindingParameter(BindingParameter bindingParameter);
-
-    public void setInvokerGroup(BindingParameterInvoker invoker);
-
-    public String getFullName();
+    public EmptyObjectException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

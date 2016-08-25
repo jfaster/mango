@@ -43,12 +43,10 @@ public class ParameterContextTest {
         TypeToken<Integer> t1 = new TypeToken<Integer>() {};
         ParameterDescriptor p1 = new ParameterDescriptor(1, t1.getType(), empty, "2");
         List<ParameterDescriptor> pds = Arrays.asList(p0, p1);
-        NameProvider np = new NameProvider(pds);
 
-        ParameterContext ctx = new ParameterContext(pds, np);
+        ParameterContext ctx = DefaultParameterContext.create(pds);
         assertThat(ctx.getInvokerGroup(BindingParameter.create("1", "")).getTargetType(), equalTo(t0.getType()));
         assertThat(ctx.getInvokerGroup(BindingParameter.create("2", "")).getTargetType(), equalTo(t1.getType()));
-        assertThat(ctx.getParameterDescriptors(), equalTo(pds));
     }
 
     @Rule
@@ -57,16 +55,15 @@ public class ParameterContextTest {
     @Test
     public void testNotReadableParameterException() throws Exception {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Parameter '3' not found, available root parameters are [2, 1]");
+        thrown.expectMessage("Parameter '3' not found, available root parameters are [1, 2]");
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<String> t = new TypeToken<String>() {};
         ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
         ParameterDescriptor p2 = new ParameterDescriptor(1, t.getType(), empty, "2");
         List<ParameterDescriptor> pds = Arrays.asList(p, p2);
-        NameProvider np = new NameProvider(pds);
 
-        ParameterContext ctx = new ParameterContext(pds, np);
+        ParameterContext ctx = DefaultParameterContext.create(pds);
         ctx.getInvokerGroup(BindingParameter.create("3", ""));
     }
 
@@ -79,9 +76,8 @@ public class ParameterContextTest {
         TypeToken<String> t = new TypeToken<String>() {};
         ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
-        NameProvider np = new NameProvider(pds);
 
-        ParameterContext ctx = new ParameterContext(pds, np);
+        ParameterContext ctx = DefaultParameterContext.create(pds);
         ctx.getInvokerGroup(BindingParameter.create("1", "id"));
     }
 

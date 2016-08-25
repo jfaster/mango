@@ -18,7 +18,7 @@ package org.jfaster.mango.parser.visitor;
 
 import com.google.common.collect.Lists;
 import org.jfaster.mango.binding.BindingException;
-import org.jfaster.mango.binding.NameProvider;
+import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
@@ -46,8 +46,7 @@ public class ParameterExpandVisitorTest {
         TypeToken<User> t = new TypeToken<User>() {};
         ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
         List<ParameterDescriptor> pds = Lists.newArrayList(p);
-        NameProvider np = new NameProvider(pds);
-        ParameterContext ctx = new ParameterContext(pds, np);
+        ParameterContext ctx = DefaultParameterContext.create(pds);
 
         rootNode.expandParameter(ctx);
         rootNode.dump(""); // TODO 返回值监测
@@ -71,8 +70,7 @@ public class ParameterExpandVisitorTest {
         TypeToken<User2> t2 = new TypeToken<User2>() {};
         ParameterDescriptor p2 = new ParameterDescriptor(1, t2.getType(), empty, "2");
         List<ParameterDescriptor> pds = Lists.newArrayList(p, p2);
-        NameProvider np = new NameProvider(pds);
-        ParameterContext ctx = new ParameterContext(pds, np);
+        ParameterContext ctx = DefaultParameterContext.create(pds);
         rootNode.expandParameter(ctx);
     }
 

@@ -14,21 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
-
-import java.lang.reflect.Type;
+package org.jfaster.mango.parser;
 
 /**
  * @author ash
  */
-public interface GetterInvokerGroup {
+public class EmptyArrayException extends EmptyObjectException {
 
-    public Type getOriginalType();
+    public EmptyArrayException(String msg) {
+        super(msg);
+    }
 
-    public Type getTargetType();
-
-    public Object invoke(Object obj);
-
-    public String getPropertyPath();
+    public EmptyArrayException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }

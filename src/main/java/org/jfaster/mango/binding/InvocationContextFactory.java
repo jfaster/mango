@@ -5,16 +5,17 @@ package org.jfaster.mango.binding;
  */
 public class InvocationContextFactory {
 
-    private NameProvider nameProvider;
+    private ParameterContext parameterContext;
 
-    public InvocationContextFactory(NameProvider nameProvider) {
-        this.nameProvider = nameProvider;
+    public InvocationContextFactory(ParameterContext parameterContext) {
+        this.parameterContext = parameterContext;
     }
 
     public InvocationContext newInvocationContext(Object[] values) {
-        InvocationContext context = new InvocationContext();
+        InvocationContext context = DefaultInvocationContext.create();
         for (int i = 0; i < values.length; i++) {
-            context.addParameter(nameProvider.getParameterName(i), values[i]);
+            String parameterName = parameterContext.getParameterNameByPosition(i);
+            context.addParameter(parameterName, values[i]);
         }
         return context;
     }

@@ -19,12 +19,13 @@ package org.jfaster.mango.operator.cache;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
+import org.jfaster.mango.base.Iterables;
+import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.binding.BindingParameter;
-import org.jfaster.mango.operator.IncorrectDefinitionException;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.binding.NameProvider;
 import org.jfaster.mango.binding.ParameterContext;
+import org.jfaster.mango.operator.IncorrectDefinitionException;
 import org.jfaster.mango.operator.StatsCounter;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
@@ -33,8 +34,6 @@ import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeWrapper;
-import org.jfaster.mango.base.Iterables;
-import org.jfaster.mango.base.Strings;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -49,8 +48,6 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
      * 具体的缓存实现，通过{@link this#setCacheHandler(CacheHandler)}初始化
      */
     private CacheHandler cacheHandler;
-
-    private NameProvider nameProvider;
 
     private StatsCounter statsCounter;
 
@@ -101,9 +98,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     private String propertyOfMapper;
 
     public CacheDriver(MethodDescriptor md, ASTRootNode rootNode, CacheHandler cacheHandler,
-                           ParameterContext context, NameProvider nameProvider, StatsCounter statsCounter) {
+                           ParameterContext context, StatsCounter statsCounter) {
         this.cacheHandler = cacheHandler;
-        this.nameProvider = nameProvider;
         this.statsCounter = statsCounter;
         this.daoClass = md.getDaoClass();
         this.returnType = md.getReturnType();
@@ -241,7 +237,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     public String getCacheKey(InvocationContext context) {
         StringBuilder key = new StringBuilder(prefix);
         for (CacheByItem item : cacheByItems) {
-            Object obj = context.getPropertyValue(item.getParameterName(), item.getInvokerGroup());
+            Object obj = context.getBindingValue(item.getParameterName(), item.getInvokerGroup());
             if (obj == null) {
                 throw new NullPointerException("value of " + item.getFullName() + " can't be null");
             }
@@ -274,7 +270,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public Object getOnlyCacheByObj(InvocationContext context) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
-        Object obj = context.getPropertyValue(item.getParameterName(), item.getInvokerGroup());
+        Object obj = context.getBindingValue(item.getParameterName(), item.getInvokerGroup());
         if (obj == null) {
             throw new NullPointerException("value of " + item.getFullName() + " can't be null");
         }
@@ -284,7 +280,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public void setOnlyCacheByObj(InvocationContext context, Object obj) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
-        context.setPropertyValue(item.getParameterName(), item.getInvokerGroup(), obj);
+        context.setBindingValue(item.getParameterName(), item.getInvokerGroup(), obj);
     }
 
     @Override
@@ -301,11 +297,11 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             CacheBy cacheByAnno = pd.getAnnotation(CacheBy.class);
             if (cacheByAnno != null) {
-                String parameterName = nameProvider.getParameterName(pd.getPosition());
+                String parameterName = context.getParameterNameByPosition(pd.getPosition());
                 String propertyPaths = cacheByAnno.value();
                 for (String propertyPath : propertyPaths.split(",")) {
                     propertyPath = propertyPath.trim();
-                    GetterInvokerGroup invokerGroup = context.getInvokerGroup(BindingParameter.create(parameterName, propertyPath));
+                    BindingParameterInvoker invokerGroup = context.getInvokerGroup(BindingParameter.create(parameterName, propertyPath));
                     Type cacheByType = invokerGroup.getTargetType();
                     TypeWrapper tw = new TypeWrapper(cacheByType);
                     cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerGroup));
@@ -410,9 +406,9 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
         private final Class<?> actualClass;
 
-        private final GetterInvokerGroup invokerGroup;
+        private final BindingParameterInvoker invokerGroup;
 
-        public CacheByItem(String parameterName, String propertyPath, Class<?> actualClass, GetterInvokerGroup invokerGroup) {
+        public CacheByItem(String parameterName, String propertyPath, Class<?> actualClass, BindingParameterInvoker invokerGroup) {
             this.parameterName = parameterName;
             this.propertyPath = propertyPath;
             this.actualClass = actualClass;
@@ -431,7 +427,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
             return actualClass;
         }
 
-        private GetterInvokerGroup getInvokerGroup() {
+        private BindingParameterInvoker getInvokerGroup() {
             return invokerGroup;
         }
 

@@ -23,6 +23,7 @@ import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.parser.EmptyCollectionException;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
@@ -315,9 +316,8 @@ public class DbTest {
 
     @Test
     public void testQueryEmpty2() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("value of :1 can't be empty, " +
-                "error SQL [select id, name, age, gender, money, update_time from user where id in ()]");
+        thrown.expect(EmptyCollectionException.class);
+        thrown.expectMessage("value of :1 can't be empty");
         boolean old = mango.isCompatibleWithEmptyList();
         mango.setCompatibleWithEmptyList(false);
         dao.getUsersInList(new ArrayList<Integer>());
@@ -407,8 +407,8 @@ public class DbTest {
 
     @Test
     public void testUpdateEmpty2() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("value of :ids can't be empty, error SQL [update user set name=? where id in ()]");
+        thrown.expect(EmptyCollectionException.class);
+        thrown.expectMessage("value of :ids can't be empty");
         boolean old = mango.isCompatibleWithEmptyList();
         mango.setCompatibleWithEmptyList(false);
         dao.updateUsers(new ArrayList<Integer>(), "ash");

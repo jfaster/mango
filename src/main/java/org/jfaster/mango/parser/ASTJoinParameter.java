@@ -17,8 +17,8 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.binding.BindingParameter;
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 public class ASTJoinParameter extends AbstractRenderableNode implements ParameterBean {
 
     private BindingParameter bindingParameter;
-    private GetterInvokerGroup invokerGroup;
+    private BindingParameterInvoker invokerGroup;
 
     public ASTJoinParameter(int id) {
         super(id);
@@ -69,7 +69,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
         if (invokerGroup == null) {
             throw new NullPointerException("invoker chain must set");
         }
-        Object obj = context.getPropertyValue(bindingParameter.getParameterName(), invokerGroup);
+        Object obj = context.getBindingValue(bindingParameter.getParameterName(), invokerGroup);
         context.writeToSqlBuffer(obj.toString());
         return true;
     }
@@ -94,7 +94,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     }
 
     @Override
-    public void setInvokerGroup(GetterInvokerGroup invokerGroup) {
+    public void setInvokerGroup(BindingParameterInvoker invokerGroup) {
         this.invokerGroup = invokerGroup;
     }
 }

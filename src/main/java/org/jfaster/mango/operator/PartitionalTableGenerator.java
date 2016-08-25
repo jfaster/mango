@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.sharding.TableShardingStrategy;
 
 import javax.annotation.Nullable;
@@ -35,11 +35,11 @@ public class PartitionalTableGenerator implements TableGenerator {
 
     private final String table; // 原始表名称
     private final String shardParameterName;
-    private final GetterInvokerGroup shardingParameterInvoker;
+    private final BindingParameterInvoker shardingParameterInvoker;
     private final TableShardingStrategy tableShardingStrategy; // 分表策略
 
     public PartitionalTableGenerator(String table, String shardParameterName,
-                                     GetterInvokerGroup shardingParameterInvoker,
+                                     BindingParameterInvoker shardingParameterInvoker,
                                      TableShardingStrategy tableShardingStrategy) {
         this.table = table;
         this.shardParameterName = shardParameterName;
@@ -51,7 +51,7 @@ public class PartitionalTableGenerator implements TableGenerator {
     @Nullable
     @Override
     public String getTable(InvocationContext context) {
-        Object shardParam = context.getPropertyValue(shardParameterName, shardingParameterInvoker);
+        Object shardParam = context.getBindingValue(shardParameterName, shardingParameterInvoker);
         return tableShardingStrategy.getTargetTable(table, shardParam);
     }
 

@@ -23,6 +23,7 @@ import org.jfaster.mango.base.sql.PreparedSql;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.parser.EmptyObjectException;
 import org.jfaster.mango.reflect.MethodDescriptor;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.ReturnDescriptor;
@@ -69,13 +70,14 @@ public class QueryOperator extends AbstractOperator {
 
     protected Object execute(InvocationContext context) {
         context.setGlobalTable(tableGenerator.getTable(context));
-        rootNode.render(context);
 
-        if (context.getRuntimeEmptyParameters() != null) {
+        try {
+            rootNode.render(context);
+        } catch (EmptyObjectException e) {
             if (config.isCompatibleWithEmptyList()) {
                 return EmptyObject();
             } else {
-                throwEmptyParametersException(context);
+                throw e;
             }
         }
 

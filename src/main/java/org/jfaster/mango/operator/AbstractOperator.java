@@ -16,16 +16,10 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.parser.RuntimeEmptyParameter;
-import org.jfaster.mango.base.Strings;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author ash
@@ -114,16 +108,6 @@ public abstract class AbstractOperator implements Operator {
     @Override
     public void setStatsCounter(StatsCounter statsCounter) {
         this.statsCounter = statsCounter;
-    }
-
-    protected void throwEmptyParametersException(InvocationContext context) {
-        List<String> fullNames = new ArrayList<String>();
-        for (RuntimeEmptyParameter rep : context.getRuntimeEmptyParameters()) {
-            fullNames.add(Strings.getFullName(rep.getParameterName(), rep.getPropertyPath()));
-        }
-        String str = fullNames.size() == 1 ? fullNames.get(0) : fullNames.toString();
-        throw new IllegalArgumentException("value of " +
-                str + " can't be empty, error SQL [" + context.getPreparedSql().getSql() + "]");
     }
 
 }

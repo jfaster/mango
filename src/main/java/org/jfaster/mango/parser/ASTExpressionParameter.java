@@ -17,8 +17,8 @@
 package org.jfaster.mango.parser;
 
 import org.jfaster.mango.binding.BindingParameter;
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class ASTExpressionParameter extends AbstractExpression implements ParameterBean {
 
     private BindingParameter bindingParameter;
-    private GetterInvokerGroup invokerGroup;
+    private BindingParameterInvoker invokerGroup;
 
     public ASTExpressionParameter(int i) {
         super(i);
@@ -71,7 +71,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (invokerGroup == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object obj = context.getNullablePropertyValue(bindingParameter.getParameterName(), invokerGroup);
+        Object obj = context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         }
@@ -86,7 +86,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (invokerGroup == null) {
             throw new NullPointerException("invoker must set");
         }
-        return context.getNullablePropertyValue(bindingParameter.getParameterName(), invokerGroup);
+        return context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
     }
 
     @Override
-    public void setInvokerGroup(GetterInvokerGroup invokerGroup) {
+    public void setInvokerGroup(BindingParameterInvoker invokerGroup) {
         this.invokerGroup = invokerGroup;
     }
 }

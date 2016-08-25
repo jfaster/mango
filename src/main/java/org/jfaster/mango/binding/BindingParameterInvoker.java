@@ -14,22 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.parser;
+package org.jfaster.mango.binding;
 
-import org.jfaster.mango.binding.BindingParameter;
-import org.jfaster.mango.binding.BindingParameterInvoker;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public interface ParameterBean {
+public interface BindingParameterInvoker {
 
+    /**
+     * 获得目标类型
+     */
+    public Type getTargetType();
+
+    /**
+     * 执行get方法链
+     */
+    public Object invoke(Object obj);
+
+    /**
+     * 获得绑定参数
+     */
     public BindingParameter getBindingParameter();
-
-    public void setBindingParameter(BindingParameter bindingParameter);
-
-    public void setInvokerGroup(BindingParameterInvoker invoker);
-
-    public String getFullName();
 
 }

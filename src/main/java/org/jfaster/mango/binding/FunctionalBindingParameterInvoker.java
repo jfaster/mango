@@ -14,8 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.binding;
 
+import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.base.NestedProperty;
 import org.jfaster.mango.base.PropertyTokenizer;
@@ -28,24 +30,20 @@ import java.util.List;
 /**
  * @author ash
  */
-public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
+public class FunctionalBindingParameterInvoker implements BindingParameterInvoker {
 
-    private final Type originalType;
     private final Type targetType;
-    private String propertyPath;
+    private final BindingParameter bindingParameter;
     private final List<GetterInvoker> invokers;
 
-    private FunctionalGetterInvokerGroup(Type originalType, String propertyPath) {
-        this.originalType = originalType;
-        this.propertyPath = propertyPath;
+    private FunctionalBindingParameterInvoker(Type originalType, BindingParameter bindingParameter) {
+        this.bindingParameter = bindingParameter;
         invokers = new ArrayList<GetterInvoker>();
         Type currentType = originalType;
         Class<?> rawType = TypeToken.of(currentType).getRawType();
-        PropertyTokenizer prop = new PropertyTokenizer(propertyPath);
-        NestedProperty np = new NestedProperty();
+        PropertyTokenizer prop = new PropertyTokenizer(bindingParameter.getPropertyPath());
         while (prop.hasCurrent()) {
             String propertyName = prop.getName();
-            np.append(propertyName);
             GetterInvoker invoker = InvokerCache.getGetterInvoker(rawType, propertyName);
             invokers.add(invoker);
             currentType = invoker.getReturnType();
@@ -55,13 +53,9 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
         targetType = currentType;
     }
 
-    public static FunctionalGetterInvokerGroup create(Type originalType, String propertyPath) {
-        return new FunctionalGetterInvokerGroup(originalType, propertyPath);
-    }
-
-    @Override
-    public Type getOriginalType() {
-        return originalType;
+    public static FunctionalBindingParameterInvoker create(
+            Type originalType, BindingParameter bindingParameter) {
+        return new FunctionalBindingParameterInvoker(originalType, bindingParameter);
     }
 
     @Override
@@ -90,8 +84,7 @@ public class FunctionalGetterInvokerGroup implements GetterInvokerGroup {
     }
 
     @Override
-    public String getPropertyPath() {
-        return propertyPath;
+    public BindingParameter getBindingParameter() {
+        return bindingParameter;
     }
-
 }

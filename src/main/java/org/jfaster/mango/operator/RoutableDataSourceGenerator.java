@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 
 import javax.annotation.Nullable;
@@ -36,11 +36,11 @@ import javax.annotation.Nullable;
 public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
 
     private final String shardParameterName;
-    private final GetterInvokerGroup shardingParameterInvoker;
+    private final BindingParameterInvoker shardingParameterInvoker;
     private final DatabaseShardingStrategy databaseShardingStrategy;
 
     protected RoutableDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
-                                          String shardParameterName, GetterInvokerGroup shardingParameterInvoker,
+                                          String shardParameterName, BindingParameterInvoker shardingParameterInvoker,
                                           DatabaseShardingStrategy databaseShardingStrategy) {
         super(dataSourceFactory, dataSourceType);
         this.shardParameterName = shardParameterName;
@@ -52,7 +52,7 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
     @Nullable
     @Override
     public String getDatabase(InvocationContext context) {
-        Object shardParam = context.getPropertyValue(shardParameterName, shardingParameterInvoker);
+        Object shardParam = context.getBindingValue(shardParameterName, shardingParameterInvoker);
         return databaseShardingStrategy.getDatabase(shardParam);
     }
 

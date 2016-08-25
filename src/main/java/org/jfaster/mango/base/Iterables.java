@@ -45,6 +45,10 @@ public class Iterables implements Iterable {
         return collection != null || array != null;
     }
 
+    public boolean isCollection() {
+        return collection != null;
+    }
+
     public boolean isEmpty() {
         return size() == 0;
     }

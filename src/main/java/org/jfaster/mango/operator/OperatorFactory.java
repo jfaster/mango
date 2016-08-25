@@ -20,16 +20,12 @@ import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.base.sql.OperatorType;
 import org.jfaster.mango.base.sql.SQLType;
-import org.jfaster.mango.binding.BindingParameter;
-import org.jfaster.mango.binding.InvocationContextFactory;
-import org.jfaster.mango.binding.NameProvider;
-import org.jfaster.mango.binding.ParameterContext;
+import org.jfaster.mango.binding.*;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -96,26 +92,25 @@ public class OperatorFactory {
             }
         }
 
-        NameProvider nameProvider = new NameProvider(md.getParameterDescriptors());
-        ParameterContext context = new ParameterContext(pds, nameProvider);
+        ParameterContext context = DefaultParameterContext.create(pds);
         statsCounter.setOperatorType(operatorType);
 
         rootNode.expandParameter(context); // 扩展简化的参数节点
         rootNode.checkAndBind(context); // 绑定GetterInvoker
 
-        TableGenerator tableGenerator = getTableGenerator(md, rootNode, nameProvider, context);
+        TableGenerator tableGenerator = getTableGenerator(md, rootNode, context);
         DataSourceType dst = DataSourceType.SLAVE;
         if (sqlType.needChangeData() || md.isAnnotationPresent(UseMaster.class)) {
             dst = DataSourceType.MASTER;
         }
-        DataSourceGenerator dataSourceGenerator = getDataSourceGenerator(dataSourceFactory, dst, md, nameProvider, context);
+        DataSourceGenerator dataSourceGenerator = getDataSourceGenerator(dataSourceFactory, dst, md, context);
 
         Operator operator;
         CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
         Cache cacheAnno = md.getAnnotation(Cache.class);
         boolean useCache = cacheAnno != null && cacheIgnoredAnno == null;
         if (useCache) {
-            CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, nameProvider, statsCounter);
+            CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, statsCounter);
             statsCounter.setCacheable(true);
             statsCounter.setUseMultipleKeys(driver.isUseMultipleKeys());
             statsCounter.setCacheNullObject(driver.isCacheNullObject());
@@ -149,17 +144,17 @@ public class OperatorFactory {
         }
 
         InvocationInterceptorChain chain =
-                new InvocationInterceptorChain(interceptorChain, context.getParameterDescriptors(), sqlType);
+                new InvocationInterceptorChain(interceptorChain, pds, sqlType);
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
-        operator.setInvocationContextFactory(new InvocationContextFactory(nameProvider));
+        operator.setInvocationContextFactory(new InvocationContextFactory(context));
         operator.setInvocationInterceptorChain(chain);
         operator.setJdbcOperations(jdbcOperations);
         operator.setStatsCounter(statsCounter);
         return operator;
     }
 
-    TableGenerator getTableGenerator(MethodDescriptor md, ASTRootNode rootNode, NameProvider nameProvider, ParameterContext context) {
+    TableGenerator getTableGenerator(MethodDescriptor md, ASTRootNode rootNode, ParameterContext context) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IllegalStateException("dao interface expected one @DB " +
@@ -200,14 +195,14 @@ public class OperatorFactory {
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             TableShardingBy tableShardingByAnno = pd.getAnnotation(TableShardingBy.class);
             if (tableShardingByAnno != null) {
-                shardingParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardingParameterName = context.getParameterNameByPosition(pd.getPosition());
                 shardingParameterProperty = tableShardingByAnno.value();
                 shardingParameterNum++;
                 continue; // 有了@TableShardingBy，则忽略@ShardingBy
             }
             ShardingBy shardingByAnno = pd.getAnnotation(ShardingBy.class);
             if (shardingByAnno != null) {
-                shardingParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardingParameterName = context.getParameterNameByPosition(pd.getPosition());
                 shardingParameterProperty = shardingByAnno.value();
                 shardingParameterNum++;
             }
@@ -215,7 +210,7 @@ public class OperatorFactory {
         TableGenerator tableGenerator;
         if (isUseTableShardingStrategy) {
             if (shardingParameterNum == 1) {
-                GetterInvokerGroup shardingParameterInvoker
+                BindingParameterInvoker shardingParameterInvoker
                         = context.getInvokerGroup(BindingParameter.create(shardingParameterName, shardingParameterProperty));
                 Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
@@ -264,7 +259,7 @@ public class OperatorFactory {
     }
 
     DataSourceGenerator getDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
-                                               MethodDescriptor md, NameProvider nameProvider, ParameterContext context) {
+                                               MethodDescriptor md, ParameterContext context) {
         DB dbAnno = md.getAnnotation(DB.class);
         if (dbAnno == null) {
             throw new IllegalStateException("dao interface expected one @DB " +
@@ -285,14 +280,14 @@ public class OperatorFactory {
         for (ParameterDescriptor pd : md.getParameterDescriptors()) {
             DatabaseShardingBy databaseShardingByAnno = pd.getAnnotation(DatabaseShardingBy.class);
             if (databaseShardingByAnno != null) {
-                shardingParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardingParameterName = context.getParameterNameByPosition(pd.getPosition());
                 shardingParameterProperty = databaseShardingByAnno.value();
                 shardingParameterNum++;
                 continue; // 有了@DatabaseShardingBy，则忽略@ShardingBy
             }
             ShardingBy shardingByAnno = pd.getAnnotation(ShardingBy.class);
             if (shardingByAnno != null) {
-                shardingParameterName = nameProvider.getParameterName(pd.getPosition());
+                shardingParameterName = context.getParameterNameByPosition(pd.getPosition());
                 shardingParameterProperty = shardingByAnno.value();
                 shardingParameterNum++;
             }
@@ -300,7 +295,7 @@ public class OperatorFactory {
         DataSourceGenerator dataSourceGenerator;
         if (strategy != null) {
             if (shardingParameterNum == 1) {
-                GetterInvokerGroup shardingParameterInvoker
+                BindingParameterInvoker shardingParameterInvoker
                         = context.getInvokerGroup(BindingParameter.create(shardingParameterName, shardingParameterProperty));
                 Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);

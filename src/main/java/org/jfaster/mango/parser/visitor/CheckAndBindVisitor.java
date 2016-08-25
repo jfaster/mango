@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.parser.visitor;
 
+import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.invoker.GetterInvokerGroup;
 import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.*;
@@ -82,7 +82,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJDBCParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvokerGroup invokerGroup = context.getInvokerGroup(node.getBindingParameter());
+        BindingParameterInvoker invokerGroup = context.getInvokerGroup(node.getBindingParameter());
         Type type = invokerGroup.getTargetType();
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
@@ -97,7 +97,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJDBCIterableParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvokerGroup invokerGroup = context.getInvokerGroup(node.getBindingParameter());
+        BindingParameterInvoker invokerGroup = context.getInvokerGroup(node.getBindingParameter());
         Type type = invokerGroup.getTargetType();
         TypeWrapper tw = new TypeWrapper(type);
         Class<?> mappedClass = tw.getMappedClass();
@@ -124,7 +124,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTJoinParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvokerGroup invokerGroup = context.getInvokerGroup(node.getBindingParameter());
+        BindingParameterInvoker invokerGroup = context.getInvokerGroup(node.getBindingParameter());
         node.setInvokerGroup(invokerGroup);
         return node.childrenAccept(this, data);
     }
@@ -212,7 +212,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     @Override
     public Object visit(ASTExpressionParameter node, Object data) {
         ParameterContext context = getParameterContext(data);
-        GetterInvokerGroup invokerGroup = context.getInvokerGroup(node.getBindingParameter());
+        BindingParameterInvoker invokerGroup = context.getInvokerGroup(node.getBindingParameter());
         node.setInvokerGroup(invokerGroup);
         return node.childrenAccept(this, data);
     }

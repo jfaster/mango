@@ -217,7 +217,7 @@ public enum ParameterExpandVisitor implements ParserVisitor {
         String parameterName = context.tryExpandParameterName(bindingParameter);
         if (parameterName != null) { // 自动扩展
             BindingParameter newBindingParameter =
-                    BindingParameter.create(parameterName, bindingParameter.transToPropertyPath());
+                    BindingParameter.create(parameterName, bindingParameter.rightShift().getPropertyPath());
             node.setBindingParameter(newBindingParameter);
         }
     }

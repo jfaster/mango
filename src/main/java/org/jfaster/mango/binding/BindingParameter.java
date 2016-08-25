@@ -36,10 +36,11 @@ public class BindingParameter {
         return new BindingParameter(parameterName, propertyPath);
     }
 
-    public String transToPropertyPath() {
-        return Strings.isNotEmpty(propertyPath) ?
+    public BindingParameter rightShift() {
+        String newPropertyPath =  Strings.isNotEmpty(propertyPath) ?
                 parameterName + "." + propertyPath :
                 parameterName;
+        return BindingParameter.create("", newPropertyPath);
     }
 
     public String getParameterName() {
