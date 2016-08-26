@@ -16,12 +16,13 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.invoker.GetterInvoker;
-import org.jfaster.mango.invoker.InvokerCache;
-import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.base.NestedProperty;
 import org.jfaster.mango.base.PropertyTokenizer;
 import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.InvokerCache;
+import org.jfaster.mango.invoker.UnreachablePropertyException;
+import org.jfaster.mango.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,7 +56,12 @@ public class FunctionalBindingParameterInvoker implements BindingParameterInvoke
 
     public static FunctionalBindingParameterInvoker create(
             Type originalType, BindingParameter bindingParameter) {
-        return new FunctionalBindingParameterInvoker(originalType, bindingParameter);
+        try {
+            FunctionalBindingParameterInvoker invokerGroup = new FunctionalBindingParameterInvoker(originalType, bindingParameter);
+            return invokerGroup;
+        } catch (UnreachablePropertyException e) {
+            throw new BindingException("Parameter '" + bindingParameter.getFullName() + "' can't be readable", e);
+        }
     }
 
     @Override
@@ -73,10 +79,8 @@ public class FunctionalBindingParameterInvoker implements BindingParameterInvoke
                 for (int j = 0; j < i; j++) {
                     np.append(invokers.get(i).getName());
                 }
-                String key = i == 0 ? "parameter" : "property";
-                // TODO
-                String fullName = Strings.getFullName("", np.getNestedProperty());
-                throw new NullPointerException(key + " " + fullName + " is null");
+                String fullName = Strings.getFullName(bindingParameter.getParameterName(), np.getNestedProperty());
+                throw new BindingException("Parameter '" + fullName + "' is null");
             }
             r = invokers.get(i).invoke(r);
         }
@@ -84,7 +88,12 @@ public class FunctionalBindingParameterInvoker implements BindingParameterInvoke
     }
 
     @Override
-    public BindingParameter getBindingParameter() {
-        return bindingParameter;
+    public String getParameterName() {
+        return bindingParameter.getParameterName();
+    }
+
+    @Override
+    public String getFullName() {
+        return bindingParameter.getFullName();
     }
 }

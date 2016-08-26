@@ -237,7 +237,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     public String getCacheKey(InvocationContext context) {
         StringBuilder key = new StringBuilder(prefix);
         for (CacheByItem item : cacheByItems) {
-            Object obj = context.getBindingValue(item.getParameterName(), item.getInvokerGroup());
+            Object obj = context.getBindingValue(item.getInvokerGroup());
             if (obj == null) {
                 throw new NullPointerException("value of " + item.getFullName() + " can't be null");
             }
@@ -270,7 +270,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public Object getOnlyCacheByObj(InvocationContext context) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
-        Object obj = context.getBindingValue(item.getParameterName(), item.getInvokerGroup());
+        Object obj = context.getBindingValue(item.getInvokerGroup());
         if (obj == null) {
             throw new NullPointerException("value of " + item.getFullName() + " can't be null");
         }
@@ -280,7 +280,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     @Override
     public void setOnlyCacheByObj(InvocationContext context, Object obj) {
         CacheByItem item = getOnlyCacheByItem(cacheByItems);
-        context.setBindingValue(item.getParameterName(), item.getInvokerGroup(), obj);
+        context.setBindingValue(item.getInvokerGroup(), obj);
     }
 
     @Override

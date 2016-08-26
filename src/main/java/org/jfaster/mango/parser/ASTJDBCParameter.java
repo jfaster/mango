@@ -72,7 +72,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
             throw new NullPointerException("invoker must set");
         }
         context.writeToSqlBuffer("?");
-        Object obj = context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
+        Object obj = context.getNullableBindingValue(invokerGroup);
         context.appendToArgs(obj);
         return true;
     }

@@ -20,6 +20,7 @@ import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
+import org.jfaster.mango.binding.BindingException;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.cache.LocalCacheHandler;
@@ -77,8 +78,8 @@ public class JdkExceptionTest {
 
     @Test
     public void testIterableParameterNullWithCache() {
-        thrown.expect(NullPointerException.class);
-        thrown.expectMessage("parameter :1 need a non-null value");
+        thrown.expect(BindingException.class);
+        thrown.expectMessage("Parameter :1 need a non-null value");
         MsgCacheDao dao = mango.create(MsgCacheDao.class, new LocalCacheHandler());
         dao.getMsgs(null);
     }

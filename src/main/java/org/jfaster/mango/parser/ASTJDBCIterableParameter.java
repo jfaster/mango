@@ -74,7 +74,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
         if (invokerGroup == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object objs = context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
+        Object objs = context.getNullableBindingValue(invokerGroup);
         if (objs == null) {
             throw new NullPointerException("value of " +
                     bindingParameter.getFullName() + " can't be null");

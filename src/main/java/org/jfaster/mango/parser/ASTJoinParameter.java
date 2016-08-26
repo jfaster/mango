@@ -69,7 +69,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
         if (invokerGroup == null) {
             throw new NullPointerException("invoker chain must set");
         }
-        Object obj = context.getBindingValue(bindingParameter.getParameterName(), invokerGroup);
+        Object obj = context.getBindingValue(invokerGroup);
         context.writeToSqlBuffer(obj.toString());
         return true;
     }

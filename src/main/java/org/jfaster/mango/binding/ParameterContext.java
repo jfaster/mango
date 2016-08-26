@@ -37,6 +37,6 @@ public interface ParameterContext {
      * 尝试自动扩展参数名
      */
     @Nullable
-    public String tryExpandParameterName(BindingParameter bindingParameter);
+    public BindingParameter tryExpandBindingParameter(BindingParameter bindingParameter);
 
 }

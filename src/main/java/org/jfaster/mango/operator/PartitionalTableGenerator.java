@@ -51,7 +51,7 @@ public class PartitionalTableGenerator implements TableGenerator {
     @Nullable
     @Override
     public String getTable(InvocationContext context) {
-        Object shardParam = context.getBindingValue(shardParameterName, shardingParameterInvoker);
+        Object shardParam = context.getBindingValue(shardingParameterInvoker);
         return tableShardingStrategy.getTargetTable(table, shardParam);
     }
 

@@ -17,8 +17,6 @@
 package org.jfaster.mango.binding;
 
 import org.jfaster.mango.annotation.Rename;
-import org.jfaster.mango.base.Strings;
-import org.jfaster.mango.invoker.UnreachablePropertyException;
 import org.jfaster.mango.reflect.ParameterDescriptor;
 
 import javax.annotation.Nullable;
@@ -66,24 +64,17 @@ public class DefaultParameterContext implements ParameterContext {
     @Override
     public BindingParameterInvoker getInvokerGroup(BindingParameter bindingParameter) {
         String parameterName = bindingParameter.getParameterName();
-        String propertyPath = bindingParameter.getPropertyPath();
         Type type = nameToTypeMap.get(parameterName);
         if (type == null) {
             throw new BindingException("Parameter '" + parameterName + "' not found, " +
                     "available root parameters are " + nameToTypeMap.keySet());
         }
-        try {
-            BindingParameterInvoker invokerGroup = FunctionalBindingParameterInvoker.create(type, bindingParameter);
-            return invokerGroup;
-        } catch (UnreachablePropertyException e) {
-            throw new BindingException("Parameter '" + Strings.getFullName(parameterName, propertyPath) +
-                    "' can't be readable", e);
-        }
+        return FunctionalBindingParameterInvoker.create(type, bindingParameter);
     }
 
     @Override
     @Nullable
-    public String tryExpandParameterName(BindingParameter bindingParameter) {
+    public BindingParameter tryExpandBindingParameter(BindingParameter bindingParameter) {
         if (!nameToTypeMap.containsKey(bindingParameter.getParameterName())) { // 根参数不存在才扩展
             BindingParameter newBindingParameter = bindingParameter.rightShift();
             List<String> parameterNames = new ArrayList<String>();
@@ -91,7 +82,7 @@ public class DefaultParameterContext implements ParameterContext {
                 Type type = entry.getValue();
                 try {
                     FunctionalBindingParameterInvoker.create(type, newBindingParameter);
-                } catch (UnreachablePropertyException e) {
+                } catch (BindingException e) {
                     // 异常说明扩展失败
                     continue;
                 }
@@ -103,7 +94,7 @@ public class DefaultParameterContext implements ParameterContext {
                     throw new BindingException("parameters " + parameterNames +
                             " has the same property '" + newBindingParameter.getPropertyPath() + "', so can't expand");
                 }
-                return parameterNames.get(0);
+                return BindingParameter.create(parameterNames.get(0), newBindingParameter.getPropertyPath());
             }
         }
         return null;

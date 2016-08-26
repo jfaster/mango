@@ -28,12 +28,12 @@ public interface InvocationContext {
 
     public void addParameter(String parameterName, Object parameterValue);
 
-    public Object getBindingValue(String parameterName, BindingParameterInvoker invoker);
+    public Object getBindingValue(BindingParameterInvoker invoker);
 
     @Nullable
-    public Object getNullableBindingValue(String parameterName, BindingParameterInvoker invoker);
+    public Object getNullableBindingValue(BindingParameterInvoker invoker);
 
-    public void setBindingValue(String parameterName, BindingParameterInvoker invoker, Object value);
+    public void setBindingValue(BindingParameterInvoker invoker, Object value);
 
     @Nullable
     public String getGlobalTable();

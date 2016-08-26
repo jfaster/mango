@@ -16,22 +16,17 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.base.sql.PreparedSql;
-import org.jfaster.mango.operator.UnreadableParameterException;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ash
  */
 public class DefaultInvocationContext implements InvocationContext {
 
-    private final Map<String, Object> parameterMap = new HashMap<String, Object>();
+    private final Map<String, Object> parameterNameToValueMap = new LinkedHashMap<String, Object>();
     private final List<Object> parameterValues = new LinkedList<Object>();
     private final Map<String, Object> cache = new HashMap<String, Object>();
 
@@ -49,40 +44,41 @@ public class DefaultInvocationContext implements InvocationContext {
 
     @Override
     public void addParameter(String parameterName, Object parameterValue) {
-        parameterMap.put(parameterName, parameterValue);
+        parameterNameToValueMap.put(parameterName, parameterValue);
         parameterValues.add(parameterValue);
     }
 
     @Override
-    public Object getBindingValue(String parameterName, BindingParameterInvoker invoker) {
-        Object value = getNullableBindingValue(parameterName, invoker);
+    public Object getBindingValue(BindingParameterInvoker invoker) {
+        Object value = getNullableBindingValue(invoker);
         if (value == null) {
-            String fullName = Strings.getFullName(parameterName, invoker.getBindingParameter().getPropertyPath());
-            String key = Strings.isEmpty(invoker.getBindingParameter().getPropertyPath()) ? "parameter" : "property";
-            throw new NullPointerException(key + " " + fullName + " need a non-null value");
+            throw new BindingException("Parameter " + invoker.getFullName() +
+                    " need a non-null value");
         }
         return value;
     }
 
     @Override
     @Nullable
-    public Object getNullableBindingValue(String parameterName, BindingParameterInvoker invoker) {
-        String key = getCacheKey(parameterName, invoker);
+    public Object getNullableBindingValue(BindingParameterInvoker invoker) {
+        String key = getCacheKey(invoker);
         if (cache.containsKey(key)) { // 有可能缓存null对象
             return cache.get(key);
         }
-        if (!parameterMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
-            throw new UnreadableParameterException("The parameter ':" + parameterName + "' is not readable");
+        String parameterName = invoker.getParameterName();
+        if (!parameterNameToValueMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
+            throw new BindingException("Parameter '" + parameterName + "' not found, " +
+                    "available root parameters are " + parameterNameToValueMap.keySet());
         }
-        Object obj = parameterMap.get(parameterName);
+        Object obj = parameterNameToValueMap.get(parameterName);
         Object value = invoker.invoke(obj);
         cache.put(key, value);
         return value;
     }
 
     @Override
-    public void setBindingValue(String parameterName, BindingParameterInvoker invoker, Object value) {
-        String key = getCacheKey(parameterName, invoker);
+    public void setBindingValue(BindingParameterInvoker invoker, Object value) {
+        String key = getCacheKey(invoker);
         cache.put(key, value);
     }
 
@@ -117,8 +113,8 @@ public class DefaultInvocationContext implements InvocationContext {
         return parameterValues;
     }
 
-    private String getCacheKey(String parameterName, BindingParameterInvoker invokerGroup) {
-        return invokerGroup == null ? parameterName : parameterName + "." + invokerGroup.getBindingParameter().getPropertyPath();
+    private String getCacheKey(BindingParameterInvoker invoker) {
+        return invoker.getFullName();
     }
 
 }

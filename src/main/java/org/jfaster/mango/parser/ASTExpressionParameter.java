@@ -71,7 +71,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (invokerGroup == null) {
             throw new NullPointerException("invoker must set");
         }
-        Object obj = context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
+        Object obj = context.getNullableBindingValue(invokerGroup);
         if (obj instanceof Boolean) {
             return (Boolean) obj;
         }
@@ -86,7 +86,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
         if (invokerGroup == null) {
             throw new NullPointerException("invoker must set");
         }
-        return context.getNullableBindingValue(bindingParameter.getParameterName(), invokerGroup);
+        return context.getNullableBindingValue(invokerGroup);
     }
 
     @Override

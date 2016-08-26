@@ -52,7 +52,7 @@ public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
     @Nullable
     @Override
     public String getDatabase(InvocationContext context) {
-        Object shardParam = context.getBindingValue(shardParameterName, shardingParameterInvoker);
+        Object shardParam = context.getBindingValue(shardingParameterInvoker);
         return databaseShardingStrategy.getDatabase(shardParam);
     }
 
