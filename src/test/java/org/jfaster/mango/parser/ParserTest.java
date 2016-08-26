@@ -24,7 +24,7 @@ import org.jfaster.mango.binding.DefaultInvocationContext;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.binding.ParameterContext;
-import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Test;
 
@@ -382,7 +382,7 @@ public class ParserTest {
         List<ParameterDescriptor> pds = Lists.newArrayList();
         int pos = 0;
         for (Type type : types) {
-            ParameterDescriptor pd = new ParameterDescriptor(pos++, type, empty, String.valueOf(pos));
+            ParameterDescriptor pd = ParameterDescriptor.create(pos++, type, empty, String.valueOf(pos));
             pds.add(pd);
         }
         ParameterContext ctx = DefaultParameterContext.create(pds);

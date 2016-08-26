@@ -23,20 +23,20 @@ import javax.annotation.Nullable;
  */
 public interface ParameterContext {
 
-    /**
-     * 根据参数位置获得参数名
-     */
-    public String getParameterNameByPosition(int position);
+  /**
+   * 根据参数位置获得参数名
+   */
+  public String getParameterNameByPosition(int position);
 
-    /**
-     * 获得getter调用器
-     */
-    public BindingParameterInvoker getInvokerGroup(BindingParameter bindingParameter);
+  /**
+   * 获得getter调用器
+   */
+  public BindingParameterInvoker getBindingParameterInvoker(BindingParameter bindingParameter);
 
-    /**
-     * 尝试自动扩展参数名
-     */
-    @Nullable
-    public BindingParameter tryExpandBindingParameter(BindingParameter bindingParameter);
+  /**
+   * 尝试自动扩展参数名
+   */
+  @Nullable
+  public BindingParameter tryExpandBindingParameter(BindingParameter bindingParameter);
 
 }

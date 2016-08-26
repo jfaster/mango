@@ -22,7 +22,7 @@ import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
-import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class ParameterExpandVisitorTest {
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
         List<ParameterDescriptor> pds = Lists.newArrayList(p);
         ParameterContext ctx = DefaultParameterContext.create(pds);
 
@@ -66,9 +66,9 @@ public class ParameterExpandVisitorTest {
 
         List<Annotation> empty = Collections.emptyList();
         TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
         TypeToken<User2> t2 = new TypeToken<User2>() {};
-        ParameterDescriptor p2 = new ParameterDescriptor(1, t2.getType(), empty, "2");
+        ParameterDescriptor p2 = ParameterDescriptor.create(1, t2.getType(), empty, "2");
         List<ParameterDescriptor> pds = Lists.newArrayList(p, p2);
         ParameterContext ctx = DefaultParameterContext.create(pds);
         rootNode.expandParameter(ctx);

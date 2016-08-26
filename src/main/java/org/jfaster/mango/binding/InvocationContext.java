@@ -26,26 +26,26 @@ import java.util.List;
  */
 public interface InvocationContext {
 
-    public void addParameter(String parameterName, Object parameterValue);
+  public void addParameter(String parameterName, Object parameterValue);
 
-    public Object getBindingValue(BindingParameterInvoker invoker);
+  public Object getBindingValue(BindingParameterInvoker invoker);
 
-    @Nullable
-    public Object getNullableBindingValue(BindingParameterInvoker invoker);
+  @Nullable
+  public Object getNullableBindingValue(BindingParameterInvoker invoker);
 
-    public void setBindingValue(BindingParameterInvoker invoker, Object value);
+  public void setBindingValue(BindingParameterInvoker invoker, Object value);
 
-    @Nullable
-    public String getGlobalTable();
+  @Nullable
+  public String getGlobalTable();
 
-    public void setGlobalTable(String globalTable);
+  public void setGlobalTable(String globalTable);
 
-    public void writeToSqlBuffer(String str);
+  public void writeToSqlBuffer(String str);
 
-    public void appendToArgs(Object obj);
+  public void appendToArgs(Object obj);
 
-    public PreparedSql getPreparedSql();
+  public PreparedSql getPreparedSql();
 
-    public List<Object> getParameterValues();
+  public List<Object> getParameterValues();
 
 }

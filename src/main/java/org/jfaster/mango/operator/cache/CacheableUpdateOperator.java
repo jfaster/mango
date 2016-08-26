@@ -24,7 +24,7 @@ import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.base.logging.InternalLogger;
 import org.jfaster.mango.base.logging.InternalLoggerFactory;
-import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 
 import java.util.List;
 import java.util.Set;

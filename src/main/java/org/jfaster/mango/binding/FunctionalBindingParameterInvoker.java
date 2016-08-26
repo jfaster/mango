@@ -33,67 +33,67 @@ import java.util.List;
  */
 public class FunctionalBindingParameterInvoker implements BindingParameterInvoker {
 
-    private final Type targetType;
-    private final BindingParameter bindingParameter;
-    private final List<GetterInvoker> invokers;
+  private final Type targetType;
+  private final BindingParameter bindingParameter;
+  private final List<GetterInvoker> invokers;
 
-    private FunctionalBindingParameterInvoker(Type originalType, BindingParameter bindingParameter) {
-        this.bindingParameter = bindingParameter;
-        invokers = new ArrayList<GetterInvoker>();
-        Type currentType = originalType;
-        Class<?> rawType = TypeToken.of(currentType).getRawType();
-        PropertyTokenizer prop = new PropertyTokenizer(bindingParameter.getPropertyPath());
-        while (prop.hasCurrent()) {
-            String propertyName = prop.getName();
-            GetterInvoker invoker = InvokerCache.getGetterInvoker(rawType, propertyName);
-            invokers.add(invoker);
-            currentType = invoker.getReturnType();
-            rawType = TypeToken.of(currentType).getRawType();
-            prop = prop.next();
+  private FunctionalBindingParameterInvoker(Type originalType, BindingParameter bindingParameter) {
+    this.bindingParameter = bindingParameter;
+    invokers = new ArrayList<GetterInvoker>();
+    Type currentType = originalType;
+    Class<?> rawType = TypeToken.of(currentType).getRawType();
+    PropertyTokenizer prop = new PropertyTokenizer(bindingParameter.getPropertyPath());
+    while (prop.hasCurrent()) {
+      String propertyName = prop.getName();
+      GetterInvoker invoker = InvokerCache.getGetterInvoker(rawType, propertyName);
+      invokers.add(invoker);
+      currentType = invoker.getReturnType();
+      rawType = TypeToken.of(currentType).getRawType();
+      prop = prop.next();
+    }
+    targetType = currentType;
+  }
+
+  public static FunctionalBindingParameterInvoker create(
+      Type originalType, BindingParameter bindingParameter) {
+    try {
+      FunctionalBindingParameterInvoker invokerGroup = new FunctionalBindingParameterInvoker(originalType, bindingParameter);
+      return invokerGroup;
+    } catch (UnreachablePropertyException e) {
+      throw new BindingException("Parameter '" + bindingParameter.getFullName() + "' can't be readable", e);
+    }
+  }
+
+  @Override
+  public Type getTargetType() {
+    return targetType;
+  }
+
+  @Override
+  public Object invoke(Object obj) {
+    Object r = obj;
+    int size = invokers.size();
+    for (int i = 0; i < size; i++) {
+      if (r == null) {
+        NestedProperty np = new NestedProperty();
+        for (int j = 0; j < i; j++) {
+          np.append(invokers.get(i).getName());
         }
-        targetType = currentType;
+        String fullName = Strings.getFullName(bindingParameter.getParameterName(), np.getNestedProperty());
+        throw new BindingException("Parameter '" + fullName + "' is null");
+      }
+      r = invokers.get(i).invoke(r);
     }
+    return r;
+  }
 
-    public static FunctionalBindingParameterInvoker create(
-            Type originalType, BindingParameter bindingParameter) {
-        try {
-            FunctionalBindingParameterInvoker invokerGroup = new FunctionalBindingParameterInvoker(originalType, bindingParameter);
-            return invokerGroup;
-        } catch (UnreachablePropertyException e) {
-            throw new BindingException("Parameter '" + bindingParameter.getFullName() + "' can't be readable", e);
-        }
-    }
+  @Override
+  public String getParameterName() {
+    return bindingParameter.getParameterName();
+  }
 
-    @Override
-    public Type getTargetType() {
-        return targetType;
-    }
-
-    @Override
-    public Object invoke(Object obj) {
-        Object r = obj;
-        int size = invokers.size();
-        for (int i = 0; i < size; i++) {
-            if (r == null) {
-                NestedProperty np = new NestedProperty();
-                for (int j = 0; j < i; j++) {
-                    np.append(invokers.get(i).getName());
-                }
-                String fullName = Strings.getFullName(bindingParameter.getParameterName(), np.getNestedProperty());
-                throw new BindingException("Parameter '" + fullName + "' is null");
-            }
-            r = invokers.get(i).invoke(r);
-        }
-        return r;
-    }
-
-    @Override
-    public String getParameterName() {
-        return bindingParameter.getParameterName();
-    }
-
-    @Override
-    public String getFullName() {
-        return bindingParameter.getFullName();
-    }
+  @Override
+  public String getFullName() {
+    return bindingParameter.getFullName();
+  }
 }

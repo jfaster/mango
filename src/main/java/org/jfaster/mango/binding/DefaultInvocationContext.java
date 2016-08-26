@@ -26,95 +26,95 @@ import java.util.*;
  */
 public class DefaultInvocationContext implements InvocationContext {
 
-    private final Map<String, Object> parameterNameToValueMap = new LinkedHashMap<String, Object>();
-    private final List<Object> parameterValues = new LinkedList<Object>();
-    private final Map<String, Object> cache = new HashMap<String, Object>();
+  private final Map<String, Object> parameterNameToValueMap = new LinkedHashMap<String, Object>();
+  private final List<Object> parameterValues = new LinkedList<Object>();
+  private final Map<String, Object> cache = new HashMap<String, Object>();
 
-    private final StringBuilder sql = new StringBuilder();
-    private final List<Object> args = new LinkedList<Object>();
+  private final StringBuilder sql = new StringBuilder();
+  private final List<Object> args = new LinkedList<Object>();
 
-    private String globalTable;
+  private String globalTable;
 
-    private DefaultInvocationContext() {
+  private DefaultInvocationContext() {
+  }
+
+  public static DefaultInvocationContext create() {
+    return new DefaultInvocationContext();
+  }
+
+  @Override
+  public void addParameter(String parameterName, Object parameterValue) {
+    parameterNameToValueMap.put(parameterName, parameterValue);
+    parameterValues.add(parameterValue);
+  }
+
+  @Override
+  public Object getBindingValue(BindingParameterInvoker invoker) {
+    Object value = getNullableBindingValue(invoker);
+    if (value == null) {
+      throw new BindingException("Parameter " + invoker.getFullName() +
+          " need a non-null value");
     }
+    return value;
+  }
 
-    public static DefaultInvocationContext create() {
-        return new DefaultInvocationContext();
+  @Override
+  @Nullable
+  public Object getNullableBindingValue(BindingParameterInvoker invoker) {
+    String key = getCacheKey(invoker);
+    if (cache.containsKey(key)) { // 有可能缓存null对象
+      return cache.get(key);
     }
+    String parameterName = invoker.getParameterName();
+    if (!parameterNameToValueMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
+      throw new BindingException("Parameter '" + parameterName + "' not found, " +
+          "available root parameters are " + parameterNameToValueMap.keySet());
+    }
+    Object obj = parameterNameToValueMap.get(parameterName);
+    Object value = invoker.invoke(obj);
+    cache.put(key, value);
+    return value;
+  }
 
-    @Override
-    public void addParameter(String parameterName, Object parameterValue) {
-        parameterNameToValueMap.put(parameterName, parameterValue);
-        parameterValues.add(parameterValue);
-    }
+  @Override
+  public void setBindingValue(BindingParameterInvoker invoker, Object value) {
+    String key = getCacheKey(invoker);
+    cache.put(key, value);
+  }
 
-    @Override
-    public Object getBindingValue(BindingParameterInvoker invoker) {
-        Object value = getNullableBindingValue(invoker);
-        if (value == null) {
-            throw new BindingException("Parameter " + invoker.getFullName() +
-                    " need a non-null value");
-        }
-        return value;
-    }
+  @Override
+  @Nullable
+  public String getGlobalTable() {
+    return globalTable;
+  }
 
-    @Override
-    @Nullable
-    public Object getNullableBindingValue(BindingParameterInvoker invoker) {
-        String key = getCacheKey(invoker);
-        if (cache.containsKey(key)) { // 有可能缓存null对象
-            return cache.get(key);
-        }
-        String parameterName = invoker.getParameterName();
-        if (!parameterNameToValueMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
-            throw new BindingException("Parameter '" + parameterName + "' not found, " +
-                    "available root parameters are " + parameterNameToValueMap.keySet());
-        }
-        Object obj = parameterNameToValueMap.get(parameterName);
-        Object value = invoker.invoke(obj);
-        cache.put(key, value);
-        return value;
-    }
+  @Override
+  public void setGlobalTable(String globalTable) {
+    this.globalTable = globalTable;
+  }
 
-    @Override
-    public void setBindingValue(BindingParameterInvoker invoker, Object value) {
-        String key = getCacheKey(invoker);
-        cache.put(key, value);
-    }
+  @Override
+  public void writeToSqlBuffer(String str) {
+    sql.append(str);
+  }
 
-    @Override
-    @Nullable
-    public String getGlobalTable() {
-        return globalTable;
-    }
+  @Override
+  public void appendToArgs(Object obj) {
+    args.add(obj);
+  }
 
-    @Override
-    public void setGlobalTable(String globalTable) {
-        this.globalTable = globalTable;
-    }
+  @Override
+  public PreparedSql getPreparedSql() {
+    return new PreparedSql(sql.toString(), args);
+  }
 
-    @Override
-    public void writeToSqlBuffer(String str) {
-        sql.append(str);
-    }
+  @Override
+  public List<Object> getParameterValues() {
+    return parameterValues;
+  }
 
-    @Override
-    public void appendToArgs(Object obj) {
-        args.add(obj);
-    }
-
-    @Override
-    public PreparedSql getPreparedSql() {
-        return new PreparedSql(sql.toString(), args);
-    }
-
-    @Override
-    public List<Object> getParameterValues() {
-        return parameterValues;
-    }
-
-    private String getCacheKey(BindingParameterInvoker invoker) {
-        return invoker.getFullName();
-    }
+  private String getCacheKey(BindingParameterInvoker invoker) {
+    return invoker.getFullName();
+  }
 
 }

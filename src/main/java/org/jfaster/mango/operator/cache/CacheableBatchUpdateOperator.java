@@ -20,7 +20,7 @@ import org.jfaster.mango.operator.BatchUpdateOperator;
 import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.base.Iterables;
 import org.jfaster.mango.base.logging.InternalLogger;
 import org.jfaster.mango.base.logging.InternalLoggerFactory;

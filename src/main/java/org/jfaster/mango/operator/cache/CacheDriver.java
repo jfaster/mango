@@ -30,8 +30,8 @@ import org.jfaster.mango.operator.StatsCounter;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeWrapper;
 
@@ -301,7 +301,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
                 String propertyPaths = cacheByAnno.value();
                 for (String propertyPath : propertyPaths.split(",")) {
                     propertyPath = propertyPath.trim();
-                    BindingParameterInvoker invokerGroup = context.getInvokerGroup(BindingParameter.create(parameterName, propertyPath));
+                    BindingParameterInvoker invokerGroup = context.getBindingParameterInvoker(BindingParameter.create(parameterName, propertyPath));
                     Type cacheByType = invokerGroup.getTargetType();
                     TypeWrapper tw = new TypeWrapper(cacheByType);
                     cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerGroup));

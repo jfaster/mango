@@ -20,9 +20,9 @@ import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.reflect.MethodDescriptor;
-import org.jfaster.mango.reflect.ParameterDescriptor;
-import org.jfaster.mango.reflect.ReturnDescriptor;
+import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.reflect.descriptor.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
@@ -276,14 +276,14 @@ public class BatchUpdateOperatorTest {
 
     private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
         List<Annotation> empty = Collections.emptyList();
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), empty, "1");
+        ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB());
         methodAnnos.add(new MockSQL(srcSql));
-        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
-        MethodDescriptor md = new MethodDescriptor(null, rd, pds);
+        ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
+        MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
         OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
@@ -296,15 +296,15 @@ public class BatchUpdateOperatorTest {
     private Operator getOperator2(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
         List<Annotation> pAnnos = new ArrayList<Annotation>();
         pAnnos.add(new MockShardingBy("id"));
-        ParameterDescriptor p = new ParameterDescriptor(0, pt.getType(), pAnnos, "1");
+        ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), pAnnos, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
 
         List<Annotation> methodAnnos = new ArrayList<Annotation>();
         methodAnnos.add(new MockDB("", "user"));
         methodAnnos.add(new MockSharding(ModHundredTableShardingStrategy.class, MyDatabaseShardingStrategy.class, null));
         methodAnnos.add(new MockSQL(srcSql));
-        ReturnDescriptor rd = new ReturnDescriptor(rt.getType(), methodAnnos);
-        MethodDescriptor md = new MethodDescriptor(null, rd, pds);
+        ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
+        MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
 
         Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();

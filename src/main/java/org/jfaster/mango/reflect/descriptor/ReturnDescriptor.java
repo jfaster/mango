@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.reflect.descriptor;
 
 import org.jfaster.mango.base.Objects;
 
@@ -29,24 +29,28 @@ import java.util.List;
  */
 public class ReturnDescriptor extends TypeWithAnnotationDescriptor {
 
-    public ReturnDescriptor(Type type, List<Annotation> annotations) {
-        super(type, annotations);
-    }
+  private ReturnDescriptor(Type type, List<Annotation> annotations) {
+    super(type, annotations);
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final ReturnDescriptor other = (ReturnDescriptor) obj;
-        return Objects.equal(this.getType(), other.getType())
-                && Objects.equal(this.getAnnotations(), other.getAnnotations());
-    }
+  public static ReturnDescriptor create(Type type, List<Annotation> annotations) {
+    return new ReturnDescriptor(type, annotations);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getType(), getAnnotations());
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final ReturnDescriptor other = (ReturnDescriptor) obj;
+    return Objects.equal(this.getType(), other.getType())
+        && Objects.equal(this.getAnnotations(), other.getAnnotations());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(getType(), getAnnotations());
+  }
 
 }

@@ -31,6 +31,8 @@ import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
 import org.jfaster.mango.reflect.*;
+import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.sharding.*;
 
 import javax.annotation.Nullable;
@@ -86,7 +88,7 @@ public class OperatorFactory {
                     operatorType = OperatorType.BATCHUPDATE;
 
                     pds = new ArrayList<ParameterDescriptor>(1);
-                    pds.add(new ParameterDescriptor(0, pd.getMappedClass(), pd.getAnnotations(), pd.getName()));
+                    pds.add(ParameterDescriptor.create(0, pd.getMappedClass(), pd.getAnnotations(), pd.getName()));
 
                 }
             }
@@ -211,7 +213,7 @@ public class OperatorFactory {
         if (isUseTableShardingStrategy) {
             if (shardingParameterNum == 1) {
                 BindingParameterInvoker shardingParameterInvoker
-                        = context.getInvokerGroup(BindingParameter.create(shardingParameterName, shardingParameterProperty));
+                        = context.getBindingParameterInvoker(BindingParameter.create(shardingParameterName, shardingParameterProperty));
                 Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();
@@ -296,7 +298,7 @@ public class OperatorFactory {
         if (strategy != null) {
             if (shardingParameterNum == 1) {
                 BindingParameterInvoker shardingParameterInvoker
-                        = context.getInvokerGroup(BindingParameter.create(shardingParameterName, shardingParameterProperty));
+                        = context.getBindingParameterInvoker(BindingParameter.create(shardingParameterName, shardingParameterProperty));
                 Type shardingParameterType = shardingParameterInvoker.getTargetType();
                 TypeWrapper tw = new TypeWrapper(shardingParameterType);
                 Class<?> mappedClass = tw.getMappedClass();

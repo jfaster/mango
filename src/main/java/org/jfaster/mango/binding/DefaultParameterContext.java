@@ -17,7 +17,7 @@
 package org.jfaster.mango.binding;
 
 import org.jfaster.mango.annotation.Rename;
-import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -28,77 +28,77 @@ import java.util.*;
  */
 public class DefaultParameterContext implements ParameterContext {
 
-    /**
-     * 位置到重命名后的变量名的映射
-     */
-    private final Map<Integer, String> positionToNameMap = new HashMap<Integer, String>();
+  /**
+   * 位置到重命名后的变量名的映射
+   */
+  private final Map<Integer, String> positionToNameMap = new HashMap<Integer, String>();
 
-    private final Map<String, Type> nameToTypeMap = new LinkedHashMap<String, Type>();
+  private final Map<String, Type> nameToTypeMap = new LinkedHashMap<String, Type>();
 
-    private DefaultParameterContext(List<ParameterDescriptor> parameterDescriptors) {
-        for (int i = 0; i < parameterDescriptors.size(); i++) {
-            ParameterDescriptor pd = parameterDescriptors.get(i);
-            Rename renameAnno = pd.getAnnotation(Rename.class);
-            String parameterName = renameAnno != null ?
-                    renameAnno.value() : // 优先使用注解中的名字
-                    pd.getName();
-            nameToTypeMap.put(parameterName, pd.getType());
-            int position = pd.getPosition();
-            positionToNameMap.put(position, parameterName);
+  private DefaultParameterContext(List<ParameterDescriptor> parameterDescriptors) {
+    for (int i = 0; i < parameterDescriptors.size(); i++) {
+      ParameterDescriptor pd = parameterDescriptors.get(i);
+      Rename renameAnno = pd.getAnnotation(Rename.class);
+      String parameterName = renameAnno != null ?
+          renameAnno.value() : // 优先使用注解中的名字
+          pd.getName();
+      nameToTypeMap.put(parameterName, pd.getType());
+      int position = pd.getPosition();
+      positionToNameMap.put(position, parameterName);
+    }
+  }
+
+  public static DefaultParameterContext create(List<ParameterDescriptor> parameterDescriptors) {
+    return new DefaultParameterContext(parameterDescriptors);
+  }
+
+  @Override
+  public String getParameterNameByPosition(int position) {
+    String name = positionToNameMap.get(position);
+    if (name == null) {
+      throw new IllegalStateException("parameter name can not be found by position [" + position + "]");
+    }
+    return name;
+  }
+
+  @Override
+  public BindingParameterInvoker getBindingParameterInvoker(BindingParameter bindingParameter) {
+    String parameterName = bindingParameter.getParameterName();
+    Type type = nameToTypeMap.get(parameterName);
+    if (type == null) {
+      throw new BindingException("Parameter '" + parameterName + "' not found, " +
+          "available root parameters are " + nameToTypeMap.keySet());
+    }
+    return FunctionalBindingParameterInvoker.create(type, bindingParameter);
+  }
+
+  @Override
+  @Nullable
+  public BindingParameter tryExpandBindingParameter(BindingParameter bindingParameter) {
+    if (!nameToTypeMap.containsKey(bindingParameter.getParameterName())) { // 根参数不存在才扩展
+      BindingParameter newBindingParameter = bindingParameter.rightShift();
+      List<String> parameterNames = new ArrayList<String>();
+      for (Map.Entry<String, Type> entry : nameToTypeMap.entrySet()) {
+        Type type = entry.getValue();
+        try {
+          FunctionalBindingParameterInvoker.create(type, newBindingParameter);
+        } catch (BindingException e) {
+          // 异常说明扩展失败
+          continue;
         }
-    }
-
-    public static DefaultParameterContext create(List<ParameterDescriptor> parameterDescriptors) {
-        return new DefaultParameterContext(parameterDescriptors);
-    }
-
-    @Override
-    public String getParameterNameByPosition(int position) {
-        String name = positionToNameMap.get(position);
-        if (name == null) {
-            throw new IllegalStateException("parameter name can not be found by position [" + position + "]");
+        parameterNames.add(entry.getKey());
+      }
+      int num = parameterNames.size();
+      if (num > 0) {
+        if (num != 1) {
+          throw new BindingException("parameters " + parameterNames +
+              " has the same property '" + newBindingParameter.getPropertyPath() + "', so can't expand");
         }
-        return name;
+        return BindingParameter.create(parameterNames.get(0), newBindingParameter.getPropertyPath());
+      }
     }
-
-    @Override
-    public BindingParameterInvoker getInvokerGroup(BindingParameter bindingParameter) {
-        String parameterName = bindingParameter.getParameterName();
-        Type type = nameToTypeMap.get(parameterName);
-        if (type == null) {
-            throw new BindingException("Parameter '" + parameterName + "' not found, " +
-                    "available root parameters are " + nameToTypeMap.keySet());
-        }
-        return FunctionalBindingParameterInvoker.create(type, bindingParameter);
-    }
-
-    @Override
-    @Nullable
-    public BindingParameter tryExpandBindingParameter(BindingParameter bindingParameter) {
-        if (!nameToTypeMap.containsKey(bindingParameter.getParameterName())) { // 根参数不存在才扩展
-            BindingParameter newBindingParameter = bindingParameter.rightShift();
-            List<String> parameterNames = new ArrayList<String>();
-            for (Map.Entry<String, Type> entry : nameToTypeMap.entrySet()) {
-                Type type = entry.getValue();
-                try {
-                    FunctionalBindingParameterInvoker.create(type, newBindingParameter);
-                } catch (BindingException e) {
-                    // 异常说明扩展失败
-                    continue;
-                }
-                parameterNames.add(entry.getKey());
-            }
-            int num = parameterNames.size();
-            if (num > 0) {
-                if (num != 1) {
-                    throw new BindingException("parameters " + parameterNames +
-                            " has the same property '" + newBindingParameter.getPropertyPath() + "', so can't expand");
-                }
-                return BindingParameter.create(parameterNames.get(0), newBindingParameter.getPropertyPath());
-            }
-        }
-        return null;
-    }
+    return null;
+  }
 
 
 }

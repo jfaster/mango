@@ -14,24 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.reflect.descriptor;
 
 import java.lang.reflect.Method;
 
 /**
- * 根据参数序号定义参数名字
+ * 参数名探测器
  *
  * @author ash
  */
-public class SerialNumberParameterNameDiscover implements ParameterNameDiscover {
+public interface ParameterNameDiscover {
 
-    @Override
-    public String[] getParameterNames(Method method) {
-        String[] names = new String[method.getGenericParameterTypes().length];
-        for (int i = 0; i < names.length; i++) {
-            names[i] = String.valueOf(i + 1);
-        }
-        return names;
-    }
+  String[] getParameterNames(Method method);
 
 }

@@ -25,7 +25,7 @@ import org.jfaster.mango.interceptor.Interceptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.interceptor.Parameter;
-import org.jfaster.mango.reflect.ParameterDescriptor;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class InvocationInterceptorChainTest {
         });
         List<Annotation> empty = Collections.emptyList();
         TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = new ParameterDescriptor(0, t.getType(), empty, "1");
+        ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
         List<ParameterDescriptor> pds = Arrays.asList(p);
         InvocationInterceptorChain iic = new InvocationInterceptorChain(ic, pds, SQLType.SELECT);
 

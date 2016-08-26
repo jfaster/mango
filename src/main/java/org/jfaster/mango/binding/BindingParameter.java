@@ -23,36 +23,36 @@ import org.jfaster.mango.base.Strings;
  */
 public class BindingParameter {
 
-    private final String parameterName;
+  private final String parameterName;
 
-    private final String propertyPath;
+  private final String propertyPath;
 
-    private BindingParameter(String parameterName, String propertyPath) {
-        this.parameterName = parameterName;
-        this.propertyPath = propertyPath;
-    }
+  private BindingParameter(String parameterName, String propertyPath) {
+    this.parameterName = parameterName;
+    this.propertyPath = propertyPath;
+  }
 
-    public static BindingParameter create(String parameterName, String propertyPath) {
-        return new BindingParameter(parameterName, propertyPath);
-    }
+  public static BindingParameter create(String parameterName, String propertyPath) {
+    return new BindingParameter(parameterName, propertyPath);
+  }
 
-    public BindingParameter rightShift() {
-        String newPropertyPath =  Strings.isNotEmpty(propertyPath) ?
-                parameterName + "." + propertyPath :
-                parameterName;
-        return BindingParameter.create("", newPropertyPath);
-    }
+  public BindingParameter rightShift() {
+    String newPropertyPath = Strings.isNotEmpty(propertyPath) ?
+        parameterName + "." + propertyPath :
+        parameterName;
+    return BindingParameter.create("", newPropertyPath);
+  }
 
-    public String getParameterName() {
-        return parameterName;
-    }
+  public String getParameterName() {
+    return parameterName;
+  }
 
-    public String getPropertyPath() {
-        return propertyPath;
-    }
+  public String getPropertyPath() {
+    return propertyPath;
+  }
 
-    public String getFullName() {
-        return Strings.getFullName(parameterName, propertyPath);
-    }
+  public String getFullName() {
+    return Strings.getFullName(parameterName, propertyPath);
+  }
 
 }

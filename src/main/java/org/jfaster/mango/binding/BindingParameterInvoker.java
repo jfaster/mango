@@ -23,24 +23,24 @@ import java.lang.reflect.Type;
  */
 public interface BindingParameterInvoker {
 
-    /**
-     * 获得目标类型
-     */
-    public Type getTargetType();
+  /**
+   * 获得目标类型
+   */
+  public Type getTargetType();
 
-    /**
-     * 执行get方法链
-     */
-    public Object invoke(Object obj);
+  /**
+   * 执行get方法链
+   */
+  public Object invoke(Object obj);
 
-    /**
-     * 获得参数名称
-     */
-    public String getParameterName();
+  /**
+   * 获得参数名称
+   */
+  public String getParameterName();
 
-    /**
-     * 获得绑定参数全名
-     */
-    public String getFullName();
+  /**
+   * 获得绑定参数全名
+   */
+  public String getFullName();
 
 }

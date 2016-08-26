@@ -23,12 +23,12 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class BindingException extends MangoException {
 
-    public BindingException(String msg) {
-        super(msg);
-    }
+  public BindingException(String msg) {
+    super(msg);
+  }
 
-    public BindingException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public BindingException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

@@ -25,7 +25,7 @@ import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.operator.QueryOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.reflect.MethodDescriptor;
+import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.base.Iterables;
 import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.base.logging.InternalLogger;
