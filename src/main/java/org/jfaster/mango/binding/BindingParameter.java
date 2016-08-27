@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.binding;
 
+import org.jfaster.mango.base.Objects;
 import org.jfaster.mango.base.Strings;
 
 /**
@@ -30,6 +31,10 @@ public class BindingParameter {
   private BindingParameter(String parameterName, String propertyPath) {
     this.parameterName = parameterName;
     this.propertyPath = propertyPath;
+  }
+
+  public static BindingParameter create(String parameterName) {
+    return new BindingParameter(parameterName, "");
   }
 
   public static BindingParameter create(String parameterName, String propertyPath) {
@@ -53,6 +58,27 @@ public class BindingParameter {
 
   public String getFullName() {
     return Strings.getFullName(parameterName, propertyPath);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final BindingParameter other = (BindingParameter) obj;
+    return Objects.equal(this.getParameterName(), other.getParameterName())
+        && Objects.equal(this.getPropertyPath(), other.getPropertyPath());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(getParameterName(), getPropertyPath());
+  }
+
+  @Override
+  public String toString() {
+    return getFullName();
   }
 
 }

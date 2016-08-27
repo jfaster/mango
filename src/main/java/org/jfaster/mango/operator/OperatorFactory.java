@@ -149,7 +149,7 @@ public class OperatorFactory {
                 new InvocationInterceptorChain(interceptorChain, pds, sqlType);
         operator.setTableGenerator(tableGenerator);
         operator.setDataSourceGenerator(dataSourceGenerator);
-        operator.setInvocationContextFactory(new InvocationContextFactory(context));
+        operator.setInvocationContextFactory(InvocationContextFactory.create(context));
         operator.setInvocationInterceptorChain(chain);
         operator.setJdbcOperations(jdbcOperations);
         operator.setStatsCounter(statsCounter);

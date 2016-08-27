@@ -18,7 +18,6 @@ package org.jfaster.mango.binding;
 
 import org.jfaster.mango.base.NestedProperty;
 import org.jfaster.mango.base.PropertyTokenizer;
-import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.UnreachablePropertyException;
@@ -60,7 +59,7 @@ public class FunctionalBindingParameterInvoker implements BindingParameterInvoke
       FunctionalBindingParameterInvoker invokerGroup = new FunctionalBindingParameterInvoker(originalType, bindingParameter);
       return invokerGroup;
     } catch (UnreachablePropertyException e) {
-      throw new BindingException("Parameter '" + bindingParameter.getFullName() + "' can't be readable", e);
+      throw new BindingException("Parameter '" + bindingParameter + "' can't be readable", e);
     }
   }
 
@@ -77,10 +76,10 @@ public class FunctionalBindingParameterInvoker implements BindingParameterInvoke
       if (r == null) {
         NestedProperty np = new NestedProperty();
         for (int j = 0; j < i; j++) {
-          np.append(invokers.get(i).getName());
+          np.append(invokers.get(j).getName());
         }
-        String fullName = Strings.getFullName(bindingParameter.getParameterName(), np.getNestedProperty());
-        throw new BindingException("Parameter '" + fullName + "' is null");
+        BindingParameter bp = BindingParameter.create(bindingParameter.getParameterName(), np.getNestedProperty());
+        throw new BindingException("Parameter '" + bp + "' is null");
       }
       r = invokers.get(i).invoke(r);
     }
@@ -88,12 +87,7 @@ public class FunctionalBindingParameterInvoker implements BindingParameterInvoke
   }
 
   @Override
-  public String getParameterName() {
-    return bindingParameter.getParameterName();
-  }
-
-  @Override
-  public String getFullName() {
-    return bindingParameter.getFullName();
+  public BindingParameter getBindingParameter() {
+    return bindingParameter;
   }
 }

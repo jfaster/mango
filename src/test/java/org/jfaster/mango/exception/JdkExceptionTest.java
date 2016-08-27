@@ -79,7 +79,7 @@ public class JdkExceptionTest {
     @Test
     public void testIterableParameterNullWithCache() {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Parameter :1 need a non-null value");
+        thrown.expectMessage("Parameter ':1' need a non-null value");
         MsgCacheDao dao = mango.create(MsgCacheDao.class, new LocalCacheHandler());
         dao.getMsgs(null);
     }

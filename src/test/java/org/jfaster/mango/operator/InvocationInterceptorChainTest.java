@@ -70,7 +70,7 @@ public class InvocationInterceptorChainTest {
         List<ParameterDescriptor> pds = Arrays.asList(p);
         InvocationInterceptorChain iic = new InvocationInterceptorChain(ic, pds, SQLType.SELECT);
 
-        InvocationContextFactory f = new InvocationContextFactory(DefaultParameterContext.create(pds));
+        InvocationContextFactory f = InvocationContextFactory.create(DefaultParameterContext.create(pds));
         InvocationContext ctx = f.newInvocationContext(new Object[] {user});
         PreparedSql ps = new PreparedSql(sql, args);
         iic.intercept(ps, ctx);

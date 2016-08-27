@@ -52,8 +52,7 @@ public class DefaultInvocationContext implements InvocationContext {
   public Object getBindingValue(BindingParameterInvoker invoker) {
     Object value = getNullableBindingValue(invoker);
     if (value == null) {
-      throw new BindingException("Parameter " + invoker.getFullName() +
-          " need a non-null value");
+      throw new BindingException("Parameter '" + invoker.getBindingParameter() + "' need a non-null value");
     }
     return value;
   }
@@ -65,10 +64,10 @@ public class DefaultInvocationContext implements InvocationContext {
     if (cache.containsKey(key)) { // 有可能缓存null对象
       return cache.get(key);
     }
-    String parameterName = invoker.getParameterName();
+    String parameterName = invoker.getBindingParameter().getParameterName();
     if (!parameterNameToValueMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
-      throw new BindingException("Parameter '" + parameterName + "' not found, " +
-          "available root parameters are " + parameterNameToValueMap.keySet());
+      throw new BindingException("Parameter '" + BindingParameter.create(parameterName) + "' not found, " +
+          "available root parameters are " + transToBindingParameters(parameterNameToValueMap.keySet()));
     }
     Object obj = parameterNameToValueMap.get(parameterName);
     Object value = invoker.invoke(obj);
@@ -114,7 +113,15 @@ public class DefaultInvocationContext implements InvocationContext {
   }
 
   private String getCacheKey(BindingParameterInvoker invoker) {
-    return invoker.getFullName();
+    return invoker.getBindingParameter().getFullName();
+  }
+
+  private Set<BindingParameter> transToBindingParameters(Collection<String> parameterNames) {
+    Set<BindingParameter> rs = new LinkedHashSet<BindingParameter>();
+    for (String parameterName : parameterNames) {
+      rs.add(BindingParameter.create(parameterName));
+    }
+    return rs;
   }
 
 }

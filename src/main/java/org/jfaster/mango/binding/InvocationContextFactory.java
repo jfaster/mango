@@ -7,8 +7,12 @@ public class InvocationContextFactory {
 
   private ParameterContext parameterContext;
 
-  public InvocationContextFactory(ParameterContext parameterContext) {
+  private InvocationContextFactory(ParameterContext parameterContext) {
     this.parameterContext = parameterContext;
+  }
+
+  public static InvocationContextFactory create(ParameterContext parameterContext) {
+    return new InvocationContextFactory(parameterContext);
   }
 
   public InvocationContext newInvocationContext(Object[] values) {

@@ -59,7 +59,7 @@ public class ParameterExpandVisitorTest {
     @Test
     public void testVisitJDBCParameter2() throws Exception {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("parameters [1, 2] has the same property 'id', so can't expand");
+        thrown.expectMessage("Root parameters [:1, :2] has the same property 'id', so can't auto expand");
 
         String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";
         ASTRootNode rootNode = new Parser(sql.trim()).parse().init();

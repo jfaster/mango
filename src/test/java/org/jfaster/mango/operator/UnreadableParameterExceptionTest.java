@@ -50,7 +50,7 @@ public class UnreadableParameterExceptionTest {
     @Test
     public void test4() {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Parameter '1' not found, available root parameters are []");
+        thrown.expectMessage("Parameter ':1' not found, available root parameters are []");
         Dao dao = mango.create(Dao.class);
         dao.add();
     }
@@ -58,7 +58,7 @@ public class UnreadableParameterExceptionTest {
     @Test
     public void test5() {
         thrown.expect(BindingException.class);
-        thrown.expectMessage("Parameter '1' not found, available root parameters are []");
+        thrown.expectMessage("Parameter ':1' not found, available root parameters are []");
         Dao dao = mango.create(Dao.class);
         dao.gets();
     }

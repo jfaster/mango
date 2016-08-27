@@ -34,13 +34,8 @@ public interface BindingParameterInvoker {
   public Object invoke(Object obj);
 
   /**
-   * 获得参数名称
+   * 获得绑定参数
    */
-  public String getParameterName();
-
-  /**
-   * 获得绑定参数全名
-   */
-  public String getFullName();
+  public BindingParameter getBindingParameter();
 
 }
