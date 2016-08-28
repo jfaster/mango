@@ -25,8 +25,8 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class IncorrectDefinitionException extends MangoException {
 
-    public IncorrectDefinitionException(String message) {
-        super(message);
-    }
+  public IncorrectDefinitionException(String message) {
+    super(message);
+  }
 
 }

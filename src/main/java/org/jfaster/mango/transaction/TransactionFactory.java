@@ -17,7 +17,7 @@
 package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.datasource.DataSourceUtils;
-import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.Mango;
 import org.jfaster.mango.exception.transaction.CannotCreateTransactionException;
 import org.jfaster.mango.base.logging.InternalLogger;
 import org.jfaster.mango.base.logging.InternalLoggerFactory;

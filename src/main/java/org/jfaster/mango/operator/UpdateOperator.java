@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.ReturnGeneratedId;
+import org.jfaster.mango.base.Config;
 import org.jfaster.mango.base.ToStringHelper;
 import org.jfaster.mango.base.sql.PreparedSql;
 import org.jfaster.mango.base.sql.SQLType;
@@ -35,173 +36,175 @@ import java.util.Map;
  */
 public class UpdateOperator extends AbstractOperator {
 
-    private boolean returnGeneratedId;
+  private boolean returnGeneratedId;
 
-    private Transformer transformer;
+  private Transformer transformer;
 
-    private Class<? extends Number> numberRawType;
+  private Class<? extends Number> numberRawType;
 
-    protected UpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
-        super(rootNode, md.getDaoClass(), config);
-        init(md, rootNode.getSQLType());
+  public UpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+    super(rootNode, md.getDaoClass(), config);
+    init(md, rootNode.getSQLType());
+  }
+
+  private void init(MethodDescriptor md, SQLType sqlType) {
+    ReturnGeneratedId returnGeneratedIdAnno = md.getAnnotation(ReturnGeneratedId.class);
+    returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
+        && sqlType == SQLType.INSERT; // 是插入语句
+
+    Class<?> returnRawType = md.getReturnRawType();
+    if (returnGeneratedId) {
+      GeneratedTransformer gt = GENERATED_TRANSFORMERS.get(returnRawType);
+      if (gt == null) {
+        String expected = ToStringHelper.toString(GENERATED_TRANSFORMERS.keySet());
+        throw new IncorrectReturnTypeException("the return type of update(returnGeneratedId) " +
+            "expected one of " + expected + " but " + returnRawType);
+      }
+      numberRawType = gt.getRawType();
+      transformer = gt;
+    } else {
+      transformer = TRANSFORMERS.get(returnRawType);
+      if (transformer == null) {
+        String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
+        throw new IncorrectReturnTypeException("the return type of update " +
+            "expected one of " + expected + " but " + returnRawType);
+      }
+    }
+  }
+
+  @Override
+  public Object execute(Object[] values) {
+    InvocationContext context = invocationContextFactory.newInvocationContext(values);
+    return execute(context);
+  }
+
+  public Object execute(InvocationContext context) {
+    context.setGlobalTable(tableGenerator.getTable(context));
+
+    try {
+      rootNode.render(context);
+    } catch (EmptyObjectException e) {
+      if (config.isCompatibleWithEmptyList()) {
+        return transformer.transform(0);
+      } else {
+        throw e;
+      }
     }
 
-    private void init(MethodDescriptor md, SQLType sqlType) {
-        ReturnGeneratedId returnGeneratedIdAnno = md.getAnnotation(ReturnGeneratedId.class);
-        returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
-                && sqlType == SQLType.INSERT; // 是插入语句
+    PreparedSql preparedSql = context.getPreparedSql();
+    invocationInterceptorChain.intercept(preparedSql, context);  // 拦截器
 
-        Class<?> returnRawType = md.getReturnRawType();
-        if (returnGeneratedId) {
-            GeneratedTransformer gt = GENERATED_TRANSFORMERS.get(returnRawType);
-            if (gt == null) {
-                String expected = ToStringHelper.toString(GENERATED_TRANSFORMERS.keySet());
-                throw new IncorrectReturnTypeException("the return type of update(returnGeneratedId) " +
-                        "expected one of " + expected + " but " + returnRawType);
-            }
-            numberRawType = gt.getRawType();
-            transformer = gt;
-        } else {
-            transformer = TRANSFORMERS.get(returnRawType);
-            if (transformer == null) {
-                String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
-                throw new IncorrectReturnTypeException("the return type of update " +
-                        "expected one of " + expected + " but " + returnRawType);
-            }
-        }
+    String sql = preparedSql.getSql();
+    Object[] args = preparedSql.getArgs().toArray();
+
+    DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
+    Number r = executeDb(ds, sql, args);
+    return transformer.transform(r);
+  }
+
+  private Number executeDb(DataSource ds, String sql, Object[] args) {
+    Number r = null;
+    long now = System.nanoTime();
+    try {
+      if (returnGeneratedId) {
+        GeneratedKeyHolder holder = new GeneratedKeyHolder(numberRawType);
+        jdbcOperations.update(ds, sql, args, holder);
+        r = holder.getKey();
+      } else {
+        r = jdbcOperations.update(ds, sql, args);
+      }
+    } finally {
+      long cost = System.nanoTime() - now;
+      if (r != null) {
+        statsCounter.recordDatabaseExecuteSuccess(cost);
+      } else {
+        statsCounter.recordDatabaseExecuteException(cost);
+      }
+    }
+    return r;
+  }
+
+  /**
+   * 更新操作支持的返回类型
+   */
+  private final static Map<Class, Transformer> TRANSFORMERS = new LinkedHashMap<Class, Transformer>();
+
+  static {
+    TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
+    TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
+    TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
+    TRANSFORMERS.put(boolean.class, BooleanTransformer.INSTANCE);
+    TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
+    TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+    TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
+    TRANSFORMERS.put(Boolean.class, BooleanTransformer.INSTANCE);
+  }
+
+  /**
+   * 生成自增id的更新操作支持的返回类型
+   */
+  private final static Map<Class, GeneratedTransformer> GENERATED_TRANSFORMERS =
+      new LinkedHashMap<Class, GeneratedTransformer>();
+
+  static {
+    GENERATED_TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
+    GENERATED_TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
+    GENERATED_TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+    GENERATED_TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
+  }
+
+  interface Transformer {
+    Object transform(Number n);
+  }
+
+  interface GeneratedTransformer extends Transformer {
+    Class<? extends Number> getRawType();
+  }
+
+  enum IntegerTransformer implements GeneratedTransformer {
+    INSTANCE;
+
+    @Override
+    public Object transform(Number n) {
+      return n.intValue();
     }
 
     @Override
-    public Object execute(Object[] values) {
-        InvocationContext context = invocationContextFactory.newInvocationContext(values);
-        return execute(context);
+    public Class<? extends Number> getRawType() {
+      return int.class;
+    }
+  }
+
+  enum LongTransformer implements GeneratedTransformer {
+    INSTANCE;
+
+    @Override
+    public Object transform(Number n) {
+      return n.longValue();
     }
 
-    public Object execute(InvocationContext context) {
-        context.setGlobalTable(tableGenerator.getTable(context));
-
-        try {
-            rootNode.render(context);
-        } catch (EmptyObjectException e) {
-            if (config.isCompatibleWithEmptyList()) {
-                return transformer.transform(0);
-            } else {
-                throw e;
-            }
-        }
-
-        PreparedSql preparedSql = context.getPreparedSql();
-        invocationInterceptorChain.intercept(preparedSql, context);  // 拦截器
-
-        String sql = preparedSql.getSql();
-        Object[] args = preparedSql.getArgs().toArray();
-
-        DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
-        Number r = executeDb(ds, sql, args);
-        return transformer.transform(r);
+    @Override
+    public Class<? extends Number> getRawType() {
+      return long.class;
     }
+  }
 
-    private Number executeDb(DataSource ds, String sql, Object[] args) {
-        Number r = null;
-        long now = System.nanoTime();
-        try {
-            if (returnGeneratedId) {
-                GeneratedKeyHolder holder = new GeneratedKeyHolder(numberRawType);
-                jdbcOperations.update(ds, sql, args, holder);
-                r = holder.getKey();
-            } else {
-                r = jdbcOperations.update(ds, sql, args);
-            }
-        } finally {
-            long cost = System.nanoTime() - now;
-            if (r != null) {
-                statsCounter.recordDatabaseExecuteSuccess(cost);
-            } else {
-                statsCounter.recordDatabaseExecuteException(cost);
-            }
-        }
-        return r;
+  enum VoidTransformer implements Transformer {
+    INSTANCE;
+
+    @Override
+    public Object transform(Number n) {
+      return null;
     }
+  }
 
-    /**
-     * 更新操作支持的返回类型
-     */
-    private final static Map<Class, Transformer> TRANSFORMERS = new LinkedHashMap<Class, Transformer>();
-    static {
-        TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
-        TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
-        TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
-        TRANSFORMERS.put(boolean.class, BooleanTransformer.INSTANCE);
-        TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
-        TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
-        TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
-        TRANSFORMERS.put(Boolean.class, BooleanTransformer.INSTANCE);
+  enum BooleanTransformer implements Transformer {
+    INSTANCE;
+
+    @Override
+    public Object transform(Number n) {
+      return n.intValue() > 0 ? Boolean.TRUE : Boolean.FALSE;
     }
-
-    /**
-     * 生成自增id的更新操作支持的返回类型
-     */
-    private final static Map<Class, GeneratedTransformer> GENERATED_TRANSFORMERS =
-            new LinkedHashMap<Class, GeneratedTransformer>();
-    static {
-        GENERATED_TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
-        GENERATED_TRANSFORMERS.put(long.class, LongTransformer.INSTANCE);
-        GENERATED_TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
-        GENERATED_TRANSFORMERS.put(Long.class, LongTransformer.INSTANCE);
-    }
-
-    interface Transformer {
-        Object transform(Number n);
-    }
-
-    interface GeneratedTransformer extends Transformer {
-        Class<? extends  Number> getRawType();
-    }
-
-    enum IntegerTransformer implements GeneratedTransformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(Number n) {
-            return n.intValue();
-        }
-
-        @Override
-        public Class<? extends Number> getRawType() {
-            return int.class;
-        }
-    }
-
-    enum LongTransformer implements GeneratedTransformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(Number n) {
-            return n.longValue();
-        }
-
-        @Override
-        public Class<? extends Number> getRawType() {
-            return long.class;
-        }
-    }
-
-    enum VoidTransformer implements Transformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(Number n) {
-            return null;
-        }
-    }
-
-    enum BooleanTransformer implements Transformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(Number n) {
-            return n.intValue() > 0 ? Boolean.TRUE : Boolean.FALSE;
-        }
-    }
+  }
 
 }

@@ -17,7 +17,7 @@
 package org.jfaster.mango.support;
 
 import org.jfaster.mango.annotation.Cache;
-import org.jfaster.mango.operator.cache.CacheExpire;
+import org.jfaster.mango.cache.CacheExpire;
 
 import java.lang.annotation.Annotation;
 

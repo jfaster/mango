@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.Mango;
+import org.jfaster.mango.base.Config;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
@@ -23,6 +25,7 @@ import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.descriptor.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Rule;
@@ -309,7 +312,7 @@ public class UpdateOperatorTest {
         ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
         MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-        OperatorFactory factory = new OperatorFactory(
+        Mango.OperatorFactory factory = new Mango.OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
                 null, new InterceptorChain(), null, new Config());
 
@@ -329,7 +332,7 @@ public class UpdateOperatorTest {
         ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
         MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-        OperatorFactory factory = new OperatorFactory(
+        Mango.OperatorFactory factory = new Mango.OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
                 null, new InterceptorChain(), null, new Config());
 

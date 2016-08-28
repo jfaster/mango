@@ -25,8 +25,8 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class IncorrectReturnTypeException extends MangoException {
 
-    public IncorrectReturnTypeException(String message) {
-        super(message);
-    }
+  public IncorrectReturnTypeException(String message) {
+    super(message);
+  }
 
 }

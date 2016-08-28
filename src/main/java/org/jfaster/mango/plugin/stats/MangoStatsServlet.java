@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.plugin.stats;
 
-import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.Mango;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;

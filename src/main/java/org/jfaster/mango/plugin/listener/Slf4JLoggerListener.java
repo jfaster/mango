@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.plugin.listener;
 
-import org.jfaster.mango.operator.MangoLogger;
+import org.jfaster.mango.base.logging.MangoLogger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

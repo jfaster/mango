@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.Mango;
+import org.jfaster.mango.base.Config;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
@@ -26,6 +28,7 @@ import org.jfaster.mango.reflect.descriptor.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
+import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Rule;
@@ -285,7 +288,7 @@ public class BatchUpdateOperatorTest {
         ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
         MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-        OperatorFactory factory = new OperatorFactory(
+        Mango.OperatorFactory factory = new Mango.OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
                 null, new InterceptorChain(), null, new Config());
 
@@ -311,7 +314,7 @@ public class BatchUpdateOperatorTest {
         map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
         map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
         DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
-        OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new Config());
+        Mango.OperatorFactory factory = new Mango.OperatorFactory(dsf, null, new InterceptorChain(), null, new Config());
         Operator operator = factory.getOperator(md, new StatsCounter());
         return operator;
     }

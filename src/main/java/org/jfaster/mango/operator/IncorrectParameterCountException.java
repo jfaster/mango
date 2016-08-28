@@ -25,7 +25,7 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class IncorrectParameterCountException extends MangoException {
 
-    public IncorrectParameterCountException(String message) {
-        super(message);
-    }
+  public IncorrectParameterCountException(String message) {
+    super(message);
+  }
 }

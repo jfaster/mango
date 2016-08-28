@@ -21,9 +21,9 @@ import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.IncorrectSqlException;
-import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.operator.cache.LocalCacheHandler;
+import org.jfaster.mango.Mango;
+import org.jfaster.mango.cache.Day;
+import org.jfaster.mango.cache.LocalCacheHandler;
 import org.jfaster.mango.parser.SqlParserException;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.junit.Rule;
@@ -59,7 +59,7 @@ public class IncorrectSqlExceptionTest {
 
     @Test
     public void test2() {
-        thrown.expect(IncorrectSqlException.class);
+        thrown.expect(DescriptionException.class);
         thrown.expectMessage("sql is null or empty");
         Dao dao = mango.create(Dao.class);
         dao.add2();

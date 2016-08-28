@@ -20,6 +20,9 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
+import org.jfaster.mango.operator.datasource.DataSourceGenerator;
+import org.jfaster.mango.operator.table.TableGenerator;
+import org.jfaster.mango.stat.StatsCounter;
 
 /**
  * db操作接口
@@ -28,18 +31,18 @@ import org.jfaster.mango.jdbc.JdbcOperations;
  */
 public interface Operator {
 
-    public Object execute(Object[] values);
+  public Object execute(Object[] values);
 
-    public void setJdbcOperations(JdbcOperations jdbcOperations);
+  public void setJdbcOperations(JdbcOperations jdbcOperations);
 
-    public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory);
+  public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory);
 
-    public void setTableGenerator(TableGenerator tableGenerator);
+  public void setTableGenerator(TableGenerator tableGenerator);
 
-    public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator);
+  public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator);
 
-    public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain);
+  public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain);
 
-    public void setStatsCounter(StatsCounter statsCounter);
+  public void setStatsCounter(StatsCounter statsCounter);
 
 }

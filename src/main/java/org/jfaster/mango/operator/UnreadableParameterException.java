@@ -25,7 +25,7 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class UnreadableParameterException extends MangoException {
 
-    public UnreadableParameterException(String message) {
-        super(message);
-    }
+  public UnreadableParameterException(String message) {
+    super(message);
+  }
 }

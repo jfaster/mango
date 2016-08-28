@@ -16,98 +16,102 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.base.Config;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
+import org.jfaster.mango.operator.datasource.DataSourceGenerator;
+import org.jfaster.mango.operator.table.TableGenerator;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.stat.StatsCounter;
 
 /**
  * @author ash
  */
 public abstract class AbstractOperator implements Operator {
 
-    /**
-     * 用于对db进行操作
-     */
-    protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, Config config) {
-        this.rootNode = rootNode;
-        this.daoClass = daoClass;
-        this.config = config;
-    }
+  /**
+   * 用于对db进行操作
+   */
+  protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, Config config) {
+    this.rootNode = rootNode;
+    this.daoClass = daoClass;
+    this.config = config;
+  }
 
-    /**
-     * 渲染sql的树节点
-     */
-    protected final ASTRootNode rootNode;
+  /**
+   * 渲染sql的树节点
+   */
+  protected final ASTRootNode rootNode;
 
-    /**
-     * dao操作所在类
-     */
-    protected final Class<?> daoClass;
+  /**
+   * dao操作所在类
+   */
+  protected final Class<?> daoClass;
 
-    /**
-     * 拦截器链
-     */
-    protected InvocationInterceptorChain invocationInterceptorChain;
+  /**
+   * 拦截器链
+   */
+  protected InvocationInterceptorChain invocationInterceptorChain;
 
-    /**
-     * 状态统计
-     */
-    protected StatsCounter statsCounter;
+  /**
+   * 状态统计
+   */
+  protected StatsCounter statsCounter;
 
-    /**
-     * 全局表
-     */
-    protected TableGenerator tableGenerator;
+  /**
+   * 全局表
+   */
+  protected TableGenerator tableGenerator;
 
-    /**
-     * 数据源
-     */
-    protected DataSourceGenerator dataSourceGenerator;
+  /**
+   * 数据源
+   */
+  protected DataSourceGenerator dataSourceGenerator;
 
-    /**
-     * 运行时环境工厂
-     */
-    protected InvocationContextFactory invocationContextFactory;
+  /**
+   * 运行时环境工厂
+   */
+  protected InvocationContextFactory invocationContextFactory;
 
-    /**
-     * jdbc操作
-     */
-    protected JdbcOperations jdbcOperations;
+  /**
+   * jdbc操作
+   */
+  protected JdbcOperations jdbcOperations;
 
-    /**
-     * mango全局配置信息
-     */
-    protected Config config;
+  /**
+   * mango全局配置信息
+   */
+  protected Config config;
 
-    @Override
-    public void setJdbcOperations(JdbcOperations jdbcOperations) {
-        this.jdbcOperations = jdbcOperations;
-    }
+  @Override
+  public void setJdbcOperations(JdbcOperations jdbcOperations) {
+    this.jdbcOperations = jdbcOperations;
+  }
 
-    @Override
-    public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory) {
-        this.invocationContextFactory = invocationContextFactory;
-    }
+  @Override
+  public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory) {
+    this.invocationContextFactory = invocationContextFactory;
+  }
 
-    @Override
-    public void setTableGenerator(TableGenerator tableGenerator) {
-        this.tableGenerator = tableGenerator;
-    }
+  @Override
+  public void setTableGenerator(TableGenerator tableGenerator) {
+    this.tableGenerator = tableGenerator;
+  }
 
-    @Override
-    public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator) {
-        this.dataSourceGenerator = dataSourceGenerator;
-    }
+  @Override
+  public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator) {
+    this.dataSourceGenerator = dataSourceGenerator;
+  }
 
-    @Override
-    public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain) {
-        this.invocationInterceptorChain = invocationInterceptorChain;
-    }
+  @Override
+  public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain) {
+    this.invocationInterceptorChain = invocationInterceptorChain;
+  }
 
-    @Override
-    public void setStatsCounter(StatsCounter statsCounter) {
-        this.statsCounter = statsCounter;
-    }
+  @Override
+  public void setStatsCounter(StatsCounter statsCounter) {
+    this.statsCounter = statsCounter;
+  }
 
 }

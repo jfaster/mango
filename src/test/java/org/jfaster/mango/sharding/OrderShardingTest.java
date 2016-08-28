@@ -23,7 +23,7 @@ import org.jfaster.mango.annotation.ShardingBy;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
-import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Order;

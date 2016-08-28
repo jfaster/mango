@@ -1,13 +1,13 @@
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.Mango;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.binding.BindingException;
-import org.jfaster.mango.jdbc.MappingException;
-import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.operator.cache.LocalCacheHandler;
+import org.jfaster.mango.cache.Day;
+import org.jfaster.mango.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.junit.Rule;
 import org.junit.Test;

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.plugin.spring;
 
-import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.Mango;
 import org.springframework.beans.factory.FactoryBean;
 
 /**

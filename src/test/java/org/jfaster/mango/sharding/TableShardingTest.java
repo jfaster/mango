@@ -19,7 +19,7 @@ package org.jfaster.mango.sharding;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;

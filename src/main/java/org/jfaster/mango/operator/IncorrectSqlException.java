@@ -25,7 +25,7 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class IncorrectSqlException extends MangoException {
 
-    public IncorrectSqlException(String message) {
-        super(message);
-    }
+  public IncorrectSqlException(String message) {
+    super(message);
+  }
 }

@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.base.Config;
 import org.jfaster.mango.base.sql.PreparedSql;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -33,7 +34,7 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     protected Transformer transformer;
 
-    protected BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+    public BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
         super(rootNode, md.getDaoClass(), config);
         transformer = TRANSFORMERS.get(md.getReturnRawType());
         if (transformer == null) {

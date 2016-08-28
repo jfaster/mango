@@ -19,9 +19,9 @@ package org.jfaster.mango.exception;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.operator.cache.LocalCacheHandler;
+import org.jfaster.mango.Mango;
+import org.jfaster.mango.cache.Day;
+import org.jfaster.mango.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class IllegalStateExceptionTest {
 
     @Test
     public void test2() {
-        thrown.expect(IllegalStateException.class);
+        thrown.expect(DescriptionException.class);
         thrown.expectMessage("each method expected one @SQL annotation but not found");
         Dao2 dao = mango.create(Dao2.class, new LocalCacheHandler());
         dao.add();

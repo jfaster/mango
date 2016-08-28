@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.Mango;
+import org.jfaster.mango.base.Config;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.ListSupplier;
@@ -25,6 +27,7 @@ import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.descriptor.ReturnDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;
@@ -266,7 +269,7 @@ public class QueryOperatorTest {
         ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
         MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-        OperatorFactory factory = new OperatorFactory(
+        Mango.OperatorFactory factory = new Mango.OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
                 null, new InterceptorChain(), null, new Config());
 

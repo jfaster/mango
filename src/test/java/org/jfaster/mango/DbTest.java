@@ -22,7 +22,6 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.parser.EmptyCollectionException;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
