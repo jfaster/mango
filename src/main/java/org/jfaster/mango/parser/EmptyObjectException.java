@@ -23,12 +23,12 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class EmptyObjectException extends MangoException {
 
-    public EmptyObjectException(String msg) {
-        super(msg);
-    }
+  public EmptyObjectException(String msg) {
+    super(msg);
+  }
 
-    public EmptyObjectException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public EmptyObjectException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

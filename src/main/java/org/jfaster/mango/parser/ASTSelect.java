@@ -20,22 +20,22 @@ import org.jfaster.mango.base.sql.SQLType;
 
 public class ASTSelect extends AbstractDMLNode {
 
-    public ASTSelect(int id) {
-        super(id);
-    }
+  public ASTSelect(int id) {
+    super(id);
+  }
 
-    public ASTSelect(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTSelect(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public SQLType getSQLType() {
-        return SQLType.SELECT;
-    }
+  @Override
+  public SQLType getSQLType() {
+    return SQLType.SELECT;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

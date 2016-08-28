@@ -24,31 +24,31 @@ import org.jfaster.mango.base.sql.SQLType;
  */
 public abstract class AbstractDMLNode extends AbstractRenderableNode {
 
-    private String value;
+  private String value;
 
-    public AbstractDMLNode(int i) {
-        super(i);
-    }
+  public AbstractDMLNode(int i) {
+    super(i);
+  }
 
-    public AbstractDMLNode(Parser p, int i) {
-        super(p, i);
-    }
+  public AbstractDMLNode(Parser p, int i) {
+    super(p, i);
+  }
 
-    @Override
-    public boolean render(InvocationContext context) {
-        context.writeToSqlBuffer(value);
-        return true;
-    }
+  @Override
+  public boolean render(InvocationContext context) {
+    context.writeToSqlBuffer(value);
+    return true;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public String toString() {
-        return super.toString() + "[" + value + "]";
-    }
+  @Override
+  public String toString() {
+    return super.toString() + "[" + value + "]";
+  }
 
-    public abstract SQLType getSQLType();
+  public abstract SQLType getSQLType();
 
 }

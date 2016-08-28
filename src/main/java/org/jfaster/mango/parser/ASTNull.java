@@ -20,29 +20,29 @@ import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTNull extends AbstractExpression {
 
-    private static Object value = null;
+  private static Object value = null;
 
-    public ASTNull(int id) {
-        super(id);
-    }
+  public ASTNull(int id) {
+    super(id);
+  }
 
-    public ASTNull(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTNull(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        return false;
-    }
+  @Override
+  public boolean evaluate(InvocationContext context) {
+    return false;
+  }
 
-    @Override
-    public Object value(InvocationContext context) {
-        return value;
-    }
+  @Override
+  public Object value(InvocationContext context) {
+    return value;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

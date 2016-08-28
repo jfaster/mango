@@ -21,12 +21,12 @@ package org.jfaster.mango.parser;
  */
 public class SqlParser {
 
-    public static ASTRootNode parse(String sql) {
-        try {
-            return new Parser(sql.trim()).parse();
-        } catch (ParseException e) {
-            throw new SqlParserException(e.getMessage());
-        }
+  public static ASTRootNode parse(String sql) {
+    try {
+      return new Parser(sql.trim()).parse();
+    } catch (ParseException e) {
+      throw new SqlParserException(e.getMessage());
     }
+  }
 
 }

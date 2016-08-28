@@ -23,27 +23,27 @@ import org.jfaster.mango.binding.InvocationContext;
  */
 public class ASTGlobalTable extends AbstractRenderableNode {
 
-    public ASTGlobalTable(int i) {
-        super(i);
-    }
+  public ASTGlobalTable(int i) {
+    super(i);
+  }
 
-    public ASTGlobalTable(Parser p, int i) {
-        super(p, i);
-    }
+  public ASTGlobalTable(Parser p, int i) {
+    super(p, i);
+  }
 
-    @Override
-    public boolean render(InvocationContext context) {
-        String table = context.getGlobalTable();
-        if (table == null) {
-            throw new IllegalStateException("global table in InvocationContext can't be null");
-        }
-        context.writeToSqlBuffer(table);
-        return true;
+  @Override
+  public boolean render(InvocationContext context) {
+    String table = context.getGlobalTable();
+    if (table == null) {
+      throw new IllegalStateException("global table in InvocationContext can't be null");
     }
+    context.writeToSqlBuffer(table);
+    return true;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

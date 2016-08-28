@@ -21,12 +21,12 @@ package org.jfaster.mango.parser;
  */
 public class EmptyArrayException extends EmptyObjectException {
 
-    public EmptyArrayException(String msg) {
-        super(msg);
-    }
+  public EmptyArrayException(String msg) {
+    super(msg);
+  }
 
-    public EmptyArrayException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public EmptyArrayException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

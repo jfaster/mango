@@ -23,48 +23,48 @@ import org.jfaster.mango.binding.InvocationContext;
  */
 public abstract class AbstractStringNode extends AbstractRenderableNode {
 
-    private String value;
+  private String value;
 
-    private String groupValue;
+  private String groupValue;
 
-    public AbstractStringNode(int i) {
-        super(i);
-    }
+  public AbstractStringNode(int i) {
+    super(i);
+  }
 
-    public AbstractStringNode(Parser p, int i) {
-        super(p, i);
-    }
+  public AbstractStringNode(Parser p, int i) {
+    super(p, i);
+  }
 
-    @Override
-    public boolean render(InvocationContext context) {
-        context.writeToSqlBuffer(groupValue);
-        return true;
-    }
+  @Override
+  public boolean render(InvocationContext context) {
+    context.writeToSqlBuffer(groupValue);
+    return true;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    public String getGroupValue() {
-        return groupValue;
-    }
+  public String getGroupValue() {
+    return groupValue;
+  }
 
-    public void setGroupValue(String groupValue) {
-        this.groupValue = groupValue;
-    }
+  public void setGroupValue(String groupValue) {
+    this.groupValue = groupValue;
+  }
 
-    @Override
-    public String toString() {
-        return super.toString() + "[" + value + "]";
-    }
+  @Override
+  public String toString() {
+    return super.toString() + "[" + value + "]";
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

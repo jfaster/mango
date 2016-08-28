@@ -20,27 +20,27 @@ import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTNotNode extends AbstractExpression {
 
-    public ASTNotNode(int id) {
-        super(id);
-    }
+  public ASTNotNode(int id) {
+    super(id);
+  }
 
-    public ASTNotNode(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTNotNode(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        return !((AbstractExpression) jjtGetChild(0)).evaluate(context);
-    }
+  @Override
+  public boolean evaluate(InvocationContext context) {
+    return !((AbstractExpression) jjtGetChild(0)).evaluate(context);
+  }
 
-    @Override
-    public Object value(InvocationContext context) {
-        return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
-    }
+  @Override
+  public Object value(InvocationContext context) {
+    return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

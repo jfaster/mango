@@ -20,22 +20,22 @@ import org.jfaster.mango.base.sql.SQLType;
 
 public class ASTUpdate extends AbstractDMLNode {
 
-    public ASTUpdate(int id) {
-        super(id);
-    }
+  public ASTUpdate(int id) {
+    super(id);
+  }
 
-    public ASTUpdate(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTUpdate(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public SQLType getSQLType() {
-        return SQLType.UPDATE;
-    }
+  @Override
+  public SQLType getSQLType() {
+    return SQLType.UPDATE;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

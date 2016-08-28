@@ -21,17 +21,17 @@ package org.jfaster.mango.parser;
  */
 public class ASTText extends AbstractStringNode {
 
-    public ASTText(int i) {
-        super(i);
-    }
+  public ASTText(int i) {
+    super(i);
+  }
 
-    public ASTText(Parser p, int i) {
-        super(p, i);
-    }
+  public ASTText(Parser p, int i) {
+    super(p, i);
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

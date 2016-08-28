@@ -20,22 +20,22 @@ import org.jfaster.mango.base.sql.SQLType;
 
 public class ASTReplace extends AbstractDMLNode {
 
-    public ASTReplace(int id) {
-        super(id);
-    }
+  public ASTReplace(int id) {
+    super(id);
+  }
 
-    public ASTReplace(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTReplace(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public SQLType getSQLType() {
-        return SQLType.REPLACE;
-    }
+  @Override
+  public SQLType getSQLType() {
+    return SQLType.REPLACE;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

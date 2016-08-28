@@ -23,22 +23,22 @@ import org.jfaster.mango.base.sql.SQLType;
  */
 public class ASTDelete extends AbstractDMLNode {
 
-    public ASTDelete(int id) {
-        super(id);
-    }
+  public ASTDelete(int id) {
+    super(id);
+  }
 
-    public ASTDelete(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTDelete(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public SQLType getSQLType() {
-        return SQLType.DELETE;
-    }
+  @Override
+  public SQLType getSQLType() {
+    return SQLType.DELETE;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

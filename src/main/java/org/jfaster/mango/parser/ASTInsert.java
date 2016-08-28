@@ -20,22 +20,22 @@ import org.jfaster.mango.base.sql.SQLType;
 
 public class ASTInsert extends AbstractDMLNode {
 
-    public ASTInsert(int id) {
-        super(id);
-    }
+  public ASTInsert(int id) {
+    super(id);
+  }
 
-    public ASTInsert(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTInsert(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public SQLType getSQLType() {
-        return SQLType.INSERT;
-    }
+  @Override
+  public SQLType getSQLType() {
+    return SQLType.INSERT;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

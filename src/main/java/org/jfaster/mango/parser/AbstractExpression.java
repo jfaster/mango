@@ -25,22 +25,22 @@ import org.jfaster.mango.binding.InvocationContext;
  */
 public abstract class AbstractExpression extends SimpleNode {
 
-    public AbstractExpression(int i) {
-        super(i);
-    }
+  public AbstractExpression(int i) {
+    super(i);
+  }
 
-    public AbstractExpression(Parser p, int i) {
-        super(p, i);
-    }
+  public AbstractExpression(Parser p, int i) {
+    super(p, i);
+  }
 
-    /**
-     * 取布尔值
-     */
-    public abstract boolean evaluate(InvocationContext context);
+  /**
+   * 取布尔值
+   */
+  public abstract boolean evaluate(InvocationContext context);
 
-    /**
-     * 取值
-     */
-    public abstract Object value(InvocationContext context);
+  /**
+   * 取值
+   */
+  public abstract Object value(InvocationContext context);
 
 }

@@ -25,8 +25,8 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class SqlParserException extends MangoException {
 
-    public SqlParserException(String message) {
-        super(message);
-    }
+  public SqlParserException(String message) {
+    super(message);
+  }
 
 }

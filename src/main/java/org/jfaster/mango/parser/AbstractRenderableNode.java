@@ -23,19 +23,19 @@ import org.jfaster.mango.binding.InvocationContext;
  */
 public abstract class AbstractRenderableNode extends SimpleNode {
 
-    public AbstractRenderableNode next;
+  public AbstractRenderableNode next;
 
-    public AbstractRenderableNode(int i) {
-        super(i);
-    }
+  public AbstractRenderableNode(int i) {
+    super(i);
+  }
 
-    public AbstractRenderableNode(Parser p, int i) {
-        super(p, i);
-    }
+  public AbstractRenderableNode(Parser p, int i) {
+    super(p, i);
+  }
 
-    /**
-     * 渲染sql与args
-     */
-    public abstract boolean render(InvocationContext context);
+  /**
+   * 渲染sql与args
+   */
+  public abstract boolean render(InvocationContext context);
 
 }

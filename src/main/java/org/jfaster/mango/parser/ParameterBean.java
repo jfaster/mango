@@ -24,12 +24,12 @@ import org.jfaster.mango.binding.BindingParameterInvoker;
  */
 public interface ParameterBean {
 
-    public BindingParameter getBindingParameter();
+  public BindingParameter getBindingParameter();
 
-    public void setBindingParameter(BindingParameter bindingParameter);
+  public void setBindingParameter(BindingParameter bindingParameter);
 
-    public void setInvokerGroup(BindingParameterInvoker invoker);
+  public void setBindingParameterInvoker(BindingParameterInvoker invoker);
 
-    public String getFullName();
+  public String getFullName();
 
 }

@@ -25,42 +25,42 @@ import org.jfaster.mango.binding.InvocationContext;
  */
 public class ASTIntegerLiteral extends AbstractExpression {
 
-    private Number value;
+  private Number value;
 
-    public ASTIntegerLiteral(int i) {
-        super(i);
-    }
+  public ASTIntegerLiteral(int i) {
+    super(i);
+  }
 
-    public ASTIntegerLiteral(Parser p, int i) {
-        super(p, i);
-    }
+  public ASTIntegerLiteral(Parser p, int i) {
+    super(p, i);
+  }
 
-    public void init(String str) {
-        try {
-            value = new Integer(str);
-        } catch (NumberFormatException E1) {
-            value = new Long(str);
-        }
+  public void init(String str) {
+    try {
+      value = new Integer(str);
+    } catch (NumberFormatException E1) {
+      value = new Long(str);
     }
+  }
 
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        return true;
-    }
+  @Override
+  public boolean evaluate(InvocationContext context) {
+    return true;
+  }
 
-    @Override
-    public Object value(InvocationContext context) {
-        return value;
-    }
+  @Override
+  public Object value(InvocationContext context) {
+    return value;
+  }
 
-    @Override
-    public String toString() {
-        return super.toString() + "[" + value + "]";
-    }
+  @Override
+  public String toString() {
+    return super.toString() + "[" + value + "]";
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

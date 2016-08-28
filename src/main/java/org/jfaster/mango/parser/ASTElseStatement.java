@@ -20,23 +20,23 @@ import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTElseStatement extends AbstractRenderableNode {
 
-    public ASTElseStatement(int id) {
-        super(id);
-    }
+  public ASTElseStatement(int id) {
+    super(id);
+  }
 
-    public ASTElseStatement(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTElseStatement(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public boolean render(InvocationContext context) {
-        ((AbstractRenderableNode) jjtGetChild(0)).render(context);
-        return true;
-    }
+  @Override
+  public boolean render(InvocationContext context) {
+    ((AbstractRenderableNode) jjtGetChild(0)).render(context);
+    return true;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

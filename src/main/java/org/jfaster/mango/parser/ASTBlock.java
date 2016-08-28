@@ -20,29 +20,29 @@ import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTBlock extends AbstractRenderableNode {
 
-    public AbstractRenderableNode head;
+  public AbstractRenderableNode head;
 
-    public ASTBlock(int id) {
-        super(id);
-    }
+  public ASTBlock(int id) {
+    super(id);
+  }
 
-    public ASTBlock(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTBlock(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public boolean render(InvocationContext context) {
-        AbstractRenderableNode node = head;
-        while (node != null) {
-            node.render(context);
-            node = node.next;
-        }
-        return true;
+  @Override
+  public boolean render(InvocationContext context) {
+    AbstractRenderableNode node = head;
+    while (node != null) {
+      node.render(context);
+      node = node.next;
     }
+    return true;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

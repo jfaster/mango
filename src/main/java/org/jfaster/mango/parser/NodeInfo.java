@@ -24,8 +24,8 @@ import java.util.List;
  */
 public class NodeInfo {
 
-    public List<ASTJDBCParameter> jdbcParameters = new LinkedList<ASTJDBCParameter>();
-    public List<ASTJDBCIterableParameter> jdbcIterableParameters = new LinkedList<ASTJDBCIterableParameter>();
-    public List<ASTGlobalTable> globalTables = new LinkedList<ASTGlobalTable>();
+  public List<ASTJDBCParameter> jdbcParameters = new LinkedList<ASTJDBCParameter>();
+  public List<ASTJDBCIterableParameter> jdbcIterableParameters = new LinkedList<ASTJDBCIterableParameter>();
+  public List<ASTGlobalTable> globalTables = new LinkedList<ASTGlobalTable>();
 
 }

@@ -20,42 +20,42 @@ import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTIfStatement extends AbstractRenderableNode {
 
-    public ASTIfStatement(int id) {
-        super(id);
+  public ASTIfStatement(int id) {
+    super(id);
+  }
+
+  public ASTIfStatement(Parser p, int id) {
+    super(p, id);
+  }
+
+  @Override
+  public boolean render(InvocationContext context) {
+
+    /**
+     * 检测#if(expression)是否返回true
+     */
+    AbstractExpression expr = (AbstractExpression) jjtGetChild(0);
+    if (expr.evaluate(context)) {
+      ((AbstractRenderableNode) jjtGetChild(1)).render(context);
+      return true;
     }
 
-    public ASTIfStatement(Parser p, int id) {
-        super(p, id);
+    /**
+     * #elseif与#else
+     */
+    for (int i = 2; i < jjtGetNumChildren(); i++) {
+      AbstractRenderableNode stmt = (AbstractRenderableNode) jjtGetChild(i);
+      if (stmt.render(context)) {
+        return true;
+      }
     }
 
-    @Override
-    public boolean render(InvocationContext context) {
+    return false;
+  }
 
-        /**
-         * 检测#if(expression)是否返回true
-         */
-        AbstractExpression expr = (AbstractExpression) jjtGetChild(0);
-        if (expr.evaluate(context)) {
-            ((AbstractRenderableNode) jjtGetChild(1)).render(context);
-            return true;
-        }
-
-        /**
-         * #elseif与#else
-         */
-        for (int i = 2; i < jjtGetNumChildren(); i++) {
-            AbstractRenderableNode stmt = (AbstractRenderableNode) jjtGetChild(i);
-            if (stmt.render(context)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

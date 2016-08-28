@@ -31,85 +31,85 @@ import java.util.regex.Pattern;
  */
 public class ASTExpressionParameter extends AbstractExpression implements ParameterBean {
 
-    private BindingParameter bindingParameter;
-    private BindingParameterInvoker invokerGroup;
+  private BindingParameter bindingParameter;
+  private BindingParameterInvoker bindingParameterInvoker;
 
-    public ASTExpressionParameter(int i) {
-        super(i);
-    }
+  public ASTExpressionParameter(int i) {
+    super(i);
+  }
 
-    public ASTExpressionParameter(Parser p, int i) {
-        super(p, i);
-    }
+  public ASTExpressionParameter(Parser p, int i) {
+    super(p, i);
+  }
 
-    public void init(String str) {
-        Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
-        Matcher m = p.matcher(str);
-        if (!m.matches()) {
-            throw new IllegalStateException("Can't compile string '" + str + "'");
-        }
-        String parameterName = m.group(1);
-        String propertyPath = str.substring(m.end(1));
-        if (!propertyPath.isEmpty()) {
-            propertyPath = propertyPath.substring(1);  // .property变为property
-        }
-        bindingParameter = BindingParameter.create(parameterName, propertyPath);
+  public void init(String str) {
+    Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
+    Matcher m = p.matcher(str);
+    if (!m.matches()) {
+      throw new IllegalStateException("Can't compile string '" + str + "'");
     }
+    String parameterName = m.group(1);
+    String propertyPath = str.substring(m.end(1));
+    if (!propertyPath.isEmpty()) {
+      propertyPath = propertyPath.substring(1);  // .property变为property
+    }
+    bindingParameter = BindingParameter.create(parameterName, propertyPath);
+  }
 
-    @Override
-    public BindingParameter getBindingParameter() {
-        return bindingParameter;
-    }
+  @Override
+  public BindingParameter getBindingParameter() {
+    return bindingParameter;
+  }
 
-    @Override
-    public void setBindingParameter(BindingParameter bindingParameter) {
-        this.bindingParameter = bindingParameter;
-    }
+  @Override
+  public void setBindingParameter(BindingParameter bindingParameter) {
+    this.bindingParameter = bindingParameter;
+  }
 
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        if (invokerGroup == null) {
-            throw new NullPointerException("invoker must set");
-        }
-        Object obj = context.getNullableBindingValue(invokerGroup);
-        if (obj instanceof Boolean) {
-            return (Boolean) obj;
-        }
-        if (obj instanceof String) {
-            return !((String) obj).isEmpty();
-        }
-        return obj != null;
+  @Override
+  public boolean evaluate(InvocationContext context) {
+    if (bindingParameterInvoker == null) {
+      throw new NullPointerException("invoker must set");
     }
+    Object obj = context.getNullableBindingValue(bindingParameterInvoker);
+    if (obj instanceof Boolean) {
+      return (Boolean) obj;
+    }
+    if (obj instanceof String) {
+      return !((String) obj).isEmpty();
+    }
+    return obj != null;
+  }
 
-    @Override
-    public Object value(InvocationContext context) {
-        if (invokerGroup == null) {
-            throw new NullPointerException("invoker must set");
-        }
-        return context.getNullableBindingValue(invokerGroup);
+  @Override
+  public Object value(InvocationContext context) {
+    if (bindingParameterInvoker == null) {
+      throw new NullPointerException("invoker must set");
     }
+    return context.getNullableBindingValue(bindingParameterInvoker);
+  }
 
-    @Override
-    public String toString() {
-        return super.toString() + "{" +
-                "fullName=" + getFullName() + ", " +
-                "parameterName=" + bindingParameter.getParameterName() + ", " +
-                "propertyPath=" + bindingParameter.getPropertyPath() +
-                "}";
-    }
+  @Override
+  public String toString() {
+    return super.toString() + "{" +
+        "fullName=" + getFullName() + ", " +
+        "parameterName=" + bindingParameter.getParameterName() + ", " +
+        "propertyPath=" + bindingParameter.getPropertyPath() +
+        "}";
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
-    @Override
-    public String getFullName() {
-        return bindingParameter.getFullName();
-    }
+  @Override
+  public String getFullName() {
+    return bindingParameter.getFullName();
+  }
 
-    @Override
-    public void setInvokerGroup(BindingParameterInvoker invokerGroup) {
-        this.invokerGroup = invokerGroup;
-    }
+  @Override
+  public void setBindingParameterInvoker(BindingParameterInvoker bindingParameterInvoker) {
+    this.bindingParameterInvoker = bindingParameterInvoker;
+  }
 }

@@ -20,35 +20,35 @@ import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTGTNode extends AbstractExpression {
 
-    public ASTGTNode(int id) {
-        super(id);
-    }
+  public ASTGTNode(int id) {
+    super(id);
+  }
 
-    public ASTGTNode(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTGTNode(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        Object left = ((AbstractExpression) jjtGetChild(0)).value(context);
-        Object right = ((AbstractExpression) jjtGetChild(1)).value(context);
-        if (!(left instanceof Number)) {
-            throw new ClassCastException(left.getClass() + " cannot be cast to " + Number.class);
-        } else if (!(right instanceof Number)) {
-            throw new ClassCastException(right.getClass() + " cannot be cast to " + Number.class);
-        } else {
-            return MathUtils.compare((Number) left, (Number) right) == 1;
-        }
+  @Override
+  public boolean evaluate(InvocationContext context) {
+    Object left = ((AbstractExpression) jjtGetChild(0)).value(context);
+    Object right = ((AbstractExpression) jjtGetChild(1)).value(context);
+    if (!(left instanceof Number)) {
+      throw new ClassCastException(left.getClass() + " cannot be cast to " + Number.class);
+    } else if (!(right instanceof Number)) {
+      throw new ClassCastException(right.getClass() + " cannot be cast to " + Number.class);
+    } else {
+      return MathUtils.compare((Number) left, (Number) right) == 1;
     }
+  }
 
-    @Override
-    public Object value(InvocationContext context) {
-        return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
-    }
+  @Override
+  public Object value(InvocationContext context) {
+    return evaluate(context) ? Boolean.TRUE : Boolean.FALSE;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

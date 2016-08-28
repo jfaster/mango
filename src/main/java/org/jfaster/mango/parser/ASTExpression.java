@@ -23,27 +23,27 @@ import org.jfaster.mango.binding.InvocationContext;
  */
 public class ASTExpression extends AbstractExpression {
 
-    public ASTExpression(int id) {
-        super(id);
-    }
+  public ASTExpression(int id) {
+    super(id);
+  }
 
-    public ASTExpression(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTExpression(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        return ((AbstractExpression) jjtGetChild(0)).evaluate(context);
-    }
+  @Override
+  public boolean evaluate(InvocationContext context) {
+    return ((AbstractExpression) jjtGetChild(0)).evaluate(context);
+  }
 
-    @Override
-    public Object value(InvocationContext context) {
-        return ((AbstractExpression) jjtGetChild(0)).value(context);
-    }
+  @Override
+  public Object value(InvocationContext context) {
+    return ((AbstractExpression) jjtGetChild(0)).value(context);
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

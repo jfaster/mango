@@ -20,29 +20,29 @@ import org.jfaster.mango.binding.InvocationContext;
 
 public class ASTTrue extends AbstractExpression {
 
-    private static Boolean value = Boolean.TRUE;
+  private static Boolean value = Boolean.TRUE;
 
-    public ASTTrue(int id) {
-        super(id);
-    }
+  public ASTTrue(int id) {
+    super(id);
+  }
 
-    public ASTTrue(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTTrue(Parser p, int id) {
+    super(p, id);
+  }
 
-    @Override
-    public boolean evaluate(InvocationContext context) {
-        return value;
-    }
+  @Override
+  public boolean evaluate(InvocationContext context) {
+    return value;
+  }
 
-    @Override
-    public Object value(InvocationContext context) {
-        return value;
-    }
+  @Override
+  public Object value(InvocationContext context) {
+    return value;
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
 }

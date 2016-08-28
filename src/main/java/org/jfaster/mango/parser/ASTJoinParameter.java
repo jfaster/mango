@@ -28,73 +28,73 @@ import java.util.regex.Pattern;
  */
 public class ASTJoinParameter extends AbstractRenderableNode implements ParameterBean {
 
-    private BindingParameter bindingParameter;
-    private BindingParameterInvoker invokerGroup;
+  private BindingParameter bindingParameter;
+  private BindingParameterInvoker bindingParameterInvoker;
 
-    public ASTJoinParameter(int id) {
-        super(id);
-    }
+  public ASTJoinParameter(int id) {
+    super(id);
+  }
 
-    public ASTJoinParameter(Parser p, int id) {
-        super(p, id);
-    }
+  public ASTJoinParameter(Parser p, int id) {
+    super(p, id);
+  }
 
-    public void init(String str) {
-        Pattern p = Pattern.compile("#\\{\\s*(:(\\w+)(\\.\\w+)*)\\s*\\}", Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher(str);
-        if (!m.matches()) {
-            throw new IllegalStateException("Can't compile string '" + str + "'");
-        }
-        String fullName = m.group(1);
-        String parameterName = m.group(2);
-        String propertyPath = fullName.substring(parameterName.length() + 1);
-        if (!propertyPath.isEmpty()) {
-            propertyPath = propertyPath.substring(1);  // .property变为property
-        }
-        bindingParameter = BindingParameter.create(parameterName, propertyPath);
+  public void init(String str) {
+    Pattern p = Pattern.compile("#\\{\\s*(:(\\w+)(\\.\\w+)*)\\s*\\}", Pattern.CASE_INSENSITIVE);
+    Matcher m = p.matcher(str);
+    if (!m.matches()) {
+      throw new IllegalStateException("Can't compile string '" + str + "'");
     }
+    String fullName = m.group(1);
+    String parameterName = m.group(2);
+    String propertyPath = fullName.substring(parameterName.length() + 1);
+    if (!propertyPath.isEmpty()) {
+      propertyPath = propertyPath.substring(1);  // .property变为property
+    }
+    bindingParameter = BindingParameter.create(parameterName, propertyPath);
+  }
 
-    @Override
-    public BindingParameter getBindingParameter() {
-        return bindingParameter;
-    }
+  @Override
+  public BindingParameter getBindingParameter() {
+    return bindingParameter;
+  }
 
-    @Override
-    public void setBindingParameter(BindingParameter bindingParameter) {
-        this.bindingParameter = bindingParameter;
-    }
+  @Override
+  public void setBindingParameter(BindingParameter bindingParameter) {
+    this.bindingParameter = bindingParameter;
+  }
 
-    @Override
-    public boolean render(InvocationContext context) {
-        if (invokerGroup == null) {
-            throw new NullPointerException("invoker chain must set");
-        }
-        Object obj = context.getBindingValue(invokerGroup);
-        context.writeToSqlBuffer(obj.toString());
-        return true;
+  @Override
+  public boolean render(InvocationContext context) {
+    if (bindingParameterInvoker == null) {
+      throw new NullPointerException("invoker chain must set");
     }
+    Object obj = context.getBindingValue(bindingParameterInvoker);
+    context.writeToSqlBuffer(obj.toString());
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        return super.toString() + "{" +
-                "fullName=" + getFullName() + ", " +
-                "parameterName=" + bindingParameter.getParameterName() + ", " +
-                "propertyPath=" + bindingParameter.getPropertyPath() +
-                "}";
-    }
+  @Override
+  public String toString() {
+    return super.toString() + "{" +
+        "fullName=" + getFullName() + ", " +
+        "parameterName=" + bindingParameter.getParameterName() + ", " +
+        "propertyPath=" + bindingParameter.getPropertyPath() +
+        "}";
+  }
 
-    @Override
-    public Object jjtAccept(ParserVisitor visitor, Object data) {
-        return visitor.visit(this, data);
-    }
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
 
-    @Override
-    public String getFullName() {
-        return bindingParameter.getFullName();
-    }
+  @Override
+  public String getFullName() {
+    return bindingParameter.getFullName();
+  }
 
-    @Override
-    public void setInvokerGroup(BindingParameterInvoker invokerGroup) {
-        this.invokerGroup = invokerGroup;
-    }
+  @Override
+  public void setBindingParameterInvoker(BindingParameterInvoker bindingParameterInvoker) {
+    this.bindingParameterInvoker = bindingParameterInvoker;
+  }
 }
