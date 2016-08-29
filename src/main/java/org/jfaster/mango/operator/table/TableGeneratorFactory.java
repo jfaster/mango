@@ -14,23 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.table;
 
-import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.annotation.ShardingBy;
 import org.jfaster.mango.annotation.TableShardingBy;
-import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.TypeWrapper;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.sharding.NotUseShardingStrategy;
 import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
@@ -45,18 +41,12 @@ import java.lang.reflect.Type;
 public class TableGeneratorFactory {
 
   public TableGenerator getTableGenerator(
-      MethodDescriptor md, ASTRootNode rootNode, ParameterContext context) {
-    DB dbAnno = md.getAnnotation(DB.class);
-    if (dbAnno == null) {
-      throw new IllegalStateException("dao interface expected one @DB " +
-          "annotation but not found");
-    }
-    String table = null;
-    if (Strings.isNotEmpty(dbAnno.table())) {
-      table = dbAnno.table();
-    }
+      @Nullable Sharding shardingAnno,
+      @Nullable String table,
+      boolean isSqlUseGlobalTable,
+      ParameterContext context) {
 
-    TableShardingStrategy strategy = getTableShardingStrategy(md);
+    TableShardingStrategy strategy = getTableShardingStrategy(shardingAnno);
     TypeToken<?> strategyToken = null;
     if (strategy != null) {
       strategyToken = TypeToken.of(strategy.getClass()).resolveFatherClass(TableShardingStrategy.class);
@@ -68,9 +58,6 @@ public class TableGeneratorFactory {
     // 是否配置使用表切分
     boolean isUseTableShardingStrategy = strategy != null;
 
-    // 是否在SQL中使用#table全局表
-    boolean isSqlUseGlobalTable = !rootNode.getASTGlobalTables().isEmpty();
-
     if (isSqlUseGlobalTable && !isUseGlobalTable) {
       throw new DescriptionException("if sql use global table '#table'," +
           " @DB.table must be defined");
@@ -80,48 +67,48 @@ public class TableGeneratorFactory {
           "@DB.table must be defined");
     }
 
-    int shardingParameterNum = 0;
-    String shardingParameterName = null;
-    String shardingParameterProperty = null;
-    for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+    int num = 0;
+    String parameterName = null;
+    String propertyPath = null;
+    for (ParameterDescriptor pd : context.getParameterDescriptors()) {
       TableShardingBy tableShardingByAnno = pd.getAnnotation(TableShardingBy.class);
       if (tableShardingByAnno != null) {
-        shardingParameterName = context.getParameterNameByPosition(pd.getPosition());
-        shardingParameterProperty = tableShardingByAnno.value();
-        shardingParameterNum++;
+        parameterName = context.getParameterNameByPosition(pd.getPosition());
+        propertyPath = tableShardingByAnno.value();
+        num++;
         continue; // 有了@TableShardingBy，则忽略@ShardingBy
       }
       ShardingBy shardingByAnno = pd.getAnnotation(ShardingBy.class);
       if (shardingByAnno != null) {
-        shardingParameterName = context.getParameterNameByPosition(pd.getPosition());
-        shardingParameterProperty = shardingByAnno.value();
-        shardingParameterNum++;
+        parameterName = context.getParameterNameByPosition(pd.getPosition());
+        propertyPath = shardingByAnno.value();
+        num++;
       }
     }
     TableGenerator tableGenerator;
     if (isUseTableShardingStrategy) {
-      if (shardingParameterNum == 1) {
-        BindingParameterInvoker shardingParameterInvoker
-            = context.getBindingParameterInvoker(BindingParameter.create(shardingParameterName, shardingParameterProperty));
-        Type shardingParameterType = shardingParameterInvoker.getTargetType();
-        TypeWrapper tw = new TypeWrapper(shardingParameterType);
+      if (num == 1) {
+        BindingParameter bp = BindingParameter.create(parameterName, propertyPath);
+        BindingParameterInvoker invoker = context.getBindingParameterInvoker(bp);
+        Type targetType = invoker.getTargetType();
+        TypeWrapper tw = new TypeWrapper(targetType);
         Class<?> mappedClass = tw.getMappedClass();
         if (mappedClass == null || tw.isIterable()) {
           throw new IncorrectParameterTypeException("the type of parameter Modified @TableShardingBy is error, " +
-              "type is " + shardingParameterType + ", " +
+              "type is " + targetType + ", " +
               "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
         }
-        TypeToken<?> shardToken = TypeToken.of(shardingParameterType);
+        TypeToken<?> shardToken = TypeToken.of(targetType);
         if (!strategyToken.isAssignableFrom(shardToken.wrap())) {
           throw new ClassCastException("TableShardingStrategy[" + strategy.getClass() + "]'s " +
               "generic type[" + strategyToken.getType() + "] must be assignable from " +
               "the type of parameter Modified @TableShardingBy [" + shardToken.getType() + "], " +
               "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
         }
-        tableGenerator = new PartitionalTableGenerator(table, shardingParameterName, shardingParameterInvoker, strategy);
+        tableGenerator = new ShardedTableGenerator(table, invoker, strategy);
       } else {
         throw new DescriptionException("if @Sharding.tableShardingStrategy is defined, " +
-            "need one and only one @TableShardingBy on method's parameter but found " + shardingParameterNum + ", " +
+            "need one and only one @TableShardingBy on method's parameter but found " + num + ", " +
             "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
       }
     } else {
@@ -131,8 +118,7 @@ public class TableGeneratorFactory {
   }
 
   @Nullable
-  private TableShardingStrategy getTableShardingStrategy(MethodDescriptor md) {
-    Sharding shardingAnno = md.getAnnotation(Sharding.class);
+  private TableShardingStrategy getTableShardingStrategy(@Nullable Sharding shardingAnno) {
     if (shardingAnno == null) {
       return null;
     }

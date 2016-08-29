@@ -14,20 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.datasource.database;
 
 import org.jfaster.mango.binding.InvocationContext;
 
-import javax.annotation.Nullable;
-
 /**
- * 表名生成器，生成的表名用于替换掉SQL中的#table
+ * database生成器
  *
  * @author ash
  */
-public interface TableGenerator {
+public interface DatabaseGenerator {
 
-  @Nullable
-  public String getTable(InvocationContext context);
+  public String getDatabase(InvocationContext context);
 
 }

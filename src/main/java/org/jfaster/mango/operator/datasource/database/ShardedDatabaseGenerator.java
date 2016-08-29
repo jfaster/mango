@@ -14,18 +14,14 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.datasource.database;
 
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 
-import javax.annotation.Nullable;
-
 /**
- * 分库数据源生成器，
+ * 分库database生成器，
  * 使用{@link org.jfaster.mango.annotation.DatabaseShardingBy}或{@link org.jfaster.mango.annotation.ShardingBy}
  * 修饰的参数作为分库参数，
  * 使用{@link org.jfaster.mango.sharding.DatabaseShardingStrategy}作为分库策略，
@@ -33,26 +29,21 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class RoutableDataSourceGenerator extends AbstractDataSourceGenerator {
+public class ShardedDatabaseGenerator implements DatabaseGenerator {
 
-  private final String shardParameterName;
-  private final BindingParameterInvoker shardingParameterInvoker;
+  private final BindingParameterInvoker bindingParameterInvoker;
   private final DatabaseShardingStrategy databaseShardingStrategy;
 
-  public RoutableDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType,
-                                     String shardParameterName, BindingParameterInvoker shardingParameterInvoker,
-                                     DatabaseShardingStrategy databaseShardingStrategy) {
-    super(dataSourceFactory, dataSourceType);
-    this.shardParameterName = shardParameterName;
-    this.shardingParameterInvoker = shardingParameterInvoker;
+  public ShardedDatabaseGenerator(
+      BindingParameterInvoker bindingParameterInvoker, DatabaseShardingStrategy databaseShardingStrategy) {
+    this.bindingParameterInvoker = bindingParameterInvoker;
     this.databaseShardingStrategy = databaseShardingStrategy;
   }
 
   @SuppressWarnings("unchecked")
-  @Nullable
   @Override
   public String getDatabase(InvocationContext context) {
-    Object shardParam = context.getBindingValue(shardingParameterInvoker);
+    Object shardParam = context.getBindingValue(bindingParameterInvoker);
     return databaseShardingStrategy.getDatabase(shardParam);
   }
 

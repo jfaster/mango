@@ -16,22 +16,23 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.annotation.Cache;
-import org.jfaster.mango.annotation.CacheIgnored;
-import org.jfaster.mango.annotation.SQL;
+import org.jfaster.mango.annotation.UseMaster;
 import org.jfaster.mango.base.Config;
-import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.base.sql.OperatorType;
 import org.jfaster.mango.base.sql.SQLType;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.exception.DescriptionException;
+import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.cache.*;
+import org.jfaster.mango.operator.datasource.DataSourceGenerator;
+import org.jfaster.mango.operator.datasource.DataSourceGeneratorFactory;
+import org.jfaster.mango.operator.table.TableGenerator;
+import org.jfaster.mango.operator.table.TableGeneratorFactory;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
 import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
@@ -64,7 +65,7 @@ public class OperatorFactory {
   }
 
   public Operator getOperator(MethodDescriptor md, StatsCounter statsCounter) {
-    ASTRootNode rootNode = SqlParser.parse(getSQL(md)).init(); // 初始化抽象语法树
+    ASTRootNode rootNode = SqlParser.parse(md.getSQL()).init(); // 初始化抽象语法树
     List<ParameterDescriptor> pds = md.getParameterDescriptors(); // 方法参数描述
     OperatorType operatorType = getOperatorType(pds, rootNode);
     statsCounter.setOperatorType(operatorType);
@@ -79,13 +80,17 @@ public class OperatorFactory {
     rootNode.checkAndBind(context); // 检查类型，设定参数绑定器
 
     // 构造表生成器
-    TableGenerator tableGenerator = tableGeneratorFactory.getTableGenerator(md, rootNode, context);
+    boolean isSqlUseGlobalTable = !rootNode.getASTGlobalTables().isEmpty();
+    TableGenerator tableGenerator = tableGeneratorFactory.getTableGenerator(
+        md.getShardingAnno(), md.getGlobalTable(), isSqlUseGlobalTable, context);
 
     // 构造数据源生成器
-    DataSourceGenerator dataSourceGenerator = dataSourceGeneratorFactory.getDataSourceGenerator(operatorType, md, context);
+    DataSourceType dataSourceType = getDataSourceType(operatorType, md);
+    DataSourceGenerator dataSourceGenerator = dataSourceGeneratorFactory.
+        getDataSourceGenerator(dataSourceType, md.getShardingAnno(), md.getDatabase(), context);
 
     Operator operator;
-    if (isUseCache(md)) {
+    if (md.isUseCache()) {
       CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, statsCounter);
       statsCounter.setCacheable(true);
       statsCounter.setUseMultipleKeys(driver.isUseMultipleKeys());
@@ -130,18 +135,6 @@ public class OperatorFactory {
     return operator;
   }
 
-  String getSQL(MethodDescriptor md) {
-    SQL sqlAnno = md.getAnnotation(SQL.class);
-    if (sqlAnno == null) {
-      throw new DescriptionException("each method expected one @SQL annotation but not found");
-    }
-    String sql = sqlAnno.value();
-    if (Strings.isEmpty(sql)) {
-      throw new DescriptionException("sql is null or empty");
-    }
-    return sql;
-  }
-
   OperatorType getOperatorType(List<ParameterDescriptor> pds, ASTRootNode rootNode) {
     OperatorType operatorType;
     if (rootNode.getSQLType() == SQLType.SELECT) {
@@ -159,10 +152,12 @@ public class OperatorFactory {
     return operatorType;
   }
 
-  private boolean isUseCache(MethodDescriptor md) {
-    CacheIgnored cacheIgnoredAnno = md.getAnnotation(CacheIgnored.class);
-    Cache cacheAnno = md.getAnnotation(Cache.class);
-    return cacheAnno != null && cacheIgnoredAnno == null;
+  DataSourceType getDataSourceType(OperatorType operatorType, MethodDescriptor md) {
+    DataSourceType dataSourceType = DataSourceType.SLAVE;
+    if (operatorType != OperatorType.QUERY || md.isAnnotationPresent(UseMaster.class)) {
+      dataSourceType = DataSourceType.MASTER;
+    }
+    return dataSourceType;
   }
 
 }

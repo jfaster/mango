@@ -14,41 +14,39 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.datasource;
 
+import org.jfaster.mango.base.logging.InternalLogger;
+import org.jfaster.mango.base.logging.InternalLoggerFactory;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.base.logging.InternalLogger;
-import org.jfaster.mango.base.logging.InternalLoggerFactory;
 import org.jfaster.mango.exception.DescriptionException;
+import org.jfaster.mango.operator.datasource.database.DatabaseGenerator;
 
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 /**
- * 抽象数据源生成器
- *
  * @author ash
  */
-public abstract class AbstractDataSourceGenerator implements DataSourceGenerator {
+public class DefaultDataSourceGenerator implements DataSourceGenerator {
 
-  private final static InternalLogger logger = InternalLoggerFactory.getInstance(AbstractDataSourceGenerator.class);
+  private final static InternalLogger logger = InternalLoggerFactory.getInstance(DefaultDataSourceGenerator.class);
 
+  private final DatabaseGenerator databaseGenerator;
   private final DataSourceFactory dataSourceFactory;
   private final DataSourceType dataSourceType;
 
-  protected AbstractDataSourceGenerator(DataSourceFactory dataSourceFactory, DataSourceType dataSourceType) {
+  public DefaultDataSourceGenerator(
+      DatabaseGenerator databaseGenerator, DataSourceFactory dataSourceFactory, DataSourceType dataSourceType) {
+    this.databaseGenerator = databaseGenerator;
     this.dataSourceFactory = dataSourceFactory;
     this.dataSourceType = dataSourceType;
   }
 
   @Override
   public DataSource getDataSource(InvocationContext context, Class<?> daoClass) {
-    return getDataSource(getDatabase(context), daoClass);
-  }
-
-  private DataSource getDataSource(String database, Class<?> daoClass) {
+    String database = databaseGenerator.getDatabase(context);
     if (logger.isDebugEnabled()) {
       logger.debug("The name of database is [" + database + "]");
     }
@@ -60,8 +58,5 @@ public abstract class AbstractDataSourceGenerator implements DataSourceGenerator
     }
     return ds;
   }
-
-  @Nullable
-  public abstract String getDatabase(InvocationContext context);
 
 }

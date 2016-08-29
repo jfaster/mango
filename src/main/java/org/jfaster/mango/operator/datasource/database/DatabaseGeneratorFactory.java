@@ -14,21 +14,19 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.datasource.database;
 
-import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.base.sql.OperatorType;
+import org.jfaster.mango.annotation.DatabaseShardingBy;
+import org.jfaster.mango.annotation.Sharding;
+import org.jfaster.mango.annotation.ShardingBy;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.ParameterContext;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.TypeWrapper;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.NotUseDatabaseShardingStrategy;
@@ -38,33 +36,16 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 
 /**
+ * database生成器工厂
+ *
  * @author ash
  */
-public class DataSourceGeneratorFactory {
+public class DatabaseGeneratorFactory {
 
-  private final DataSourceFactory dataSourceFactory;
+  public DatabaseGenerator getDataSourceGenerator(
+      @Nullable Sharding shardingAnno, String database, ParameterContext context) {
 
-  public DataSourceGeneratorFactory(DataSourceFactory dataSourceFactory) {
-    this.dataSourceFactory = dataSourceFactory;
-  }
-
-  public DataSourceGenerator getDataSourceGenerator(
-      OperatorType operatorType, MethodDescriptor md, ParameterContext context) {
-
-    DataSourceType dataSourceType = DataSourceType.SLAVE;
-    if (operatorType != OperatorType.QUERY || md.isAnnotationPresent(UseMaster.class)) {
-      dataSourceType = DataSourceType.MASTER;
-    }
-
-    DB dbAnno = md.getAnnotation(DB.class);
-    if (dbAnno == null) {
-      throw new IllegalStateException("dao interface expected one @DB " +
-          "annotation but not found");
-    }
-    String database = dbAnno.database();
-
-
-    DatabaseShardingStrategy strategy = getDatabaseShardingStrategy(md);
+    DatabaseShardingStrategy strategy = getDatabaseShardingStrategy(shardingAnno);
     TypeToken<?> strategyToken = null;
     if (strategy != null) {
       strategyToken = TypeToken.of(strategy.getClass()).resolveFatherClass(DatabaseShardingStrategy.class);
@@ -73,7 +54,7 @@ public class DataSourceGeneratorFactory {
     int shardingParameterNum = 0;
     String shardingParameterName = null;
     String shardingParameterProperty = null;
-    for (ParameterDescriptor pd : md.getParameterDescriptors()) {
+    for (ParameterDescriptor pd : context.getParameterDescriptors()) {
       DatabaseShardingBy databaseShardingByAnno = pd.getAnnotation(DatabaseShardingBy.class);
       if (databaseShardingByAnno != null) {
         shardingParameterName = context.getParameterNameByPosition(pd.getPosition());
@@ -88,7 +69,7 @@ public class DataSourceGeneratorFactory {
         shardingParameterNum++;
       }
     }
-    DataSourceGenerator dataSourceGenerator;
+    DatabaseGenerator dataSourceGenerator;
     if (strategy != null) {
       if (shardingParameterNum == 1) {
         BindingParameterInvoker shardingParameterInvoker
@@ -108,21 +89,20 @@ public class DataSourceGeneratorFactory {
               "the type of parameter Modified @DatabaseShardingBy [" + shardToken.getType() + "], " +
               "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
         }
-        dataSourceGenerator = new RoutableDataSourceGenerator(dataSourceFactory, dataSourceType, shardingParameterName, shardingParameterInvoker, strategy);
+        dataSourceGenerator = new ShardedDatabaseGenerator(shardingParameterInvoker, strategy);
       } else {
         throw new DescriptionException("if @Sharding.databaseShardingStrategy is defined, " +
             "need one and only one @DatabaseShardingBy on method's parameter but found " + shardingParameterNum + ", " +
             "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
       }
     } else {
-      dataSourceGenerator = new SimpleDataSourceGenerator(dataSourceFactory, dataSourceType, database);
+      dataSourceGenerator = new SimpleDatabaseGenerator(database);
     }
     return dataSourceGenerator;
   }
 
   @Nullable
-  private DatabaseShardingStrategy getDatabaseShardingStrategy(MethodDescriptor md) {
-    Sharding shardingAnno = md.getAnnotation(Sharding.class);
+  private DatabaseShardingStrategy getDatabaseShardingStrategy(@Nullable Sharding shardingAnno) {
     if (shardingAnno == null) {
       return null;
     }

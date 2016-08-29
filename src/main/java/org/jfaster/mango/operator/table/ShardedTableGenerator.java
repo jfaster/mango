@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.table;
 
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
@@ -31,19 +31,16 @@ import javax.annotation.Nullable;
  *
  * @author ash
  */
-public class PartitionalTableGenerator implements TableGenerator {
+public class ShardedTableGenerator implements TableGenerator {
 
   private final String table; // 原始表名称
-  private final String shardParameterName;
-  private final BindingParameterInvoker shardingParameterInvoker;
+  private final BindingParameterInvoker bindingParameterInvoker; // 绑定参数执行器
   private final TableShardingStrategy tableShardingStrategy; // 分表策略
 
-  public PartitionalTableGenerator(String table, String shardParameterName,
-                                   BindingParameterInvoker shardingParameterInvoker,
-                                   TableShardingStrategy tableShardingStrategy) {
+  public ShardedTableGenerator(
+      String table, BindingParameterInvoker bindingParameterInvoker, TableShardingStrategy tableShardingStrategy) {
     this.table = table;
-    this.shardParameterName = shardParameterName;
-    this.shardingParameterInvoker = shardingParameterInvoker;
+    this.bindingParameterInvoker = bindingParameterInvoker;
     this.tableShardingStrategy = tableShardingStrategy;
   }
 
@@ -51,7 +48,7 @@ public class PartitionalTableGenerator implements TableGenerator {
   @Nullable
   @Override
   public String getTable(InvocationContext context) {
-    Object shardParam = context.getBindingValue(shardingParameterInvoker);
+    Object shardParam = context.getBindingValue(bindingParameterInvoker);
     return tableShardingStrategy.getTargetTable(table, shardParam);
   }
 

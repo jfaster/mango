@@ -16,6 +16,10 @@
 
 package org.jfaster.mango.reflect.descriptor;
 
+import org.jfaster.mango.annotation.*;
+import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.exception.DescriptionException;
+
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -43,6 +47,52 @@ public class MethodDescriptor {
   public static MethodDescriptor create(
       Class<?> daoClass, ReturnDescriptor returnDescriptor, List<ParameterDescriptor> parameterDescriptors) {
     return new MethodDescriptor(daoClass, returnDescriptor, parameterDescriptors);
+  }
+
+  public String getSQL() {
+    SQL sqlAnno = getAnnotation(SQL.class);
+    if (sqlAnno == null) {
+      throw new DescriptionException("each method expected one @SQL annotation but not found");
+    }
+    String sql = sqlAnno.value();
+    if (Strings.isEmpty(sql)) {
+      throw new DescriptionException("sql is null or empty");
+    }
+    return sql;
+  }
+
+  @Nullable
+  public String getGlobalTable() {
+    DB dbAnno = getAnnotation(DB.class);
+    if (dbAnno == null) {
+      throw new DescriptionException("dao interface expected one @DB " +
+          "annotation but not found");
+    }
+    String table = null;
+    if (Strings.isNotEmpty(dbAnno.table())) {
+      table = dbAnno.table();
+    }
+    return table;
+  }
+
+  public String getDatabase() {
+    DB dbAnno = getAnnotation(DB.class);
+    if (dbAnno == null) {
+      throw new DescriptionException("dao interface expected one @DB " +
+          "annotation but not found");
+    }
+    return dbAnno.database();
+  }
+
+  @Nullable
+  public Sharding getShardingAnno() {
+    return getAnnotation(Sharding.class);
+  }
+
+  public boolean isUseCache() {
+    CacheIgnored cacheIgnoredAnno = getAnnotation(CacheIgnored.class);
+    Cache cacheAnno = getAnnotation(Cache.class);
+    return cacheAnno != null && cacheIgnoredAnno == null;
   }
 
   public Class<?> getDaoClass() {

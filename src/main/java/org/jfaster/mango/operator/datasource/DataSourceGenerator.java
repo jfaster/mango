@@ -14,18 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.operator.datasource;
 
-import org.jfaster.mango.exception.MangoException;
+import org.jfaster.mango.binding.InvocationContext;
+
+import javax.sql.DataSource;
 
 /**
- * 错误的类型异常
- *
  * @author ash
  */
-public class IncorrectTypeException extends MangoException {
+public interface DataSourceGenerator {
 
-    public IncorrectTypeException(String message) {
-        super(message);
-    }
+  public DataSource getDataSource(InvocationContext context, Class<?> daoClass);
+
 }
