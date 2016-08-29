@@ -17,7 +17,7 @@
 package org.jfaster.mango.plugin.stats;
 
 import freemarker.template.Template;
-import org.jfaster.mango.Mango;
+import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.stat.OperatorStats;
 
 import java.io.BufferedWriter;

@@ -19,6 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.base.Config;
 import org.jfaster.mango.base.sql.PreparedSql;
 import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.base.Iterables;
@@ -32,183 +33,184 @@ import java.util.*;
  */
 public class BatchUpdateOperator extends AbstractOperator {
 
-    protected Transformer transformer;
+  protected Transformer transformer;
 
-    public BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
-        super(rootNode, md.getDaoClass(), config);
-        transformer = TRANSFORMERS.get(md.getReturnRawType());
-        if (transformer == null) {
-            String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
-            throw new IncorrectReturnTypeException("the return type of batch update " +
-                    "expected one of " + expected + " but " + md.getReturnRawType());
-        }
+  public BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+    super(rootNode, md.getDaoClass(), config);
+    transformer = TRANSFORMERS.get(md.getReturnRawType());
+    if (transformer == null) {
+      String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
+      throw new DescriptionException("the return type of batch update " +
+          "expected one of " + expected + " but " + md.getReturnRawType());
     }
+  }
+
+  @Override
+  public Object execute(Object[] values) {
+    Iterables iterables = getIterables(values);
+    if (iterables.isEmpty()) {
+      return transformer.transform(new int[]{});
+    }
+
+    Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
+    int t = 0;
+    for (Object obj : iterables) {
+      InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
+      group(context, gorupMap, t++);
+    }
+    int[] ints = executeDb(gorupMap, t);
+    return transformer.transform(ints);
+  }
+
+  protected void group(InvocationContext context, Map<DataSource, Group> groupMap, int position) {
+    context.setGlobalTable(tableGenerator.getTable(context));
+    DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
+    Group group = groupMap.get(ds);
+    if (group == null) {
+      group = new Group();
+      groupMap.put(ds, group);
+    }
+
+    rootNode.render(context);
+    PreparedSql preparedSql = context.getPreparedSql();
+    invocationInterceptorChain.intercept(preparedSql, context); // 拦截器
+
+    String sql = preparedSql.getSql();
+    Object[] args = preparedSql.getArgs().toArray();
+    group.add(sql, args, position);
+  }
+
+  protected Iterables getIterables(Object[] values) {
+    Object firstValue = values[0];
+    if (firstValue == null) {
+      throw new NullPointerException("batchUpdate's parameter can't be null");
+    }
+    Iterables iterables = new Iterables(firstValue);
+    return iterables;
+  }
+
+  protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum) {
+    int[] r = new int[batchNum];
+    long now = System.nanoTime();
+    int t = 0;
+    try {
+      for (Map.Entry<DataSource, Group> entry : groupMap.entrySet()) {
+        DataSource ds = entry.getKey();
+        List<String> sqls = entry.getValue().getSqls();
+        List<Object[]> batchArgs = entry.getValue().getBatchArgs();
+        List<Integer> positions = entry.getValue().getPositions();
+        int[] ints = isUniqueSql(sqls) ?
+            jdbcOperations.batchUpdate(ds, sqls.get(0), batchArgs) :
+            jdbcOperations.batchUpdate(ds, sqls, batchArgs);
+        for (int i = 0; i < ints.length; i++) {
+          r[positions.get(i)] = ints[i];
+        }
+        t++;
+      }
+    } finally {
+      long cost = System.nanoTime() - now;
+      if (t == groupMap.entrySet().size()) {
+        statsCounter.recordDatabaseExecuteSuccess(cost);
+      } else {
+        statsCounter.recordDatabaseExecuteException(cost);
+      }
+    }
+    return r;
+  }
+
+  protected boolean isUniqueSql(List<String> sqls) {
+    String sql = sqls.get(0);
+    boolean r = true;
+    for (int i = 1; i < sqls.size(); i++) {
+      if (!sql.equals(sqls.get(i))) {
+        r = false;
+        break;
+      }
+    }
+    return r;
+  }
+
+  protected static class Group {
+    private List<String> sqls = new LinkedList<String>();
+    private List<Object[]> batchArgs = new LinkedList<Object[]>();
+    private List<Integer> positions = new LinkedList<Integer>();
+
+    public void add(String sql, Object[] args, int position) {
+      sqls.add(sql);
+      batchArgs.add(args);
+      positions.add(position);
+    }
+
+    public List<String> getSqls() {
+      return sqls;
+    }
+
+    public List<Object[]> getBatchArgs() {
+      return batchArgs;
+    }
+
+    public List<Integer> getPositions() {
+      return positions;
+    }
+  }
+
+  private final static Map<Class, Transformer> TRANSFORMERS = new LinkedHashMap<Class, Transformer>();
+
+  static {
+    TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
+    TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
+    TRANSFORMERS.put(int[].class, IntArrayTransformer.INSTANCE);
+    TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
+    TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
+    TRANSFORMERS.put(Integer[].class, IntegerArrayTransformer.INSTANCE);
+  }
+
+  public interface Transformer {
+    Object transform(int[] s);
+  }
+
+  enum IntArrayTransformer implements Transformer {
+    INSTANCE;
 
     @Override
-    public Object execute(Object[] values) {
-        Iterables iterables = getIterables(values);
-        if (iterables.isEmpty()) {
-            return transformer.transform(new int[] {});
-        }
-
-        Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
-        int t = 0;
-        for (Object obj : iterables) {
-            InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
-            group(context, gorupMap, t++);
-        }
-        int[] ints = executeDb(gorupMap, t);
-        return transformer.transform(ints);
+    public Object transform(int[] s) {
+      return s;
     }
+  }
 
-    protected void group(InvocationContext context, Map<DataSource, Group> groupMap, int position) {
-        context.setGlobalTable(tableGenerator.getTable(context));
-        DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
-        Group group = groupMap.get(ds);
-        if (group == null) {
-            group = new Group();
-            groupMap.put(ds, group);
-        }
+  enum IntegerArrayTransformer implements Transformer {
+    INSTANCE;
 
-        rootNode.render(context);
-        PreparedSql preparedSql = context.getPreparedSql();
-        invocationInterceptorChain.intercept(preparedSql, context); // 拦截器
-
-        String sql = preparedSql.getSql();
-        Object[] args = preparedSql.getArgs().toArray();
-        group.add(sql, args, position);
+    @Override
+    public Object transform(int[] s) {
+      Integer[] r = new Integer[s.length];
+      for (int i = 0; i < s.length; i++) {
+        r[i] = s[i];
+      }
+      return r;
     }
+  }
 
-    protected Iterables getIterables(Object[] values) {
-        Object firstValue = values[0];
-        if (firstValue == null) {
-            throw new NullPointerException("batchUpdate's parameter can't be null");
-        }
-        Iterables iterables = new Iterables(firstValue);
-        return iterables;
+  enum IntegerTransformer implements Transformer {
+    INSTANCE;
+
+    @Override
+    public Object transform(int[] s) {
+      int r = 0;
+      for (int e : s) {
+        r += e;
+      }
+      return r;
     }
+  }
 
-    protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum) {
-        int[] r = new int[batchNum];
-        long now = System.nanoTime();
-        int t = 0;
-        try {
-            for (Map.Entry<DataSource, Group> entry : groupMap.entrySet()) {
-                DataSource ds = entry.getKey();
-                List<String> sqls = entry.getValue().getSqls();
-                List<Object[]> batchArgs = entry.getValue().getBatchArgs();
-                List<Integer> positions = entry.getValue().getPositions();
-                int[] ints = isUniqueSql(sqls) ?
-                        jdbcOperations.batchUpdate(ds, sqls.get(0), batchArgs) :
-                        jdbcOperations.batchUpdate(ds, sqls, batchArgs);
-                for (int i = 0; i < ints.length; i++) {
-                    r[positions.get(i)] = ints[i];
-                }
-                t++;
-            }
-        } finally {
-            long cost = System.nanoTime() - now;
-            if (t == groupMap.entrySet().size()) {
-                statsCounter.recordDatabaseExecuteSuccess(cost);
-            } else {
-                statsCounter.recordDatabaseExecuteException(cost);
-            }
-        }
-        return r;
+  enum VoidTransformer implements Transformer {
+    INSTANCE;
+
+    @Override
+    public Object transform(int[] s) {
+      return null;
     }
-
-    protected boolean isUniqueSql(List<String> sqls) {
-        String sql = sqls.get(0);
-        boolean r = true;
-        for (int i = 1; i < sqls.size(); i++) {
-            if (!sql.equals(sqls.get(i))) {
-                r = false;
-                break;
-            }
-        }
-        return r;
-    }
-
-    protected static class Group {
-        private List<String> sqls = new LinkedList<String>();
-        private List<Object[]> batchArgs = new LinkedList<Object[]>();
-        private List<Integer> positions = new LinkedList<Integer>();
-
-        public void add(String sql, Object[] args, int position) {
-            sqls.add(sql);
-            batchArgs.add(args);
-            positions.add(position);
-        }
-
-        public List<String> getSqls() {
-            return sqls;
-        }
-
-        public List<Object[]> getBatchArgs() {
-            return batchArgs;
-        }
-
-        public List<Integer> getPositions() {
-            return positions;
-        }
-    }
-
-    private final static Map<Class, Transformer> TRANSFORMERS = new LinkedHashMap<Class, Transformer>();
-    static {
-        TRANSFORMERS.put(void.class, VoidTransformer.INSTANCE);
-        TRANSFORMERS.put(int.class, IntegerTransformer.INSTANCE);
-        TRANSFORMERS.put(int[].class, IntArrayTransformer.INSTANCE);
-        TRANSFORMERS.put(Void.class, VoidTransformer.INSTANCE);
-        TRANSFORMERS.put(Integer.class, IntegerTransformer.INSTANCE);
-        TRANSFORMERS.put(Integer[].class, IntegerArrayTransformer.INSTANCE);
-    }
-
-    public interface Transformer {
-        Object transform(int[] s);
-    }
-
-    enum IntArrayTransformer implements Transformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(int[] s) {
-            return s;
-        }
-    }
-
-    enum IntegerArrayTransformer implements Transformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(int[] s) {
-            Integer[] r = new Integer[s.length];
-            for (int i = 0; i < s.length; i++) {
-                r[i] = s[i];
-            }
-            return r;
-        }
-    }
-
-    enum IntegerTransformer implements Transformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(int[] s) {
-            int r = 0;
-            for (int e : s) {
-                r += e;
-            }
-            return r;
-        }
-    }
-
-    enum VoidTransformer implements Transformer {
-        INSTANCE;
-
-        @Override
-        public Object transform(int[] s) {
-            return null;
-        }
-    }
+  }
 
 }

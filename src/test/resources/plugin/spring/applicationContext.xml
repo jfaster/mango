@@ -14,7 +14,7 @@
         </property>
     </bean>
 
-    <bean class="org.jfaster.mango.Mango">
+    <bean class="org.jfaster.mango.operator.Mango">
         <property name="dataSource" ref="dmds" />
     </bean>
 

@@ -16,7 +16,10 @@
 
 package org.jfaster.mango.binding;
 
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @author ash
@@ -29,9 +32,14 @@ public interface ParameterContext {
   public String getParameterNameByPosition(int position);
 
   /**
-   * 获得getter调用器
+   * 获得绑定参数调用器
    */
   public BindingParameterInvoker getBindingParameterInvoker(BindingParameter bindingParameter);
+
+  /**
+   * 获得参数描述
+   */
+  public List<ParameterDescriptor> getParameterDescriptors();
 
   /**
    * 尝试自动扩展参数名

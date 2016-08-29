@@ -22,6 +22,7 @@ import org.jfaster.mango.base.ToStringHelper;
 import org.jfaster.mango.base.sql.PreparedSql;
 import org.jfaster.mango.base.sql.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
@@ -57,7 +58,7 @@ public class UpdateOperator extends AbstractOperator {
       GeneratedTransformer gt = GENERATED_TRANSFORMERS.get(returnRawType);
       if (gt == null) {
         String expected = ToStringHelper.toString(GENERATED_TRANSFORMERS.keySet());
-        throw new IncorrectReturnTypeException("the return type of update(returnGeneratedId) " +
+        throw new DescriptionException("the return type of update(returnGeneratedId) " +
             "expected one of " + expected + " but " + returnRawType);
       }
       numberRawType = gt.getRawType();
@@ -66,7 +67,7 @@ public class UpdateOperator extends AbstractOperator {
       transformer = TRANSFORMERS.get(returnRawType);
       if (transformer == null) {
         String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
-        throw new IncorrectReturnTypeException("the return type of update " +
+        throw new DescriptionException("the return type of update " +
             "expected one of " + expected + " but " + returnRawType);
       }
     }

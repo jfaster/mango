@@ -33,7 +33,12 @@ public class DefaultParameterContext implements ParameterContext {
    */
   private final Map<Integer, String> positionToNameMap = new HashMap<Integer, String>();
 
+  /**
+   * 参数名到参数类型的映射
+   */
   private final Map<String, Type> nameToTypeMap = new LinkedHashMap<String, Type>();
+
+  private final List<ParameterDescriptor> parameterDescriptors = new ArrayList<ParameterDescriptor>();
 
   private DefaultParameterContext(List<ParameterDescriptor> parameterDescriptors) {
     for (int i = 0; i < parameterDescriptors.size(); i++) {
@@ -45,6 +50,7 @@ public class DefaultParameterContext implements ParameterContext {
       nameToTypeMap.put(parameterName, pd.getType());
       int position = pd.getPosition();
       positionToNameMap.put(position, parameterName);
+      this.parameterDescriptors.add(pd);
     }
   }
 
@@ -70,6 +76,11 @@ public class DefaultParameterContext implements ParameterContext {
           "' not found, available root parameters are " + transToBindingParameters(nameToTypeMap.keySet()));
     }
     return FunctionalBindingParameterInvoker.create(type, bindingParameter);
+  }
+
+  @Override
+  public List<ParameterDescriptor> getParameterDescriptors() {
+    return parameterDescriptors;
   }
 
   @Override

@@ -17,6 +17,8 @@
 package org.jfaster.mango.exception;
 
 /**
+ * DAO描述异常
+ *
  * @author ash
  */
 public class DescriptionException extends MangoException {

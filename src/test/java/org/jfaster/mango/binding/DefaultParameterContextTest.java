@@ -66,6 +66,18 @@ public class DefaultParameterContextTest {
   }
 
   @Test
+  public void testGetParameterDescriptors() throws Exception {
+    List<Annotation> empty = Collections.emptyList();
+    ParameterDescriptor p0 = ParameterDescriptor.create(0, String.class, empty, "1");
+    ParameterDescriptor p1 = ParameterDescriptor.create(1, User.class, empty, "2");
+    List<ParameterDescriptor> pds = Arrays.asList(p0, p1);
+
+    ParameterContext ctx = DefaultParameterContext.create(pds);
+    assertThat(ctx.getParameterDescriptors(), equalTo(pds));
+  }
+
+
+  @Test
   public void testTryExpandBindingParameter() throws Exception {
     List<Annotation> empty = Collections.emptyList();
     ParameterDescriptor p0 = ParameterDescriptor.create(0, String.class, empty, "1");

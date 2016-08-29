@@ -19,7 +19,7 @@ package org.jfaster.mango.jdbc;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.Mango;
+import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.base.logging.MangoLogger;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;

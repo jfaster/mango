@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.Mango;
 import org.jfaster.mango.base.Config;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
+import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
@@ -238,7 +238,7 @@ public class UpdateOperatorTest {
 
     @Test
     public void testUpdateReturnTypeError() throws Exception {
-        thrown.expect(IncorrectReturnTypeException.class);
+        thrown.expect(DescriptionException.class);
         thrown.expectMessage("the return type of update expected one of [void, int, long, boolean, " +
                 "Void, Integer, Long, Boolean] but class java.lang.String");
 
@@ -269,7 +269,7 @@ public class UpdateOperatorTest {
 
     @Test
     public void testUpdateReturnGeneratedIdReturnTypeError() throws Exception {
-        thrown.expect(IncorrectReturnTypeException.class);
+        thrown.expect(DescriptionException.class);
         thrown.expectMessage("the return type of update(returnGeneratedId) expected " +
                 "one of [int, long, Integer, Long] but void");
 
@@ -312,7 +312,7 @@ public class UpdateOperatorTest {
         ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
         MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-        Mango.OperatorFactory factory = new Mango.OperatorFactory(
+        OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
                 null, new InterceptorChain(), null, new Config());
 
@@ -332,7 +332,7 @@ public class UpdateOperatorTest {
         ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
         MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-        Mango.OperatorFactory factory = new Mango.OperatorFactory(
+        OperatorFactory factory = new OperatorFactory(
                 new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
                 null, new InterceptorChain(), null, new Config());
 

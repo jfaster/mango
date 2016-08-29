@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.support;
 
-import org.jfaster.mango.cache.CacheHandler;
+import org.jfaster.mango.operator.cache.CacheHandler;
 
 import java.lang.reflect.Type;
 import java.util.Map;

@@ -17,8 +17,9 @@
 package org.jfaster.mango;
 
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.cache.Day;
-import org.jfaster.mango.cache.LocalCacheHandler;
+import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.operator.cache.Day;
+import org.jfaster.mango.operator.cache.LocalCacheHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;

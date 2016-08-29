@@ -16,12 +16,12 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.exception.MangoException;
+import org.jfaster.mango.exception.DescriptionException;
 
 /**
  * @author ash
  */
-public class BindingException extends MangoException {
+public class BindingException extends DescriptionException {
 
   public BindingException(String msg) {
     super(msg);

@@ -17,7 +17,7 @@
 package org.jfaster.mango.support;
 
 import com.alibaba.fastjson.JSON;
-import org.jfaster.mango.cache.SimpleCacheHandler;
+import org.jfaster.mango.operator.cache.SimpleCacheHandler;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

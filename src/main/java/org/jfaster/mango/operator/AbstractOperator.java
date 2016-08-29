@@ -20,8 +20,6 @@ import org.jfaster.mango.base.Config;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
-import org.jfaster.mango.operator.datasource.DataSourceGenerator;
-import org.jfaster.mango.operator.table.TableGenerator;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.stat.StatsCounter;
 
