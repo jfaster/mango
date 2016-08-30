@@ -21,12 +21,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class QueryTimeoutException extends DataAccessException {
 
-    public QueryTimeoutException(String msg) {
-        super(msg);
-    }
+  public QueryTimeoutException(String msg) {
+    super(msg);
+  }
 
-    public QueryTimeoutException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public QueryTimeoutException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

@@ -29,17 +29,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class AbstractRowMapperTest {
 
-    @Test
-    public void testInt() throws Exception {
-        class IntegerRowMapper extends AbstractRowMapper<Integer> {
-            @Override
-            public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getInt(1);
-            }
-        }
-        RowMapper mapper = new IntegerRowMapper();
-        Class<?> mappedClass = mapper.getMappedClass();
-        assertThat(mappedClass.equals(Integer.class), is(true));
+  @Test
+  public void testInt() throws Exception {
+    class IntegerRowMapper extends AbstractRowMapper<Integer> {
+      @Override
+      public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getInt(1);
+      }
     }
+    RowMapper mapper = new IntegerRowMapper();
+    Class<?> mappedClass = mapper.getMappedClass();
+    assertThat(mappedClass.equals(Integer.class), is(true));
+  }
 
 }

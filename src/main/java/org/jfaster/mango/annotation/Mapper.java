@@ -28,6 +28,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Mapper {
 
-    Class<? extends RowMapper<?>> value();
+  Class<? extends RowMapper<?>> value();
 
 }

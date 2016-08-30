@@ -23,10 +23,10 @@ import java.lang.reflect.Type;
  */
 public interface GetterInvoker extends NamedObject {
 
-    public Object invoke(Object obj);
+  public Object invoke(Object obj);
 
-    public Type getReturnType();
+  public Type getReturnType();
 
-    public Class<?> getReturnRawType();
+  public Class<?> getReturnRawType();
 
 }

@@ -26,171 +26,172 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpServer {
 
-    private final static int PORT = 8080;
+  private final static int PORT = 8080;
 
-    public static void main(String[] args) throws Exception {
-        init();
+  public static void main(String[] args) throws Exception {
+    init();
 
-        Server server = new Server(PORT);
+    Server server = new Server(PORT);
 
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        server.setHandler(context);
+    ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    context.setContextPath("/");
+    server.setHandler(context);
 
-        ServletHolder servlet = new ServletHolder(new MangoStatsServlet());
-        //servlet.setInitParameter("key", "9527");
-        context.addServlet(servlet, "/mango-stats");
-        server.start();
-        server.join();
-    }
+    ServletHolder servlet = new ServletHolder(new MangoStatsServlet());
+    //servlet.setInitParameter("key", "9527");
+    context.addServlet(servlet, "/mango-stats");
+    server.start();
+    server.join();
+  }
 
-    private static void init() throws Exception {
-        DataSource ds = DataSourceConfig.getDataSource();
-        Table.USER.load(ds);
-        Table.MSG_PARTITION.load(ds);
-        Mango mango = Mango.newInstance(ds);
-        mango.setDefaultCacheHandler(new LocalCacheHandler() {
-            void sleep() {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                }
-            }
-            @Override
-            public Object get(String key) {
-                sleep();
-                return super.get(key);
-            }
+  private static void init() throws Exception {
+    DataSource ds = DataSourceConfig.getDataSource();
+    Table.USER.load(ds);
+    Table.MSG_PARTITION.load(ds);
+    Mango mango = Mango.newInstance(ds);
+    mango.setDefaultCacheHandler(new LocalCacheHandler() {
+      void sleep() {
+        try {
+          Thread.sleep(10);
+        } catch (InterruptedException e) {
+        }
+      }
 
-            @Override
-            public Map<String, Object> getBulk(Set<String> keys) {
-                sleep();
-                return super.getBulk(keys);
-            }
+      @Override
+      public Object get(String key) {
+        sleep();
+        return super.get(key);
+      }
 
-            @Override
-            public void set(String key, Object value, int expires) {
-                sleep();
-                super.set(key, value, expires);
-            }
+      @Override
+      public Map<String, Object> getBulk(Set<String> keys) {
+        sleep();
+        return super.getBulk(keys);
+      }
 
-            @Override
-            public void add(String key, Object value, int expires) {
-                sleep();
-                super.add(key, value, expires);
-            }
+      @Override
+      public void set(String key, Object value, int expires) {
+        sleep();
+        super.set(key, value, expires);
+      }
 
-            @Override
-            public void batchDelete(Set<String> keys) {
-                sleep();
-                super.batchDelete(keys);
-            }
+      @Override
+      public void add(String key, Object value, int expires) {
+        sleep();
+        super.add(key, value, expires);
+      }
 
-            @Override
-            public void delete(String key) {
-                sleep();
-                super.delete(key);
-            }
-        });
-        final UserDao userDao = mango.create(UserDao.class, true);
-        final MsgDao msgDao = mango.create(MsgDao.class, true);
+      @Override
+      public void batchDelete(Set<String> keys) {
+        sleep();
+        super.batchDelete(keys);
+      }
 
+      @Override
+      public void delete(String key) {
+        sleep();
+        super.delete(key);
+      }
+    });
+    final UserDao userDao = mango.create(UserDao.class, true);
+    final MsgDao msgDao = mango.create(MsgDao.class, true);
+
+    int id = 1;
+    userDao.getIntegerId(id);
+    userDao.getName(id);
+    userDao.getBoolObjGender(id);
+
+    int id1 = userDao.insertUser(createRandomUser());
+    int id2 = userDao.insertUser(createRandomUser());
+    List<Integer> ids = Lists.newArrayList(id1, id2);
+    userDao.getUser(id1);
+    userDao.getUser(id1);
+    userDao.getUsers(ids);
+    userDao.getUsers(ids);
+    userDao.delete(id1);
+    userDao.getUser(id1);
+    userDao.delete(id1);
+    userDao.getUsers(ids);
+    userDao.deletes(ids);
+    userDao.deletes2(ids);
+    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    executor.scheduleAtFixedRate(new Runnable() {
+      @Override
+      public void run() {
         int id = 1;
         userDao.getIntegerId(id);
         userDao.getName(id);
         userDao.getBoolObjGender(id);
+        for (int i = 0; i < 1500; i++) {
+          userDao.getLongObjMoney(id, null, null);
+          msgDao.getMsgs(id);
+        }
+      }
+    }, 0, 10, TimeUnit.SECONDS);
+  }
 
-        int id1 = userDao.insertUser(createRandomUser());
-        int id2 = userDao.insertUser(createRandomUser());
-        List<Integer> ids = Lists.newArrayList(id1, id2);
-        userDao.getUser(id1);
-        userDao.getUser(id1);
-        userDao.getUsers(ids);
-        userDao.getUsers(ids);
-        userDao.delete(id1);
-        userDao.getUser(id1);
-        userDao.delete(id1);
-        userDao.getUsers(ids);
-        userDao.deletes(ids);
-        userDao.deletes2(ids);
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                int id = 1;
-                userDao.getIntegerId(id);
-                userDao.getName(id);
-                userDao.getBoolObjGender(id);
-                for (int i = 0; i < 1500; i++) {
-                    userDao.getLongObjMoney(id, null, null);
-                    msgDao.getMsgs(id);
-                }
-            }
-        }, 0, 10, TimeUnit.SECONDS);
-    }
+  @DB(table = "user")
+  @Sharding
+  @Cache(prefix = "user", expire = Day.class, cacheNullObject = true)
+  static interface UserDao {
 
-    @DB(table = "user")
-    @Sharding
-    @Cache(prefix = "user", expire = Day.class, cacheNullObject = true)
-    static interface UserDao {
+    @CacheIgnored
+    @SQL("select id from #table where id = :1")
+    public Integer getIntegerId(int id);
 
-        @CacheIgnored
-        @SQL("select id from #table where id = :1")
-        public Integer getIntegerId(int id);
+    @CacheIgnored
+    @SQL("select name from #table where id = :1")
+    public String getName(int id);
 
-        @CacheIgnored
-        @SQL("select name from #table where id = :1")
-        public String getName(int id);
+    @CacheIgnored
+    @SQL("select gender from #table where id = :1")
+    public Boolean getBoolObjGender(int id);
 
-        @CacheIgnored
-        @SQL("select gender from #table where id = :1")
-        public Boolean getBoolObjGender(int id);
+    @CacheIgnored
+    @SQL("select money from #table where id = :1")
+    public Long getLongObjMoney(int id, String str, List<User> users);
 
-        @CacheIgnored
-        @SQL("select money from #table where id = :1")
-        public Long getLongObjMoney(int id, String str, List<User> users);
+    @SQL("delete from #table where id = :1")
+    public boolean delete(@CacheBy int id);
 
-        @SQL("delete from #table where id = :1")
-        public boolean delete(@CacheBy int id);
+    @SQL("delete from #table where id = :1")
+    public void deletes(@CacheBy List<Integer> ids);
 
-        @SQL("delete from #table where id = :1")
-        public void deletes(@CacheBy List<Integer> ids);
+    @SQL("delete from #table where id in (:1)")
+    public void deletes2(@CacheBy List<Integer> ids);
 
-        @SQL("delete from #table where id in (:1)")
-        public void deletes2(@CacheBy List<Integer> ids);
+    @SQL("select id, name, age, gender, money, update_time from #table where id = :1")
+    public User getUser(@CacheBy int id);
 
-        @SQL("select id, name, age, gender, money, update_time from #table where id = :1")
-        public User getUser(@CacheBy int id);
+    @SQL("select id, name, age, gender, money, update_time from #table where id in (:1)")
+    public List<User> getUsers(@CacheBy List<Integer> ids);
 
-        @SQL("select id, name, age, gender, money, update_time from #table where id in (:1)")
-        public List<User> getUsers(@CacheBy List<Integer> ids);
+    @ReturnGeneratedId
+    @CacheIgnored
+    @SQL("insert into user(name, age, gender, money, update_time) " +
+        "values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
+    public int insertUser(User user);
 
-        @ReturnGeneratedId
-        @CacheIgnored
-        @SQL("insert into user(name, age, gender, money, update_time) " +
-                "values(:1.name, :1.age, :1.gender, :1.money, :1.updateTime)")
-        public int insertUser(User user);
+  }
 
-    }
+  @DB(table = "msg")
+  @Sharding(tableShardingStrategy = ModTenTableShardingStrategy.class)
+  interface MsgDao {
 
-    @DB(table = "msg")
-    @Sharding(tableShardingStrategy = ModTenTableShardingStrategy.class)
-    interface MsgDao {
+    @SQL("select id, uid, content from #table where uid=:1")
+    public List<Msg> getMsgs(@ShardingBy int uid);
 
-        @SQL("select id, uid, content from #table where uid=:1")
-        public List<Msg> getMsgs(@ShardingBy int uid);
+  }
 
-    }
-
-    private static User createRandomUser() {
-        Random r = new Random();
-        String name = Randoms.randomString(20);
-        int age = r.nextInt(200);
-        boolean gender = r.nextBoolean();
-        long money = r.nextInt(1000000);
-        Date date = new Date();
-        User user = new User(name, age, gender, money, date);
-        return user;
-    }
+  private static User createRandomUser() {
+    Random r = new Random();
+    String name = Randoms.randomString(20);
+    int age = r.nextInt(200);
+    boolean gender = r.nextBoolean();
+    long money = r.nextInt(1000000);
+    Date date = new Date();
+    User user = new User(name, age, gender, money, date);
+    return user;
+  }
 
 }

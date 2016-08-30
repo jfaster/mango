@@ -28,10 +28,10 @@ import javax.annotation.Nullable;
  */
 public class ObjectToGsonFunction implements GetterFunction<Object, String> {
 
-    @Nullable
-    @Override
-    public String apply(@Nullable Object input) {
-        return input == null ? null : new Gson().toJson(input);
-    }
+  @Nullable
+  @Override
+  public String apply(@Nullable Object input) {
+    return input == null ? null : new Gson().toJson(input);
+  }
 
 }

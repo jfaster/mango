@@ -39,72 +39,73 @@ import java.util.List;
  */
 public class IncorrectSqlExceptionTest {
 
-    private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
-    static {
-        mango.setDefaultLazyInit(true).setDefaultCacheHandler(new LocalCacheHandler());
+  private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
+
+  static {
+    mango.setDefaultLazyInit(true).setDefaultCacheHandler(new LocalCacheHandler());
+  }
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void test() {
+    thrown.expect(DescriptionException.class);
+    thrown.expectMessage("if use cache, sql's in clause expected less than or equal 1 but 2");
+    Dao dao = mango.create(Dao.class);
+    dao.add(new ArrayList<Integer>(), new ArrayList<Integer>());
+  }
+
+
+  @Test
+  public void test2() {
+    thrown.expect(DescriptionException.class);
+    thrown.expectMessage("sql is null or empty");
+    Dao dao = mango.create(Dao.class);
+    dao.add2();
+  }
+
+  @Test
+  public void test4() {
+    thrown.expect(SqlParserException.class);
+    Dao dao = mango.create(Dao.class);
+    dao.add3();
+  }
+
+  @Test
+  public void test5() {
+    thrown.expect(DescriptionException.class);
+    thrown.expectMessage("if use cache, sql's in clause expected less than or equal 1 but 2");
+    Dao dao = mango.create(Dao.class);
+    dao.gets(new ArrayList<Integer>(), new ArrayList<Integer>());
+  }
+
+  @DB
+  @Cache(prefix = "dao_", expire = Day.class)
+  static interface Dao {
+    @SQL("update ... where a in (:1) and b in (:2)")
+    public int add(@CacheBy List<Integer> a, List<Integer> b);
+
+    @SQL("")
+    public int add2();
+
+    @SQL("test")
+    public int add3();
+
+    @SQL("select ... where a in (:1) and b in (:2)")
+    public List<Integer> gets(@CacheBy List<Integer> a, List<Integer> b);
+  }
+
+  static class Model {
+    int id;
+    List<Integer> list;
+
+    public int getId() {
+      return id;
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Test
-    public void test() {
-        thrown.expect(DescriptionException.class);
-        thrown.expectMessage("if use cache, sql's in clause expected less than or equal 1 but 2");
-        Dao dao = mango.create(Dao.class);
-        dao.add(new ArrayList<Integer>(), new ArrayList<Integer>());
+    public List<Integer> getList() {
+      return list;
     }
-
-
-    @Test
-    public void test2() {
-        thrown.expect(DescriptionException.class);
-        thrown.expectMessage("sql is null or empty");
-        Dao dao = mango.create(Dao.class);
-        dao.add2();
-    }
-
-    @Test
-    public void test4() {
-        thrown.expect(SqlParserException.class);
-        Dao dao = mango.create(Dao.class);
-        dao.add3();
-    }
-
-    @Test
-    public void test5() {
-        thrown.expect(DescriptionException.class);
-        thrown.expectMessage("if use cache, sql's in clause expected less than or equal 1 but 2");
-        Dao dao = mango.create(Dao.class);
-        dao.gets(new ArrayList<Integer>(), new ArrayList<Integer>());
-    }
-
-    @DB
-    @Cache(prefix = "dao_", expire = Day.class)
-    static interface Dao {
-        @SQL("update ... where a in (:1) and b in (:2)")
-        public int add(@CacheBy List<Integer> a, List<Integer> b);
-
-        @SQL("")
-        public int add2();
-
-        @SQL("test")
-        public int add3();
-
-        @SQL("select ... where a in (:1) and b in (:2)")
-        public List<Integer> gets(@CacheBy List<Integer> a, List<Integer> b);
-    }
-
-    static class Model {
-        int id;
-        List<Integer> list;
-
-        public int getId() {
-            return id;
-        }
-
-        public List<Integer> getList() {
-            return list;
-        }
-    }
+  }
 }

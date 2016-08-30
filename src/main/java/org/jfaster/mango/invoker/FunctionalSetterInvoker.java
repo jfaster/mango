@@ -33,143 +33,143 @@ import java.lang.reflect.Type;
  */
 public class FunctionalSetterInvoker extends MethodNamedObject implements SetterInvoker {
 
-    private FunctionAdapter functionAdapter;
-    private Type parameterType;
-    private Class<?> parameterRawType;
+  private FunctionAdapter functionAdapter;
+  private Type parameterType;
+  private Class<?> parameterRawType;
 
-    private Type runtimeOutputType;
-    private Class<?> runtimeOutputRawType;
+  private Type runtimeOutputType;
+  private Class<?> runtimeOutputRawType;
 
-    private FunctionalSetterInvoker(String name, Method method) {
-        super(name, method);
-        TypeToken<?> parameterToken = TypeToken.of(method.getGenericParameterTypes()[0]);
-        runtimeOutputType = parameterToken.getType();
-        runtimeOutputRawType = parameterToken.getRawType();
+  private FunctionalSetterInvoker(String name, Method method) {
+    super(name, method);
+    TypeToken<?> parameterToken = TypeToken.of(method.getGenericParameterTypes()[0]);
+    runtimeOutputType = parameterToken.getType();
+    runtimeOutputRawType = parameterToken.getRawType();
 
-        Setter setterAnno = method.getAnnotation(Setter.class);
+    Setter setterAnno = method.getAnnotation(Setter.class);
 
-        if (setterAnno != null) { // 启用函数式调用功能
-            Class<? extends DummySetterFunction<?, ?>> funcClass = setterAnno.value();
-            if (SetterFunction.class.isAssignableFrom(funcClass)) {
-                functionAdapter = new SetterFunctionAdapter((SetterFunction) Reflection.instantiateClass(funcClass));
-            } else if (RuntimeSetterFunction.class.isAssignableFrom(funcClass)) {
-                functionAdapter = new RuntimeSetterFunctionAdapter((RuntimeSetterFunction) Reflection.instantiateClass(funcClass));
-            } else {
-                throw new IllegalArgumentException(); // TODO
-            }
+    if (setterAnno != null) { // 启用函数式调用功能
+      Class<? extends DummySetterFunction<?, ?>> funcClass = setterAnno.value();
+      if (SetterFunction.class.isAssignableFrom(funcClass)) {
+        functionAdapter = new SetterFunctionAdapter((SetterFunction) Reflection.instantiateClass(funcClass));
+      } else if (RuntimeSetterFunction.class.isAssignableFrom(funcClass)) {
+        functionAdapter = new RuntimeSetterFunctionAdapter((RuntimeSetterFunction) Reflection.instantiateClass(funcClass));
+      } else {
+        throw new IllegalArgumentException(); // TODO
+      }
 
-            TokenTuple tokenTuple = TypeToken.of(funcClass).resolveFatherClassTuple(DummySetterFunction.class);
-            TypeToken<?> inputToken = tokenTuple.getFirst();
-            TypeToken<?> outputToken = tokenTuple.getSecond();
+      TokenTuple tokenTuple = TypeToken.of(funcClass).resolveFatherClassTuple(DummySetterFunction.class);
+      TypeToken<?> inputToken = tokenTuple.getFirst();
+      TypeToken<?> outputToken = tokenTuple.getSecond();
 
-            TypeToken<?> wrapParameterToken = parameterToken.wrap();
-            if (functionAdapter instanceof RuntimeSetterFunctionAdapter) { // 针对继承RuntimeSetterFunction的
-                if (!outputToken.isAssignableFrom(wrapParameterToken)) {
-                    throw new ClassCastException("function[" + functionAdapter.getFunction().getClass() + "] " +
-                            "on method[" + method + "] error, function's outputType[" + outputToken.getType() + "] " +
-                            "must be assignable from method's parameterType[" + parameterToken.getType() + "]");
-                }
-            } else { // 针对继承LiteSetterFunction的
-                if (!wrapParameterToken.isAssignableFrom(outputToken)) {
-                    throw new ClassCastException("function[" + functionAdapter.getFunction().getClass() + "] " +
-                            "on method[" + method + "] error, method's parameterType[" + parameterToken.getType() + "] " +
-                            "must be assignable from function's outputType[" + outputToken.getType() + "]");
-                }
-            }
-            parameterToken = inputToken;
+      TypeToken<?> wrapParameterToken = parameterToken.wrap();
+      if (functionAdapter instanceof RuntimeSetterFunctionAdapter) { // 针对继承RuntimeSetterFunction的
+        if (!outputToken.isAssignableFrom(wrapParameterToken)) {
+          throw new ClassCastException("function[" + functionAdapter.getFunction().getClass() + "] " +
+              "on method[" + method + "] error, function's outputType[" + outputToken.getType() + "] " +
+              "must be assignable from method's parameterType[" + parameterToken.getType() + "]");
         }
-        parameterType = parameterToken.getType();
-        parameterRawType = parameterToken.getRawType();
+      } else { // 针对继承LiteSetterFunction的
+        if (!wrapParameterToken.isAssignableFrom(outputToken)) {
+          throw new ClassCastException("function[" + functionAdapter.getFunction().getClass() + "] " +
+              "on method[" + method + "] error, method's parameterType[" + parameterToken.getType() + "] " +
+              "must be assignable from function's outputType[" + outputToken.getType() + "]");
+        }
+      }
+      parameterToken = inputToken;
+    }
+    parameterType = parameterToken.getType();
+    parameterRawType = parameterToken.getRawType();
+  }
+
+  public static FunctionalSetterInvoker create(String name, Method method) {
+    return new FunctionalSetterInvoker(name, method);
+  }
+
+  @Override
+  public void invoke(Object object, @Nullable Object parameter) {
+    try {
+      if (functionAdapter != null) {
+        parameter = functionAdapter.apply(parameter, runtimeOutputType);
+      }
+      if (parameter == null && runtimeOutputRawType.isPrimitive()) {
+        throw new NullPointerException("property " + getName() + " of " +
+            object.getClass() + " is primitive, can not be assigned to null");
+      }
+      if (parameter != null && !Types.isAssignable(runtimeOutputRawType, parameter.getClass())) {
+        throw new ClassCastException("cannot convert value of type [" + parameter.getClass().getName() +
+            "] to required type [" + runtimeOutputRawType.getName() + "] " +
+            "for property '" + getName() + "' of " + object.getClass());
+      }
+      method.invoke(object, parameter);
+    } catch (IllegalAccessException e) {
+      throw new UncheckedException(e.getMessage(), e.getCause());
+    } catch (InvocationTargetException e) {
+      throw new UncheckedException(e.getMessage(), e.getCause());
+    }
+  }
+
+  @Override
+  public Type getParameterType() {
+    return parameterType;
+  }
+
+  @Override
+  public Class<?> getParameterRawType() {
+    return parameterRawType;
+  }
+
+  interface FunctionAdapter {
+
+    @Nullable
+    public Object apply(@Nullable Object input, Type runtimeOutputType);
+
+    public DummySetterFunction getFunction();
+
+  }
+
+  static class SetterFunctionAdapter implements FunctionAdapter {
+
+    private final SetterFunction function;
+
+    SetterFunctionAdapter(SetterFunction function) {
+      this.function = function;
     }
 
-    public static FunctionalSetterInvoker create(String name, Method method) {
-        return new FunctionalSetterInvoker(name, method);
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public Object apply(@Nullable Object input, Type runtimeOutputType) {
+      return function.apply(input);
     }
 
     @Override
-    public void invoke(Object object, @Nullable Object parameter) {
-        try {
-            if (functionAdapter != null) {
-                parameter = functionAdapter.apply(parameter, runtimeOutputType);
-            }
-            if (parameter == null && runtimeOutputRawType.isPrimitive()) {
-                throw new NullPointerException("property " + getName() + " of " +
-                        object.getClass() + " is primitive, can not be assigned to null");
-            }
-            if (parameter != null &&  !Types.isAssignable(runtimeOutputRawType, parameter.getClass())) {
-                throw new ClassCastException("cannot convert value of type [" + parameter.getClass().getName() +
-                        "] to required type [" + runtimeOutputRawType.getName() + "] " +
-                        "for property '" + getName() + "' of " +  object.getClass());
-            }
-            method.invoke(object, parameter);
-        } catch (IllegalAccessException e) {
-            throw new UncheckedException(e.getMessage(), e.getCause());
-        } catch (InvocationTargetException e) {
-            throw new UncheckedException(e.getMessage(), e.getCause());
-        }
+    public DummySetterFunction getFunction() {
+      return function;
+    }
+
+  }
+
+  static class RuntimeSetterFunctionAdapter implements FunctionAdapter {
+
+    private final RuntimeSetterFunction function;
+
+    RuntimeSetterFunctionAdapter(RuntimeSetterFunction function) {
+      this.function = function;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public Object apply(@Nullable Object input, Type runtimeOutputType) {
+      return function.apply(input, runtimeOutputType);
     }
 
     @Override
-    public Type getParameterType() {
-        return parameterType;
+    public DummySetterFunction getFunction() {
+      return function;
     }
 
-    @Override
-    public Class<?> getParameterRawType() {
-        return parameterRawType;
-    }
-
-    interface FunctionAdapter {
-
-        @Nullable
-        public Object apply(@Nullable Object input, Type runtimeOutputType);
-
-        public DummySetterFunction getFunction();
-
-    }
-
-    static class SetterFunctionAdapter implements FunctionAdapter {
-
-        private final SetterFunction function;
-
-        SetterFunctionAdapter(SetterFunction function) {
-            this.function = function;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Nullable
-        @Override
-        public Object apply(@Nullable Object input, Type runtimeOutputType) {
-            return function.apply(input);
-        }
-
-        @Override
-        public DummySetterFunction getFunction() {
-            return function;
-        }
-
-    }
-
-    static class RuntimeSetterFunctionAdapter implements FunctionAdapter {
-
-        private final RuntimeSetterFunction function;
-
-        RuntimeSetterFunctionAdapter(RuntimeSetterFunction function) {
-            this.function = function;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Nullable
-        @Override
-        public Object apply(@Nullable Object input, Type runtimeOutputType) {
-            return function.apply(input, runtimeOutputType);
-        }
-
-        @Override
-        public DummySetterFunction getFunction() {
-            return function;
-        }
-
-    }
+  }
 
 }

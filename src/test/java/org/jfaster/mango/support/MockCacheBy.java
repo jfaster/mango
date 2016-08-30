@@ -25,20 +25,20 @@ import java.lang.annotation.Annotation;
  */
 public class MockCacheBy implements Annotation, CacheBy {
 
-    private String value;
+  private String value;
 
-    public MockCacheBy(String value) {
-        this.value = value;
-    }
+  public MockCacheBy(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public String value() {
-        return value;
-    }
+  @Override
+  public String value() {
+    return value;
+  }
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    throw new UnsupportedOperationException();
+  }
 
 }

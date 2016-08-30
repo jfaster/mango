@@ -21,20 +21,20 @@ package org.jfaster.mango.base.logging;
  */
 public class MangoLogger {
 
-    public static void useConsoleLogger() {
-        InternalLoggerFactory.setDefaultFactory(new ConsoleLoggerFactory());
-    }
+  public static void useConsoleLogger() {
+    InternalLoggerFactory.setDefaultFactory(new ConsoleLoggerFactory());
+  }
 
-    public static void useJdkLogger() {
-        InternalLoggerFactory.setDefaultFactory(new JdkLoggerFactory());
-    }
+  public static void useJdkLogger() {
+    InternalLoggerFactory.setDefaultFactory(new JdkLoggerFactory());
+  }
 
-    public static void useLog4JLogger() {
-        InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
-    }
+  public static void useLog4JLogger() {
+    InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
+  }
 
-    public static void useSlf4JLogger() {
-        InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-    }
+  public static void useSlf4JLogger() {
+    InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
+  }
 
 }

@@ -23,12 +23,12 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class UnreachablePropertyException extends MangoException {
 
-    public UnreachablePropertyException(String msg) {
-        super(msg);
-    }
+  public UnreachablePropertyException(String msg) {
+    super(msg);
+  }
 
-    public UnreachablePropertyException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public UnreachablePropertyException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

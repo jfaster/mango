@@ -35,34 +35,34 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class StringToIntegerListFunctionTest {
 
-    @Test
-    public void testApply() throws Exception {
-        A a = new A();
-        Method m = A.class.getDeclaredMethod("setX", List.class);
-        SetterInvoker invoker = FunctionalSetterInvoker.create("x", m);
+  @Test
+  public void testApply() throws Exception {
+    A a = new A();
+    Method m = A.class.getDeclaredMethod("setX", List.class);
+    SetterInvoker invoker = FunctionalSetterInvoker.create("x", m);
 
-        invoker.invoke(a, "1,2,3");
-        List<Integer> list = Lists.newArrayList(1, 2, 3);
-        assertThat(a.getX().toString(), is(list.toString()));
+    invoker.invoke(a, "1,2,3");
+    List<Integer> list = Lists.newArrayList(1, 2, 3);
+    assertThat(a.getX().toString(), is(list.toString()));
 
-        invoker.invoke(a, null);
-        assertThat(a.getX(), nullValue());
+    invoker.invoke(a, null);
+    assertThat(a.getX(), nullValue());
 
-        invoker.invoke(a, "");
-        assertThat(a.getX().toString(), is(new ArrayList<Integer>().toString()));
+    invoker.invoke(a, "");
+    assertThat(a.getX().toString(), is(new ArrayList<Integer>().toString()));
+  }
+
+  static class A {
+    private List<Integer> x;
+
+    List<Integer> getX() {
+      return x;
     }
 
-    static class A {
-        private List<Integer> x;
-
-        List<Integer> getX() {
-            return x;
-        }
-
-        @Setter(StringToIntegerListFunction.class)
-        void setX(List<Integer> x) {
-            this.x = x;
-        }
+    @Setter(StringToIntegerListFunction.class)
+    void setX(List<Integer> x) {
+      this.x = x;
     }
+  }
 
 }

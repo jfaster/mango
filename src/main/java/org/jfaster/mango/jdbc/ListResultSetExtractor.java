@@ -18,7 +18,6 @@ package org.jfaster.mango.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,22 +25,22 @@ import java.util.List;
  */
 public class ListResultSetExtractor<T> implements ResultSetExtractor<List<T>> {
 
-    private final ListSupplier listSupplier;
-    private final RowMapper<T> rowMapper;
+  private final ListSupplier listSupplier;
+  private final RowMapper<T> rowMapper;
 
-    public ListResultSetExtractor(ListSupplier listSupplier, RowMapper<T> rowMapper) {
-        this.listSupplier = listSupplier;
-        this.rowMapper = rowMapper;
-    }
+  public ListResultSetExtractor(ListSupplier listSupplier, RowMapper<T> rowMapper) {
+    this.listSupplier = listSupplier;
+    this.rowMapper = rowMapper;
+  }
 
-    @Override
-    public List<T> extractData(ResultSet rs) throws SQLException {
-        List<T> results = listSupplier.get(rowMapper.getMappedClass());
-        int rowNum = 0;
-        while (rs.next()) {
-            results.add(rowMapper.mapRow(rs, rowNum++));
-        }
-        return results;
+  @Override
+  public List<T> extractData(ResultSet rs) throws SQLException {
+    List<T> results = listSupplier.get(rowMapper.getMappedClass());
+    int rowNum = 0;
+    while (rs.next()) {
+      results.add(rowMapper.mapRow(rs, rowNum++));
     }
+    return results;
+  }
 
 }

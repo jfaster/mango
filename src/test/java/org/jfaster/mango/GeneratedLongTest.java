@@ -39,34 +39,34 @@ import static org.hamcrest.Matchers.greaterThan;
  */
 public class GeneratedLongTest {
 
-    private final static DataSource ds = DataSourceConfig.getDataSource();
-    private final static Mango mango = Mango.newInstance(ds);
-    private final static MsgDao dao = mango.create(MsgDao.class);
+  private final static DataSource ds = DataSourceConfig.getDataSource();
+  private final static Mango mango = Mango.newInstance(ds);
+  private final static MsgDao dao = mango.create(MsgDao.class);
 
-    @Before
-    public void before() throws Exception {
-        Connection conn = ds.getConnection();
-        Table.LONG_ID_MSG.load(conn);
-        conn.close();
-    }
+  @Before
+  public void before() throws Exception {
+    Connection conn = ds.getConnection();
+    Table.LONG_ID_MSG.load(conn);
+    conn.close();
+  }
 
-    @Test
-    public void test() {
-        int uid = 100;
-        String content = "content";
-        long id = dao.insert(uid, content);
-        assertThat(id, greaterThan((long) Integer.MAX_VALUE));
-        long id2 = dao.insert(uid, content);
-        assertThat(id2, equalTo(id + 1));
-    }
+  @Test
+  public void test() {
+    int uid = 100;
+    String content = "content";
+    long id = dao.insert(uid, content);
+    assertThat(id, greaterThan((long) Integer.MAX_VALUE));
+    long id2 = dao.insert(uid, content);
+    assertThat(id2, equalTo(id + 1));
+  }
 
-    @DB()
-    interface MsgDao {
+  @DB()
+  interface MsgDao {
 
-        @ReturnGeneratedId
-        @SQL("insert into long_id_msg(uid, content) values(:1, :2)")
-        long insert(int uid, String content);
+    @ReturnGeneratedId
+    @SQL("insert into long_id_msg(uid, content) values(:1, :2)")
+    long insert(int uid, String content);
 
-    }
+  }
 
 }

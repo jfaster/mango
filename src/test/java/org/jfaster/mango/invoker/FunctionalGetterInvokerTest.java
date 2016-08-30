@@ -41,330 +41,330 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FunctionalGetterInvokerTest {
 
-    public static class IntegerToStringFunction implements GetterFunction<Integer, String> {
+  public static class IntegerToStringFunction implements GetterFunction<Integer, String> {
 
-        @Nullable
-        @Override
-        public String apply(@Nullable Integer input) {
-            return "string" + input;
-        }
-
+    @Nullable
+    @Override
+    public String apply(@Nullable Integer input) {
+      return "string" + input;
     }
 
-    static class A {
-        private int x;
-        private int y;
+  }
 
-        int getX() {
-            return x;
-        }
+  static class A {
+    private int x;
+    private int y;
 
-        void setX(int x) {
-            this.x = x;
-        }
-        
-        @Getter(IntegerToStringFunction.class)
-        int getY() {
-            return y;
-        }
-
-        void setY(int y) {
-            this.y = y;
-        }
+    int getX() {
+      return x;
     }
 
-    @Test
-    public void testIntToString() throws Exception {
-        Method method = A.class.getDeclaredMethod("getX");
-        A a = new A();
-        a.setX(100);
-        GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(int.class.equals(invoker.getReturnType()), is(true));
-        assertThat(int.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((Integer) invoker.invoke(a), is(100));
-
-        method = A.class.getDeclaredMethod("getY");
-        a = new A();
-        a.setY(100);
-        invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getReturnType()), is(true));
-        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((String) invoker.invoke(a), is("string100"));
+    void setX(int x) {
+      this.x = x;
     }
 
-    static class B {
-        private Integer x;
-        private Integer y;
-
-        Integer getX() {
-            return x;
-        }
-
-        void setX(Integer x) {
-            this.x = x;
-        }
-
-        @Getter(IntegerToStringFunction.class)
-        Integer getY() {
-            return y;
-        }
-
-        void setY(Integer y) {
-            this.y = y;
-        }
+    @Getter(IntegerToStringFunction.class)
+    int getY() {
+      return y;
     }
 
-    @Test
-    public void testIntegerToString() throws Exception {
-        Method method = B.class.getDeclaredMethod("getX");
-        B b = new B();
-        b.setX(100);
-        GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(Integer.class.equals(invoker.getReturnType()), is(true));
-        assertThat(Integer.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((Integer) invoker.invoke(b), is(100));
+    void setY(int y) {
+      this.y = y;
+    }
+  }
 
-        method = B.class.getDeclaredMethod("getY");
-        b = new B();
-        b.setY(100);
-        invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getReturnType()), is(true));
-        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((String) invoker.invoke(b), is("string100"));
+  @Test
+  public void testIntToString() throws Exception {
+    Method method = A.class.getDeclaredMethod("getX");
+    A a = new A();
+    a.setX(100);
+    GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(int.class.equals(invoker.getReturnType()), is(true));
+    assertThat(int.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((Integer) invoker.invoke(a), is(100));
+
+    method = A.class.getDeclaredMethod("getY");
+    a = new A();
+    a.setY(100);
+    invoker = FunctionalGetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getReturnType()), is(true));
+    assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((String) invoker.invoke(a), is("string100"));
+  }
+
+  static class B {
+    private Integer x;
+    private Integer y;
+
+    Integer getX() {
+      return x;
     }
 
-    public static class StringToIntegerFunction implements GetterFunction<String, Integer> {
-
-        @Nullable
-        @Override
-        public Integer apply(@Nullable String input) {
-            return 100 * Integer.valueOf(input);
-        }
-
+    void setX(Integer x) {
+      this.x = x;
     }
 
-    static class C {
-        private String x;
-        private String y;
-
-        String getX() {
-            return x;
-        }
-
-        void setX(String x) {
-            this.x = x;
-        }
-
-        @Getter(StringToIntegerFunction.class)
-        String getY() {
-            return y;
-        }
-
-        void setY(String y) {
-            this.y = y;
-        }
+    @Getter(IntegerToStringFunction.class)
+    Integer getY() {
+      return y;
     }
 
-    @Test
-    public void testStringToInteger() throws Exception {
-        Method method = C.class.getDeclaredMethod("getX");
-        C c = new C();
-        c.setX("9527");
-        GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(String.class.equals(invoker.getReturnType()), is(true));
-        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((String) invoker.invoke(c), is("9527"));
+    void setY(Integer y) {
+      this.y = y;
+    }
+  }
 
-        method = C.class.getDeclaredMethod("getY");
-        c = new C();
-        c.setY("9527");
-        invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(Integer.class.equals(invoker.getReturnType()), is(true));
-        assertThat(Integer.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((Integer) invoker.invoke(c), is(952700));
+  @Test
+  public void testIntegerToString() throws Exception {
+    Method method = B.class.getDeclaredMethod("getX");
+    B b = new B();
+    b.setX(100);
+    GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(Integer.class.equals(invoker.getReturnType()), is(true));
+    assertThat(Integer.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((Integer) invoker.invoke(b), is(100));
+
+    method = B.class.getDeclaredMethod("getY");
+    b = new B();
+    b.setY(100);
+    invoker = FunctionalGetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getReturnType()), is(true));
+    assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((String) invoker.invoke(b), is("string100"));
+  }
+
+  public static class StringToIntegerFunction implements GetterFunction<String, Integer> {
+
+    @Nullable
+    @Override
+    public Integer apply(@Nullable String input) {
+      return 100 * Integer.valueOf(input);
     }
 
-    public static class IntegerListToStringFunction implements GetterFunction<List<Integer>, String> {
+  }
 
-        @Nullable
-        @Override
-        public String apply(@Nullable List<Integer> input) {
-            return Joiner.on(",").join(input);
-        }
+  static class C {
+    private String x;
+    private String y;
 
+    String getX() {
+      return x;
     }
 
-    static class D {
-        private List<Integer> x;
-        private List<Integer> y;
-
-        List<Integer> getX() {
-            return x;
-        }
-
-        void setX(List<Integer> x) {
-            this.x = x;
-        }
-
-        @Getter(IntegerListToStringFunction.class)
-        List<Integer> getY() {
-            return y;
-        }
-
-        void setY(List<Integer> y) {
-            this.y = y;
-        }
+    void setX(String x) {
+      this.x = x;
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testListToString() throws Exception {
-        Method method = D.class.getDeclaredMethod("getX");
-        D d = new D();
-        List<Integer> x = Lists.newArrayList(1, 2);
-        d.setX(x);
-        GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        Type type = new TypeToken<List<Integer>>() {}.getType();
-        assertThat(type.equals(invoker.getReturnType()), is(true));
-        assertThat(List.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat(invoker.invoke(d).equals(x), is(true));
-
-        method = D.class.getDeclaredMethod("getY");
-        d = new D();
-        List<Integer> y = Lists.newArrayList(1, 2);
-        d.setY(y);
-        invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getReturnType()), is(true));
-        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((String) invoker.invoke(d), is("1,2"));
+    @Getter(StringToIntegerFunction.class)
+    String getY() {
+      return y;
     }
 
+    void setY(String y) {
+      this.y = y;
+    }
+  }
 
+  @Test
+  public void testStringToInteger() throws Exception {
+    Method method = C.class.getDeclaredMethod("getX");
+    C c = new C();
+    c.setX("9527");
+    GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(String.class.equals(invoker.getReturnType()), is(true));
+    assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((String) invoker.invoke(c), is("9527"));
 
-    static class E {
-        private String x;
+    method = C.class.getDeclaredMethod("getY");
+    c = new C();
+    c.setY("9527");
+    invoker = FunctionalGetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(Integer.class.equals(invoker.getReturnType()), is(true));
+    assertThat(Integer.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((Integer) invoker.invoke(c), is(952700));
+  }
 
-        @Getter(IntegerToStringFunction.class)
-        String getX() {
-            return x;
-        }
+  public static class IntegerListToStringFunction implements GetterFunction<List<Integer>, String> {
 
-        void setX(String x) {
-            this.x = x;
-        }
+    @Nullable
+    @Override
+    public String apply(@Nullable List<Integer> input) {
+      return Joiner.on(",").join(input);
     }
 
+  }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  static class D {
+    private List<Integer> x;
+    private List<Integer> y;
 
-    @Test
-    public void testException() throws Exception {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerToStringFunction] on method[java.lang.String org.jfaster.mango.invoker.FunctionalGetterInvokerTest$E.getX()] error, function's inputType[class java.lang.Integer] must be assignable from method's returnType[class java.lang.String]");
-        Method method = E.class.getDeclaredMethod("getX");
-        E e = new E();
-        e.setX("9527");
-        FunctionalGetterInvoker.create("x", method);
+    List<Integer> getX() {
+      return x;
     }
 
-    static class F {
-        private List<String> x;
-
-        @Getter(IntegerListToStringFunction.class)
-        List<String> getX() {
-            return x;
-        }
-
-        void setX(List<String> x) {
-            this.x = x;
-        }
+    void setX(List<Integer> x) {
+      this.x = x;
     }
 
-    @Test
-    public void testException2() throws Exception {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerListToStringFunction] on method[java.util.List org.jfaster.mango.invoker.FunctionalGetterInvokerTest$F.getX()] error, function's inputType[java.util.List<java.lang.Integer>] must be assignable from method's returnType[java.util.List<java.lang.String>]");
-        Method method = F.class.getDeclaredMethod("getX");
-        F e = new F();
-        ArrayList<String> x = Lists.newArrayList("xxx");
-        e.setX(x);
-        FunctionalGetterInvoker.create("x", method);
+    @Getter(IntegerListToStringFunction.class)
+    List<Integer> getY() {
+      return y;
     }
 
-    public static class IntArrayToStringFunction implements GetterFunction<int[], String> {
+    void setY(List<Integer> y) {
+      this.y = y;
+    }
+  }
 
-        @Nullable
-        @Override
-        public String apply(@Nullable int[] input) {
-            return Ints.join(",", input);
-        }
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testListToString() throws Exception {
+    Method method = D.class.getDeclaredMethod("getX");
+    D d = new D();
+    List<Integer> x = Lists.newArrayList(1, 2);
+    d.setX(x);
+    GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    Type type = new TypeToken<List<Integer>>() {
+    }.getType();
+    assertThat(type.equals(invoker.getReturnType()), is(true));
+    assertThat(List.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat(invoker.invoke(d).equals(x), is(true));
+
+    method = D.class.getDeclaredMethod("getY");
+    d = new D();
+    List<Integer> y = Lists.newArrayList(1, 2);
+    d.setY(y);
+    invoker = FunctionalGetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getReturnType()), is(true));
+    assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((String) invoker.invoke(d), is("1,2"));
+  }
+
+
+  static class E {
+    private String x;
+
+    @Getter(IntegerToStringFunction.class)
+    String getX() {
+      return x;
     }
 
-    static class G {
-        private int[] x;
-        private int[] y;
+    void setX(String x) {
+      this.x = x;
+    }
+  }
 
-        int[] getX() {
-            return x;
-        }
 
-        void setX(int[] x) {
-            this.x = x;
-        }
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-        @Getter(IntArrayToStringFunction.class)
-        int[] getY() {
-            return y;
-        }
+  @Test
+  public void testException() throws Exception {
+    thrown.expect(ClassCastException.class);
+    thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerToStringFunction] on method[java.lang.String org.jfaster.mango.invoker.FunctionalGetterInvokerTest$E.getX()] error, function's inputType[class java.lang.Integer] must be assignable from method's returnType[class java.lang.String]");
+    Method method = E.class.getDeclaredMethod("getX");
+    E e = new E();
+    e.setX("9527");
+    FunctionalGetterInvoker.create("x", method);
+  }
 
-        void setY(int[] y) {
-            this.y = y;
-        }
+  static class F {
+    private List<String> x;
+
+    @Getter(IntegerListToStringFunction.class)
+    List<String> getX() {
+      return x;
     }
 
-    @Test
-    public void testIntArrayToString() throws Exception {
-        Method method = G.class.getDeclaredMethod("getX");
-        G g = new G();
-        int[] x = new int[]{1, 2, 3};
-        g.setX(x);
-        GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(int[].class.equals(invoker.getReturnType()), is(true));
-        assertThat(int[].class.equals(invoker.getReturnRawType()), is(true));
-        assertThat(Arrays.toString((int[]) invoker.invoke(g)).equals(Arrays.toString(x)), is(true));
+    void setX(List<String> x) {
+      this.x = x;
+    }
+  }
 
-        method = G.class.getDeclaredMethod("getY");
-        g = new G();
-        int[] y = new int[]{1, 2, 3};
-        g.setY(y);
-        invoker = FunctionalGetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getReturnType()), is(true));
-        assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
-        assertThat((String) invoker.invoke(g), is("1,2,3"));
+  @Test
+  public void testException2() throws Exception {
+    thrown.expect(ClassCastException.class);
+    thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalGetterInvokerTest$IntegerListToStringFunction] on method[java.util.List org.jfaster.mango.invoker.FunctionalGetterInvokerTest$F.getX()] error, function's inputType[java.util.List<java.lang.Integer>] must be assignable from method's returnType[java.util.List<java.lang.String>]");
+    Method method = F.class.getDeclaredMethod("getX");
+    F e = new F();
+    ArrayList<String> x = Lists.newArrayList("xxx");
+    e.setX(x);
+    FunctionalGetterInvoker.create("x", method);
+  }
+
+  public static class IntArrayToStringFunction implements GetterFunction<int[], String> {
+
+    @Nullable
+    @Override
+    public String apply(@Nullable int[] input) {
+      return Ints.join(",", input);
+    }
+  }
+
+  static class G {
+    private int[] x;
+    private int[] y;
+
+    int[] getX() {
+      return x;
     }
 
-    static class H {
-        private String x;
-
-        String getX() {
-            return x;
-        }
-
-        @Getter(LongListToStringFunction.class)
-        void setX(String x) {
-            this.x = x;
-        }
+    void setX(int[] x) {
+      this.x = x;
     }
+
+    @Getter(IntArrayToStringFunction.class)
+    int[] getY() {
+      return y;
+    }
+
+    void setY(int[] y) {
+      this.y = y;
+    }
+  }
+
+  @Test
+  public void testIntArrayToString() throws Exception {
+    Method method = G.class.getDeclaredMethod("getX");
+    G g = new G();
+    int[] x = new int[]{1, 2, 3};
+    g.setX(x);
+    GetterInvoker invoker = FunctionalGetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(int[].class.equals(invoker.getReturnType()), is(true));
+    assertThat(int[].class.equals(invoker.getReturnRawType()), is(true));
+    assertThat(Arrays.toString((int[]) invoker.invoke(g)).equals(Arrays.toString(x)), is(true));
+
+    method = G.class.getDeclaredMethod("getY");
+    g = new G();
+    int[] y = new int[]{1, 2, 3};
+    g.setY(y);
+    invoker = FunctionalGetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getReturnType()), is(true));
+    assertThat(String.class.equals(invoker.getReturnRawType()), is(true));
+    assertThat((String) invoker.invoke(g), is("1,2,3"));
+  }
+
+  static class H {
+    private String x;
+
+    String getX() {
+      return x;
+    }
+
+    @Getter(LongListToStringFunction.class)
+    void setX(String x) {
+      this.x = x;
+    }
+  }
 
 }

@@ -16,11 +16,11 @@
 
 package org.jfaster.mango.datasource;
 
+import org.jfaster.mango.base.logging.InternalLogger;
+import org.jfaster.mango.base.logging.InternalLoggerFactory;
 import org.jfaster.mango.exception.jdbc.CannotGetJdbcConnectionException;
 import org.jfaster.mango.transaction.ConnectionHolder;
 import org.jfaster.mango.transaction.TransactionSynchronizationManager;
-import org.jfaster.mango.base.logging.InternalLogger;
-import org.jfaster.mango.base.logging.InternalLoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -32,69 +32,69 @@ import java.sql.SQLException;
  */
 public class DataSourceUtils {
 
-    private final static InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceUtils.class);
+  private final static InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceUtils.class);
 
-    public static Connection getConnection(DataSource dataSource) throws CannotGetJdbcConnectionException {
-        try {
-            return doGetConnection(dataSource);
-        } catch (SQLException e) {
-            throw new CannotGetJdbcConnectionException("Could not get JDBC Connection", e);
-        }
+  public static Connection getConnection(DataSource dataSource) throws CannotGetJdbcConnectionException {
+    try {
+      return doGetConnection(dataSource);
+    } catch (SQLException e) {
+      throw new CannotGetJdbcConnectionException("Could not get JDBC Connection", e);
     }
+  }
 
-    private static Connection doGetConnection(DataSource dataSource) throws SQLException {
-        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
-        if (connHolder != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Fetching resumed JDBC Connection from DataSource");
-            }
-            return connHolder.getConnection();
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("Fetching JDBC Connection from DataSource");
-        }
-        Connection conn = dataSource.getConnection();
-        if (DataSourceMonitor.needCheckAutoCommit(dataSource)) { // 如果使用事务后，归还conn时，重置autoCommit失败，则需要检测
-            try {
-                if (!conn.getAutoCommit()) {
-                    conn.setAutoCommit(true);
-                }
-            } catch (Throwable e) {
-                logger.error("Could not set autoCommit of JDBC Connection after get Connection, so close it", e);
-                releaseConnection(conn, dataSource);
-                throw new CannotGetJdbcConnectionException("Could not set autoCommit of JDBC Connection " +
-                        "after get Connection, so close it", e);
-            }
-        }
-        return conn;
+  private static Connection doGetConnection(DataSource dataSource) throws SQLException {
+    ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
+    if (connHolder != null) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Fetching resumed JDBC Connection from DataSource");
+      }
+      return connHolder.getConnection();
     }
-
-
-    public static void releaseConnection(@Nullable Connection conn, DataSource dataSource) {
-        try {
-            doReleaseConnection(conn, dataSource);
-        } catch (SQLException e) {
-            logger.error("Could not close JDBC Connection", e);
-        } catch (Throwable e) {
-            logger.error("Unexpected exception on closing JDBC Connection", e);
-        }
+    if (logger.isDebugEnabled()) {
+      logger.debug("Fetching JDBC Connection from DataSource");
     }
-
-    private static void doReleaseConnection(@Nullable Connection conn, DataSource dataSource) throws SQLException {
-        if (conn == null) {
-            return;
+    Connection conn = dataSource.getConnection();
+    if (DataSourceMonitor.needCheckAutoCommit(dataSource)) { // 如果使用事务后，归还conn时，重置autoCommit失败，则需要检测
+      try {
+        if (!conn.getAutoCommit()) {
+          conn.setAutoCommit(true);
         }
-        ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
-        if (connHolder != null && connectionEquals(connHolder, conn)) {
-            return;
-        }
-        logger.debug("Returning JDBC Connection to DataSource");
-        conn.close();
+      } catch (Throwable e) {
+        logger.error("Could not set autoCommit of JDBC Connection after get Connection, so close it", e);
+        releaseConnection(conn, dataSource);
+        throw new CannotGetJdbcConnectionException("Could not set autoCommit of JDBC Connection " +
+            "after get Connection, so close it", e);
+      }
     }
+    return conn;
+  }
 
-    private static boolean connectionEquals(ConnectionHolder connHolder, Connection passedInConn) {
-        Connection heldConn = connHolder.getConnection();
-        return heldConn == passedInConn || heldConn.equals(passedInConn);
+
+  public static void releaseConnection(@Nullable Connection conn, DataSource dataSource) {
+    try {
+      doReleaseConnection(conn, dataSource);
+    } catch (SQLException e) {
+      logger.error("Could not close JDBC Connection", e);
+    } catch (Throwable e) {
+      logger.error("Unexpected exception on closing JDBC Connection", e);
     }
+  }
+
+  private static void doReleaseConnection(@Nullable Connection conn, DataSource dataSource) throws SQLException {
+    if (conn == null) {
+      return;
+    }
+    ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(dataSource);
+    if (connHolder != null && connectionEquals(connHolder, conn)) {
+      return;
+    }
+    logger.debug("Returning JDBC Connection to DataSource");
+    conn.close();
+  }
+
+  private static boolean connectionEquals(ConnectionHolder connHolder, Connection passedInConn) {
+    Connection heldConn = connHolder.getConnection();
+    return heldConn == passedInConn || heldConn.equals(passedInConn);
+  }
 
 }

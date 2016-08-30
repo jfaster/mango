@@ -24,12 +24,12 @@ package org.jfaster.mango.exception.transaction;
 public class TransactionSystemException extends TransactionException {
 
 
-    public TransactionSystemException(String msg) {
-        super(msg);
-    }
+  public TransactionSystemException(String msg) {
+    super(msg);
+  }
 
-    public TransactionSystemException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public TransactionSystemException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

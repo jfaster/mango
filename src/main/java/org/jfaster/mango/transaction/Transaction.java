@@ -21,12 +21,12 @@ package org.jfaster.mango.transaction;
  */
 public interface Transaction {
 
-    public void commit();
+  public void commit();
 
-    public void rollback();
+  public void rollback();
 
-    public boolean isRollbackOnly();
+  public boolean isRollbackOnly();
 
-    public void setRollbackOnly(boolean rollbackOnly);
+  public void setRollbackOnly(boolean rollbackOnly);
 
 }

@@ -47,289 +47,297 @@ import static org.hamcrest.Matchers.*;
  */
 public class BatchUpdateOperatorTest {
 
-    @Test
-    public void testExecuteReturnVoid() throws Exception {
-        TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
-        TypeToken<Void> rt = TypeToken.of(void.class);
-        String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator operator = getOperator(pt, rt, srcSql);
+  @Test
+  public void testExecuteReturnVoid() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<Void> rt = TypeToken.of(void.class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
 
-        final int[] expectedInts = new int[] {1, 2};
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-                String descSql = "update user set name=? where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(batchArgs.size(), equalTo(2));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-                assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-                assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return expectedInts;
-            }
-        });
+    final int[] expectedInts = new int[]{1, 2};
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(batchArgs.size(), equalTo(2));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
+        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
+        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
+        return expectedInts;
+      }
+    });
 
-        List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        Object actual = operator.execute(new Object[]{users});
-        assertThat(actual, nullValue());
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    Object actual = operator.execute(new Object[]{users});
+    assertThat(actual, nullValue());
+  }
+
+  @Test
+  public void testExecuteReturnInt() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<Integer> rt = TypeToken.of(int.class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
+
+    final int[] expectedInts = new int[]{1, 2};
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(batchArgs.size(), equalTo(2));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
+        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
+        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
+        return expectedInts;
+      }
+    });
+
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    int actual = (Integer) operator.execute(new Object[]{users});
+    assertThat(actual, is(3));
+  }
+
+  @Test
+  public void testExecuteReturnIntArray() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<int[]> rt = TypeToken.of(int[].class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
+
+    final int[] expectedInts = new int[]{1, 2};
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(batchArgs.size(), equalTo(2));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
+        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
+        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
+        return expectedInts;
+      }
+    });
+
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    int[] actualInts = (int[]) operator.execute(new Object[]{users});
+    assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
+  }
+
+  @Test
+  public void testExecuteReturnIntegerArray() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<Integer[]> rt = TypeToken.of(Integer[].class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
+
+    final int[] expectedInts = new int[]{1, 2};
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(batchArgs.size(), equalTo(2));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
+        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
+        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
+        return expectedInts;
+      }
+    });
+
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    Integer[] actualInts = (Integer[]) operator.execute(new Object[]{users});
+    assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
+  }
+
+  @Test
+  public void testExecuteMulti() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<int[]> rt = TypeToken.of(int[].class);
+    String srcSql = "update #table set name=:1.name where id=:1.id";
+    Operator operator = getOperator2(pt, rt, srcSql);
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs) {
+        List<String> descSqls = Arrays.asList("update user_10 set name=? where id=?",
+            "update user_20 set name=? where id=?");
+        assertThat(sqls, equalTo(descSqls));
+        assertThat(batchArgs.size(), equalTo(2));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 10));
+        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
+        assertThat(batchArgs.get(1)[1], equalTo((Object) 20));
+        return new int[]{5, 8};
+      }
+
+      @Override
+      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        String descSql = "update user_60 set name=? where id=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(batchArgs.size(), equalTo(1));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "lily"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 60));
+        return new int[]{6};
+      }
+    });
+
+    List<User> users = Arrays.asList(new User(10, "ash"), new User(20, "lucy"), new User(60, "lily"));
+    int[] actualInts = (int[]) operator.execute(new Object[]{users});
+    assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(new int[]{5, 8, 6})));
+  }
+
+  @Test
+  public void testStatsCounter() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<int[]> rt = TypeToken.of(int[].class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(batchArgs.size(), equalTo(2));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
+        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
+        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
+        return new int[]{9, 7};
+      }
+    });
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    operator.execute(new Object[]{users});
+    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
+    operator.execute(new Object[]{users});
+    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
+
+    operator.setJdbcOperations(new JdbcOperationsAdapter());
+    try {
+      operator.execute(new Object[]{users});
+    } catch (UnsupportedOperationException e) {
     }
-
-    @Test
-    public void testExecuteReturnInt() throws Exception {
-        TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
-        TypeToken<Integer> rt = TypeToken.of(int.class);
-        String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator operator = getOperator(pt, rt, srcSql);
-
-        final int[] expectedInts = new int[] {1, 2};
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-                String descSql = "update user set name=? where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(batchArgs.size(), equalTo(2));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-                assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-                assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return expectedInts;
-            }
-        });
-
-        List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        int actual = (Integer) operator.execute(new Object[]{users});
-        assertThat(actual, is(3));
+    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
+    try {
+      operator.execute(new Object[]{users});
+    } catch (UnsupportedOperationException e) {
     }
+    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
+  }
 
-    @Test
-    public void testExecuteReturnIntArray() throws Exception {
-        TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
-        TypeToken<int[]> rt = TypeToken.of(int[].class);
-        String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator operator = getOperator(pt, rt, srcSql);
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-        final int[] expectedInts = new int[] {1, 2};
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-                String descSql = "update user set name=? where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(batchArgs.size(), equalTo(2));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-                assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-                assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return expectedInts;
-            }
-        });
+  @Test
+  public void testExecuteReturnTypeError() throws Exception {
+    thrown.expect(DescriptionException.class);
+    thrown.expectMessage("the return type of batch update expected one of " +
+        "[void, int, int[], Void, Integer, Integer[]] but class java.lang.String");
 
-        List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        int[] actualInts = (int[]) operator.execute(new Object[]{users});
-        assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<String> rt = TypeToken.of(String.class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
+
+    final int[] expectedInts = new int[]{1, 2};
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(batchArgs.size(), equalTo(2));
+        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
+        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
+        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
+        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
+        return expectedInts;
+      }
+    });
+
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    operator.execute(new Object[]{users});
+  }
+
+  private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
+    List<Annotation> empty = Collections.emptyList();
+    ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), empty, "1");
+    List<ParameterDescriptor> pds = Arrays.asList(p);
+
+    List<Annotation> methodAnnos = new ArrayList<Annotation>();
+    methodAnnos.add(new MockDB());
+    methodAnnos.add(new MockSQL(srcSql));
+    ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
+    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+
+    OperatorFactory factory = new OperatorFactory(
+        new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
+        null, new InterceptorChain(), null, new Config());
+
+    Operator operator = factory.getOperator(md, new StatsCounter());
+    return operator;
+  }
+
+  private Operator getOperator2(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
+    List<Annotation> pAnnos = new ArrayList<Annotation>();
+    pAnnos.add(new MockShardingBy("id"));
+    ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), pAnnos, "1");
+    List<ParameterDescriptor> pds = Arrays.asList(p);
+
+    List<Annotation> methodAnnos = new ArrayList<Annotation>();
+    methodAnnos.add(new MockDB("", "user"));
+    methodAnnos.add(new MockSharding(ModHundredTableShardingStrategy.class, MyDatabaseShardingStrategy.class, null));
+    methodAnnos.add(new MockSQL(srcSql));
+    ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
+    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+
+
+    Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();
+    map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
+    map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
+    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
+    OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new Config());
+    Operator operator = factory.getOperator(md, new StatsCounter());
+    return operator;
+  }
+
+  public static class MyDatabaseShardingStrategy implements DatabaseShardingStrategy {
+
+    @Override
+    public String getDatabase(Object shardParam) {
+      Integer i = (Integer) shardParam;
+      if (i < 50) {
+        return "l50";
+      } else {
+        return "g50";
+      }
     }
-
-    @Test
-    public void testExecuteReturnIntegerArray() throws Exception {
-        TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
-        TypeToken<Integer[]> rt = TypeToken.of(Integer[].class);
-        String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator operator = getOperator(pt, rt, srcSql);
-
-        final int[] expectedInts = new int[] {1, 2};
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-                String descSql = "update user set name=? where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(batchArgs.size(), equalTo(2));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-                assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-                assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return expectedInts;
-            }
-        });
-
-        List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        Integer[] actualInts = (Integer[]) operator.execute(new Object[]{users});
-        assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
-    }
-
-    @Test
-    public void testExecuteMulti() throws Exception {
-        TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
-        TypeToken<int[]> rt = TypeToken.of(int[].class);
-        String srcSql = "update #table set name=:1.name where id=:1.id";
-        Operator operator = getOperator2(pt, rt, srcSql);
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs) {
-                List<String> descSqls = Arrays.asList("update user_10 set name=? where id=?",
-                        "update user_20 set name=? where id=?");
-                assertThat(sqls, equalTo(descSqls));
-                assertThat(batchArgs.size(), equalTo(2));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 10));
-                assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-                assertThat(batchArgs.get(1)[1], equalTo((Object) 20));
-                return new int[] {5, 8};
-            }
-            @Override
-            public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-                String descSql = "update user_60 set name=? where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(batchArgs.size(), equalTo(1));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "lily"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 60));
-                return new int[] {6};
-            }
-        });
-
-        List<User> users = Arrays.asList(new User(10, "ash"), new User(20, "lucy"), new User(60, "lily"));
-        int[] actualInts = (int[]) operator.execute(new Object[]{users});
-        assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(new int[]{5, 8, 6})));
-    }
-
-    @Test
-    public void testStatsCounter() throws Exception {
-        TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
-        TypeToken<int[]> rt = TypeToken.of(int[].class);
-        String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator operator = getOperator(pt, rt, srcSql);
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-                String descSql = "update user set name=? where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(batchArgs.size(), equalTo(2));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-                assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-                assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return new int[] {9, 7};
-            }
-        });
-        List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        operator.execute(new Object[]{users});
-        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
-        operator.execute(new Object[]{users});
-        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
-
-        operator.setJdbcOperations(new JdbcOperationsAdapter());
-        try {
-            operator.execute(new Object[]{users});
-        } catch (UnsupportedOperationException e) {
-        }
-        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
-        try {
-            operator.execute(new Object[]{users});
-        } catch (UnsupportedOperationException e) {
-        }
-        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
-    }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Test
-    public void testExecuteReturnTypeError() throws Exception {
-        thrown.expect(DescriptionException.class);
-        thrown.expectMessage("the return type of batch update expected one of " +
-                "[void, int, int[], Void, Integer, Integer[]] but class java.lang.String");
-
-        TypeToken<List<User>> pt = new TypeToken<List<User>>() {};
-        TypeToken<String> rt = TypeToken.of(String.class);
-        String srcSql = "update user set name=:1.name where id=:1.id";
-        Operator operator = getOperator(pt, rt, srcSql);
-
-        final int[] expectedInts = new int[] {1, 2};
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-                String descSql = "update user set name=? where id=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(batchArgs.size(), equalTo(2));
-                assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-                assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-                assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-                assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-                return expectedInts;
-            }
-        });
-
-        List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-        operator.execute(new Object[]{users});
-    }
-
-    private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
-        List<Annotation> empty = Collections.emptyList();
-        ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), empty, "1");
-        List<ParameterDescriptor> pds = Arrays.asList(p);
-
-        List<Annotation> methodAnnos = new ArrayList<Annotation>();
-        methodAnnos.add(new MockDB());
-        methodAnnos.add(new MockSQL(srcSql));
-        ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-        MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
-
-        OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-                null, new InterceptorChain(), null, new Config());
-
-        Operator operator = factory.getOperator(md, new StatsCounter());
-        return operator;
-    }
-
-    private Operator getOperator2(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
-        List<Annotation> pAnnos = new ArrayList<Annotation>();
-        pAnnos.add(new MockShardingBy("id"));
-        ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), pAnnos, "1");
-        List<ParameterDescriptor> pds = Arrays.asList(p);
-
-        List<Annotation> methodAnnos = new ArrayList<Annotation>();
-        methodAnnos.add(new MockDB("", "user"));
-        methodAnnos.add(new MockSharding(ModHundredTableShardingStrategy.class, MyDatabaseShardingStrategy.class, null));
-        methodAnnos.add(new MockSQL(srcSql));
-        ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-        MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
-
-
-        Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();
-        map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
-        map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
-        DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
-        OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new Config());
-        Operator operator = factory.getOperator(md, new StatsCounter());
-        return operator;
-    }
-
-    public static class MyDatabaseShardingStrategy implements DatabaseShardingStrategy {
-
-        @Override
-        public String getDatabase(Object shardParam) {
-            Integer i = (Integer) shardParam;
-            if (i < 50) {
-                return "l50";
-            } else {
-                return "g50";
-            }
-        }
-    }
+  }
 
 }

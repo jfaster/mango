@@ -23,10 +23,10 @@ import java.lang.reflect.Type;
  */
 public interface SetterInvoker extends NamedObject {
 
-    public void invoke(Object object, Object parameter);
+  public void invoke(Object object, Object parameter);
 
-    public Type getParameterType();
+  public Type getParameterType();
 
-    public Class<?> getParameterRawType();
+  public Class<?> getParameterRawType();
 
 }

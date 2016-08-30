@@ -28,6 +28,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Getter {
 
-    Class<? extends GetterFunction<?, ?>> value();
+  Class<? extends GetterFunction<?, ?>> value();
 
 }

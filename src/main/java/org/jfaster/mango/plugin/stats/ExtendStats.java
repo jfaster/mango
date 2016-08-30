@@ -19,10 +19,10 @@ package org.jfaster.mango.plugin.stats;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.Sharding;
-import org.jfaster.mango.stat.OperatorStats;
-import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
 import org.jfaster.mango.base.Strings;
 import org.jfaster.mango.base.ToStringHelper;
+import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
+import org.jfaster.mango.stat.OperatorStats;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -34,51 +34,51 @@ import java.util.List;
  */
 public class ExtendStats {
 
-    private OperatorStats operatorStats;
+  private OperatorStats operatorStats;
 
-    private Method method;
+  private Method method;
 
-    public ExtendStats(OperatorStats operatorStats) {
-        this.operatorStats = operatorStats;
-        this.method = operatorStats.getMethod();
+  public ExtendStats(OperatorStats operatorStats) {
+    this.operatorStats = operatorStats;
+    this.method = operatorStats.getMethod();
+  }
+
+  public String getSimpleClassName() {
+    return method.getDeclaringClass().getSimpleName();
+  }
+
+  public String getSimpleMethodName() {
+    return method.getName() + "(" + method.getParameterTypes().length + ")";
+  }
+
+  public String getSql() {
+    String sql = method.getAnnotation(SQL.class).value();
+    DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+    String table = dbAnno.table();
+    if (Strings.isNotEmpty(table)) {
+      Sharding shardingAnno = method.getAnnotation(Sharding.class);
+      if (shardingAnno == null) {
+        shardingAnno = method.getDeclaringClass().getAnnotation(Sharding.class);
+      }
+      if (shardingAnno != null &&
+          !NotUseTableShardingStrategy.class.equals(shardingAnno.tableShardingStrategy())) {
+        table = table + "_#";
+      }
+      sql = sql.replaceAll("#table", table);
     }
+    return sql;
+  }
 
-    public String getSimpleClassName() {
-        return method.getDeclaringClass().getSimpleName();
+  public List<String> getStrParameterTypes() {
+    List<String> r = new ArrayList<String>();
+    for (Type type : method.getGenericParameterTypes()) {
+      r.add(ToStringHelper.toString(type));
     }
+    return r;
+  }
 
-    public String getSimpleMethodName() {
-        return method.getName() + "(" + method.getParameterTypes().length + ")";
-    }
-
-    public String getSql() {
-        String sql = method.getAnnotation(SQL.class).value();
-        DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
-        String table = dbAnno.table();
-        if (Strings.isNotEmpty(table)) {
-            Sharding shardingAnno = method.getAnnotation(Sharding.class);
-            if (shardingAnno == null) {
-                shardingAnno = method.getDeclaringClass().getAnnotation(Sharding.class);
-            }
-            if (shardingAnno != null &&
-                    !NotUseTableShardingStrategy.class.equals(shardingAnno.tableShardingStrategy())) {
-                table = table + "_#";
-            }
-            sql = sql.replaceAll("#table", table);
-        }
-        return sql;
-    }
-
-    public List<String> getStrParameterTypes() {
-        List<String> r = new ArrayList<String>();
-        for (Type type : method.getGenericParameterTypes()) {
-            r.add(ToStringHelper.toString(type));
-        }
-        return r;
-    }
-
-    public String getType() {
-        return operatorStats.getType().name().toLowerCase();
-    }
+  public String getType() {
+    return operatorStats.getType().name().toLowerCase();
+  }
 
 }

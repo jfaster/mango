@@ -21,10 +21,10 @@ package org.jfaster.mango.invoker;
  */
 public interface SetterInvokerGroup {
 
-    public Class<?> getOriginalType();
+  public Class<?> getOriginalType();
 
-    public Class<?> getTargetType();
+  public Class<?> getTargetType();
 
-    public void invoke(Object obj, Object value);
+  public void invoke(Object obj, Object value);
 
 }

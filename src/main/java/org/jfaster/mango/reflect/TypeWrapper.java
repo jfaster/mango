@@ -24,127 +24,127 @@ import java.util.*;
  */
 public class TypeWrapper {
 
-    /**
-     * type映射的原始类型
-     * <p>
-     * 如果type为{@code Integer}，它的值为{@code Integer.class}，
-     * 如果type为{@code List<Integer>}，它的值为{@code Integer.class}，
-     * 如果type为{@code List<List<String>>}，{@code List<T>>}等，它的值为{@code null}
-     */
-    private Class<?> mappedClass;
+  /**
+   * type映射的原始类型
+   * <p/>
+   * 如果type为{@code Integer}，它的值为{@code Integer.class}，
+   * 如果type为{@code List<Integer>}，它的值为{@code Integer.class}，
+   * 如果type为{@code List<List<String>>}，{@code List<T>>}等，它的值为{@code null}
+   */
+  private Class<?> mappedClass;
 
-    /**
-     * type映射的原始类型，抛出异常时需要用到
-     */
-    private Type mappedType;
+  /**
+   * type映射的原始类型，抛出异常时需要用到
+   */
+  private Type mappedType;
 
-    private boolean isArray;
-    private boolean isCollection;
-    private boolean isList;
-    private boolean isArrayList;
-    private boolean isLinkedList;
-    private boolean isSet;
-    private boolean isHashSet;
-    private boolean isCollectionAssignable;
+  private boolean isArray;
+  private boolean isCollection;
+  private boolean isList;
+  private boolean isArrayList;
+  private boolean isLinkedList;
+  private boolean isSet;
+  private boolean isHashSet;
+  private boolean isCollectionAssignable;
 
-    public TypeWrapper(final Type type) {
-        if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
-            mappedType = mappedClass = byte[].class;
-        } else {
-            new TypeVisitor() {
-                @Override
-                void visitClass(Class<?> t) {
-                    mappedType = t;
-                    if (t.isArray()) { // 数组
-                        isArray = true;
-                        mappedType = t.getComponentType();
-                    }
-                }
-
-                @Override
-                void visitGenericArrayType(GenericArrayType t) {
-                    isArray = true;
-                    mappedType = t.getGenericComponentType();
-                }
-
-                @Override
-                void visitParameterizedType(ParameterizedType t) {
-                    Type rawType = t.getRawType();
-
-                    // 支持Collection,List,ArrayList,LinkedList,Set,HashSet
-                    if (Collection.class.equals(rawType)) {
-                        isCollection = true;
-                    } else if (List.class.equals(rawType)) {
-                        isList = true;
-                    } else if (ArrayList.class.equals(rawType)) {
-                        isArrayList = true;
-                    } else if (LinkedList.class.equals(rawType)) {
-                        isLinkedList = true;
-                    } else if (Set.class.equals(rawType)) {
-                        isSet = true;
-                    } else if (HashSet.class.equals(rawType)) {
-                        isHashSet = true;
-                    } else {
-                        throw new IllegalStateException("parameterized type must be one of" +
-                                "[Collection,List,ArrayList,LinkedList,Set,HashSet] but " + type);
-                    }
-                    isCollectionAssignable = true;
-                    mappedType = t.getActualTypeArguments()[0];
-                }
-
-                @Override
-                void visitTypeVariable(TypeVariable<?> t) {
-                    throw new IllegalStateException("Does not support the type " + type);
-                }
-
-                @Override
-                void visitWildcardType(WildcardType t) {
-                    throw new IllegalStateException("Does not support the type " + type);
-                }
-            }.visit(type);
-            mappedClass = TypeToken.of(mappedType).getRawType();
+  public TypeWrapper(final Type type) {
+    if (byte[].class.equals(type)) { // byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
+      mappedType = mappedClass = byte[].class;
+    } else {
+      new TypeVisitor() {
+        @Override
+        void visitClass(Class<?> t) {
+          mappedType = t;
+          if (t.isArray()) { // 数组
+            isArray = true;
+            mappedType = t.getComponentType();
+          }
         }
-    }
 
-    public boolean isArray() {
-        return isArray;
-    }
+        @Override
+        void visitGenericArrayType(GenericArrayType t) {
+          isArray = true;
+          mappedType = t.getGenericComponentType();
+        }
 
-    public boolean isCollection() {
-        return isCollection;
-    }
+        @Override
+        void visitParameterizedType(ParameterizedType t) {
+          Type rawType = t.getRawType();
 
-    public boolean isList() {
-        return isList;
-    }
+          // 支持Collection,List,ArrayList,LinkedList,Set,HashSet
+          if (Collection.class.equals(rawType)) {
+            isCollection = true;
+          } else if (List.class.equals(rawType)) {
+            isList = true;
+          } else if (ArrayList.class.equals(rawType)) {
+            isArrayList = true;
+          } else if (LinkedList.class.equals(rawType)) {
+            isLinkedList = true;
+          } else if (Set.class.equals(rawType)) {
+            isSet = true;
+          } else if (HashSet.class.equals(rawType)) {
+            isHashSet = true;
+          } else {
+            throw new IllegalStateException("parameterized type must be one of" +
+                "[Collection,List,ArrayList,LinkedList,Set,HashSet] but " + type);
+          }
+          isCollectionAssignable = true;
+          mappedType = t.getActualTypeArguments()[0];
+        }
 
-    public boolean isArrayList() {
-        return isArrayList;
-    }
+        @Override
+        void visitTypeVariable(TypeVariable<?> t) {
+          throw new IllegalStateException("Does not support the type " + type);
+        }
 
-    public boolean isLinkedList() {
-        return isLinkedList;
+        @Override
+        void visitWildcardType(WildcardType t) {
+          throw new IllegalStateException("Does not support the type " + type);
+        }
+      }.visit(type);
+      mappedClass = TypeToken.of(mappedType).getRawType();
     }
+  }
 
-    public boolean isSet() {
-        return isSet;
-    }
+  public boolean isArray() {
+    return isArray;
+  }
 
-    public boolean isHashSet() {
-        return isHashSet;
-    }
+  public boolean isCollection() {
+    return isCollection;
+  }
 
-    public boolean isIterable() {
-        return isCollectionAssignable || isArray;
-    }
+  public boolean isList() {
+    return isList;
+  }
 
-    public Class<?> getMappedClass() {
-        return mappedClass;
-    }
+  public boolean isArrayList() {
+    return isArrayList;
+  }
 
-    public Type getMappedType() {
-        return mappedType;
-    }
+  public boolean isLinkedList() {
+    return isLinkedList;
+  }
+
+  public boolean isSet() {
+    return isSet;
+  }
+
+  public boolean isHashSet() {
+    return isHashSet;
+  }
+
+  public boolean isIterable() {
+    return isCollectionAssignable || isArray;
+  }
+
+  public Class<?> getMappedClass() {
+    return mappedClass;
+  }
+
+  public Type getMappedType() {
+    return mappedType;
+  }
 
 }
 

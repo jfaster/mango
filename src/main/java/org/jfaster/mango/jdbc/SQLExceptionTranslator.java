@@ -25,6 +25,6 @@ import java.sql.SQLException;
  */
 public interface SQLExceptionTranslator {
 
-    DataAccessException translate(String sql, SQLException ex);
+  DataAccessException translate(String sql, SQLException ex);
 
 }

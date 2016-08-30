@@ -25,20 +25,20 @@ import java.lang.annotation.Annotation;
  */
 public class MockRename implements Annotation, Rename {
 
-    private String value;
+  private String value;
 
-    public MockRename(String value) {
-        this.value = value;
-    }
+  public MockRename(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public String value() {
-        return value;
-    }
+  @Override
+  public String value() {
+    return value;
+  }
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    throw new UnsupportedOperationException();
+  }
 
 }

@@ -24,18 +24,18 @@ import java.lang.reflect.Type;
  */
 public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 
-    private Class<T> mappedClass;
+  private Class<T> mappedClass;
 
-    @SuppressWarnings("unchecked")
-    protected AbstractRowMapper() {
-        Type genType = getClass().getGenericSuperclass();
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        mappedClass =  (Class<T>) params[0];
-    }
+  @SuppressWarnings("unchecked")
+  protected AbstractRowMapper() {
+    Type genType = getClass().getGenericSuperclass();
+    Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+    mappedClass = (Class<T>) params[0];
+  }
 
-    @Override
-    public Class<T> getMappedClass() {
-        return mappedClass;
-    }
+  @Override
+  public Class<T> getMappedClass() {
+    return mappedClass;
+  }
 
 }

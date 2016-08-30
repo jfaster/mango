@@ -20,7 +20,9 @@ import org.jfaster.mango.DbTest;
 import org.jfaster.mango.base.ScriptRunner;
 
 import javax.sql.DataSource;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -29,39 +31,38 @@ import java.sql.SQLException;
  */
 public enum Table {
 
-    USER("user.sql"),
-    PERSON("person.sql"),
-    BYTE_INFO("byte_info.sql"),
-    MSG("msg.sql"),
-    MSG_PARTITION("msg_partition.sql"),
-    MSG_ROUTER1("msg_router1.sql"),
-    MSG_ROUTER2("msg_router2.sql"),
-    MSG_ROUTER3("msg_router3.sql"),
-    LONG_ID_MSG("long_id_msg.sql"),
-    ACCOUNT("account.sql"),
-    POSITION("position.sql"),
-    BT("bt.sql"),
-    BILL_PARTITION("bill_partition.sql"),
-    ORDER_PARTITION("order_partition.sql"),
-    PRODUCT_PARTITION("product_partition.sql"),
-    ;
+  USER("user.sql"),
+  PERSON("person.sql"),
+  BYTE_INFO("byte_info.sql"),
+  MSG("msg.sql"),
+  MSG_PARTITION("msg_partition.sql"),
+  MSG_ROUTER1("msg_router1.sql"),
+  MSG_ROUTER2("msg_router2.sql"),
+  MSG_ROUTER3("msg_router3.sql"),
+  LONG_ID_MSG("long_id_msg.sql"),
+  ACCOUNT("account.sql"),
+  POSITION("position.sql"),
+  BT("bt.sql"),
+  BILL_PARTITION("bill_partition.sql"),
+  ORDER_PARTITION("order_partition.sql"),
+  PRODUCT_PARTITION("product_partition.sql"),;
 
-    private String name;
+  private String name;
 
-    private Table(String name) {
-        this.name = name;
-    }
+  private Table(String name) {
+    this.name = name;
+  }
 
-    public void load(Connection conn) throws IOException, SQLException {
-        ScriptRunner sr = new ScriptRunner(conn, false, true);
-        InputStream is = DbTest.class.getResourceAsStream("/" + DataSourceConfig.getDir() + "/" + name);
-        sr.runScript(new InputStreamReader(is));
-    }
+  public void load(Connection conn) throws IOException, SQLException {
+    ScriptRunner sr = new ScriptRunner(conn, false, true);
+    InputStream is = DbTest.class.getResourceAsStream("/" + DataSourceConfig.getDir() + "/" + name);
+    sr.runScript(new InputStreamReader(is));
+  }
 
-    public void load(DataSource ds) throws IOException, SQLException {
-        Connection conn = ds.getConnection();
-        load(conn);
-        conn.close();
-    }
+  public void load(DataSource ds) throws IOException, SQLException {
+    Connection conn = ds.getConnection();
+    load(conn);
+    conn.close();
+  }
 
 }

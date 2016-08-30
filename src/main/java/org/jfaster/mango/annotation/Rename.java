@@ -28,6 +28,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Rename {
 
-    String value();
+  String value();
 
 }

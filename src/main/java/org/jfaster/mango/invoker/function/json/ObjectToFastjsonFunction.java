@@ -28,10 +28,10 @@ import javax.annotation.Nullable;
  */
 public class ObjectToFastjsonFunction implements GetterFunction<Object, String> {
 
-    @Nullable
-    @Override
-    public String apply(@Nullable Object input) {
-        return input == null ? null : JSON.toJSONString(input);
-    }
+  @Nullable
+  @Override
+  public String apply(@Nullable Object input) {
+    return input == null ? null : JSON.toJSONString(input);
+  }
 
 }

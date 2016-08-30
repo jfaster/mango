@@ -30,39 +30,39 @@ import java.lang.annotation.*;
 @Documented
 public @interface Cache {
 
-    /**
-     * 缓存key前缀
-     *
-     * @return
-     */
-    String prefix();
+  /**
+   * 缓存key前缀
+   *
+   * @return
+   */
+  String prefix();
 
-    /**
-     * 缓存过期时间单位
-     *
-     * @return
-     */
-    Class<? extends CacheExpire> expire();
+  /**
+   * 缓存过期时间单位
+   *
+   * @return
+   */
+  Class<? extends CacheExpire> expire();
 
-    /**
-     * 缓存过期时间数量
-     *
-     * @return
-     */
-    int num() default 1;
+  /**
+   * 缓存过期时间数量
+   *
+   * @return
+   */
+  int num() default 1;
 
-    /**
-     * 是否缓存null对象
-     *
-     * @return
-     */
-    boolean cacheNullObject() default false;
+  /**
+   * 是否缓存null对象
+   *
+   * @return
+   */
+  boolean cacheNullObject() default false;
 
-    /**
-     * 是否缓存空列表
-     *
-     * @return
-     */
-    boolean cacheEmptyList() default true;
+  /**
+   * 是否缓存空列表
+   *
+   * @return
+   */
+  boolean cacheEmptyList() default true;
 
 }

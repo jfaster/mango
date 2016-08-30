@@ -39,39 +39,39 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class BTTest {
 
-    private final static DataSource ds = DataSourceConfig.getDataSource();
-    private final static Mango mango = Mango.newInstance(ds);
-    private final static BTDao dao = mango.create(BTDao.class);
+  private final static DataSource ds = DataSourceConfig.getDataSource();
+  private final static Mango mango = Mango.newInstance(ds);
+  private final static BTDao dao = mango.create(BTDao.class);
 
-    @Before
-    public void before() throws Exception {
-        Connection conn = ds.getConnection();
-        Table.BT.load(conn);
-        conn.close();
-    }
+  @Before
+  public void before() throws Exception {
+    Connection conn = ds.getConnection();
+    Table.BT.load(conn);
+    conn.close();
+  }
 
-    @Test
-    public void test() {
-        BT bt = new BT();
-        bt.setOk(true);
-        int id = dao.insert(bt);
-        assertThat(dao.getBT(id).isOk(), equalTo(true));
-        bt.setOk(false);
-        id = dao.insert(bt);
-        assertThat(dao.getBT(id).isOk(), equalTo(false));
-    }
+  @Test
+  public void test() {
+    BT bt = new BT();
+    bt.setOk(true);
+    int id = dao.insert(bt);
+    assertThat(dao.getBT(id).isOk(), equalTo(true));
+    bt.setOk(false);
+    id = dao.insert(bt);
+    assertThat(dao.getBT(id).isOk(), equalTo(false));
+  }
 
 
-    @DB(table = "bt")
-    interface BTDao {
+  @DB(table = "bt")
+  interface BTDao {
 
-        @ReturnGeneratedId
-        @SQL("insert into #table(is_ok) values(:isOk)")
-        public int insert(BT bt);
+    @ReturnGeneratedId
+    @SQL("insert into #table(is_ok) values(:isOk)")
+    public int insert(BT bt);
 
-        @SQL("select id, is_ok from #table where id=:1")
-        public BT getBT(int id);
+    @SQL("select id, is_ok from #table where id=:1")
+    public BT getBT(int id);
 
-    }
+  }
 
 }

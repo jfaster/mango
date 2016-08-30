@@ -26,49 +26,49 @@ import java.lang.annotation.Annotation;
  */
 public class MockCache implements Annotation, Cache {
 
-    private String prefix;
-    private Class<? extends CacheExpire> expire;
-    private int num = 1;
+  private String prefix;
+  private Class<? extends CacheExpire> expire;
+  private int num = 1;
 
-    public MockCache(String prefix, Class<? extends CacheExpire> expire) {
-        this.prefix = prefix;
-        this.expire = expire;
-    }
+  public MockCache(String prefix, Class<? extends CacheExpire> expire) {
+    this.prefix = prefix;
+    this.expire = expire;
+  }
 
-    public MockCache(String prefix, Class<? extends CacheExpire> expire, int num) {
-        this.prefix = prefix;
-        this.expire = expire;
-        this.num = num;
-    }
+  public MockCache(String prefix, Class<? extends CacheExpire> expire, int num) {
+    this.prefix = prefix;
+    this.expire = expire;
+    this.num = num;
+  }
 
-    @Override
-    public String prefix() {
-        return prefix;
-    }
+  @Override
+  public String prefix() {
+    return prefix;
+  }
 
-    @Override
-    public Class<? extends CacheExpire> expire() {
-        return expire;
-    }
+  @Override
+  public Class<? extends CacheExpire> expire() {
+    return expire;
+  }
 
-    @Override
-    public int num() {
-        return num;
-    }
+  @Override
+  public int num() {
+    return num;
+  }
 
-    @Override
-    public boolean cacheNullObject() {
-        return false;
-    }
+  @Override
+  public boolean cacheNullObject() {
+    return false;
+  }
 
-    @Override
-    public boolean cacheEmptyList() {
-        return true;
-    }
+  @Override
+  public boolean cacheEmptyList() {
+    return true;
+  }
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    throw new UnsupportedOperationException();
+  }
 
 }

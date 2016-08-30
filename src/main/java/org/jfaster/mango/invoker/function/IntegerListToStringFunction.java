@@ -28,23 +28,23 @@ import java.util.List;
  */
 public class IntegerListToStringFunction implements GetterFunction<List<Integer>, String> {
 
-    private final static String SEPARATOR = ",";
+  private final static String SEPARATOR = ",";
 
-    @Nullable
-    @Override
-    public String apply(@Nullable List<Integer> input) {
-        if (input == null) {
-            return null;
-        }
-        if (input.size() == 0) {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append(input.get(0));
-        for (int i = 1; i < input.size(); i++) {
-            builder.append(SEPARATOR).append(input.get(i));
-        }
-        return builder.toString();
+  @Nullable
+  @Override
+  public String apply(@Nullable List<Integer> input) {
+    if (input == null) {
+      return null;
     }
+    if (input.size() == 0) {
+      return "";
+    }
+    StringBuilder builder = new StringBuilder();
+    builder.append(input.get(0));
+    for (int i = 1; i < input.size(); i++) {
+      builder.append(SEPARATOR).append(input.get(i));
+    }
+    return builder.toString();
+  }
 
 }

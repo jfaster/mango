@@ -27,23 +27,23 @@ import javax.annotation.Nullable;
  */
 public class IntArrayToStringFunction implements GetterFunction<int[], String> {
 
-    private final static String SEPARATOR = ",";
+  private final static String SEPARATOR = ",";
 
-    @Nullable
-    @Override
-    public String apply(@Nullable int[] input) {
-        if (input == null) {
-            return null;
-        }
-        if (input.length == 0) {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append(input[0]);
-        for (int i = 1; i < input.length; i++) {
-            builder.append(SEPARATOR).append(input[i]);
-        }
-        return builder.toString();
+  @Nullable
+  @Override
+  public String apply(@Nullable int[] input) {
+    if (input == null) {
+      return null;
     }
+    if (input.length == 0) {
+      return "";
+    }
+    StringBuilder builder = new StringBuilder();
+    builder.append(input[0]);
+    for (int i = 1; i < input.length; i++) {
+      builder.append(SEPARATOR).append(input[i]);
+    }
+    return builder.toString();
+  }
 
 }

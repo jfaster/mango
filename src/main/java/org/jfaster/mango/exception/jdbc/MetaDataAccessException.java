@@ -23,12 +23,12 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class MetaDataAccessException extends MangoException {
 
-    public MetaDataAccessException(String message) {
-        super(message);
-    }
+  public MetaDataAccessException(String message) {
+    super(message);
+  }
 
-    public MetaDataAccessException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public MetaDataAccessException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
 }

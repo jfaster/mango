@@ -23,12 +23,12 @@ import org.jfaster.mango.exception.MangoException;
  */
 public class MappingException extends MangoException {
 
-    public MappingException(String msg) {
-        super(msg);
-    }
+  public MappingException(String msg) {
+    super(msg);
+  }
 
-    public MappingException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public MappingException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

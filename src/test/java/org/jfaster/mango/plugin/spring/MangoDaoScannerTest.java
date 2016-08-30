@@ -38,25 +38,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @Ignore
 public class MangoDaoScannerTest {
 
-    @Autowired
-    TestDao testDao;
+  @Autowired
+  TestDao testDao;
 
-    @Test
-    public void testSetPackages() throws Exception {
-        MangoDaoScanner mc = new MangoDaoScanner();
-        List<String> packages = Lists.newArrayList("org.jfaster.mango", "", "org.jfaster");
-        mc.setPackages(packages);
-        assertThat(mc.locationPatterns.get(0), is("classpath*:org/jfaster/mango/**/*Dao.class"));
-        assertThat(mc.locationPatterns.get(1), is("classpath*:org/jfaster/mango/**/*DAO.class"));
-        assertThat(mc.locationPatterns.get(2), is("classpath*:/**/*Dao.class"));
-        assertThat(mc.locationPatterns.get(3), is("classpath*:/**/*DAO.class"));
-        assertThat(mc.locationPatterns.get(4), is("classpath*:org/jfaster/**/*Dao.class"));
-        assertThat(mc.locationPatterns.get(5), is("classpath*:org/jfaster/**/*DAO.class"));
-    }
+  @Test
+  public void testSetPackages() throws Exception {
+    MangoDaoScanner mc = new MangoDaoScanner();
+    List<String> packages = Lists.newArrayList("org.jfaster.mango", "", "org.jfaster");
+    mc.setPackages(packages);
+    assertThat(mc.locationPatterns.get(0), is("classpath*:org/jfaster/mango/**/*Dao.class"));
+    assertThat(mc.locationPatterns.get(1), is("classpath*:org/jfaster/mango/**/*DAO.class"));
+    assertThat(mc.locationPatterns.get(2), is("classpath*:/**/*Dao.class"));
+    assertThat(mc.locationPatterns.get(3), is("classpath*:/**/*DAO.class"));
+    assertThat(mc.locationPatterns.get(4), is("classpath*:org/jfaster/**/*Dao.class"));
+    assertThat(mc.locationPatterns.get(5), is("classpath*:org/jfaster/**/*DAO.class"));
+  }
 
-    @Test
-    public void testNotNull() {
-        assertThat(testDao, notNullValue());
-    }
+  @Test
+  public void testNotNull() {
+    assertThat(testDao, notNullValue());
+  }
 
 }

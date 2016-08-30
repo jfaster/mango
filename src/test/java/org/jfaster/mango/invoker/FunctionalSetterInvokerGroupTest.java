@@ -27,98 +27,98 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FunctionalSetterInvokerGroupTest {
 
-    @Test
-    public void test() throws Exception {
-        FunctionalSetterInvokerGroup gbi = FunctionalSetterInvokerGroup.create(A.class, "b.i");
-        FunctionalSetterInvokerGroup gbj = FunctionalSetterInvokerGroup.create(A.class, "b.j");
-        FunctionalSetterInvokerGroup gc = FunctionalSetterInvokerGroup.create(A.class, "b.c.k");
-        A a = new A();
-        gbi.invoke(a, 1);
-        assertThat(a.getB().getI(), equalTo(1));
-        assertThat(a.getB().getJ(), equalTo(0));
-        assertThat(a.getB().getC(), nullValue());
-        gbj.invoke(a, 2);
-        assertThat(a.getB().getI(), equalTo(1));
-        assertThat(a.getB().getJ(), equalTo(2));
-        assertThat(a.getB().getC(), nullValue());
-        gc.invoke(a, "ash");
-        assertThat(a.getB().getI(), equalTo(1));
-        assertThat(a.getB().getJ(), equalTo(2));
-        assertThat(a.getB().getC().getK(), equalTo("ash"));
+  @Test
+  public void test() throws Exception {
+    FunctionalSetterInvokerGroup gbi = FunctionalSetterInvokerGroup.create(A.class, "b.i");
+    FunctionalSetterInvokerGroup gbj = FunctionalSetterInvokerGroup.create(A.class, "b.j");
+    FunctionalSetterInvokerGroup gc = FunctionalSetterInvokerGroup.create(A.class, "b.c.k");
+    A a = new A();
+    gbi.invoke(a, 1);
+    assertThat(a.getB().getI(), equalTo(1));
+    assertThat(a.getB().getJ(), equalTo(0));
+    assertThat(a.getB().getC(), nullValue());
+    gbj.invoke(a, 2);
+    assertThat(a.getB().getI(), equalTo(1));
+    assertThat(a.getB().getJ(), equalTo(2));
+    assertThat(a.getB().getC(), nullValue());
+    gc.invoke(a, "ash");
+    assertThat(a.getB().getI(), equalTo(1));
+    assertThat(a.getB().getJ(), equalTo(2));
+    assertThat(a.getB().getC().getK(), equalTo("ash"));
+  }
+
+  @Test
+  public void testException() throws Exception {
+    boolean error = false;
+    try {
+      FunctionalSetterInvokerGroup.create(A.class, "bb.i");
+    } catch (UnreachablePropertyException e) {
+      error = true;
+    }
+    assertThat(error, equalTo(true));
+
+    error = false;
+    try {
+      FunctionalSetterInvokerGroup.create(A.class, "b.jj");
+    } catch (UnreachablePropertyException e) {
+      error = true;
+    }
+    assertThat(error, equalTo(true));
+  }
+
+  public static class A {
+    private B b;
+
+    public B getB() {
+      return b;
     }
 
-    @Test
-    public void testException() throws Exception {
-        boolean error = false;
-        try {
-            FunctionalSetterInvokerGroup.create(A.class, "bb.i");
-        } catch (UnreachablePropertyException e) {
-            error = true;
-        }
-        assertThat(error, equalTo(true));
-
-        error = false;
-        try {
-            FunctionalSetterInvokerGroup.create(A.class, "b.jj");
-        } catch (UnreachablePropertyException e) {
-            error = true;
-        }
-        assertThat(error, equalTo(true));
+    public void setB(B b) {
+      this.b = b;
     }
 
-    public static class A {
-        private B b;
+  }
 
-        public B getB() {
-            return b;
-        }
+  public static class B {
+    private int i;
+    private int j;
+    private C c;
 
-        public void setB(B b) {
-            this.b = b;
-        }
-
+    public int getI() {
+      return i;
     }
 
-    public static class B {
-        private int i;
-        private int j;
-        private C c;
-
-        public int getI() {
-            return i;
-        }
-
-        public void setI(int i) {
-            this.i = i;
-        }
-
-        public int getJ() {
-            return j;
-        }
-
-        public void setJ(int j) {
-            this.j = j;
-        }
-
-        public C getC() {
-            return c;
-        }
-
-        public void setC(C c) {
-            this.c = c;
-        }
+    public void setI(int i) {
+      this.i = i;
     }
 
-    public static class C {
-        private String k;
-
-        public String getK() {
-            return k;
-        }
-
-        public void setK(String k) {
-            this.k = k;
-        }
+    public int getJ() {
+      return j;
     }
+
+    public void setJ(int j) {
+      this.j = j;
+    }
+
+    public C getC() {
+      return c;
+    }
+
+    public void setC(C c) {
+      this.c = c;
+    }
+  }
+
+  public static class C {
+    private String k;
+
+    public String getK() {
+      return k;
+    }
+
+    public void setK(String k) {
+      this.k = k;
+    }
+  }
 
 }

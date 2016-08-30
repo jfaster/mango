@@ -5,6 +5,6 @@ package org.jfaster.mango.transaction;
  */
 public interface TransactionAction {
 
-    void doInTransaction(TransactionStatus status);
+  void doInTransaction(TransactionStatus status);
 
 }

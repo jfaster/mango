@@ -27,42 +27,42 @@ import java.util.Random;
  */
 public class MasterSlaveDataSourceFactory implements DataSourceFactory {
 
-    private DataSource master;
-    private List<DataSource> slaves;
-    private final Random random = new Random();
+  private DataSource master;
+  private List<DataSource> slaves;
+  private final Random random = new Random();
 
-    public MasterSlaveDataSourceFactory() {
-    }
+  public MasterSlaveDataSourceFactory() {
+  }
 
-    public MasterSlaveDataSourceFactory(DataSource master, List<DataSource> slaves) {
-        this.master = master;
-        this.slaves = slaves;
-    }
+  public MasterSlaveDataSourceFactory(DataSource master, List<DataSource> slaves) {
+    this.master = master;
+    this.slaves = slaves;
+  }
 
-    @Override
-    public DataSource getMasterDataSource(String database) {
-       return master;
-    }
+  @Override
+  public DataSource getMasterDataSource(String database) {
+    return master;
+  }
 
-    @Override
-    public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
-        return slaves.get(random.nextInt(slaves.size()));
-    }
+  @Override
+  public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
+    return slaves.get(random.nextInt(slaves.size()));
+  }
 
-    public DataSource getMaster() {
-        return master;
-    }
+  public DataSource getMaster() {
+    return master;
+  }
 
-    public void setMaster(DataSource master) {
-        this.master = master;
-    }
+  public void setMaster(DataSource master) {
+    this.master = master;
+  }
 
-    public List<DataSource> getSlaves() {
-        return slaves;
-    }
+  public List<DataSource> getSlaves() {
+    return slaves;
+  }
 
-    public void setSlaves(List<DataSource> slaves) {
-        this.slaves = slaves;
-    }
+  public void setSlaves(List<DataSource> slaves) {
+    this.slaves = slaves;
+  }
 
 }

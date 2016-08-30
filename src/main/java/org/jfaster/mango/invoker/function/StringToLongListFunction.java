@@ -29,23 +29,23 @@ import java.util.List;
  */
 public class StringToLongListFunction implements SetterFunction<String, List<Long>> {
 
-    private final static String SEPARATOR = ",";
+  private final static String SEPARATOR = ",";
 
-    @Nullable
-    @Override
-    public List<Long> apply(@Nullable String input) {
-        if (input == null) {
-            return null;
-        }
-        if (input.length() == 0) {
-            return new ArrayList<Long>();
-        }
-        String[] ss = input.split(SEPARATOR);
-        List<Long> r = new ArrayList<Long>();
-        for (int i = 0; i < ss.length; i++) {
-            r.add(Long.parseLong(ss[i]));
-        }
-        return r;
+  @Nullable
+  @Override
+  public List<Long> apply(@Nullable String input) {
+    if (input == null) {
+      return null;
     }
+    if (input.length() == 0) {
+      return new ArrayList<Long>();
+    }
+    String[] ss = input.split(SEPARATOR);
+    List<Long> r = new ArrayList<Long>();
+    for (int i = 0; i < ss.length; i++) {
+      r.add(Long.parseLong(ss[i]));
+    }
+    return r;
+  }
 
 }

@@ -29,23 +29,23 @@ import java.util.List;
  */
 public class StringToIntegerListFunction implements SetterFunction<String, List<Integer>> {
 
-    private final static String SEPARATOR = ",";
+  private final static String SEPARATOR = ",";
 
-    @Nullable
-    @Override
-    public List<Integer> apply(@Nullable String input) {
-        if (input == null) {
-            return null;
-        }
-        if (input.length() == 0) {
-            return new ArrayList<Integer>();
-        }
-        String[] ss = input.split(SEPARATOR);
-        List<Integer> r = new ArrayList<Integer>();
-        for (int i = 0; i < ss.length; i++) {
-            r.add(Integer.parseInt(ss[i]));
-        }
-        return r;
+  @Nullable
+  @Override
+  public List<Integer> apply(@Nullable String input) {
+    if (input == null) {
+      return null;
     }
+    if (input.length() == 0) {
+      return new ArrayList<Integer>();
+    }
+    String[] ss = input.split(SEPARATOR);
+    List<Integer> r = new ArrayList<Integer>();
+    for (int i = 0; i < ss.length; i++) {
+      r.add(Integer.parseInt(ss[i]));
+    }
+    return r;
+  }
 
 }

@@ -17,13 +17,13 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.base.Config;
+import org.jfaster.mango.base.Iterables;
+import org.jfaster.mango.base.ToStringHelper;
 import org.jfaster.mango.base.sql.PreparedSql;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
-import org.jfaster.mango.base.Iterables;
-import org.jfaster.mango.base.ToStringHelper;
 
 import javax.sql.DataSource;
 import java.util.*;

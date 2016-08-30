@@ -24,8 +24,8 @@ import java.sql.SQLException;
  */
 public interface RowMapper<T> {
 
-    T mapRow(ResultSet rs, int rowNum) throws SQLException;
+  T mapRow(ResultSet rs, int rowNum) throws SQLException;
 
-    Class<T> getMappedClass();
+  Class<T> getMappedClass();
 
 }

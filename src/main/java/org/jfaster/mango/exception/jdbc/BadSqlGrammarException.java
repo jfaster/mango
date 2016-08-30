@@ -23,12 +23,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class BadSqlGrammarException extends InvalidDataAccessResourceUsageException {
 
-    public BadSqlGrammarException(String msg) {
-        super(msg);
-    }
+  public BadSqlGrammarException(String msg) {
+    super(msg);
+  }
 
-    public BadSqlGrammarException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public BadSqlGrammarException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

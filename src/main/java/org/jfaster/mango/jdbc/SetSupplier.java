@@ -23,6 +23,6 @@ import java.util.Set;
  */
 public interface SetSupplier {
 
-    public <T> Set<T> get(Class<T> clazz);
+  public <T> Set<T> get(Class<T> clazz);
 
 }

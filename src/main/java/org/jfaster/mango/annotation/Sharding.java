@@ -30,25 +30,25 @@ import java.lang.annotation.*;
 @Documented
 public @interface Sharding {
 
-    /**
-     * 表切分策略
-     *
-     * @return
-     */
-    Class<? extends TableShardingStrategy> tableShardingStrategy() default NotUseTableShardingStrategy.class;
+  /**
+   * 表切分策略
+   *
+   * @return
+   */
+  Class<? extends TableShardingStrategy> tableShardingStrategy() default NotUseTableShardingStrategy.class;
 
-    /**
-     * 数据库切分策略
-     *
-     * @return
-     */
-    Class<? extends DatabaseShardingStrategy> databaseShardingStrategy() default NotUseDatabaseShardingStrategy.class;
+  /**
+   * 数据库切分策略
+   *
+   * @return
+   */
+  Class<? extends DatabaseShardingStrategy> databaseShardingStrategy() default NotUseDatabaseShardingStrategy.class;
 
-    /**
-     * 表切分策略和数据库切分策略
-     *
-     * @return
-     */
-    Class<? extends ShardingStrategy> shardingStrategy() default NotUseShardingStrategy.class;
+  /**
+   * 表切分策略和数据库切分策略
+   *
+   * @return
+   */
+  Class<? extends ShardingStrategy> shardingStrategy() default NotUseShardingStrategy.class;
 
 }

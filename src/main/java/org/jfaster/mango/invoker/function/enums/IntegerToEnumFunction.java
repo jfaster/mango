@@ -16,11 +16,11 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.invoker.RuntimeSetterFunction;
-import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.base.local.CacheLoader;
 import org.jfaster.mango.base.local.DoubleCheckCache;
 import org.jfaster.mango.base.local.LoadingCache;
+import org.jfaster.mango.invoker.RuntimeSetterFunction;
+import org.jfaster.mango.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -33,27 +33,27 @@ import java.util.EnumSet;
  */
 public class IntegerToEnumFunction implements RuntimeSetterFunction<Integer, Enum> {
 
-    private final static LoadingCache<Class, EnumSet> cache = new DoubleCheckCache<Class, EnumSet>(
-            new CacheLoader<Class, EnumSet>() {
-                public EnumSet load(Class enumType) {
-                    return EnumSet.allOf(enumType);
-                }
-            });
+  private final static LoadingCache<Class, EnumSet> cache = new DoubleCheckCache<Class, EnumSet>(
+      new CacheLoader<Class, EnumSet>() {
+        public EnumSet load(Class enumType) {
+          return EnumSet.allOf(enumType);
+        }
+      });
 
-    @Nullable
-    @Override
-    public Enum apply(@Nullable Integer input, Type runtimeOutputType) {
-        if (input == null) {
-            return null;
-        }
-        Class<?> rawType = TypeToken.of(runtimeOutputType).getRawType();
-        EnumSet<?> es = cache.get(rawType);
-        for (Enum<?> e : es) {
-            if (e.ordinal() == input) {
-                return e;
-            }
-        }
-        throw new IllegalStateException("cant' trans Integer(" + input + ") to " + runtimeOutputType);
+  @Nullable
+  @Override
+  public Enum apply(@Nullable Integer input, Type runtimeOutputType) {
+    if (input == null) {
+      return null;
     }
+    Class<?> rawType = TypeToken.of(runtimeOutputType).getRawType();
+    EnumSet<?> es = cache.get(rawType);
+    for (Enum<?> e : es) {
+      if (e.ordinal() == input) {
+        return e;
+      }
+    }
+    throw new IllegalStateException("cant' trans Integer(" + input + ") to " + runtimeOutputType);
+  }
 
 }

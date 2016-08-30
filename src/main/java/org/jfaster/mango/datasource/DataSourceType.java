@@ -7,8 +7,8 @@ package org.jfaster.mango.datasource;
  */
 public enum DataSourceType {
 
-    MASTER, // 主库
-    SLAVE, // 从库
-    ;
+  MASTER, // 主库
+  SLAVE, // 从库
+  ;
 
 }

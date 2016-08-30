@@ -26,13 +26,13 @@ import javax.servlet.ServletContextListener;
  */
 public class ForceCheckAutoCommitListener implements ServletContextListener {
 
-    @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        DataSourceMonitor.setForceCheckAutoCommit(true);
-    }
+  @Override
+  public void contextInitialized(ServletContextEvent servletContextEvent) {
+    DataSourceMonitor.setForceCheckAutoCommit(true);
+  }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    }
+  @Override
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {
+  }
 
 }

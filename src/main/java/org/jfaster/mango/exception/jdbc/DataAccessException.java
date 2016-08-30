@@ -25,12 +25,12 @@ import org.jfaster.mango.exception.MangoException;
  */
 public abstract class DataAccessException extends MangoException {
 
-    public DataAccessException(String msg) {
-        super(msg);
-    }
+  public DataAccessException(String msg) {
+    super(msg);
+  }
 
-    public DataAccessException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public DataAccessException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

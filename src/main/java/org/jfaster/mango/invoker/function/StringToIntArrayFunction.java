@@ -27,23 +27,23 @@ import javax.annotation.Nullable;
  */
 public class StringToIntArrayFunction implements SetterFunction<String, int[]> {
 
-    private final static String SEPARATOR = ",";
+  private final static String SEPARATOR = ",";
 
-    @Nullable
-    @Override
-    public int[] apply(@Nullable String input) {
-        if (input == null) {
-            return null;
-        }
-        if (input.length() == 0) {
-            return new int[0];
-        }
-        String[] ss = input.split(SEPARATOR);
-        int[] r = new int[ss.length];
-        for (int i = 0; i < ss.length; i++) {
-            r[i] = Integer.parseInt(ss[i]);
-        }
-        return r;
+  @Nullable
+  @Override
+  public int[] apply(@Nullable String input) {
+    if (input == null) {
+      return null;
     }
+    if (input.length() == 0) {
+      return new int[0];
+    }
+    String[] ss = input.split(SEPARATOR);
+    int[] r = new int[ss.length];
+    for (int i = 0; i < ss.length; i++) {
+      r[i] = Integer.parseInt(ss[i]);
+    }
+    return r;
+  }
 
 }

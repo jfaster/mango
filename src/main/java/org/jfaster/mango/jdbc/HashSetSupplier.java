@@ -24,9 +24,9 @@ import java.util.Set;
  */
 public class HashSetSupplier implements SetSupplier {
 
-    @Override
-    public <T> Set<T> get(Class<T> clazz) {
-        return new HashSet<T>();
-    }
+  @Override
+  public <T> Set<T> get(Class<T> clazz) {
+    return new HashSet<T>();
+  }
 
 }

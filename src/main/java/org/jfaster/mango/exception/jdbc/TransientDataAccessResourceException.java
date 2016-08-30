@@ -22,13 +22,13 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class TransientDataAccessResourceException extends TransientDataAccessException {
 
-    public TransientDataAccessResourceException(String msg) {
-        super(msg);
-    }
+  public TransientDataAccessResourceException(String msg) {
+    super(msg);
+  }
 
-    public TransientDataAccessResourceException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public TransientDataAccessResourceException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }
 

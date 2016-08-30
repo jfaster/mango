@@ -16,54 +16,54 @@
 
 package org.jfaster.mango.transaction;
 
-import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.exception.transaction.TransactionException;
+import org.jfaster.mango.operator.Mango;
 
 /**
  * @author ash
  */
 public class TransactionTemplate {
 
-    public static void execute(
-            Mango mango, String database, TransactionIsolationLevel level,
-            TransactionAction action) throws TransactionException {
-        execute(TransactionFactory.newTransaction(mango, database, level), action);
-    }
+  public static void execute(
+      Mango mango, String database, TransactionIsolationLevel level,
+      TransactionAction action) throws TransactionException {
+    execute(TransactionFactory.newTransaction(mango, database, level), action);
+  }
 
-    public static void execute(Mango mango, String database, TransactionAction action)
-            throws TransactionException {
-        execute(TransactionFactory.newTransaction(mango, database), action);
-    }
+  public static void execute(Mango mango, String database, TransactionAction action)
+      throws TransactionException {
+    execute(TransactionFactory.newTransaction(mango, database), action);
+  }
 
-    public static void execute(String database, TransactionIsolationLevel level, TransactionAction action)
-            throws TransactionException {
-        execute(TransactionFactory.newTransaction(database, level), action);
-    }
+  public static void execute(String database, TransactionIsolationLevel level, TransactionAction action)
+      throws TransactionException {
+    execute(TransactionFactory.newTransaction(database, level), action);
+  }
 
-    public static void execute(String database, TransactionAction action) throws TransactionException {
-        execute(TransactionFactory.newTransaction(database), action);
-    }
+  public static void execute(String database, TransactionAction action) throws TransactionException {
+    execute(TransactionFactory.newTransaction(database), action);
+  }
 
-    public static void execute(TransactionIsolationLevel level, TransactionAction action) throws TransactionException {
-        execute(TransactionFactory.newTransaction(level), action);
-    }
+  public static void execute(TransactionIsolationLevel level, TransactionAction action) throws TransactionException {
+    execute(TransactionFactory.newTransaction(level), action);
+  }
 
-    public static void execute(TransactionAction action) throws TransactionException {
-        execute(TransactionFactory.newTransaction(), action);
-    }
+  public static void execute(TransactionAction action) throws TransactionException {
+    execute(TransactionFactory.newTransaction(), action);
+  }
 
-    private static void execute(Transaction transaction, TransactionAction action) throws TransactionException {
-        TransactionStatus status = new TransactionStatus();
-        try {
-            action.doInTransaction(status);
-        } catch (RuntimeException e) {
-            transaction.rollback();
-            throw e;
-        }
-        if (status.isRollbackOnly()) {
-            transaction.setRollbackOnly(true);
-        }
-        transaction.commit();
+  private static void execute(Transaction transaction, TransactionAction action) throws TransactionException {
+    TransactionStatus status = new TransactionStatus();
+    try {
+      action.doInTransaction(status);
+    } catch (RuntimeException e) {
+      transaction.rollback();
+      throw e;
     }
+    if (status.isRollbackOnly()) {
+      transaction.setRollbackOnly(true);
+    }
+    transaction.commit();
+  }
 
 }

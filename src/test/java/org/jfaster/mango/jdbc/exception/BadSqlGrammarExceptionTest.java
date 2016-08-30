@@ -33,23 +33,23 @@ import java.sql.Connection;
  */
 public class BadSqlGrammarExceptionTest {
 
-    private final static DataSource ds = DataSourceConfig.getDataSource();
+  private final static DataSource ds = DataSourceConfig.getDataSource();
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-    @Before
-    public void before() throws Exception {
-        Connection conn = ds.getConnection();
-        Table.PERSON.load(conn);
-        conn.close();
-    }
+  @Before
+  public void before() throws Exception {
+    Connection conn = ds.getConnection();
+    Table.PERSON.load(conn);
+    conn.close();
+  }
 
-    @Test
-    public void test() {
-        thrown.expect(BadSqlGrammarException.class);
-        JdbcTemplate t = new JdbcTemplate();
-        t.update(ds, "insert intoo ..", new Object[]{});
-    }
+  @Test
+  public void test() {
+    thrown.expect(BadSqlGrammarException.class);
+    JdbcTemplate t = new JdbcTemplate();
+    t.update(ds, "insert intoo ..", new Object[]{});
+  }
 
 }

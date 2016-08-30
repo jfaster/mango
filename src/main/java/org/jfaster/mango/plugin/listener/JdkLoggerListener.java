@@ -26,13 +26,13 @@ import javax.servlet.ServletContextListener;
  */
 public class JdkLoggerListener implements ServletContextListener {
 
-    @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        MangoLogger.useJdkLogger();
-    }
+  @Override
+  public void contextInitialized(ServletContextEvent servletContextEvent) {
+    MangoLogger.useJdkLogger();
+  }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    }
+  @Override
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {
+  }
 
 }

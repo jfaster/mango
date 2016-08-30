@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  */
 public interface SetterFunction<I, O> extends DummySetterFunction<I, O> {
 
-    @Nullable
-    public O apply(@Nullable I input);
+  @Nullable
+  public O apply(@Nullable I input);
 
 }

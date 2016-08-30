@@ -24,49 +24,49 @@ import com.google.common.base.Objects;
  */
 public class Order {
 
-    private String id;
-    private int uid;
-    private int price;
+  private String id;
+  private int uid;
+  private int price;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public int getUid() {
-        return uid;
-    }
+  public int getUid() {
+    return uid;
+  }
 
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
+  public void setUid(int uid) {
+    this.uid = uid;
+  }
 
-    public int getPrice() {
-        return price;
-    }
+  public int getPrice() {
+    return price;
+  }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
+  public void setPrice(int price) {
+    this.price = price;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Order other = (Order) obj;
-        return Objects.equal(this.id, other.id)
-                && Objects.equal(this.uid, other.uid)
-                && Objects.equal(this.price, other.price);
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final Order other = (Order) obj;
+    return Objects.equal(this.id, other.id)
+        && Objects.equal(this.uid, other.uid)
+        && Objects.equal(this.price, other.price);
+  }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("uid", uid).add("price", price).toString();
-    }
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("id", id).add("uid", uid).add("price", price).toString();
+  }
 
 }

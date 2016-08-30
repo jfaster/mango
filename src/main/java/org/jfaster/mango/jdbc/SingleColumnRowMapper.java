@@ -29,32 +29,32 @@ import java.sql.SQLException;
  */
 public class SingleColumnRowMapper<T> implements RowMapper<T> {
 
-    private Class<T> mappedClass;
+  private Class<T> mappedClass;
 
-    public SingleColumnRowMapper(Class<T> mappedClass) {
-        this.mappedClass = mappedClass;
+  public SingleColumnRowMapper(Class<T> mappedClass) {
+    this.mappedClass = mappedClass;
+  }
+
+  @SuppressWarnings("unchecked")
+  public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+    // 验证列数
+    ResultSetMetaData rsmd = rs.getMetaData();
+    int nrOfColumns = rsmd.getColumnCount();
+    if (nrOfColumns != 1) {
+      throw new IncorrectResultSetColumnCountException("incorrect column count, expected 1 but " + nrOfColumns);
     }
 
-    @SuppressWarnings("unchecked")
-    public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-        // 验证列数
-        ResultSetMetaData rsmd = rs.getMetaData();
-        int nrOfColumns = rsmd.getColumnCount();
-        if (nrOfColumns != 1) {
-            throw new IncorrectResultSetColumnCountException("incorrect column count, expected 1 but " + nrOfColumns);
-        }
+    Object result = getColumnValue(rs, 1, this.mappedClass);
+    return (T) result;
+  }
 
-        Object result = getColumnValue(rs, 1, this.mappedClass);
-        return (T) result;
-    }
+  @Override
+  public Class<T> getMappedClass() {
+    return mappedClass;
+  }
 
-    @Override
-    public Class<T> getMappedClass() {
-        return mappedClass;
-    }
-
-    protected Object getColumnValue(ResultSet rs, int index, Class requiredType) throws SQLException {
-        return JdbcUtils.getResultSetValue(rs, index, requiredType);
-    }
+  protected Object getColumnValue(ResultSet rs, int index, Class requiredType) throws SQLException {
+    return JdbcUtils.getResultSetValue(rs, index, requiredType);
+  }
 
 }

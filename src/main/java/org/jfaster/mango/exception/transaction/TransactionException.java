@@ -23,12 +23,12 @@ import org.jfaster.mango.exception.MangoException;
  */
 public abstract class TransactionException extends MangoException {
 
-    public TransactionException(String msg) {
-        super(msg);
-    }
+  public TransactionException(String msg) {
+    super(msg);
+  }
 
-    public TransactionException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public TransactionException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

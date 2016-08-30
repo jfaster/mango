@@ -37,153 +37,153 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class TransactionTemplateTest {
 
-    private final static DataSource ds = DataSourceConfig.getDataSource();
-    private final static Mango mango = Mango.newInstance(ds);
-    private final static AccountDao dao = mango.create(AccountDao.class);
+  private final static DataSource ds = DataSourceConfig.getDataSource();
+  private final static Mango mango = Mango.newInstance(ds);
+  private final static AccountDao dao = mango.create(AccountDao.class);
 
-    @Before
-    public void before() throws Exception {
-        Table.ACCOUNT.load(ds);
-    }
+  @Before
+  public void before() throws Exception {
+    Table.ACCOUNT.load(ds);
+  }
 
-    @Test
-    public void testCommit() throws Exception {
-        final Account x = new Account(1, 1000);
-        final Account y = new Account(2, 1000);
-        final Account z = new Account(3, 1000);
-        dao.insert(x);
-        dao.insert(y);
-        dao.insert(z);
+  @Test
+  public void testCommit() throws Exception {
+    final Account x = new Account(1, 1000);
+    final Account y = new Account(2, 1000);
+    final Account z = new Account(3, 1000);
+    dao.insert(x);
+    dao.insert(y);
+    dao.insert(z);
 
-        TransactionTemplate.execute(mango, "", new TransactionAction() {
-            @Override
-            public void doInTransaction(TransactionStatus status) {
-                x.add(50);
-                dao.update(x);
-
-                TransactionTemplate.execute(mango, "", new TransactionAction() {
-
-                    @Override
-                    public void doInTransaction(TransactionStatus status) {
-                        TransactionTemplate.execute(mango, "", new TransactionAction() {
-
-                            @Override
-                            public void doInTransaction(TransactionStatus status) {
-                                z.sub(30);
-                                dao.update(z);
-                            }
-                        });
-
-                        y.sub(20);
-                        dao.update(y);
-                    }
-                });
-            }
-        });
-
-        assertThat(dao.getAccount(1), equalTo(x));
-        assertThat(dao.getAccount(2), equalTo(y));
-        assertThat(dao.getAccount(3), equalTo(z));
-    }
-
-    @Test
-    public void testRollback() throws Exception {
-        final Account x = new Account(1, 1000);
-        final Account y = new Account(2, 2000);
-        final Account z = new Account(3, 3000);
-        dao.insert(x);
-        dao.insert(y);
-        dao.insert(z);
+    TransactionTemplate.execute(mango, "", new TransactionAction() {
+      @Override
+      public void doInTransaction(TransactionStatus status) {
+        x.add(50);
+        dao.update(x);
 
         TransactionTemplate.execute(mango, "", new TransactionAction() {
-            @Override
-            public void doInTransaction(TransactionStatus status) {
-                x.add(50);
-                dao.update(x);
 
-                TransactionTemplate.execute(mango, "", new TransactionAction() {
+          @Override
+          public void doInTransaction(TransactionStatus status) {
+            TransactionTemplate.execute(mango, "", new TransactionAction() {
 
-                    @Override
-                    public void doInTransaction(TransactionStatus status) {
-                        TransactionTemplate.execute(mango, "", new TransactionAction() {
+              @Override
+              public void doInTransaction(TransactionStatus status) {
+                z.sub(30);
+                dao.update(z);
+              }
+            });
 
-                            @Override
-                            public void doInTransaction(TransactionStatus status) {
-                                z.sub(30);
-                                dao.update(z);
-                                status.setRollbackOnly(true);
-                            }
-                        });
-                        y.sub(20);
-                        dao.update(y);
-                    }
-                });
-            }
+            y.sub(20);
+            dao.update(y);
+          }
         });
+      }
+    });
 
-        assertThat(dao.getAccount(1).getBalance(), equalTo(1000));
-        assertThat(dao.getAccount(2).getBalance(), equalTo(2000));
-        assertThat(dao.getAccount(3).getBalance(), equalTo(3000));
-    }
+    assertThat(dao.getAccount(1), equalTo(x));
+    assertThat(dao.getAccount(2), equalTo(y));
+    assertThat(dao.getAccount(3), equalTo(z));
+  }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  @Test
+  public void testRollback() throws Exception {
+    final Account x = new Account(1, 1000);
+    final Account y = new Account(2, 2000);
+    final Account z = new Account(3, 3000);
+    dao.insert(x);
+    dao.insert(y);
+    dao.insert(z);
 
-    @Test
-    public void testRollback2() throws Exception {
-        thrown.expect(RuntimeException.class);
-
-        final Account x = new Account(1, 1000);
-        final Account y = new Account(2, 2000);
-        final Account z = new Account(3, 3000);
-        dao.insert(x);
-        dao.insert(y);
-        dao.insert(z);
+    TransactionTemplate.execute(mango, "", new TransactionAction() {
+      @Override
+      public void doInTransaction(TransactionStatus status) {
+        x.add(50);
+        dao.update(x);
 
         TransactionTemplate.execute(mango, "", new TransactionAction() {
-            @Override
-            public void doInTransaction(TransactionStatus status) {
-                x.add(50);
-                dao.update(x);
 
-                TransactionTemplate.execute(mango, "", new TransactionAction() {
+          @Override
+          public void doInTransaction(TransactionStatus status) {
+            TransactionTemplate.execute(mango, "", new TransactionAction() {
 
-                    @Override
-                    public void doInTransaction(TransactionStatus status) {
-                        TransactionTemplate.execute(mango, "", new TransactionAction() {
-
-                            @Override
-                            public void doInTransaction(TransactionStatus status) {
-                                z.sub(30);
-                                dao.update(z);
-                                throw new RuntimeException();
-                            }
-                        });
-                        y.sub(20);
-                        dao.update(y);
-                    }
-                });
-            }
+              @Override
+              public void doInTransaction(TransactionStatus status) {
+                z.sub(30);
+                dao.update(z);
+                status.setRollbackOnly(true);
+              }
+            });
+            y.sub(20);
+            dao.update(y);
+          }
         });
+      }
+    });
 
-        assertThat(dao.getAccount(1).getBalance(), equalTo(1000));
-        assertThat(dao.getAccount(2).getBalance(), equalTo(2000));
-        assertThat(dao.getAccount(3).getBalance(), equalTo(3000));
-    }
+    assertThat(dao.getAccount(1).getBalance(), equalTo(1000));
+    assertThat(dao.getAccount(2).getBalance(), equalTo(2000));
+    assertThat(dao.getAccount(3).getBalance(), equalTo(3000));
+  }
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void testRollback2() throws Exception {
+    thrown.expect(RuntimeException.class);
+
+    final Account x = new Account(1, 1000);
+    final Account y = new Account(2, 2000);
+    final Account z = new Account(3, 3000);
+    dao.insert(x);
+    dao.insert(y);
+    dao.insert(z);
+
+    TransactionTemplate.execute(mango, "", new TransactionAction() {
+      @Override
+      public void doInTransaction(TransactionStatus status) {
+        x.add(50);
+        dao.update(x);
+
+        TransactionTemplate.execute(mango, "", new TransactionAction() {
+
+          @Override
+          public void doInTransaction(TransactionStatus status) {
+            TransactionTemplate.execute(mango, "", new TransactionAction() {
+
+              @Override
+              public void doInTransaction(TransactionStatus status) {
+                z.sub(30);
+                dao.update(z);
+                throw new RuntimeException();
+              }
+            });
+            y.sub(20);
+            dao.update(y);
+          }
+        });
+      }
+    });
+
+    assertThat(dao.getAccount(1).getBalance(), equalTo(1000));
+    assertThat(dao.getAccount(2).getBalance(), equalTo(2000));
+    assertThat(dao.getAccount(3).getBalance(), equalTo(3000));
+  }
 
 
-    @DB(table = "account")
-    interface AccountDao {
+  @DB(table = "account")
+  interface AccountDao {
 
-        @SQL("insert into #table(id, balance) values(:1.id, :1.balance)")
-        public int insert(Account account);
+    @SQL("insert into #table(id, balance) values(:1.id, :1.balance)")
+    public int insert(Account account);
 
-        @SQL("update #table set balance=:1.balance where id=:1.id")
-        public int update(Account account);
+    @SQL("update #table set balance=:1.balance where id=:1.id")
+    public int update(Account account);
 
-        @SQL("select id, balance from #table where id=:1")
-        public Account getAccount(int id);
+    @SQL("select id, balance from #table where id=:1")
+    public Account getAccount(int id);
 
-    }
+  }
 
 }

@@ -27,33 +27,33 @@ import java.util.List;
  */
 public class InterceptorChain {
 
-    private List<Interceptor> interceptors;
+  private List<Interceptor> interceptors;
 
-    public void addInterceptor(Interceptor interceptor) {
-        initInterceptorList();
-        interceptors.add(interceptor);
-    }
+  public void addInterceptor(Interceptor interceptor) {
+    initInterceptorList();
+    interceptors.add(interceptor);
+  }
 
-    public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
-        if (getInterceptors() != null) {
-            for (Interceptor interceptor : getInterceptors()) {
-                interceptor.intercept(preparedSql, parameters, sqlType);
-            }
-        }
+  public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
+    if (getInterceptors() != null) {
+      for (Interceptor interceptor : getInterceptors()) {
+        interceptor.intercept(preparedSql, parameters, sqlType);
+      }
     }
+  }
 
-    public List<Interceptor> getInterceptors() {
-        return interceptors;
-    }
+  public List<Interceptor> getInterceptors() {
+    return interceptors;
+  }
 
-    public void setInterceptors(List<Interceptor> interceptors) {
-        this.interceptors = interceptors;
-    }
+  public void setInterceptors(List<Interceptor> interceptors) {
+    this.interceptors = interceptors;
+  }
 
-    private void initInterceptorList() {
-        if (interceptors == null) {
-            interceptors = new LinkedList<Interceptor>();
-        }
+  private void initInterceptorList() {
+    if (interceptors == null) {
+      interceptors = new LinkedList<Interceptor>();
     }
+  }
 
 }

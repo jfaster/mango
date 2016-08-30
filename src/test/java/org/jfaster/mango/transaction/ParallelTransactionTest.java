@@ -43,78 +43,80 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class ParallelTransactionTest {
 
-    private final static DataSource ds1 = DataSourceConfig.getDataSource(1, false, 4);
-    private final static DataSource ds2 = DataSourceConfig.getDataSource(2, false, 4);
-    private static Mango mango;
-    static {
-        Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
-        factories.put("db1", new SimpleDataSourceFactory(ds1));
-        factories.put("db2", new SimpleDataSourceFactory(ds2));
-        DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
-        mango = Mango.newInstance(dsf);
-    }
-    private final static MsgDao dao = mango.create(MsgDao.class);
+  private final static DataSource ds1 = DataSourceConfig.getDataSource(1, false, 4);
+  private final static DataSource ds2 = DataSourceConfig.getDataSource(2, false, 4);
+  private static Mango mango;
 
-    @Before
-    public void before() throws Exception {
-        Table.MSG.load(ds1);
-        Table.MSG.load(ds2);
-    }
+  static {
+    Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
+    factories.put("db1", new SimpleDataSourceFactory(ds1));
+    factories.put("db2", new SimpleDataSourceFactory(ds2));
+    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
+    mango = Mango.newInstance(dsf);
+  }
 
-    @Test
-    public void testCommit() throws Exception {
-        int threadNum = 4;
-        final int taskPerThread = 10;
-        final AtomicInteger uid = new AtomicInteger(1);
-        Thread[] threads = new Thread[threadNum];
-        for (int i = 0; i < threadNum; i++) {
-            threads[i] = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < taskPerThread; i++) {
-                        Msg msg = new Msg();
-                        int ruid = uid.getAndIncrement();
-                        msg.setUid(ruid);
-                        msg.setContent("content");
-                        String database = "db" + (ruid % 2 + 1);
-                        Transaction tx = TransactionFactory.newTransaction(mango, database);
-                        int id = dao.insert(msg);
-                        tx.commit();
-                        msg.setId(id);
-                        assertThat(dao.getMsgById(ruid, id), equalTo(msg));
-                    }
-                }
-            });
-        }
-        for (int i = 0; i < threadNum; i++) {
-            threads[i].start();
-        }
-        for (int i = 0; i < threadNum; i++) {
-            threads[i].join();
-        }
+  private final static MsgDao dao = mango.create(MsgDao.class);
 
-    }
+  @Before
+  public void before() throws Exception {
+    Table.MSG.load(ds1);
+    Table.MSG.load(ds2);
+  }
 
-    @DB(table = "msg")
-    @Sharding(databaseShardingStrategy = MsgDatabaseShardingStrategy.class)
-    interface MsgDao {
-
-        @ReturnGeneratedId
-        @SQL("insert into #table(uid, content) values(:1.uid, :1.content)")
-        int insert(@ShardingBy("uid") Msg msg);
-
-        @SQL("select id, uid, content from #table where id = :2")
-        public Msg getMsgById(@ShardingBy int uid, int id);
-
-    }
-
-    static class MsgDatabaseShardingStrategy implements DatabaseShardingStrategy<Integer> {
-
+  @Test
+  public void testCommit() throws Exception {
+    int threadNum = 4;
+    final int taskPerThread = 10;
+    final AtomicInteger uid = new AtomicInteger(1);
+    Thread[] threads = new Thread[threadNum];
+    for (int i = 0; i < threadNum; i++) {
+      threads[i] = new Thread(new Runnable() {
         @Override
-        public String getDatabase(Integer uid) {
-            return "db" + (uid % 2 + 1);
+        public void run() {
+          for (int i = 0; i < taskPerThread; i++) {
+            Msg msg = new Msg();
+            int ruid = uid.getAndIncrement();
+            msg.setUid(ruid);
+            msg.setContent("content");
+            String database = "db" + (ruid % 2 + 1);
+            Transaction tx = TransactionFactory.newTransaction(mango, database);
+            int id = dao.insert(msg);
+            tx.commit();
+            msg.setId(id);
+            assertThat(dao.getMsgById(ruid, id), equalTo(msg));
+          }
         }
-
+      });
     }
+    for (int i = 0; i < threadNum; i++) {
+      threads[i].start();
+    }
+    for (int i = 0; i < threadNum; i++) {
+      threads[i].join();
+    }
+
+  }
+
+  @DB(table = "msg")
+  @Sharding(databaseShardingStrategy = MsgDatabaseShardingStrategy.class)
+  interface MsgDao {
+
+    @ReturnGeneratedId
+    @SQL("insert into #table(uid, content) values(:1.uid, :1.content)")
+    int insert(@ShardingBy("uid") Msg msg);
+
+    @SQL("select id, uid, content from #table where id = :2")
+    public Msg getMsgById(@ShardingBy int uid, int id);
+
+  }
+
+  static class MsgDatabaseShardingStrategy implements DatabaseShardingStrategy<Integer> {
+
+    @Override
+    public String getDatabase(Integer uid) {
+      return "db" + (uid % 2 + 1);
+    }
+
+  }
 
 }

@@ -44,62 +44,62 @@ import static org.hamcrest.Matchers.*;
  */
 public class MapperTest {
 
-    private final static DataSource ds = DataSourceConfig.getDataSource();
-    private final static Mango mango = Mango.newInstance(ds);
+  private final static DataSource ds = DataSourceConfig.getDataSource();
+  private final static Mango mango = Mango.newInstance(ds);
 
-    @Before
-    public void before() throws Exception {
-        Connection conn = ds.getConnection();
-        Table.MSG.load(conn);
-        conn.close();
+  @Before
+  public void before() throws Exception {
+    Connection conn = ds.getConnection();
+    Table.MSG.load(conn);
+    conn.close();
+  }
+
+  @Test
+  public void test() {
+    MsgDao dao = mango.create(MsgDao.class);
+    int num = 5;
+    List<Msg> msgs = Msg.createRandomMsgs(num);
+    List<Integer> ids = new ArrayList<Integer>();
+    for (Msg msg : msgs) {
+      int id = dao.insert(msg.getUid(), msg.getContent());
+      assertThat(id, greaterThan(0));
+      msg.setId(id);
+      ids.add(id);
     }
 
-    @Test
-    public void test() {
-        MsgDao dao = mango.create(MsgDao.class);
-        int num = 5;
-        List<Msg> msgs = Msg.createRandomMsgs(num);
-        List<Integer> ids = new ArrayList<Integer>();
-        for (Msg msg : msgs) {
-            int id = dao.insert(msg.getUid(), msg.getContent());
-            assertThat(id, greaterThan(0));
-            msg.setId(id);
-            ids.add(id);
-        }
+    List<Msg> dbMsgs = dao.getMsgs(ids);
+    assertThat(dbMsgs, hasSize(msgs.size()));
+    assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
+    Msg msg = msgs.get(0);
+    assertThat(dao.getMsg(msg.getId()), equalTo(msg));
+  }
 
-        List<Msg> dbMsgs = dao.getMsgs(ids);
-        assertThat(dbMsgs, hasSize(msgs.size()));
-        assertThat(dbMsgs, containsInAnyOrder(msgs.toArray()));
-        Msg msg = msgs.get(0);
-        assertThat(dao.getMsg(msg.getId()), equalTo(msg));
+  @DB(table = "msg")
+  interface MsgDao {
+
+    @ReturnGeneratedId
+    @SQL("insert into #table(uid, content) values(:1, :2)")
+    int insert(int uid, String content);
+
+    @SQL("select id, uid, content from #table where id in (:1) order by id")
+    @Mapper(MsgMapper.class)
+    public List<Msg> getMsgs(List<Integer> ids);
+
+    @SQL("select id, uid, content from #table where id = :1")
+    public Msg getMsg(int id);
+
+  }
+
+  public static class MsgMapper extends AbstractRowMapper<Msg> {
+
+    @Override
+    public Msg mapRow(ResultSet rs, int rowNum) throws SQLException {
+      Msg msg = new Msg();
+      msg.setId(rs.getInt("id"));
+      msg.setUid(rs.getInt("uid"));
+      msg.setContent(rs.getString("content"));
+      return msg;
     }
-
-    @DB(table = "msg")
-    interface MsgDao {
-
-        @ReturnGeneratedId
-        @SQL("insert into #table(uid, content) values(:1, :2)")
-        int insert(int uid, String content);
-
-        @SQL("select id, uid, content from #table where id in (:1) order by id")
-        @Mapper(MsgMapper.class)
-        public List<Msg> getMsgs(List<Integer> ids);
-
-        @SQL("select id, uid, content from #table where id = :1")
-        public Msg getMsg(int id);
-
-    }
-
-    public static class MsgMapper extends AbstractRowMapper<Msg> {
-
-        @Override
-        public Msg mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Msg msg = new Msg();
-            msg.setId(rs.getInt("id"));
-            msg.setUid(rs.getInt("uid"));
-            msg.setContent(rs.getString("content"));
-            return msg;
-        }
-    }
+  }
 
 }

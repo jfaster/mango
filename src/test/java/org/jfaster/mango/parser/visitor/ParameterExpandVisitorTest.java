@@ -22,8 +22,8 @@ import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.Parser;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -37,65 +37,68 @@ import java.util.List;
  */
 public class ParameterExpandVisitorTest {
 
-    @Test
-    public void testVisitJDBCParameter() throws Exception {
-        String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";
-        ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
+  @Test
+  public void testVisitJDBCParameter() throws Exception {
+    String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";
+    ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
 
-        List<Annotation> empty = Collections.emptyList();
-        TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
-        List<ParameterDescriptor> pds = Lists.newArrayList(p);
-        ParameterContext ctx = DefaultParameterContext.create(pds);
+    List<Annotation> empty = Collections.emptyList();
+    TypeToken<User> t = new TypeToken<User>() {
+    };
+    ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
+    List<ParameterDescriptor> pds = Lists.newArrayList(p);
+    ParameterContext ctx = DefaultParameterContext.create(pds);
 
-        rootNode.expandParameter(ctx);
-        rootNode.dump(""); // TODO 返回值监测
+    rootNode.expandParameter(ctx);
+    rootNode.dump(""); // TODO 返回值监测
 
+  }
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void testVisitJDBCParameter2() throws Exception {
+    thrown.expect(BindingException.class);
+    thrown.expectMessage("Root parameters [:1, :2] has the same property 'id', so can't auto expand");
+
+    String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";
+    ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
+
+    List<Annotation> empty = Collections.emptyList();
+    TypeToken<User> t = new TypeToken<User>() {
+    };
+    ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
+    TypeToken<User2> t2 = new TypeToken<User2>() {
+    };
+    ParameterDescriptor p2 = ParameterDescriptor.create(1, t2.getType(), empty, "2");
+    List<ParameterDescriptor> pds = Lists.newArrayList(p, p2);
+    ParameterContext ctx = DefaultParameterContext.create(pds);
+    rootNode.expandParameter(ctx);
+  }
+
+  static class User {
+    private int id;
+
+    public int getId() {
+      return id;
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public void setId(int id) {
+      this.id = id;
+    }
+  }
 
-    @Test
-    public void testVisitJDBCParameter2() throws Exception {
-        thrown.expect(BindingException.class);
-        thrown.expectMessage("Root parameters [:1, :2] has the same property 'id', so can't auto expand");
+  static class User2 {
+    private int id;
 
-        String sql = "select * from user where id=:id and #{:id} and #if (:id) #end";
-        ASTRootNode rootNode = new Parser(sql.trim()).parse().init();
-
-        List<Annotation> empty = Collections.emptyList();
-        TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
-        TypeToken<User2> t2 = new TypeToken<User2>() {};
-        ParameterDescriptor p2 = ParameterDescriptor.create(1, t2.getType(), empty, "2");
-        List<ParameterDescriptor> pds = Lists.newArrayList(p, p2);
-        ParameterContext ctx = DefaultParameterContext.create(pds);
-        rootNode.expandParameter(ctx);
+    public int getId() {
+      return id;
     }
 
-    static class User {
-        private int id;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
+    public void setId(int id) {
+      this.id = id;
     }
-
-    static class User2 {
-        private int id;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-    }
+  }
 
 }

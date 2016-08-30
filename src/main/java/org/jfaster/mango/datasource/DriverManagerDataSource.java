@@ -32,109 +32,109 @@ import java.util.logging.Logger;
  */
 public class DriverManagerDataSource implements DataSource {
 
-    private String driverClassName;
-    private String url;
-    private String username;
-    private String password;
+  private String driverClassName;
+  private String url;
+  private String username;
+  private String password;
 
-    public DriverManagerDataSource() {
-    }
+  public DriverManagerDataSource() {
+  }
 
-    public DriverManagerDataSource(String driverClassName, String url, String username, String password) {
-        String driverClassNameToUse = driverClassName.trim();
-        try {
-            Class.forName(driverClassNameToUse);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
-        }
-        this.driverClassName = driverClassNameToUse;
-        this.url = url;
-        this.username = username;
-        this.password = password;
+  public DriverManagerDataSource(String driverClassName, String url, String username, String password) {
+    String driverClassNameToUse = driverClassName.trim();
+    try {
+      Class.forName(driverClassNameToUse);
+    } catch (ClassNotFoundException e) {
+      throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
     }
+    this.driverClassName = driverClassNameToUse;
+    this.url = url;
+    this.username = username;
+    this.password = password;
+  }
 
-    @Override
-    public Connection getConnection() throws SQLException {
-        Properties props = new Properties();
-        props.setProperty("user", username);
-        props.setProperty("password", password);
-        return DriverManager.getConnection(url, props);
-    }
+  @Override
+  public Connection getConnection() throws SQLException {
+    Properties props = new Properties();
+    props.setProperty("user", username);
+    props.setProperty("password", password);
+    return DriverManager.getConnection(url, props);
+  }
 
-    @Override
-    public Connection getConnection(String username, String password) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Connection getConnection(String username, String password) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public PrintWriter getLogWriter() throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public PrintWriter getLogWriter() throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public void setLogWriter(PrintWriter out) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void setLogWriter(PrintWriter out) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void setLoginTimeout(int seconds) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public int getLoginTimeout() throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public int getLoginTimeout() throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new UnsupportedOperationException();
-    }
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public <T> T unwrap(Class<T> iface) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 
-    public String getDriverClassName() {
-        return driverClassName;
-    }
+  public String getDriverClassName() {
+    return driverClassName;
+  }
 
-    public void setDriverClassName(String driverClassName) {
-        String driverClassNameToUse = driverClassName.trim();
-        try {
-            Class.forName(driverClassNameToUse);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
-        }
-        this.driverClassName = driverClassNameToUse;
+  public void setDriverClassName(String driverClassName) {
+    String driverClassNameToUse = driverClassName.trim();
+    try {
+      Class.forName(driverClassNameToUse);
+    } catch (ClassNotFoundException e) {
+      throw new IllegalStateException("Could not load JDBC driver class [" + driverClassNameToUse + "]", e);
     }
+    this.driverClassName = driverClassNameToUse;
+  }
 
-    public String getUrl() {
-        return url;
-    }
+  public String getUrl() {
+    return url;
+  }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }

@@ -23,23 +23,23 @@ package org.jfaster.mango.base;
  */
 public class Config {
 
-    private boolean compatibleWithEmptyList = true;
+  private boolean compatibleWithEmptyList = true;
 
-    private boolean checkColumn = true;
+  private boolean checkColumn = true;
 
-    public boolean isCompatibleWithEmptyList() {
-        return compatibleWithEmptyList;
-    }
+  public boolean isCompatibleWithEmptyList() {
+    return compatibleWithEmptyList;
+  }
 
-    public void setCompatibleWithEmptyList(boolean compatibleWithEmptyList) {
-        this.compatibleWithEmptyList = compatibleWithEmptyList;
-    }
+  public void setCompatibleWithEmptyList(boolean compatibleWithEmptyList) {
+    this.compatibleWithEmptyList = compatibleWithEmptyList;
+  }
 
-    public boolean isCheckColumn() {
-        return checkColumn;
-    }
+  public boolean isCheckColumn() {
+    return checkColumn;
+  }
 
-    public void setCheckColumn(boolean checkColumn) {
-        this.checkColumn = checkColumn;
-    }
+  public void setCheckColumn(boolean checkColumn) {
+    this.checkColumn = checkColumn;
+  }
 }

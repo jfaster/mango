@@ -24,12 +24,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class TransientDataAccessException extends DataAccessException {
 
-    public TransientDataAccessException(String msg) {
-        super(msg);
-    }
+  public TransientDataAccessException(String msg) {
+    super(msg);
+  }
 
-    public TransientDataAccessException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public TransientDataAccessException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

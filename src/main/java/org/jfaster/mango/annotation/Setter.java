@@ -28,6 +28,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Setter {
 
-    Class<? extends DummySetterFunction<?, ?>> value();
+  Class<? extends DummySetterFunction<?, ?>> value();
 
 }

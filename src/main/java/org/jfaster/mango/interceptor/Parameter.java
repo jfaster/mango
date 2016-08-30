@@ -28,42 +28,42 @@ import java.util.List;
  */
 public class Parameter {
 
-    private final ParameterDescriptor descriptor;
-    private final Object value;
+  private final ParameterDescriptor descriptor;
+  private final Object value;
 
-    public Parameter(ParameterDescriptor descriptor, Object value) {
-        this.descriptor = descriptor;
-        this.value = value;
-    }
+  public Parameter(ParameterDescriptor descriptor, Object value) {
+    this.descriptor = descriptor;
+    this.value = value;
+  }
 
-    public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
-        return getAnnotation(annotationType) != null;
-    }
+  public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
+    return getAnnotation(annotationType) != null;
+  }
 
-    @Nullable
-    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
-        for (Annotation annotation : getAnnotations()) {
-            if (annotationType.isInstance(annotation)) {
-                return annotationType.cast(annotation);
-            }
-        }
-        return null;
+  @Nullable
+  public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+    for (Annotation annotation : getAnnotations()) {
+      if (annotationType.isInstance(annotation)) {
+        return annotationType.cast(annotation);
+      }
     }
+    return null;
+  }
 
-    public Object getValue() {
-        return value;
-    }
+  public Object getValue() {
+    return value;
+  }
 
-    public Type getType() {
-        return descriptor.getType();
-    }
+  public Type getType() {
+    return descriptor.getType();
+  }
 
-    public Class<?> getRawType() {
-        return descriptor.getRawType();
-    }
+  public Class<?> getRawType() {
+    return descriptor.getRawType();
+  }
 
-    public List<Annotation> getAnnotations() {
-        return descriptor.getAnnotations();
-    }
+  public List<Annotation> getAnnotations() {
+    return descriptor.getAnnotations();
+  }
 
 }

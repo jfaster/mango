@@ -21,12 +21,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class InvalidResultSetAccessException extends InvalidDataAccessResourceUsageException {
 
-    public InvalidResultSetAccessException(String msg) {
-        super(msg);
-    }
+  public InvalidResultSetAccessException(String msg) {
+    super(msg);
+  }
 
-    public InvalidResultSetAccessException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public InvalidResultSetAccessException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

@@ -23,12 +23,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class DataAccessResourceFailureException extends NonTransientDataAccessException {
 
-    public DataAccessResourceFailureException(String msg) {
-        super(msg);
-    }
+  public DataAccessResourceFailureException(String msg) {
+    super(msg);
+  }
 
-    public DataAccessResourceFailureException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public DataAccessResourceFailureException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

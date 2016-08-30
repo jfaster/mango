@@ -24,9 +24,9 @@ import java.util.List;
  */
 public class LinkedListSuppliter implements ListSupplier {
 
-    @Override
-    public <T> List<T> get(Class<T> clazz) {
-        return new LinkedList<T>();
-    }
+  @Override
+  public <T> List<T> get(Class<T> clazz) {
+    return new LinkedList<T>();
+  }
 
 }

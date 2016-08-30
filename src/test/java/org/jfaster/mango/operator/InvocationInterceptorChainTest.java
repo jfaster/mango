@@ -25,8 +25,8 @@ import org.jfaster.mango.interceptor.Interceptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.interceptor.Parameter;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Test;
 
@@ -44,36 +44,37 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class InvocationInterceptorChainTest {
 
-    @Test
-    public void testIntercept() throws Exception {
-        final List<Object> args = new ArrayList<Object>();
-        args.add(1);
-        args.add("ash");
-        final String sql = "select * from user where id=? and name=?";
-        final User user = new User();
-        user.setId(100);
-        user.setName("lucy");
+  @Test
+  public void testIntercept() throws Exception {
+    final List<Object> args = new ArrayList<Object>();
+    args.add(1);
+    args.add("ash");
+    final String sql = "select * from user where id=? and name=?";
+    final User user = new User();
+    user.setId(100);
+    user.setName("lucy");
 
-        InterceptorChain ic = new InterceptorChain();
-        ic.addInterceptor(new Interceptor() {
-            @Override
-            public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
-                assertThat(preparedSql.getSql(), equalTo(sql));
-                assertThat(preparedSql.getArgs(), equalTo(args));
-                assertThat((User) parameters.get(0).getValue(), equalTo(user));
-                assertThat(sqlType, equalTo(SQLType.SELECT));
-            }
-        });
-        List<Annotation> empty = Collections.emptyList();
-        TypeToken<User> t = new TypeToken<User>() {};
-        ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
-        List<ParameterDescriptor> pds = Arrays.asList(p);
-        InvocationInterceptorChain iic = new InvocationInterceptorChain(ic, pds, SQLType.SELECT);
+    InterceptorChain ic = new InterceptorChain();
+    ic.addInterceptor(new Interceptor() {
+      @Override
+      public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
+        assertThat(preparedSql.getSql(), equalTo(sql));
+        assertThat(preparedSql.getArgs(), equalTo(args));
+        assertThat((User) parameters.get(0).getValue(), equalTo(user));
+        assertThat(sqlType, equalTo(SQLType.SELECT));
+      }
+    });
+    List<Annotation> empty = Collections.emptyList();
+    TypeToken<User> t = new TypeToken<User>() {
+    };
+    ParameterDescriptor p = ParameterDescriptor.create(0, t.getType(), empty, "1");
+    List<ParameterDescriptor> pds = Arrays.asList(p);
+    InvocationInterceptorChain iic = new InvocationInterceptorChain(ic, pds, SQLType.SELECT);
 
-        InvocationContextFactory f = InvocationContextFactory.create(DefaultParameterContext.create(pds));
-        InvocationContext ctx = f.newInvocationContext(new Object[] {user});
-        PreparedSql ps = new PreparedSql(sql, args);
-        iic.intercept(ps, ctx);
-    }
+    InvocationContextFactory f = InvocationContextFactory.create(DefaultParameterContext.create(pds));
+    InvocationContext ctx = f.newInvocationContext(new Object[]{user});
+    PreparedSql ps = new PreparedSql(sql, args);
+    iic.intercept(ps, ctx);
+  }
 
 }

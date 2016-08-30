@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.interceptor;
 
-import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.base.sql.PreparedSql;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,30 +29,30 @@ import java.util.List;
  */
 public class InvocationInterceptorChain {
 
-    private InterceptorChain interceptorChain;
+  private InterceptorChain interceptorChain;
 
-    private List<ParameterDescriptor> parameterDescriptors;
+  private List<ParameterDescriptor> parameterDescriptors;
 
-    private SQLType sqlType;
+  private SQLType sqlType;
 
-    public InvocationInterceptorChain(InterceptorChain interceptorChain,
-                                      List<ParameterDescriptor> parameterDescriptors,
-                                      SQLType sqlType) {
-        this.interceptorChain = interceptorChain;
-        this.parameterDescriptors = parameterDescriptors;
-        this.sqlType = sqlType;
+  public InvocationInterceptorChain(InterceptorChain interceptorChain,
+                                    List<ParameterDescriptor> parameterDescriptors,
+                                    SQLType sqlType) {
+    this.interceptorChain = interceptorChain;
+    this.parameterDescriptors = parameterDescriptors;
+    this.sqlType = sqlType;
+  }
+
+  public void intercept(PreparedSql preparedSql, InvocationContext context) {
+    if (interceptorChain.getInterceptors() != null) {
+      List<Object> parameterValues = context.getParameterValues();
+      List<Parameter> parameters = new ArrayList<Parameter>(parameterValues.size());
+      for (int i = 0; i < parameterValues.size(); i++) {
+        ParameterDescriptor pd = parameterDescriptors.get(i);
+        parameters.add(new Parameter(pd, parameterValues.get(i)));
+      }
+      interceptorChain.intercept(preparedSql, parameters, sqlType);
     }
-
-    public void intercept(PreparedSql preparedSql, InvocationContext context) {
-        if (interceptorChain.getInterceptors() != null) {
-            List<Object> parameterValues = context.getParameterValues();
-            List<Parameter> parameters = new ArrayList<Parameter>(parameterValues.size());
-            for (int i = 0; i < parameterValues.size(); i++) {
-                ParameterDescriptor pd = parameterDescriptors.get(i);
-                parameters.add(new Parameter(pd, parameterValues.get(i)));
-            }
-            interceptorChain.intercept(preparedSql, parameters, sqlType);
-        }
-    }
+  }
 
 }

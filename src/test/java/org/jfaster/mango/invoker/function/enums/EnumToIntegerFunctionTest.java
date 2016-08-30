@@ -31,31 +31,31 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class EnumToIntegerFunctionTest {
 
-    @Test
-    public void testApply() throws Exception {
-        A a = new A();
-        a.setE(E.Y);
-        Method m = A.class.getDeclaredMethod("getE");
-        GetterInvoker invoker = FunctionalGetterInvoker.create("e", m);
-        Integer r = (Integer) invoker.invoke(a);
-        assertThat(r, is(1));
+  @Test
+  public void testApply() throws Exception {
+    A a = new A();
+    a.setE(E.Y);
+    Method m = A.class.getDeclaredMethod("getE");
+    GetterInvoker invoker = FunctionalGetterInvoker.create("e", m);
+    Integer r = (Integer) invoker.invoke(a);
+    assertThat(r, is(1));
+  }
+
+  static class A {
+    private E e;
+
+    @Getter(EnumToIntegerFunction.class)
+    E getE() {
+      return e;
     }
 
-    static class A {
-        private E e;
-
-        @Getter(EnumToIntegerFunction.class)
-        E getE() {
-            return e;
-        }
-
-        void setE(E e) {
-            this.e = e;
-        }
+    void setE(E e) {
+      this.e = e;
     }
+  }
 
-    enum E {
-        X, Y, Z;
-    }
+  enum E {
+    X, Y, Z;
+  }
 
 }

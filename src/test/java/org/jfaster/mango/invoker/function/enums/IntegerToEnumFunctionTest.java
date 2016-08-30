@@ -31,51 +31,51 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class IntegerToEnumFunctionTest {
 
-    @Test
-    public void testApply() throws Exception {
-        A a = new A();
-        Method m = A.class.getDeclaredMethod("setE", E.class);
-        SetterInvoker invoker = FunctionalSetterInvoker.create("e", m);
-        invoker.invoke(a, 2);
-        assertThat(a.getE(), is(E.Z));
+  @Test
+  public void testApply() throws Exception {
+    A a = new A();
+    Method m = A.class.getDeclaredMethod("setE", E.class);
+    SetterInvoker invoker = FunctionalSetterInvoker.create("e", m);
+    invoker.invoke(a, 2);
+    assertThat(a.getE(), is(E.Z));
 
 
-        Method m2 = A.class.getDeclaredMethod("setE2", E2.class);
-        SetterInvoker invoker2 = FunctionalSetterInvoker.create("e2", m2);
-        invoker2.invoke(a, 2);
-        assertThat(a.getE2(), is(E2.C));
+    Method m2 = A.class.getDeclaredMethod("setE2", E2.class);
+    SetterInvoker invoker2 = FunctionalSetterInvoker.create("e2", m2);
+    invoker2.invoke(a, 2);
+    assertThat(a.getE2(), is(E2.C));
+  }
+
+  static class A {
+    private E e;
+
+    private E2 e2;
+
+    E getE() {
+      return e;
     }
 
-    static class A {
-        private E e;
-
-        private E2 e2;
-
-        E getE() {
-            return e;
-        }
-
-        @Setter(IntegerToEnumFunction.class)
-        void setE(E e) {
-            this.e = e;
-        }
-
-        E2 getE2() {
-            return e2;
-        }
-
-        @Setter(IntegerToEnumFunction.class)
-        void setE2(E2 e2) {
-            this.e2 = e2;
-        }
+    @Setter(IntegerToEnumFunction.class)
+    void setE(E e) {
+      this.e = e;
     }
 
-    enum E {
-        X, Y, Z;
+    E2 getE2() {
+      return e2;
     }
 
-    enum E2 {
-        A, B, C;
+    @Setter(IntegerToEnumFunction.class)
+    void setE2(E2 e2) {
+      this.e2 = e2;
     }
+  }
+
+  enum E {
+    X, Y, Z;
+  }
+
+  enum E2 {
+    A, B, C;
+  }
 
 }

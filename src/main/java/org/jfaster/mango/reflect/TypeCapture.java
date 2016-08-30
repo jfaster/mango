@@ -24,12 +24,12 @@ import java.lang.reflect.Type;
  */
 abstract class TypeCapture<T> {
 
-    final Type capture() {
-        Type superclass = getClass().getGenericSuperclass();
-        if (!(superclass instanceof ParameterizedType)) {
-            throw new IllegalArgumentException(superclass + " isn't parameterized");
-        }
-        return ((ParameterizedType) superclass).getActualTypeArguments()[0];
+  final Type capture() {
+    Type superclass = getClass().getGenericSuperclass();
+    if (!(superclass instanceof ParameterizedType)) {
+      throw new IllegalArgumentException(superclass + " isn't parameterized");
     }
+    return ((ParameterizedType) superclass).getActualTypeArguments()[0];
+  }
 
 }

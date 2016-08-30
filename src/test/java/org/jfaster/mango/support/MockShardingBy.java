@@ -25,25 +25,25 @@ import java.lang.annotation.Annotation;
  */
 public class MockShardingBy implements Annotation, ShardingBy {
 
-    private String value;
+  private String value;
 
-    public MockShardingBy(String value) {
-        this.value = value;
-    }
+  public MockShardingBy(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public String value() {
-        return value;
-    }
+  @Override
+  public String value() {
+    return value;
+  }
 
-    @Override
-    public int type() {
-        return 0;
-    }
+  @Override
+  public int type() {
+    return 0;
+  }
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    throw new UnsupportedOperationException();
+  }
 
 }

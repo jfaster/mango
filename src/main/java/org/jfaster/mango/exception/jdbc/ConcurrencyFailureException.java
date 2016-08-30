@@ -25,12 +25,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class ConcurrencyFailureException extends DataAccessException {
 
-    public ConcurrencyFailureException(String msg) {
-        super(msg);
-    }
+  public ConcurrencyFailureException(String msg) {
+    super(msg);
+  }
 
-    public ConcurrencyFailureException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public ConcurrencyFailureException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

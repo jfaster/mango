@@ -31,30 +31,30 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class StringToEnumFunctionTest {
 
-    @Test
-    public void testApply() throws Exception {
-        A a = new A();
-        Method m = A.class.getDeclaredMethod("setE", E.class);
-        SetterInvoker invoker = FunctionalSetterInvoker.create("e", m);
-        invoker.invoke(a, "Y");
-        assertThat(a.getE(), is(E.Y));
+  @Test
+  public void testApply() throws Exception {
+    A a = new A();
+    Method m = A.class.getDeclaredMethod("setE", E.class);
+    SetterInvoker invoker = FunctionalSetterInvoker.create("e", m);
+    invoker.invoke(a, "Y");
+    assertThat(a.getE(), is(E.Y));
+  }
+
+  static class A {
+    private E e;
+
+    E getE() {
+      return e;
     }
 
-    static class A {
-        private E e;
-
-        E getE() {
-            return e;
-        }
-
-        @Setter(StringToEnumFunction.class)
-        void setE(E e) {
-            this.e = e;
-        }
+    @Setter(StringToEnumFunction.class)
+    void setE(E e) {
+      this.e = e;
     }
+  }
 
-    enum E {
-        X, Y, Z;
-    }
+  enum E {
+    X, Y, Z;
+  }
 
 }

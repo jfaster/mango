@@ -21,6 +21,6 @@ package org.jfaster.mango.base.local;
  */
 public interface LoadingCache<K, V> {
 
-    public V get(K key);
+  public V get(K key);
 
 }

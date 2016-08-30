@@ -23,11 +23,11 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class CannotGetJdbcConnectionException extends DataAccessResourceFailureException {
 
-    public CannotGetJdbcConnectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public CannotGetJdbcConnectionException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public CannotGetJdbcConnectionException(String message) {
-        super(message);
-    }
+  public CannotGetJdbcConnectionException(String message) {
+    super(message);
+  }
 }

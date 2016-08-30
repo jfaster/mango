@@ -25,31 +25,31 @@ import java.lang.annotation.Annotation;
  */
 public class MockDB implements Annotation, DB {
 
-    private String database = "";
+  private String database = "";
 
-    private String table = "";
+  private String table = "";
 
-    public MockDB() {
-    }
+  public MockDB() {
+  }
 
-    public MockDB(String database, String table) {
-        this.database = database;
-        this.table = table;
-    }
+  public MockDB(String database, String table) {
+    this.database = database;
+    this.table = table;
+  }
 
-    @Override
-    public String database() {
-        return database;
-    }
+  @Override
+  public String database() {
+    return database;
+  }
 
-    @Override
-    public String table() {
-        return table;
-    }
+  @Override
+  public String table() {
+    return table;
+  }
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    throw new UnsupportedOperationException();
+  }
 
 }

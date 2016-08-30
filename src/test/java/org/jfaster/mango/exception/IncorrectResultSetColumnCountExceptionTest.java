@@ -38,41 +38,42 @@ import java.sql.Connection;
  */
 public class IncorrectResultSetColumnCountExceptionTest {
 
-    private final static DataSource ds = DataSourceConfig.getDataSource();
-    private final static Mango mango = Mango.newInstance(ds);
-    static {
-        mango.setDefaultLazyInit(true);
-    }
+  private final static DataSource ds = DataSourceConfig.getDataSource();
+  private final static Mango mango = Mango.newInstance(ds);
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  static {
+    mango.setDefaultLazyInit(true);
+  }
 
-    @Before
-    public void before() throws Exception {
-        Connection conn = ds.getConnection();
-        Table.PERSON.load(conn);
-        conn.close();
-    }
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public void test() {
-        thrown.expect(IncorrectResultSetColumnCountException.class);
-        thrown.expectMessage("incorrect column count, expected 1 but 2");
-        PersonDao dao = mango.create(PersonDao.class);
-        int id = 1;
-        dao.add(new Person(id, "ash"));
-        dao.get(id);
-    }
+  @Before
+  public void before() throws Exception {
+    Connection conn = ds.getConnection();
+    Table.PERSON.load(conn);
+    conn.close();
+  }
 
-    @DB
-    static interface PersonDao {
+  @Test
+  public void test() {
+    thrown.expect(IncorrectResultSetColumnCountException.class);
+    thrown.expectMessage("incorrect column count, expected 1 but 2");
+    PersonDao dao = mango.create(PersonDao.class);
+    int id = 1;
+    dao.add(new Person(id, "ash"));
+    dao.get(id);
+  }
 
-        @SQL("insert into person(id, name) values(:1.id, :1.name)")
-        public int add(Person p);
+  @DB
+  static interface PersonDao {
 
-        @SQL("select id, name from person where id=:1")
-        public int get(int id);
-    }
+    @SQL("insert into person(id, name) values(:1.id, :1.name)")
+    public int add(Person p);
+
+    @SQL("select id, name from person where id=:1")
+    public int get(int id);
+  }
 
 }
 

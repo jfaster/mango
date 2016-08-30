@@ -29,10 +29,10 @@ import java.lang.reflect.Type;
  */
 public class FastjsonToObjectFunction implements RuntimeSetterFunction<String, Object> {
 
-    @Nullable
-    @Override
-    public Object apply(@Nullable String input, Type runtimeOutputType) {
-        return input == null ? null : JSON.parseObject(input, runtimeOutputType);
-    }
+  @Nullable
+  @Override
+  public Object apply(@Nullable String input, Type runtimeOutputType) {
+    return input == null ? null : JSON.parseObject(input, runtimeOutputType);
+  }
 
 }

@@ -21,12 +21,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class CannotAcquireLockException extends PessimisticLockingFailureException {
 
-    public CannotAcquireLockException(String msg) {
-        super(msg);
-    }
+  public CannotAcquireLockException(String msg) {
+    super(msg);
+  }
 
-    public CannotAcquireLockException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public CannotAcquireLockException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

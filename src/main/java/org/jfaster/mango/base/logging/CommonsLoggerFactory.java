@@ -26,9 +26,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CommonsLoggerFactory extends InternalLoggerFactory {
 
-    @Override
-    public InternalLogger newInstance(String name) {
-        return new CommonsLogger(LogFactory.getLog(name), name);
-    }
+  @Override
+  public InternalLogger newInstance(String name) {
+    return new CommonsLogger(LogFactory.getLog(name), name);
+  }
 
 }

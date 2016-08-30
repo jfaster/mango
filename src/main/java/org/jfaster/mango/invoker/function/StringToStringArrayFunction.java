@@ -27,18 +27,18 @@ import javax.annotation.Nullable;
  */
 public class StringToStringArrayFunction implements SetterFunction<String, String[]> {
 
-    private final static String SEPARATOR = ",";
+  private final static String SEPARATOR = ",";
 
-    @Nullable
-    @Override
-    public String[] apply(@Nullable String input) {
-        if (input == null) {
-            return null;
-        }
-        if (input.length() == 0) {
-            return new String[0];
-        }
-        return input.split(SEPARATOR);
+  @Nullable
+  @Override
+  public String[] apply(@Nullable String input) {
+    if (input == null) {
+      return null;
     }
+    if (input.length() == 0) {
+      return new String[0];
+    }
+    return input.split(SEPARATOR);
+  }
 
 }

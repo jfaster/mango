@@ -32,33 +32,33 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class LongArrayToStringFunctionTest {
 
-    @Test
-    public void testApply() throws Exception {
-        A a = new A();
-        Method m = A.class.getDeclaredMethod("getX");
-        GetterInvoker invoker = FunctionalGetterInvoker.create("x", m);
+  @Test
+  public void testApply() throws Exception {
+    A a = new A();
+    Method m = A.class.getDeclaredMethod("getX");
+    GetterInvoker invoker = FunctionalGetterInvoker.create("x", m);
 
-        a.setX(new long[] {1, 2, 3});
-        assertThat((String) invoker.invoke(a), is("1,2,3"));
+    a.setX(new long[]{1, 2, 3});
+    assertThat((String) invoker.invoke(a), is("1,2,3"));
 
-        a.setX(null);
-        assertThat(invoker.invoke(a), nullValue());
+    a.setX(null);
+    assertThat(invoker.invoke(a), nullValue());
 
-        a.setX(new long[] {});
-        assertThat((String) invoker.invoke(a), is(""));
+    a.setX(new long[]{});
+    assertThat((String) invoker.invoke(a), is(""));
+  }
+
+  static class A {
+    private long[] x;
+
+    @Getter(LongArrayToStringFunction.class)
+    long[] getX() {
+      return x;
     }
 
-    static class A {
-        private long[] x;
-
-        @Getter(LongArrayToStringFunction.class)
-        long[] getX() {
-            return x;
-        }
-
-        void setX(long[] x) {
-            this.x = x;
-        }
+    void setX(long[] x) {
+      this.x = x;
     }
+  }
 
 }

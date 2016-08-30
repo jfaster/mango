@@ -33,59 +33,60 @@ import java.util.List;
  */
 public class IncorrectParameterTypeExceptionTest {
 
-    private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
-    static {
-        mango.setDefaultLazyInit(true);
-    }
+  private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  static {
+    mango.setDefaultLazyInit(true);
+  }
 
-    @Test
-    public void test4() {
-        thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("invalid type of :1, " +
-                "expected array or implementations of java.util.List or implementations of java.util.Set " +
-                "but int");
-        Dao dao = mango.create(Dao.class);
-        dao.get(1);
-    }
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public void test6() {
-        thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("invalid component type of :1, component type of :1 " +
-                "expected a class can be identified by jdbc " +
-                "but class java.lang.Object");
-        Dao dao = mango.create(Dao.class);
-        dao.get3(new Object[]{});
-    }
+  @Test
+  public void test4() {
+    thrown.expect(IncorrectParameterTypeException.class);
+    thrown.expectMessage("invalid type of :1, " +
+        "expected array or implementations of java.util.List or implementations of java.util.Set " +
+        "but int");
+    Dao dao = mango.create(Dao.class);
+    dao.get(1);
+  }
 
-    @Test
-    public void test7() {
-        thrown.expect(IncorrectParameterTypeException.class);
-        thrown.expectMessage("invalid type of :1, " +
-                "expected a class can be identified by jdbc " +
-                "but class java.lang.Object");
-        Dao dao = mango.create(Dao.class);
-        dao.get4(new Object());
-    }
+  @Test
+  public void test6() {
+    thrown.expect(IncorrectParameterTypeException.class);
+    thrown.expectMessage("invalid component type of :1, component type of :1 " +
+        "expected a class can be identified by jdbc " +
+        "but class java.lang.Object");
+    Dao dao = mango.create(Dao.class);
+    dao.get3(new Object[]{});
+  }
 
-    @DB
-    static interface Dao {
+  @Test
+  public void test7() {
+    thrown.expect(IncorrectParameterTypeException.class);
+    thrown.expectMessage("invalid type of :1, " +
+        "expected a class can be identified by jdbc " +
+        "but class java.lang.Object");
+    Dao dao = mango.create(Dao.class);
+    dao.get4(new Object());
+  }
 
-        @SQL("select ... where a in (:1)")
-        public List<Integer> get(int a);
+  @DB
+  static interface Dao {
 
-        @SQL("select ... where a in (:1)")
-        public List<Integer> get2(List<List<Integer>> list);
+    @SQL("select ... where a in (:1)")
+    public List<Integer> get(int a);
 
-        @SQL("select ... where a in (:1)")
-        public List<Integer> get3(Object[] objs);
+    @SQL("select ... where a in (:1)")
+    public List<Integer> get2(List<List<Integer>> list);
 
-        @SQL("select ... where a=:1")
-        public int get4(Object obj);
-    }
+    @SQL("select ... where a in (:1)")
+    public List<Integer> get3(Object[] objs);
+
+    @SQL("select ... where a=:1")
+    public int get4(Object obj);
+  }
 
 
 }

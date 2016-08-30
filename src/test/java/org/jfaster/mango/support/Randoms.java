@@ -23,19 +23,19 @@ import org.apache.commons.lang.math.RandomUtils;
  */
 public class Randoms {
 
-    public static String randomString(int maxLength) {
-        int length = randomInt(maxLength) + 1;
-        StringBuffer buffer = new StringBuffer("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-        StringBuffer sb = new StringBuffer();
-        int range = buffer.length();
-        for (int i = 0; i < length; i ++) {
-            sb.append(buffer.charAt(randomInt(range)));
-        }
-        return sb.toString();
+  public static String randomString(int maxLength) {
+    int length = randomInt(maxLength) + 1;
+    StringBuffer buffer = new StringBuffer("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    StringBuffer sb = new StringBuffer();
+    int range = buffer.length();
+    for (int i = 0; i < length; i++) {
+      sb.append(buffer.charAt(randomInt(range)));
     }
+    return sb.toString();
+  }
 
-    public static int randomInt(int n) {
-        return RandomUtils.nextInt(n);
-    }
+  public static int randomInt(int n) {
+    return RandomUtils.nextInt(n);
+  }
 
 }

@@ -26,16 +26,16 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class DefaultMangoFactoryBean extends AbstractMangoFactoryBean implements ApplicationContextAware {
 
-    private ApplicationContext applicationContext;
+  private ApplicationContext applicationContext;
 
-    @Override
-    public Mango createMango() {
-        return applicationContext.getBean(Mango.class);
-    }
+  @Override
+  public Mango createMango() {
+    return applicationContext.getBean(Mango.class);
+  }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
 
 }

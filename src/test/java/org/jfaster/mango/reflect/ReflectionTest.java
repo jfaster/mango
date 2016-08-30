@@ -23,13 +23,13 @@ import org.junit.Test;
  */
 public class ReflectionTest {
 
-    @Test
-    public void testInstantiate() throws Exception {
-        Reflection.instantiateClass(A.class);
-    }
+  @Test
+  public void testInstantiate() throws Exception {
+    Reflection.instantiateClass(A.class);
+  }
 
-    private static class A {
+  private static class A {
 
-    }
+  }
 
 }

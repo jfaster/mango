@@ -21,20 +21,20 @@ package org.jfaster.mango.reflect;
  */
 public class TokenTuple {
 
-    private final TypeToken<?> first;
-    private final TypeToken<?> second;
+  private final TypeToken<?> first;
+  private final TypeToken<?> second;
 
-    public TokenTuple(TypeToken<?> first, TypeToken<?> second) {
-        this.first = first;
-        this.second = second;
-    }
+  public TokenTuple(TypeToken<?> first, TypeToken<?> second) {
+    this.first = first;
+    this.second = second;
+  }
 
-    public TypeToken<?> getFirst() {
-        return first;
-    }
+  public TypeToken<?> getFirst() {
+    return first;
+  }
 
-    public TypeToken<?> getSecond() {
-        return second;
-    }
+  public TypeToken<?> getSecond() {
+    return second;
+  }
 
 }

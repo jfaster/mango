@@ -22,10 +22,10 @@ import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.RowMapper;
 import org.jfaster.mango.jdbc.SetSupplier;
+import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
 import org.jfaster.mango.reflect.descriptor.ReturnDescriptor;
-import org.jfaster.mango.reflect.TypeToken;
 import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
@@ -47,233 +47,240 @@ import static org.hamcrest.Matchers.is;
  */
 public class QueryOperatorTest {
 
-    @Test
-    public void testQueryObject() throws Exception {
-        TypeToken<User> t = TypeToken.of(User.class);
-        String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
+  @Test
+  public void testQueryObject() throws Exception {
+    TypeToken<User> t = TypeToken.of(User.class);
+    String srcSql = "select * from user where id=:1.id and name=:1.name";
+    Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-                String descSql = "select * from user where id=? and name=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(2));
-                assertThat(args[0], equalTo((Object) 100));
-                assertThat(args[1], equalTo((Object) "ash"));
-                assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
-                return null;
-            }
-        });
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        String descSql = "select * from user where id=? and name=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(args.length, equalTo(2));
+        assertThat(args[0], equalTo((Object) 100));
+        assertThat(args[1], equalTo((Object) "ash"));
+        assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
+        return null;
+      }
+    });
 
-        User user = new User();
-        user.setId(100);
-        user.setName("ash");
-        operator.execute(new Object[]{user});
+    User user = new User();
+    user.setId(100);
+    user.setName("ash");
+    operator.execute(new Object[]{user});
+  }
+
+  @Test
+  public void testQueryList() throws Exception {
+    TypeToken<User> pt = TypeToken.of(User.class);
+    TypeToken<List<User>> rt = new TypeToken<List<User>>() {
+    };
+    String srcSql = "select * from user where id=:1.id and name=:1.name";
+    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+                                      ListSupplier listSupplier, RowMapper<T> rowMapper) {
+        String descSql = "select * from user where id=? and name=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(args.length, equalTo(2));
+        assertThat(args[0], equalTo((Object) 100));
+        assertThat(args[1], equalTo((Object) "ash"));
+        assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
+        return null;
+      }
+    });
+
+    User user = new User();
+    user.setId(100);
+    user.setName("ash");
+    operator.execute(new Object[]{user});
+  }
+
+  @Test
+  public void testQuerySet() throws Exception {
+    TypeToken<User> pt = TypeToken.of(User.class);
+    TypeToken<Set<User>> rt = new TypeToken<Set<User>>() {
+    };
+    String srcSql = "select * from user where id=:1.id and name=:1.name";
+    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args,
+                                    SetSupplier setSupplier, RowMapper<T> rowMapper) {
+        String descSql = "select * from user where id=? and name=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(args.length, equalTo(2));
+        assertThat(args[0], equalTo((Object) 100));
+        assertThat(args[1], equalTo((Object) "ash"));
+        assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
+        return null;
+      }
+    });
+
+    User user = new User();
+    user.setId(100);
+    user.setName("ash");
+    operator.execute(new Object[]{user});
+  }
+
+  @Test
+  public void testQueryArray() throws Exception {
+    TypeToken<User> pt = TypeToken.of(User.class);
+    TypeToken<User[]> rt = new TypeToken<User[]>() {
+    };
+    String srcSql = "select * from user where id=:1.id and name=:1.name";
+    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        String descSql = "select * from user where id=? and name=?";
+        assertThat(sql, equalTo(descSql));
+        assertThat(args.length, equalTo(2));
+        assertThat(args[0], equalTo((Object) 100));
+        assertThat(args[1], equalTo((Object) "ash"));
+        assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
+        return null;
+      }
+    });
+
+    User user = new User();
+    user.setId(100);
+    user.setName("ash");
+    operator.execute(new Object[]{user});
+  }
+
+  @Test
+  public void testQueryIn() throws Exception {
+    TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {
+    };
+    TypeToken<List<User>> rt = new TypeToken<List<User>>() {
+    };
+    String srcSql = "select * from user where id in (:1)";
+    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+                                      ListSupplier listSupplier, RowMapper<T> rowMapper) {
+        String descSql = "select * from user where id in (?,?,?)";
+        assertThat(sql, equalTo(descSql));
+        assertThat(args.length, equalTo(3));
+        assertThat(args[0], equalTo((Object) 100));
+        assertThat(args[1], equalTo((Object) 200));
+        assertThat(args[2], equalTo((Object) 300));
+        assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
+        return null;
+      }
+    });
+
+    List<Integer> ids = Arrays.asList(100, 200, 300);
+    operator.execute(new Object[]{ids});
+  }
+
+  @Test
+  public void testQueryInCount() throws Exception {
+    TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {
+    };
+    TypeToken<Integer> rt = new TypeToken<Integer>() {
+    };
+    String srcSql = "select count(1) from user where id in (:1)";
+    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @SuppressWarnings("unchecked")
+      @Override
+      public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        String descSql = "select count(1) from user where id in (?,?,?)";
+        assertThat(sql, equalTo(descSql));
+        assertThat(args.length, equalTo(3));
+        assertThat(args[0], equalTo((Object) 100));
+        assertThat(args[1], equalTo((Object) 200));
+        assertThat(args[2], equalTo((Object) 300));
+        assertThat(rowMapper.getMappedClass().equals(Integer.class), is(true));
+        return (T) Integer.valueOf(3);
+      }
+    });
+
+    List<Integer> ids = Arrays.asList(100, 200, 300);
+    Integer r = (Integer) operator.execute(new Object[]{ids});
+    assertThat(r, is(3));
+  }
+
+  @Test
+  public void testStatsCounter() throws Exception {
+    TypeToken<User> t = TypeToken.of(User.class);
+    String srcSql = "select * from user where id=:1.id and name=:1.name";
+    Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    User user = new User();
+    user.setId(100);
+    user.setName("ash");
+
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+        return null;
+      }
+    });
+    operator.execute(new Object[]{user});
+    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
+    operator.execute(new Object[]{user});
+    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
+
+    operator.setJdbcOperations(new JdbcOperationsAdapter());
+    try {
+      operator.execute(new Object[]{user});
+    } catch (UnsupportedOperationException e) {
     }
-
-    @Test
-    public void testQueryList() throws Exception {
-        TypeToken<User> pt = TypeToken.of(User.class);
-        TypeToken<List<User>> rt = new TypeToken<List<User>>() {};
-        String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
-                                            ListSupplier listSupplier, RowMapper<T> rowMapper) {
-                String descSql = "select * from user where id=? and name=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(2));
-                assertThat(args[0], equalTo((Object) 100));
-                assertThat(args[1], equalTo((Object) "ash"));
-                assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
-                return null;
-            }
-        });
-
-        User user = new User();
-        user.setId(100);
-        user.setName("ash");
-        operator.execute(new Object[]{user});
+    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
+    try {
+      operator.execute(new Object[]{user});
+    } catch (UnsupportedOperationException e) {
     }
+    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
+  }
 
-    @Test
-    public void testQuerySet() throws Exception {
-        TypeToken<User> pt = TypeToken.of(User.class);
-        TypeToken<Set<User>> rt = new TypeToken<Set<User>>() {};
-        String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+  private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
+      throws Exception {
+    List<Annotation> empty = Collections.emptyList();
+    ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), empty, "1");
+    List<ParameterDescriptor> pds = Arrays.asList(p);
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args,
-                                          SetSupplier setSupplier, RowMapper<T> rowMapper) {
-                String descSql = "select * from user where id=? and name=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(2));
-                assertThat(args[0], equalTo((Object) 100));
-                assertThat(args[1], equalTo((Object) "ash"));
-                assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
-                return null;
-            }
-        });
-
-        User user = new User();
-        user.setId(100);
-        user.setName("ash");
-        operator.execute(new Object[]{user});
+    List<Annotation> methodAnnos = new ArrayList<Annotation>();
+    methodAnnos.add(new MockDB());
+    methodAnnos.add(new MockSQL(srcSql));
+    for (Annotation anno : annos) {
+      methodAnnos.add(anno);
     }
+    ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
+    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-    @Test
-    public void testQueryArray() throws Exception {
-        TypeToken<User> pt = TypeToken.of(User.class);
-        TypeToken<User[]> rt = new TypeToken<User[]>() {};
-        String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+    OperatorFactory factory = new OperatorFactory(
+        new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
+        null, new InterceptorChain(), null, new Config());
 
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-                String descSql = "select * from user where id=? and name=?";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(2));
-                assertThat(args[0], equalTo((Object) 100));
-                assertThat(args[1], equalTo((Object) "ash"));
-                assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
-                return null;
-            }
-        });
-
-        User user = new User();
-        user.setId(100);
-        user.setName("ash");
-        operator.execute(new Object[]{user});
-    }
-
-    @Test
-    public void testQueryIn() throws Exception {
-        TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
-        TypeToken<List<User>> rt = new TypeToken<List<User>>() {};
-        String srcSql = "select * from user where id in (:1)";
-        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
-                                            ListSupplier listSupplier, RowMapper<T> rowMapper) {
-                String descSql = "select * from user where id in (?,?,?)";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(3));
-                assertThat(args[0], equalTo((Object) 100));
-                assertThat(args[1], equalTo((Object) 200));
-                assertThat(args[2], equalTo((Object) 300));
-                assertThat(rowMapper.getMappedClass().equals(User.class), is(true));
-                return null;
-            }
-        });
-
-        List<Integer> ids = Arrays.asList(100, 200, 300);
-        operator.execute(new Object[]{ids});
-    }
-
-    @Test
-    public void testQueryInCount() throws Exception {
-        TypeToken<List<Integer>> pt = new TypeToken<List<Integer>>() {};
-        TypeToken<Integer> rt = new TypeToken<Integer>() {};
-        String srcSql = "select count(1) from user where id in (:1)";
-        Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-                String descSql = "select count(1) from user where id in (?,?,?)";
-                assertThat(sql, equalTo(descSql));
-                assertThat(args.length, equalTo(3));
-                assertThat(args[0], equalTo((Object) 100));
-                assertThat(args[1], equalTo((Object) 200));
-                assertThat(args[2], equalTo((Object) 300));
-                assertThat(rowMapper.getMappedClass().equals(Integer.class), is(true));
-                return (T) Integer.valueOf(3);
-            }
-        });
-
-        List<Integer> ids = Arrays.asList(100, 200, 300);
-        Integer r = (Integer) operator.execute(new Object[]{ids});
-        assertThat(r, is(3));
-    }
-
-    @Test
-    public void testStatsCounter() throws Exception {
-        TypeToken<User> t = TypeToken.of(User.class);
-        String srcSql = "select * from user where id=:1.id and name=:1.name";
-        Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
-
-        StatsCounter sc = new StatsCounter();
-        operator.setStatsCounter(sc);
-        User user = new User();
-        user.setId(100);
-        user.setName("ash");
-
-        operator.setJdbcOperations(new JdbcOperationsAdapter() {
-            @Override
-            public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
-                return null;
-            }
-        });
-        operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
-        operator.execute(new Object[]{user});
-        assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
-
-        operator.setJdbcOperations(new JdbcOperationsAdapter());
-        try {
-            operator.execute(new Object[]{user});
-        } catch (UnsupportedOperationException e) {
-        }
-        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
-        try {
-            operator.execute(new Object[]{user});
-        } catch (UnsupportedOperationException e) {
-        }
-        assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
-    }
-
-    private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
-            throws Exception {
-        List<Annotation> empty = Collections.emptyList();
-        ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), empty, "1");
-        List<ParameterDescriptor> pds = Arrays.asList(p);
-
-        List<Annotation> methodAnnos = new ArrayList<Annotation>();
-        methodAnnos.add(new MockDB());
-        methodAnnos.add(new MockSQL(srcSql));
-        for (Annotation anno : annos) {
-            methodAnnos.add(anno);
-        }
-        ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-        MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
-
-        OperatorFactory factory = new OperatorFactory(
-                new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-                null, new InterceptorChain(), null, new Config());
-
-        Operator operator = factory.getOperator(md, new StatsCounter());
-        return operator;
-    }
+    Operator operator = factory.getOperator(md, new StatsCounter());
+    return operator;
+  }
 
 }

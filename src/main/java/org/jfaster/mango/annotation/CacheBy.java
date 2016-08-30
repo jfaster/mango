@@ -30,12 +30,12 @@ import java.lang.annotation.*;
 @Documented
 public @interface CacheBy {
 
-    /**
-     * 如果value等于""，被修饰的参数直接作为缓存后缀<br>
-     * 如果value不等于""，则被修饰参数中的value值属性将作为缓存后缀
-     *
-     * @return
-     */
-    String value() default "";
+  /**
+   * 如果value等于""，被修饰的参数直接作为缓存后缀<br>
+   * 如果value不等于""，则被修饰参数中的value值属性将作为缓存后缀
+   *
+   * @return
+   */
+  String value() default "";
 
 }

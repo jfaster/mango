@@ -29,15 +29,15 @@ import java.lang.reflect.Type;
  */
 public class StringToEnumFunction implements RuntimeSetterFunction<String, Enum> {
 
-    @Nullable
-    @Override
-    public Enum apply(@Nullable String input, Type runtimeOutputType) {
-        if (input == null) {
-            return null;
-        }
-        Class rawType = TypeToken.of(runtimeOutputType).getRawType();
-        Enum r = Enum.valueOf(rawType, input);
-        return r;
+  @Nullable
+  @Override
+  public Enum apply(@Nullable String input, Type runtimeOutputType) {
+    if (input == null) {
+      return null;
     }
+    Class rawType = TypeToken.of(runtimeOutputType).getRawType();
+    Enum r = Enum.valueOf(rawType, input);
+    return r;
+  }
 
 }

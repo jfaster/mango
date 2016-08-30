@@ -27,10 +27,10 @@ import javax.annotation.Nullable;
  */
 public class EnumToIntegerFunction implements GetterFunction<Enum, Integer> {
 
-    @Nullable
-    @Override
-    public Integer apply(@Nullable Enum input) {
-        return input == null ? null : input.ordinal();
-    }
+  @Nullable
+  @Override
+  public Integer apply(@Nullable Enum input) {
+    return input == null ? null : input.ordinal();
+  }
 
 }

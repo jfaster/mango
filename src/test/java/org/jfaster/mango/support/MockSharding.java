@@ -26,39 +26,39 @@ import java.lang.annotation.Annotation;
  */
 public class MockSharding implements Annotation, Sharding {
 
-    private Class<? extends TableShardingStrategy> tableShardingStrategy = NotUseTableShardingStrategy.class;
+  private Class<? extends TableShardingStrategy> tableShardingStrategy = NotUseTableShardingStrategy.class;
 
-    private Class<? extends DatabaseShardingStrategy> databaseShardingStrategy = NotUseDatabaseShardingStrategy.class;
+  private Class<? extends DatabaseShardingStrategy> databaseShardingStrategy = NotUseDatabaseShardingStrategy.class;
 
-    private Class<? extends ShardingStrategy> shardingStrategy = NotUseShardingStrategy.class;
+  private Class<? extends ShardingStrategy> shardingStrategy = NotUseShardingStrategy.class;
 
-    public MockSharding() {
-    }
+  public MockSharding() {
+  }
 
-    public MockSharding(Class<? extends TableShardingStrategy> tableShardingStrategy, Class<? extends DatabaseShardingStrategy> databaseShardingStrategy, Class<? extends ShardingStrategy> shardingStrategy) {
-        this.tableShardingStrategy = tableShardingStrategy;
-        this.databaseShardingStrategy = databaseShardingStrategy;
-        this.shardingStrategy = shardingStrategy;
-    }
+  public MockSharding(Class<? extends TableShardingStrategy> tableShardingStrategy, Class<? extends DatabaseShardingStrategy> databaseShardingStrategy, Class<? extends ShardingStrategy> shardingStrategy) {
+    this.tableShardingStrategy = tableShardingStrategy;
+    this.databaseShardingStrategy = databaseShardingStrategy;
+    this.shardingStrategy = shardingStrategy;
+  }
 
-    @Override
-    public Class<? extends TableShardingStrategy> tableShardingStrategy() {
-        return tableShardingStrategy;
-    }
+  @Override
+  public Class<? extends TableShardingStrategy> tableShardingStrategy() {
+    return tableShardingStrategy;
+  }
 
-    @Override
-    public Class<? extends DatabaseShardingStrategy> databaseShardingStrategy() {
-        return databaseShardingStrategy;
-    }
+  @Override
+  public Class<? extends DatabaseShardingStrategy> databaseShardingStrategy() {
+    return databaseShardingStrategy;
+  }
 
-    @Override
-    public Class<? extends ShardingStrategy> shardingStrategy() {
-        return shardingStrategy;
-    }
+  @Override
+  public Class<? extends ShardingStrategy> shardingStrategy() {
+    return shardingStrategy;
+  }
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    throw new UnsupportedOperationException();
+  }
 
 }

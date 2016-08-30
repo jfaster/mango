@@ -29,42 +29,42 @@ import java.util.Map;
  */
 public class MultipleDatabaseDataSourceFactory implements DataSourceFactory {
 
-    private Map<String, DataSourceFactory> factories;
+  private Map<String, DataSourceFactory> factories;
 
-    public MultipleDatabaseDataSourceFactory() {
-    }
+  public MultipleDatabaseDataSourceFactory() {
+  }
 
-    public MultipleDatabaseDataSourceFactory(Map<String, DataSourceFactory> factories) {
-        this.factories = factories;
-    }
+  public MultipleDatabaseDataSourceFactory(Map<String, DataSourceFactory> factories) {
+    this.factories = factories;
+  }
 
-    @Override
-    public DataSource getMasterDataSource(String database) {
-        DataSourceFactory factory = getDataSourceFactory(database);
-        return factory.getMasterDataSource(database);
-    }
+  @Override
+  public DataSource getMasterDataSource(String database) {
+    DataSourceFactory factory = getDataSourceFactory(database);
+    return factory.getMasterDataSource(database);
+  }
 
-    @Override
-    public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
-        DataSourceFactory factory = getDataSourceFactory(database);
-        return factory.getSlaveDataSource(database, daoClass);
-    }
+  @Override
+  public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
+    DataSourceFactory factory = getDataSourceFactory(database);
+    return factory.getSlaveDataSource(database, daoClass);
+  }
 
-    private DataSourceFactory getDataSourceFactory(String database) {
-        DataSourceFactory factory = factories.get(database);
-        if (factory == null) {
-            throw new IllegalArgumentException("can not find the datasource factory by database [" + database + "], " +
-                    "available database is " + factories.keySet());
-        }
-        return factory;
+  private DataSourceFactory getDataSourceFactory(String database) {
+    DataSourceFactory factory = factories.get(database);
+    if (factory == null) {
+      throw new IllegalArgumentException("can not find the datasource factory by database [" + database + "], " +
+          "available database is " + factories.keySet());
     }
+    return factory;
+  }
 
-    public Map<String, DataSourceFactory> getFactories() {
-        return factories;
-    }
+  public Map<String, DataSourceFactory> getFactories() {
+    return factories;
+  }
 
-    public void setFactories(Map<String, DataSourceFactory> factories) {
-        this.factories = factories;
-    }
+  public void setFactories(Map<String, DataSourceFactory> factories) {
+    this.factories = factories;
+  }
 
 }

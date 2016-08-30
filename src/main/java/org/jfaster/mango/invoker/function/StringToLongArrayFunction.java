@@ -27,23 +27,23 @@ import javax.annotation.Nullable;
  */
 public class StringToLongArrayFunction implements SetterFunction<String, long[]> {
 
-    private final static String SEPARATOR = ",";
+  private final static String SEPARATOR = ",";
 
-    @Nullable
-    @Override
-    public long[] apply(@Nullable String input) {
-        if (input == null) {
-            return null;
-        }
-        if (input.length() == 0) {
-            return new long[0];
-        }
-        String[] ss = input.split(SEPARATOR);
-        long[] r = new long[ss.length];
-        for (int i = 0; i < ss.length; i++) {
-            r[i] = Long.parseLong(ss[i]);
-        }
-        return r;
+  @Nullable
+  @Override
+  public long[] apply(@Nullable String input) {
+    if (input == null) {
+      return null;
     }
+    if (input.length() == 0) {
+      return new long[0];
+    }
+    String[] ss = input.split(SEPARATOR);
+    long[] r = new long[ss.length];
+    for (int i = 0; i < ss.length; i++) {
+      r[i] = Long.parseLong(ss[i]);
+    }
+    return r;
+  }
 
 }

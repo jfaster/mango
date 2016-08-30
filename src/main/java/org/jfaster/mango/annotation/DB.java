@@ -28,18 +28,18 @@ import java.lang.annotation.*;
 @Documented
 public @interface DB {
 
-    /**
-     * 使用数据源，只有在使用{@link org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory}时，database的值才有意义。
-     *
-     * @return
-     */
-    String database() default "";
+  /**
+   * 使用数据源，只有在使用{@link org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory}时，database的值才有意义。
+   *
+   * @return
+   */
+  String database() default "";
 
-    /**
-     * 全局表名，在{@link SQL}的字符串参数，可以通过#table的方式引用此全局表名。
-     *
-     * @return
-     */
-    String table() default "";
+  /**
+   * 全局表名，在{@link SQL}的字符串参数，可以通过#table的方式引用此全局表名。
+   *
+   * @return
+   */
+  String table() default "";
 
 }

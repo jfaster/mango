@@ -29,10 +29,10 @@ import java.lang.reflect.Type;
  */
 public class GsonToObjectFunction implements RuntimeSetterFunction<String, Object> {
 
-    @Nullable
-    @Override
-    public Object apply(@Nullable String input, Type runtimeOutputType) {
-        return input == null ? null : new Gson().fromJson(input, runtimeOutputType);
-    }
+  @Nullable
+  @Override
+  public Object apply(@Nullable String input, Type runtimeOutputType) {
+    return input == null ? null : new Gson().fromJson(input, runtimeOutputType);
+  }
 
 }

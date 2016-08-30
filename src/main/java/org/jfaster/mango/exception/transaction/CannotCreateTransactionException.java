@@ -21,12 +21,12 @@ package org.jfaster.mango.exception.transaction;
  */
 public class CannotCreateTransactionException extends TransactionException {
 
-    public CannotCreateTransactionException(String msg) {
-        super(msg);
-    }
+  public CannotCreateTransactionException(String msg) {
+    super(msg);
+  }
 
-    public CannotCreateTransactionException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public CannotCreateTransactionException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

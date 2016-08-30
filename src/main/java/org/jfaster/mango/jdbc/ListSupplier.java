@@ -23,6 +23,6 @@ import java.util.List;
  */
 public interface ListSupplier {
 
-    public <T> List<T> get(Class<T> clazz);
+  public <T> List<T> get(Class<T> clazz);
 
 }

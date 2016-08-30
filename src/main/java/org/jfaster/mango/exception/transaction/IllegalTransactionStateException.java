@@ -21,8 +21,8 @@ package org.jfaster.mango.exception.transaction;
  */
 public class IllegalTransactionStateException extends TransactionException {
 
-    public IllegalTransactionStateException(String msg) {
-        super(msg);
-    }
+  public IllegalTransactionStateException(String msg) {
+    super(msg);
+  }
 
 }

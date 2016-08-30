@@ -21,9 +21,9 @@ package org.jfaster.mango.base.logging;
  */
 public class ConsoleLoggerFactory extends InternalLoggerFactory {
 
-    @Override
-    protected InternalLogger newInstance(String name) {
-        return new ConsoleLogger(name);
-    }
+  @Override
+  protected InternalLogger newInstance(String name) {
+    return new ConsoleLogger(name);
+  }
 
 }

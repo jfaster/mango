@@ -24,54 +24,54 @@ import com.google.common.base.Objects;
  */
 public class Account {
 
-    private int id;
-    private int balance;
+  private int id;
+  private int balance;
 
-    public Account() {
-    }
+  public Account() {
+  }
 
-    public Account(int id, int balance) {
-        this.id = id;
-        this.balance = balance;
-    }
+  public Account(int id, int balance) {
+    this.id = id;
+    this.balance = balance;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Account other = (Account) obj;
-        return Objects.equal(this.id, other.id)
-                && Objects.equal(this.balance, other.balance);
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final Account other = (Account) obj;
+    return Objects.equal(this.id, other.id)
+        && Objects.equal(this.balance, other.balance);
+  }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("balance", balance).toString();
-    }
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("id", id).add("balance", balance).toString();
+  }
 
-    public void add(int num) {
-        balance += num;
-    }
+  public void add(int num) {
+    balance += num;
+  }
 
-    public void sub(int num) {
-        balance -= num;
-    }
+  public void sub(int num) {
+    balance -= num;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public int getBalance() {
-        return balance;
-    }
+  public int getBalance() {
+    return balance;
+  }
 
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
+  public void setBalance(int balance) {
+    this.balance = balance;
+  }
 }

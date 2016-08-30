@@ -28,11 +28,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface SQL {
 
-    /**
-     * 指明要执行的SQL语句
-     *
-     * @return
-     */
-    String value();
+  /**
+   * 指明要执行的SQL语句
+   *
+   * @return
+   */
+  String value();
 
 }

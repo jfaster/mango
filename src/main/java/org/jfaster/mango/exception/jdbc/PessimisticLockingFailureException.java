@@ -24,12 +24,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class PessimisticLockingFailureException extends ConcurrencyFailureException {
 
-    public PessimisticLockingFailureException(String msg) {
-        super(msg);
-    }
+  public PessimisticLockingFailureException(String msg) {
+    super(msg);
+  }
 
-    public PessimisticLockingFailureException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public PessimisticLockingFailureException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

@@ -25,31 +25,31 @@ import javax.sql.DataSource;
  */
 public class SimpleDataSourceFactory implements DataSourceFactory {
 
-    private DataSource dataSource;
+  private DataSource dataSource;
 
-    public SimpleDataSourceFactory() {
-    }
+  public SimpleDataSourceFactory() {
+  }
 
-    public SimpleDataSourceFactory(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+  public SimpleDataSourceFactory(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
 
-    @Override
-    public DataSource getMasterDataSource(String database) {
-        return dataSource;
-    }
+  @Override
+  public DataSource getMasterDataSource(String database) {
+    return dataSource;
+  }
 
-    @Override
-    public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
-        return dataSource;
-    }
+  @Override
+  public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
+    return dataSource;
+  }
 
-    public DataSource getDataSource() {
-        return dataSource;
-    }
+  public DataSource getDataSource() {
+    return dataSource;
+  }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+  public void setDataSource(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
 
 }

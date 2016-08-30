@@ -21,10 +21,10 @@ package org.jfaster.mango.base.sql;
  */
 public enum OperatorType {
 
-    QUERY,
+  QUERY,
 
-    UPDATE,
+  UPDATE,
 
-    BATCHUPDATE,
+  BATCHUPDATE,
 
 }

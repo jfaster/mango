@@ -33,63 +33,63 @@ import java.lang.reflect.Type;
  */
 public class FunctionalGetterInvoker extends MethodNamedObject implements GetterInvoker {
 
-    private GetterFunction function;
-    private Type returnType;
-    private Class<?> returnRawType;
+  private GetterFunction function;
+  private Type returnType;
+  private Class<?> returnRawType;
 
-    private FunctionalGetterInvoker(String name, Method method) {
-        super(name, method);
-        Getter getterAnno = method.getAnnotation(Getter.class);
+  private FunctionalGetterInvoker(String name, Method method) {
+    super(name, method);
+    Getter getterAnno = method.getAnnotation(Getter.class);
 
-        TypeToken<?> returnToken = TypeToken.of(method.getGenericReturnType());
-        if (getterAnno != null) { // 启用函数式调用功能
-            Class<? extends GetterFunction<?, ?>> funcClass = getterAnno.value();
-            function = Reflection.instantiateClass(funcClass);
+    TypeToken<?> returnToken = TypeToken.of(method.getGenericReturnType());
+    if (getterAnno != null) { // 启用函数式调用功能
+      Class<? extends GetterFunction<?, ?>> funcClass = getterAnno.value();
+      function = Reflection.instantiateClass(funcClass);
 
-            TokenTuple tokenTuple = TypeToken.of(funcClass).resolveFatherClassTuple(GetterFunction.class);
-            TypeToken<?> inputToken = tokenTuple.getFirst();
-            TypeToken<?> outputToken = tokenTuple.getSecond();
+      TokenTuple tokenTuple = TypeToken.of(funcClass).resolveFatherClassTuple(GetterFunction.class);
+      TypeToken<?> inputToken = tokenTuple.getFirst();
+      TypeToken<?> outputToken = tokenTuple.getSecond();
 
-            TypeToken<?> wrapReturnToken = returnToken.wrap();
-            if (!inputToken.isAssignableFrom(wrapReturnToken)) {
-                throw new ClassCastException("function[" + function.getClass() + "] " +
-                        "on method[" + method + "] error, function's inputType[" + inputToken.getType() + "] " +
-                        "must be assignable from method's returnType[" + returnToken.getType() + "]");
-            }
-            returnToken = outputToken;
-        }
-        returnType = returnToken.getType();
-        returnRawType = returnToken.getRawType();
+      TypeToken<?> wrapReturnToken = returnToken.wrap();
+      if (!inputToken.isAssignableFrom(wrapReturnToken)) {
+        throw new ClassCastException("function[" + function.getClass() + "] " +
+            "on method[" + method + "] error, function's inputType[" + inputToken.getType() + "] " +
+            "must be assignable from method's returnType[" + returnToken.getType() + "]");
+      }
+      returnToken = outputToken;
     }
+    returnType = returnToken.getType();
+    returnRawType = returnToken.getRawType();
+  }
 
-    public static FunctionalGetterInvoker create(String name, Method method) {
-        return new FunctionalGetterInvoker(name, method);
-    }
+  public static FunctionalGetterInvoker create(String name, Method method) {
+    return new FunctionalGetterInvoker(name, method);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Object invoke(Object obj) {
-        try {
-            Object r = method.invoke(obj);
-            if (function != null) {
-                r = function.apply(r);
-            }
-            return r;
-        } catch (IllegalAccessException e) {
-            throw new UncheckedException(e.getMessage(), e.getCause());
-        } catch (InvocationTargetException e) {
-            throw new UncheckedException(e.getMessage(), e.getCause());
-        }
+  @SuppressWarnings("unchecked")
+  @Override
+  public Object invoke(Object obj) {
+    try {
+      Object r = method.invoke(obj);
+      if (function != null) {
+        r = function.apply(r);
+      }
+      return r;
+    } catch (IllegalAccessException e) {
+      throw new UncheckedException(e.getMessage(), e.getCause());
+    } catch (InvocationTargetException e) {
+      throw new UncheckedException(e.getMessage(), e.getCause());
     }
+  }
 
-    @Override
-    public Type getReturnType() {
-        return returnType;
-    }
+  @Override
+  public Type getReturnType() {
+    return returnType;
+  }
 
-    @Override
-    public Class<?> getReturnRawType() {
-        return returnRawType;
-    }
+  @Override
+  public Class<?> getReturnRawType() {
+    return returnRawType;
+  }
 
 }

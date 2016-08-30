@@ -34,51 +34,52 @@ import org.junit.rules.ExpectedException;
  */
 public class IllegalStateExceptionTest {
 
-    private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
-    static {
-        mango.setDefaultLazyInit(true);
-    }
+  private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  static {
+    mango.setDefaultLazyInit(true);
+  }
 
-    @Test
-    public void test() {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("dao interface expected one @DB annotation but not found");
-        mango.create(Dao.class);
-    }
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public void test2() {
-        thrown.expect(DescriptionException.class);
-        thrown.expectMessage("each method expected one @SQL annotation but not found");
-        Dao2 dao = mango.create(Dao2.class, new LocalCacheHandler());
-        dao.add();
-    }
+  @Test
+  public void test() {
+    thrown.expect(IllegalStateException.class);
+    thrown.expectMessage("dao interface expected one @DB annotation but not found");
+    mango.create(Dao.class);
+  }
 
-    @Test
-    public void test3() {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("if use cache, each method expected one or more " +
-                "@CacheBy annotation on parameter but found 0");
-        Dao3 dao = mango.create(Dao3.class, new LocalCacheHandler());
-        dao.add();
-    }
+  @Test
+  public void test2() {
+    thrown.expect(DescriptionException.class);
+    thrown.expectMessage("each method expected one @SQL annotation but not found");
+    Dao2 dao = mango.create(Dao2.class, new LocalCacheHandler());
+    dao.add();
+  }
 
-    static interface Dao {
-    }
+  @Test
+  public void test3() {
+    thrown.expect(IllegalStateException.class);
+    thrown.expectMessage("if use cache, each method expected one or more " +
+        "@CacheBy annotation on parameter but found 0");
+    Dao3 dao = mango.create(Dao3.class, new LocalCacheHandler());
+    dao.add();
+  }
 
-    @DB
-    static interface Dao2 {
-        public int add();
-    }
+  static interface Dao {
+  }
 
-    @DB
-    @Cache(prefix = "dao3_", expire = Day.class)
-    static interface Dao3 {
-        @SQL("insert into ...")
-        public int add();
-    }
+  @DB
+  static interface Dao2 {
+    public int add();
+  }
+
+  @DB
+  @Cache(prefix = "dao3_", expire = Day.class)
+  static interface Dao3 {
+    @SQL("insert into ...")
+    public int add();
+  }
 
 }

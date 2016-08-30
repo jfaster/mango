@@ -26,29 +26,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class TypesTest {
 
-    @Test
-    public void testIsAssignable() throws Exception {
-        assertThat(Types.isAssignable(int.class, Integer.class), is(true));
-        assertThat(Types.isAssignable(Integer.class, Integer.class), is(true));
-        assertThat(Types.isAssignable(Integer.class, int.class), is(true));
-        assertThat(Types.isAssignable(int.class, int.class), is(true));
+  @Test
+  public void testIsAssignable() throws Exception {
+    assertThat(Types.isAssignable(int.class, Integer.class), is(true));
+    assertThat(Types.isAssignable(Integer.class, Integer.class), is(true));
+    assertThat(Types.isAssignable(Integer.class, int.class), is(true));
+    assertThat(Types.isAssignable(int.class, int.class), is(true));
 
-        assertThat(Types.isAssignable(int.class, long.class), is(false));
-        assertThat(Types.isAssignable(Integer.class, Long.class), is(false));
+    assertThat(Types.isAssignable(int.class, long.class), is(false));
+    assertThat(Types.isAssignable(Integer.class, Long.class), is(false));
 
-        assertThat(Types.isAssignable(A.class, B.class), is(true));
-        assertThat(Types.isAssignable(A.class, A.class), is(true));
-        assertThat(Types.isAssignable(B.class, B.class), is(true));
-        assertThat(Types.isAssignable(B.class, A.class), is(false));
+    assertThat(Types.isAssignable(A.class, B.class), is(true));
+    assertThat(Types.isAssignable(A.class, A.class), is(true));
+    assertThat(Types.isAssignable(B.class, B.class), is(true));
+    assertThat(Types.isAssignable(B.class, A.class), is(false));
 
-    }
+  }
 
-    static class A {
+  static class A {
 
-    }
+  }
 
-    static class B extends A {
+  static class B extends A {
 
-    }
+  }
 
 }

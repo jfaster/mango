@@ -21,23 +21,23 @@ package org.jfaster.mango.jdbc;
  */
 public class GeneratedKeyHolder {
 
-    private Number key;
+  private Number key;
 
-    private Class<? extends Number> keyClass;
+  private Class<? extends Number> keyClass;
 
-    public GeneratedKeyHolder(Class<? extends Number> keyClass) {
-        this.keyClass = keyClass;
-    }
+  public GeneratedKeyHolder(Class<? extends Number> keyClass) {
+    this.keyClass = keyClass;
+  }
 
-    public Number getKey() {
-        return key;
-    }
+  public Number getKey() {
+    return key;
+  }
 
-    public void setKey(Object key) {
-        this.key = Number.class.cast(key);
-    }
+  public void setKey(Object key) {
+    this.key = Number.class.cast(key);
+  }
 
-    public Class<? extends Number> getKeyClass() {
-        return keyClass;
-    }
+  public Class<? extends Number> getKeyClass() {
+    return keyClass;
+  }
 }

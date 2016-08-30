@@ -35,33 +35,33 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class LongListToStringFunctionTest {
 
-    @Test
-    public void testApply() throws Exception {
-        A a = new A();
-        Method m = A.class.getDeclaredMethod("getX");
-        GetterInvoker invoker = FunctionalGetterInvoker.create("x", m);
+  @Test
+  public void testApply() throws Exception {
+    A a = new A();
+    Method m = A.class.getDeclaredMethod("getX");
+    GetterInvoker invoker = FunctionalGetterInvoker.create("x", m);
 
-        a.setX(Lists.newArrayList(1000000000000000L, 2l, 3L));
-        assertThat((String) invoker.invoke(a), is("1000000000000000,2,3"));
+    a.setX(Lists.newArrayList(1000000000000000L, 2l, 3L));
+    assertThat((String) invoker.invoke(a), is("1000000000000000,2,3"));
 
-        a.setX(null);
-        assertThat(invoker.invoke(a), nullValue());
+    a.setX(null);
+    assertThat(invoker.invoke(a), nullValue());
 
-        a.setX(new ArrayList<Long>());
-        assertThat((String) invoker.invoke(a), is(""));
+    a.setX(new ArrayList<Long>());
+    assertThat((String) invoker.invoke(a), is(""));
+  }
+
+  static class A {
+    private List<Long> x;
+
+    @Getter(LongListToStringFunction.class)
+    List<Long> getX() {
+      return x;
     }
 
-    static class A {
-        private List<Long> x;
-
-        @Getter(LongListToStringFunction.class)
-        List<Long> getX() {
-            return x;
-        }
-
-        void setX(List<Long> x) {
-            this.x = x;
-        }
+    void setX(List<Long> x) {
+      this.x = x;
     }
+  }
 
 }

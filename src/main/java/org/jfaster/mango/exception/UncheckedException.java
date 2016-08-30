@@ -23,8 +23,8 @@ package org.jfaster.mango.exception;
  */
 public class UncheckedException extends MangoException {
 
-    public UncheckedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public UncheckedException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
 }

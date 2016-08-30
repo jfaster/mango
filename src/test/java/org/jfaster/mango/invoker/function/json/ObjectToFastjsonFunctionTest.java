@@ -34,131 +34,131 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class ObjectToFastjsonFunctionTest {
 
-    @Test
-    public void testApply() throws Exception {
-        A a = new A();
-        List<Integer> list = Lists.newArrayList(1, 2, 3);
-        a.setList(list);
-        Method m = A.class.getDeclaredMethod("getList");
-        GetterInvoker invoker = FunctionalGetterInvoker.create("list", m);
-        String r = (String) invoker.invoke(a);
-        assertThat(r, is(JSON.toJSONString(list)));
+  @Test
+  public void testApply() throws Exception {
+    A a = new A();
+    List<Integer> list = Lists.newArrayList(1, 2, 3);
+    a.setList(list);
+    Method m = A.class.getDeclaredMethod("getList");
+    GetterInvoker invoker = FunctionalGetterInvoker.create("list", m);
+    String r = (String) invoker.invoke(a);
+    assertThat(r, is(JSON.toJSONString(list)));
 
-        B b = new B(3, 5);
-        a.setB(b);
-        Method m2 = A.class.getDeclaredMethod("getB");
-        GetterInvoker invoker2 = FunctionalGetterInvoker.create("b", m2);
-        String r2 = (String) invoker2.invoke(a);
-        assertThat(r2, is(JSON.toJSONString(b)));
+    B b = new B(3, 5);
+    a.setB(b);
+    Method m2 = A.class.getDeclaredMethod("getB");
+    GetterInvoker invoker2 = FunctionalGetterInvoker.create("b", m2);
+    String r2 = (String) invoker2.invoke(a);
+    assertThat(r2, is(JSON.toJSONString(b)));
+  }
+
+  static class A {
+    private List<Integer> list;
+    private B b;
+
+    @Getter(ObjectToFastjsonFunction.class)
+    List<Integer> getList() {
+      return list;
     }
 
-    static class A {
-        private List<Integer> list;
-        private B b;
-
-        @Getter(ObjectToFastjsonFunction.class)
-        List<Integer> getList() {
-            return list;
-        }
-
-        void setList(List<Integer> list) {
-            this.list = list;
-        }
-
-        @Getter(ObjectToFastjsonFunction.class)
-        B getB() {
-            return b;
-        }
-
-        void setB(B b) {
-            this.b = b;
-        }
+    void setList(List<Integer> list) {
+      this.list = list;
     }
 
-    public static class B {
-        private int x;
-        private int y;
-
-        public B(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public void setX(int x) {
-            this.x = x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public void setY(int y) {
-            this.y = y;
-        }
+    @Getter(ObjectToFastjsonFunction.class)
+    B getB() {
+      return b;
     }
 
+    void setB(B b) {
+      this.b = b;
+    }
+  }
 
-    @Test
-    public void testApplyArray() throws Exception {
-        G g = new G();
+  public static class B {
+    private int x;
+    private int y;
 
-        int[] a = new int[] {2, 3, 4};
-        g.setA(a);
-        Method m = G.class.getDeclaredMethod("getA");
-        GetterInvoker invoker = FunctionalGetterInvoker.create("a", m);
-        String r = (String) invoker.invoke(g);
-        assertThat(r, is(JSON.toJSONString(a)));
-
-        B[] b = new B[] {new B(4, 5), new B(7, 8)};
-        g.setB(b);
-        Method m2 = G.class.getDeclaredMethod("getB");
-        GetterInvoker invoker2 = FunctionalGetterInvoker.create("b", m2);
-        String r2 = (String) invoker2.invoke(g);
-        assertThat(r2, is(JSON.toJSONString(b)));
-
-        Integer[] c = new Integer[] {1, 9, 5};
-        g.setC(c);
-        Method m3 = G.class.getDeclaredMethod("getC");
-        GetterInvoker invoker3 = FunctionalGetterInvoker.create("c", m3);
-        String r3 = (String) invoker3.invoke(g);
-        assertThat(r3, is(JSON.toJSONString(c)));
+    public B(int x, int y) {
+      this.x = x;
+      this.y = y;
     }
 
-    static class G {
-        private int[] a;
-        private B[] b;
-        private Integer[] c;
-
-        @Getter(ObjectToFastjsonFunction.class)
-        int[] getA() {
-            return a;
-        }
-
-        void setA(int[] a) {
-            this.a = a;
-        }
-
-        @Getter(ObjectToFastjsonFunction.class)
-        B[] getB() {
-            return b;
-        }
-
-        void setB(B[] b) {
-            this.b = b;
-        }
-
-        @Getter(ObjectToFastjsonFunction.class)
-        Integer[] getC() {
-            return c;
-        }
-
-        void setC(Integer[] c) {
-            this.c = c;
-        }
+    public int getX() {
+      return x;
     }
+
+    public void setX(int x) {
+      this.x = x;
+    }
+
+    public int getY() {
+      return y;
+    }
+
+    public void setY(int y) {
+      this.y = y;
+    }
+  }
+
+
+  @Test
+  public void testApplyArray() throws Exception {
+    G g = new G();
+
+    int[] a = new int[]{2, 3, 4};
+    g.setA(a);
+    Method m = G.class.getDeclaredMethod("getA");
+    GetterInvoker invoker = FunctionalGetterInvoker.create("a", m);
+    String r = (String) invoker.invoke(g);
+    assertThat(r, is(JSON.toJSONString(a)));
+
+    B[] b = new B[]{new B(4, 5), new B(7, 8)};
+    g.setB(b);
+    Method m2 = G.class.getDeclaredMethod("getB");
+    GetterInvoker invoker2 = FunctionalGetterInvoker.create("b", m2);
+    String r2 = (String) invoker2.invoke(g);
+    assertThat(r2, is(JSON.toJSONString(b)));
+
+    Integer[] c = new Integer[]{1, 9, 5};
+    g.setC(c);
+    Method m3 = G.class.getDeclaredMethod("getC");
+    GetterInvoker invoker3 = FunctionalGetterInvoker.create("c", m3);
+    String r3 = (String) invoker3.invoke(g);
+    assertThat(r3, is(JSON.toJSONString(c)));
+  }
+
+  static class G {
+    private int[] a;
+    private B[] b;
+    private Integer[] c;
+
+    @Getter(ObjectToFastjsonFunction.class)
+    int[] getA() {
+      return a;
+    }
+
+    void setA(int[] a) {
+      this.a = a;
+    }
+
+    @Getter(ObjectToFastjsonFunction.class)
+    B[] getB() {
+      return b;
+    }
+
+    void setB(B[] b) {
+      this.b = b;
+    }
+
+    @Getter(ObjectToFastjsonFunction.class)
+    Integer[] getC() {
+      return c;
+    }
+
+    void setC(Integer[] c) {
+      this.c = c;
+    }
+  }
 
 }

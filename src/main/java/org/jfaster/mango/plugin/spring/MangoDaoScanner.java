@@ -43,62 +43,62 @@ import java.util.List;
  */
 final public class MangoDaoScanner implements BeanFactoryPostProcessor {
 
-    private final static InternalLogger logger = InternalLoggerFactory.getInstance(MangoDaoScanner.class);
+  private final static InternalLogger logger = InternalLoggerFactory.getInstance(MangoDaoScanner.class);
 
-    private static final List<String> DAO_ENDS = Arrays.asList("Dao", "DAO");
+  private static final List<String> DAO_ENDS = Arrays.asList("Dao", "DAO");
 
-    List<String> locationPatterns = new ArrayList<String>();
+  List<String> locationPatterns = new ArrayList<String>();
 
-    Class<?> factoryBeanClass = DefaultMangoFactoryBean.class;
+  Class<?> factoryBeanClass = DefaultMangoFactoryBean.class;
 
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        DefaultListableBeanFactory dlbf = (DefaultListableBeanFactory) beanFactory;
-        for (Class<?> daoClass : findMangoDaoClasses()) {
-            GenericBeanDefinition bf = new GenericBeanDefinition();
-            bf.setBeanClassName(daoClass.getName());
-            MutablePropertyValues pvs = bf.getPropertyValues();
-            pvs.addPropertyValue("daoClass", daoClass);
-            bf.setBeanClass(factoryBeanClass);
-            bf.setPropertyValues(pvs);
-            bf.setLazyInit(false);
-            dlbf.registerBeanDefinition(daoClass.getName(), bf);
+  @Override
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    DefaultListableBeanFactory dlbf = (DefaultListableBeanFactory) beanFactory;
+    for (Class<?> daoClass : findMangoDaoClasses()) {
+      GenericBeanDefinition bf = new GenericBeanDefinition();
+      bf.setBeanClassName(daoClass.getName());
+      MutablePropertyValues pvs = bf.getPropertyValues();
+      pvs.addPropertyValue("daoClass", daoClass);
+      bf.setBeanClass(factoryBeanClass);
+      bf.setPropertyValues(pvs);
+      bf.setLazyInit(false);
+      dlbf.registerBeanDefinition(daoClass.getName(), bf);
+    }
+  }
+
+  private List<Class<?>> findMangoDaoClasses() {
+    try {
+      List<Class<?>> daos = new ArrayList<Class<?>>();
+      ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+      MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
+      for (String locationPattern : locationPatterns) {
+        Resource[] rs = resourcePatternResolver.getResources(locationPattern);
+        for (Resource r : rs) {
+          MetadataReader reader = metadataReaderFactory.getMetadataReader(r);
+          AnnotationMetadata annotationMD = reader.getAnnotationMetadata();
+          if (annotationMD.hasAnnotation(DB.class.getName())) {
+            ClassMetadata clazzMD = reader.getClassMetadata();
+            daos.add(Class.forName(clazzMD.getClassName()));
+          }
         }
+      }
+      return daos;
+    } catch (Exception e) {
+      throw new IllegalStateException(e.getMessage(), e);
     }
+  }
 
-    private List<Class<?>> findMangoDaoClasses() {
-        try {
-            List<Class<?>> daos = new ArrayList<Class<?>>();
-            ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-            MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
-            for (String locationPattern : locationPatterns) {
-                Resource[] rs = resourcePatternResolver.getResources(locationPattern);
-                for (Resource r : rs) {
-                    MetadataReader reader = metadataReaderFactory.getMetadataReader(r);
-                    AnnotationMetadata annotationMD = reader.getAnnotationMetadata();
-                    if (annotationMD.hasAnnotation(DB.class.getName())) {
-                        ClassMetadata clazzMD = reader.getClassMetadata();
-                        daos.add(Class.forName(clazzMD.getClassName()));
-                    }
-                }
-            }
-            return daos;
-        } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
+  public void setPackages(List<String> packages) {
+    for (String p : packages) {
+      for (String daoEnd : DAO_ENDS) {
+        String locationPattern = "classpath*:" + p.replaceAll("\\.", "/") + "/**/*" + daoEnd + ".class";
+        logger.info("trnas package[" + p + "] to locationPattern[" + locationPattern + "]");
+        locationPatterns.add(locationPattern);
+      }
     }
+  }
 
-    public void setPackages(List<String> packages) {
-        for (String p : packages) {
-            for (String daoEnd : DAO_ENDS) {
-                String locationPattern = "classpath*:" + p.replaceAll("\\.", "/") + "/**/*" + daoEnd + ".class";
-                logger.info("trnas package[" + p + "] to locationPattern[" + locationPattern + "]");
-                locationPatterns.add(locationPattern);
-            }
-        }
-    }
-
-    public void setFactoryBeanClass(Class<?> factoryBeanClass) {
-        this.factoryBeanClass = factoryBeanClass;
-    }
+  public void setFactoryBeanClass(Class<?> factoryBeanClass) {
+    this.factoryBeanClass = factoryBeanClass;
+  }
 }

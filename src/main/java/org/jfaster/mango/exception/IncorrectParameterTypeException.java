@@ -23,7 +23,7 @@ package org.jfaster.mango.exception;
  */
 public class IncorrectParameterTypeException extends MangoException {
 
-    public IncorrectParameterTypeException(String message) {
-        super(message);
-    }
+  public IncorrectParameterTypeException(String message) {
+    super(message);
+  }
 }

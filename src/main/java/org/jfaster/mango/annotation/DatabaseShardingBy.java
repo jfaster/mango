@@ -29,14 +29,14 @@ import java.lang.annotation.*;
 @Documented
 public @interface DatabaseShardingBy {
 
-    /**
-     * 如果value等于""，直接取被修饰的参数<br>
-     * 如果value不等于""，取被修饰参数的value属性
-     *
-     * @return
-     */
-    String value() default "";
+  /**
+   * 如果value等于""，直接取被修饰的参数<br>
+   * 如果value不等于""，取被修饰参数的value属性
+   *
+   * @return
+   */
+  String value() default "";
 
-    int type() default 0;
+  int type() default 0;
 
 }

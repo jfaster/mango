@@ -23,12 +23,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class DataIntegrityViolationException extends NonTransientDataAccessException {
 
-    public DataIntegrityViolationException(String msg) {
-        super(msg);
-    }
+  public DataIntegrityViolationException(String msg) {
+    super(msg);
+  }
 
-    public DataIntegrityViolationException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public DataIntegrityViolationException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

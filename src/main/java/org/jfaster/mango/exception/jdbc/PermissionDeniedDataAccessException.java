@@ -21,12 +21,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class PermissionDeniedDataAccessException extends NonTransientDataAccessException {
 
-    public PermissionDeniedDataAccessException(String msg) {
-        super(msg);
-    }
+  public PermissionDeniedDataAccessException(String msg) {
+    super(msg);
+  }
 
-    public PermissionDeniedDataAccessException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public PermissionDeniedDataAccessException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

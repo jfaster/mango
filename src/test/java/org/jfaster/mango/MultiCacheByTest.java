@@ -38,70 +38,70 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class MultiCacheByTest {
 
-    private final static DataSource ds = DataSourceConfig.getDataSource();
-    private final static Mango mango = Mango.newInstance(ds);
+  private final static DataSource ds = DataSourceConfig.getDataSource();
+  private final static Mango mango = Mango.newInstance(ds);
 
-    @Before
-    public void before() throws Exception {
-        Connection conn = ds.getConnection();
-        Table.POSITION.load(conn);
-        conn.close();
-    }
+  @Before
+  public void before() throws Exception {
+    Connection conn = ds.getConnection();
+    Table.POSITION.load(conn);
+    conn.close();
+  }
 
 
-    @Test
-    public void test() throws Exception {
-        LocalCacheHandler cacheHandler = new LocalCacheHandler();
-        PositionDao dao = mango.create(PositionDao.class, cacheHandler);
-        Position p = createRandomPosition();
-        dao.insert(p);
-        String key = getKey(p);
-        assertThat(cacheHandler.get(key), nullValue());
-        assertThat(dao.get(p.getX(), p.getY()), equalTo(p));
-        assertThat((Position) cacheHandler.get(key), equalTo(p));
-        assertThat(dao.get(p.getX(), p.getY()), equalTo(p));
+  @Test
+  public void test() throws Exception {
+    LocalCacheHandler cacheHandler = new LocalCacheHandler();
+    PositionDao dao = mango.create(PositionDao.class, cacheHandler);
+    Position p = createRandomPosition();
+    dao.insert(p);
+    String key = getKey(p);
+    assertThat(cacheHandler.get(key), nullValue());
+    assertThat(dao.get(p.getX(), p.getY()), equalTo(p));
+    assertThat((Position) cacheHandler.get(key), equalTo(p));
+    assertThat(dao.get(p.getX(), p.getY()), equalTo(p));
 
-        p.setV(9527);
-        assertThat(dao.update(p), is(1));
-        assertThat(cacheHandler.get(key), nullValue());
-        assertThat(dao.get(p.getX(), p.getY()), equalTo(p));
-        assertThat((Position) cacheHandler.get(key), equalTo(p));
+    p.setV(9527);
+    assertThat(dao.update(p), is(1));
+    assertThat(cacheHandler.get(key), nullValue());
+    assertThat(dao.get(p.getX(), p.getY()), equalTo(p));
+    assertThat((Position) cacheHandler.get(key), equalTo(p));
 
-        dao.delete(p.getX(), p.getY());
-        assertThat(cacheHandler.get(key), nullValue());
-        assertThat(dao.get(p.getX(), p.getY()), nullValue());
-    }
+    dao.delete(p.getX(), p.getY());
+    assertThat(cacheHandler.get(key), nullValue());
+    assertThat(dao.get(p.getX(), p.getY()), nullValue());
+  }
 
-    @DB(table = "pos")
-    @Cache(prefix = "pos", expire = Day.class)
-    interface PositionDao {
+  @DB(table = "pos")
+  @Cache(prefix = "pos", expire = Day.class)
+  interface PositionDao {
 
-        @CacheIgnored
-        @SQL("insert into #table(x, y, v) values(:x, :y, :v)")
-        void insert(@CacheBy("x, y") Position p);
+    @CacheIgnored
+    @SQL("insert into #table(x, y, v) values(:x, :y, :v)")
+    void insert(@CacheBy("x, y") Position p);
 
-        @SQL("delete from #table where x = :1 and y = :2")
-        boolean delete(@CacheBy int x, @CacheBy int y);
+    @SQL("delete from #table where x = :1 and y = :2")
+    boolean delete(@CacheBy int x, @CacheBy int y);
 
-        @SQL("update #table set v = :v where x = :x and y = :y")
-        int update(@CacheBy("x,y") Position p);
+    @SQL("update #table set v = :v where x = :x and y = :y")
+    int update(@CacheBy("x,y") Position p);
 
-        @SQL("select x, y, v from #table where x = :1 and y = :2")
-        Position get(@CacheBy int x, @CacheBy int y);
+    @SQL("select x, y, v from #table where x = :1 and y = :2")
+    Position get(@CacheBy int x, @CacheBy int y);
 
-    }
+  }
 
-    private Position createRandomPosition() {
-        Random r = new Random();
-        int x = r.nextInt(100000);
-        int y = r.nextInt(100000);
-        int v = r.nextInt(100000);
-        return new Position(x, y, v);
-    }
+  private Position createRandomPosition() {
+    Random r = new Random();
+    int x = r.nextInt(100000);
+    int y = r.nextInt(100000);
+    int v = r.nextInt(100000);
+    return new Position(x, y, v);
+  }
 
-    private String getKey(Position p) {
-        return "pos_" + p.getX() + "_" + p.getY();
-    }
+  private String getKey(Position p) {
+    return "pos_" + p.getX() + "_" + p.getY();
+  }
 
 }
 

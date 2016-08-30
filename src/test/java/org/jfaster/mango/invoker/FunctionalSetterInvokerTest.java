@@ -39,331 +39,331 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FunctionalSetterInvokerTest {
 
-    public static class StringToIntegerFunction implements SetterFunction<String, Integer> {
+  public static class StringToIntegerFunction implements SetterFunction<String, Integer> {
 
-        @Nullable
-        @Override
-        public Integer apply(@Nullable String input) {
-            return Integer.valueOf(input);
-        }
-
+    @Nullable
+    @Override
+    public Integer apply(@Nullable String input) {
+      return Integer.valueOf(input);
     }
 
-    static class A {
-        private int x;
-        private int y;
+  }
 
-        int getX() {
-            return x;
-        }
+  static class A {
+    private int x;
+    private int y;
 
-        void setX(int x) {
-            this.x = x;
-        }
-        
-        int getY() {
-            return y;
-        }
-
-        @Setter(StringToIntegerFunction.class)
-        void setY(int y) {
-            this.y = y;
-        }
+    int getX() {
+      return x;
     }
 
-    @Test
-    public void testStringToInt() throws Exception {
-        Method method = A.class.getDeclaredMethod("setX", int.class);
-        A a = new A();
-        SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(int.class.equals(invoker.getParameterType()), is(true));
-        assertThat(int.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(a, 100);
-        assertThat(a.getX() , is(100));
-
-        method = A.class.getDeclaredMethod("setY", int.class);
-        a = new A();
-        invoker = FunctionalSetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getParameterType()), is(true));
-        assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(a, "100");
-        assertThat(a.getY() , is(100));
+    void setX(int x) {
+      this.x = x;
     }
 
-    static class B {
-        private Integer x;
-        private Integer y;
-
-        Integer getX() {
-            return x;
-        }
-
-        void setX(Integer x) {
-            this.x = x;
-        }
-
-        Integer getY() {
-            return y;
-        }
-
-        @Setter(StringToIntegerFunction.class)
-        void setY(Integer y) {
-            this.y = y;
-        }
+    int getY() {
+      return y;
     }
 
-    @Test
-    public void testStringToInteger() throws Exception {
-        Method method = B.class.getDeclaredMethod("setX", Integer.class);
-        B b = new B();
-        SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(Integer.class.equals(invoker.getParameterType()), is(true));
-        assertThat(Integer.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(b, 100);
-        assertThat(b.getX() , is(100));
+    @Setter(StringToIntegerFunction.class)
+    void setY(int y) {
+      this.y = y;
+    }
+  }
 
-        method = B.class.getDeclaredMethod("setY", Integer.class);
-        b = new B();
-        invoker = FunctionalSetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getParameterType()), is(true));
-        assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(b, "100");
-        assertThat(b.getY() , is(100));
+  @Test
+  public void testStringToInt() throws Exception {
+    Method method = A.class.getDeclaredMethod("setX", int.class);
+    A a = new A();
+    SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(int.class.equals(invoker.getParameterType()), is(true));
+    assertThat(int.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(a, 100);
+    assertThat(a.getX(), is(100));
+
+    method = A.class.getDeclaredMethod("setY", int.class);
+    a = new A();
+    invoker = FunctionalSetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getParameterType()), is(true));
+    assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(a, "100");
+    assertThat(a.getY(), is(100));
+  }
+
+  static class B {
+    private Integer x;
+    private Integer y;
+
+    Integer getX() {
+      return x;
     }
 
-    public static class IntegerToStringFunction implements SetterFunction<Integer, String> {
-
-        @Nullable
-        @Override
-        public String apply(@Nullable Integer input) {
-            return "xx" + input;
-        }
-
+    void setX(Integer x) {
+      this.x = x;
     }
 
-    static class C {
-        private String x;
-        private String y;
-
-        String getX() {
-            return x;
-        }
-
-        void setX(String x) {
-            this.x = x;
-        }
-
-        String getY() {
-            return y;
-        }
-
-        @Setter(IntegerToStringFunction.class)
-        void setY(String y) {
-            this.y = y;
-        }
+    Integer getY() {
+      return y;
     }
 
-    @Test
-    public void testIntegerToString() throws Exception {
-        Method method = C.class.getDeclaredMethod("setX", String.class);
-        C c = new C();
-        SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(String.class.equals(invoker.getParameterType()), is(true));
-        assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(c, "xx100");
-        assertThat(c.getX() , is("xx100"));
+    @Setter(StringToIntegerFunction.class)
+    void setY(Integer y) {
+      this.y = y;
+    }
+  }
 
-        method = C.class.getDeclaredMethod("setY", String.class);
-        c = new C();
-        invoker = FunctionalSetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(Integer.class.equals(invoker.getParameterType()), is(true));
-        assertThat(Integer.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(c, 100);
-        assertThat(c.getY() , is("xx100"));
+  @Test
+  public void testStringToInteger() throws Exception {
+    Method method = B.class.getDeclaredMethod("setX", Integer.class);
+    B b = new B();
+    SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(Integer.class.equals(invoker.getParameterType()), is(true));
+    assertThat(Integer.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(b, 100);
+    assertThat(b.getX(), is(100));
+
+    method = B.class.getDeclaredMethod("setY", Integer.class);
+    b = new B();
+    invoker = FunctionalSetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getParameterType()), is(true));
+    assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(b, "100");
+    assertThat(b.getY(), is(100));
+  }
+
+  public static class IntegerToStringFunction implements SetterFunction<Integer, String> {
+
+    @Nullable
+    @Override
+    public String apply(@Nullable Integer input) {
+      return "xx" + input;
     }
 
-    public static class StringToIntegerListFunction implements SetterFunction<String, List<Integer>> {
+  }
 
-        @Nullable
-        @Override
-        public List<Integer> apply(@Nullable String input) {
-            List<Integer> r = Lists.newArrayList();
-            for (String s : Splitter.on(",").split(input)) {
-                r.add(Integer.valueOf(s));
-            }
-            return r;
-        }
+  static class C {
+    private String x;
+    private String y;
 
+    String getX() {
+      return x;
     }
 
-    static class D {
-        private List<Integer> x;
-        private List<Integer> y;
-
-        List<Integer> getX() {
-            return x;
-        }
-
-        void setX(List<Integer> x) {
-            this.x = x;
-        }
-
-        List<Integer> getY() {
-            return y;
-        }
-
-        @Setter(StringToIntegerListFunction.class)
-        void setY(List<Integer> y) {
-            this.y = y;
-        }
+    void setX(String x) {
+      this.x = x;
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testStringToList() throws Exception {
-        Method method = D.class.getDeclaredMethod("setX", List.class);
-        D d = new D();
-        SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        Type type = new TypeToken<List<Integer>>() {}.getType();
-        assertThat(type.equals(invoker.getParameterType()), is(true));
-        assertThat(List.class.equals(invoker.getParameterRawType()), is(true));
-        List<Integer> x = Lists.newArrayList(1, 2);
-        invoker.invoke(d, x);
-        assertThat(d.getX().equals(x) , is(true));
-
-        method = D.class.getDeclaredMethod("setY", List.class);
-        d = new D();
-        invoker = FunctionalSetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getParameterType()), is(true));
-        assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(d, "1,2");
-        assertThat(d.getY().equals(x) , is(true));
+    String getY() {
+      return y;
     }
 
+    @Setter(IntegerToStringFunction.class)
+    void setY(String y) {
+      this.y = y;
+    }
+  }
 
+  @Test
+  public void testIntegerToString() throws Exception {
+    Method method = C.class.getDeclaredMethod("setX", String.class);
+    C c = new C();
+    SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(String.class.equals(invoker.getParameterType()), is(true));
+    assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(c, "xx100");
+    assertThat(c.getX(), is("xx100"));
 
-    static class E {
-        private String x;
+    method = C.class.getDeclaredMethod("setY", String.class);
+    c = new C();
+    invoker = FunctionalSetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(Integer.class.equals(invoker.getParameterType()), is(true));
+    assertThat(Integer.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(c, 100);
+    assertThat(c.getY(), is("xx100"));
+  }
 
-        String getX() {
-            return x;
-        }
+  public static class StringToIntegerListFunction implements SetterFunction<String, List<Integer>> {
 
-        @Setter(StringToIntegerFunction.class)
-        void setX(String x) {
-            this.x = x;
-        }
+    @Nullable
+    @Override
+    public List<Integer> apply(@Nullable String input) {
+      List<Integer> r = Lists.newArrayList();
+      for (String s : Splitter.on(",").split(input)) {
+        r.add(Integer.valueOf(s));
+      }
+      return r;
     }
 
+  }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  static class D {
+    private List<Integer> x;
+    private List<Integer> y;
 
-    @Test
-    public void testException() throws Exception {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalSetterInvokerTest$StringToIntegerFunction] on method[void org.jfaster.mango.invoker.FunctionalSetterInvokerTest$E.setX(java.lang.String)] error, method's parameterType[class java.lang.String] must be assignable from function's outputType[class java.lang.Integer]");
-        Method method = E.class.getDeclaredMethod("setX", String.class);
-        FunctionalSetterInvoker.create("x", method);
+    List<Integer> getX() {
+      return x;
     }
 
-    static class F {
-        private List<String> x;
-
-        List<String> getX() {
-            return x;
-        }
-
-        @Setter(StringToIntegerListFunction.class)
-        void setX(List<String> x) {
-            this.x = x;
-        }
+    void setX(List<Integer> x) {
+      this.x = x;
     }
 
-    @Test
-    public void testException2() throws Exception {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalSetterInvokerTest$StringToIntegerListFunction] on method[void org.jfaster.mango.invoker.FunctionalSetterInvokerTest$F.setX(java.util.List)] error, method's parameterType[java.util.List<java.lang.String>] must be assignable from function's outputType[java.util.List<java.lang.Integer>]");
-        Method method = F.class.getDeclaredMethod("setX", List.class);
-        FunctionalSetterInvoker.create("x", method);
+    List<Integer> getY() {
+      return y;
     }
 
-    public static class StringIntArrayFunction implements SetterFunction<String, int[]> {
+    @Setter(StringToIntegerListFunction.class)
+    void setY(List<Integer> y) {
+      this.y = y;
+    }
+  }
 
-        @Nullable
-        @Override
-        public int[] apply(@Nullable String input) {
-            List<Integer> r = Lists.newArrayList();
-            for (String s : Splitter.on(",").split(input)) {
-                r.add(Integer.valueOf(s));
-            }
-            return Ints.toArray(r);
-        }
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testStringToList() throws Exception {
+    Method method = D.class.getDeclaredMethod("setX", List.class);
+    D d = new D();
+    SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    Type type = new TypeToken<List<Integer>>() {
+    }.getType();
+    assertThat(type.equals(invoker.getParameterType()), is(true));
+    assertThat(List.class.equals(invoker.getParameterRawType()), is(true));
+    List<Integer> x = Lists.newArrayList(1, 2);
+    invoker.invoke(d, x);
+    assertThat(d.getX().equals(x), is(true));
+
+    method = D.class.getDeclaredMethod("setY", List.class);
+    d = new D();
+    invoker = FunctionalSetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getParameterType()), is(true));
+    assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(d, "1,2");
+    assertThat(d.getY().equals(x), is(true));
+  }
+
+
+  static class E {
+    private String x;
+
+    String getX() {
+      return x;
     }
 
-    static class G {
-        private int[] x;
-        private int[] y;
+    @Setter(StringToIntegerFunction.class)
+    void setX(String x) {
+      this.x = x;
+    }
+  }
 
-        int[] getX() {
-            return x;
-        }
 
-        void setX(int[] x) {
-            this.x = x;
-        }
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-        int[] getY() {
-            return y;
-        }
+  @Test
+  public void testException() throws Exception {
+    thrown.expect(ClassCastException.class);
+    thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalSetterInvokerTest$StringToIntegerFunction] on method[void org.jfaster.mango.invoker.FunctionalSetterInvokerTest$E.setX(java.lang.String)] error, method's parameterType[class java.lang.String] must be assignable from function's outputType[class java.lang.Integer]");
+    Method method = E.class.getDeclaredMethod("setX", String.class);
+    FunctionalSetterInvoker.create("x", method);
+  }
 
-        @Setter(StringIntArrayFunction.class)
-        void setY(int[] y) {
-            this.y = y;
-        }
+  static class F {
+    private List<String> x;
+
+    List<String> getX() {
+      return x;
     }
 
-    @Test
-    public void testIntArrayToString() throws Exception {
-        Method method = G.class.getDeclaredMethod("setX", int[].class);
-        G g = new G();
-        SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
-        assertThat(invoker.getName(), is("x"));
-        assertThat(int[].class.equals(invoker.getParameterType()), is(true));
-        assertThat(int[].class.equals(invoker.getParameterRawType()), is(true));
-        int[] x = new int[] {1, 2};
-        invoker.invoke(g, x);
-        assertThat(Arrays.toString(g.getX()).equals(Arrays.toString(x)), is(true));
+    @Setter(StringToIntegerListFunction.class)
+    void setX(List<String> x) {
+      this.x = x;
+    }
+  }
 
-        method = G.class.getDeclaredMethod("setY", int[].class);
-        g = new G();
-        invoker = FunctionalSetterInvoker.create("y", method);
-        assertThat(invoker.getName(), is("y"));
-        assertThat(String.class.equals(invoker.getParameterType()), is(true));
-        assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
-        invoker.invoke(g, "1,2");
-        assertThat(Arrays.toString(g.getY()).equals(Arrays.toString(x)), is(true));
+  @Test
+  public void testException2() throws Exception {
+    thrown.expect(ClassCastException.class);
+    thrown.expectMessage("function[class org.jfaster.mango.invoker.FunctionalSetterInvokerTest$StringToIntegerListFunction] on method[void org.jfaster.mango.invoker.FunctionalSetterInvokerTest$F.setX(java.util.List)] error, method's parameterType[java.util.List<java.lang.String>] must be assignable from function's outputType[java.util.List<java.lang.Integer>]");
+    Method method = F.class.getDeclaredMethod("setX", List.class);
+    FunctionalSetterInvoker.create("x", method);
+  }
+
+  public static class StringIntArrayFunction implements SetterFunction<String, int[]> {
+
+    @Nullable
+    @Override
+    public int[] apply(@Nullable String input) {
+      List<Integer> r = Lists.newArrayList();
+      for (String s : Splitter.on(",").split(input)) {
+        r.add(Integer.valueOf(s));
+      }
+      return Ints.toArray(r);
+    }
+  }
+
+  static class G {
+    private int[] x;
+    private int[] y;
+
+    int[] getX() {
+      return x;
     }
 
-    static class H {
-        private String x;
-
-        @Setter(StringToIntegerFunction.class)
-        String getX() {
-            return x;
-        }
-
-        void setX(String x) {
-            this.x = x;
-        }
+    void setX(int[] x) {
+      this.x = x;
     }
+
+    int[] getY() {
+      return y;
+    }
+
+    @Setter(StringIntArrayFunction.class)
+    void setY(int[] y) {
+      this.y = y;
+    }
+  }
+
+  @Test
+  public void testIntArrayToString() throws Exception {
+    Method method = G.class.getDeclaredMethod("setX", int[].class);
+    G g = new G();
+    SetterInvoker invoker = FunctionalSetterInvoker.create("x", method);
+    assertThat(invoker.getName(), is("x"));
+    assertThat(int[].class.equals(invoker.getParameterType()), is(true));
+    assertThat(int[].class.equals(invoker.getParameterRawType()), is(true));
+    int[] x = new int[]{1, 2};
+    invoker.invoke(g, x);
+    assertThat(Arrays.toString(g.getX()).equals(Arrays.toString(x)), is(true));
+
+    method = G.class.getDeclaredMethod("setY", int[].class);
+    g = new G();
+    invoker = FunctionalSetterInvoker.create("y", method);
+    assertThat(invoker.getName(), is("y"));
+    assertThat(String.class.equals(invoker.getParameterType()), is(true));
+    assertThat(String.class.equals(invoker.getParameterRawType()), is(true));
+    invoker.invoke(g, "1,2");
+    assertThat(Arrays.toString(g.getY()).equals(Arrays.toString(x)), is(true));
+  }
+
+  static class H {
+    private String x;
+
+    @Setter(StringToIntegerFunction.class)
+    String getX() {
+      return x;
+    }
+
+    void setX(String x) {
+      this.x = x;
+    }
+  }
 
 }

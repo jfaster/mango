@@ -23,31 +23,30 @@ package org.jfaster.mango.exception;
  */
 public abstract class MangoException extends RuntimeException {
 
-    public MangoException(String msg) {
-        super(msg);
-    }
+  public MangoException(String msg) {
+    super(msg);
+  }
 
-    public MangoException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public MangoException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
-    @Override
-    public String getMessage() {
-        return buildMessage(super.getMessage(), getCause());
-    }
+  @Override
+  public String getMessage() {
+    return buildMessage(super.getMessage(), getCause());
+  }
 
-    private String buildMessage(String message, Throwable cause) {
-        if (cause != null) {
-            StringBuilder sb = new StringBuilder();
-            if (message != null) {
-                sb.append(message).append("; ");
-            }
-            sb.append("caused by: ").append(cause.getMessage());
-            return sb.toString();
-        }
-        else {
-            return message;
-        }
+  private String buildMessage(String message, Throwable cause) {
+    if (cause != null) {
+      StringBuilder sb = new StringBuilder();
+      if (message != null) {
+        sb.append(message).append("; ");
+      }
+      sb.append("caused by: ").append(cause.getMessage());
+      return sb.toString();
+    } else {
+      return message;
     }
+  }
 
 }

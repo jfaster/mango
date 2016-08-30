@@ -24,48 +24,48 @@ import com.google.common.base.Objects;
  */
 public class LongIdMsg {
 
-    private long id;
-    private int uid;
-    private String content;
+  private long id;
+  private int uid;
+  private String content;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final LongIdMsg other = (LongIdMsg) obj;
-        return Objects.equal(this.id, other.id)
-                && Objects.equal(this.uid, other.uid)
-                && Objects.equal(this.content, other.content);
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final LongIdMsg other = (LongIdMsg) obj;
+    return Objects.equal(this.id, other.id)
+        && Objects.equal(this.uid, other.uid)
+        && Objects.equal(this.content, other.content);
+  }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("uid", uid).add("content", content).toString();
-    }
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("id", id).add("uid", uid).add("content", content).toString();
+  }
 
-    public long getId() {
-        return id;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public int getUid() {
-        return uid;
-    }
+  public int getUid() {
+    return uid;
+  }
 
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
+  public void setUid(int uid) {
+    this.uid = uid;
+  }
 
-    public String getContent() {
-        return content;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 }

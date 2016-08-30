@@ -24,9 +24,9 @@ import java.util.List;
  */
 public class ArrayListSuppliter implements ListSupplier {
 
-    @Override
-    public <T> List<T> get(Class<T> clazz) {
-        return new ArrayList<T>();
-    }
+  @Override
+  public <T> List<T> get(Class<T> clazz) {
+    return new ArrayList<T>();
+  }
 
 }

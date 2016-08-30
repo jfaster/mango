@@ -21,12 +21,12 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class DeadlockLoserDataAccessException extends PessimisticLockingFailureException {
 
-    public DeadlockLoserDataAccessException(String msg) {
-        super(msg);
-    }
+  public DeadlockLoserDataAccessException(String msg) {
+    super(msg);
+  }
 
-    public DeadlockLoserDataAccessException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public DeadlockLoserDataAccessException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

@@ -24,39 +24,39 @@ import com.google.common.base.Objects;
  */
 public class BT {
 
-    private int id;
-    private boolean isOk;
+  private int id;
+  private boolean isOk;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final BT other = (BT) obj;
-        return Objects.equal(this.id, other.id)
-                && Objects.equal(this.isOk, other.isOk);
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final BT other = (BT) obj;
+    return Objects.equal(this.id, other.id)
+        && Objects.equal(this.isOk, other.isOk);
+  }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("isOk", isOk).toString();
-    }
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("id", id).add("isOk", isOk).toString();
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public boolean isOk() {
-        return isOk;
-    }
+  public boolean isOk() {
+    return isOk;
+  }
 
-    public void setOk(boolean ok) {
-        isOk = ok;
-    }
+  public void setOk(boolean ok) {
+    isOk = ok;
+  }
 
 }

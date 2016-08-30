@@ -21,8 +21,8 @@ package org.jfaster.mango.exception.jdbc;
  */
 public class UncategorizedDataAccessException extends NonTransientDataAccessException {
 
-    public UncategorizedDataAccessException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public UncategorizedDataAccessException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

@@ -21,19 +21,19 @@ package org.jfaster.mango.base;
  */
 public class NestedProperty {
 
-    private StringBuilder nestedProperty = new StringBuilder();
-    private int num = 0;
+  private StringBuilder nestedProperty = new StringBuilder();
+  private int num = 0;
 
-    public void append(String property) {
-        if (num++ == 0) {
-            nestedProperty.append(property);
-        } else {
-            nestedProperty.append("." + property);
-        }
+  public void append(String property) {
+    if (num++ == 0) {
+      nestedProperty.append(property);
+    } else {
+      nestedProperty.append("." + property);
     }
+  }
 
-    public String getNestedProperty() {
-        return nestedProperty.toString();
-    }
+  public String getNestedProperty() {
+    return nestedProperty.toString();
+  }
 
 }

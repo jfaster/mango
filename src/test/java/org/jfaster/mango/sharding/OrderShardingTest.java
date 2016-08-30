@@ -45,89 +45,90 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class OrderShardingTest {
 
-    private static String[] dsns = new String[] {"db1", "db2", "db3", "db4"};
-    private static OrderDao orderDao;
+  private static String[] dsns = new String[]{"db1", "db2", "db3", "db4"};
+  private static OrderDao orderDao;
 
-    @Before
-    public void before() throws Exception {
-        Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
-        for (int i = 0; i < 4; i++) {
-            DataSource ds = DataSourceConfig.getDataSource(i + 1);
-            Connection conn = ds.getConnection();
-            Table.ORDER_PARTITION.load(conn);
-            conn.close();
-            factories.put(dsns[i], new SimpleDataSourceFactory(ds));
-        }
-        DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
-        Mango mango = Mango.newInstance(dsf);
-        orderDao = mango.create(OrderDao.class);
+  @Before
+  public void before() throws Exception {
+    Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
+    for (int i = 0; i < 4; i++) {
+      DataSource ds = DataSourceConfig.getDataSource(i + 1);
+      Connection conn = ds.getConnection();
+      Table.ORDER_PARTITION.load(conn);
+      conn.close();
+      factories.put(dsns[i], new SimpleDataSourceFactory(ds));
+    }
+    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
+    Mango mango = Mango.newInstance(dsf);
+    orderDao = mango.create(OrderDao.class);
+  }
+
+  @Test
+  public void test() throws Exception {
+    int price = 0;
+    for (int uid = 1; uid < 100; uid++) {
+      String id = getOrderIdByUid(uid);
+      Order o = new Order();
+      o.setId(id);
+      o.setUid(uid);
+      o.setPrice(price);
+      orderDao.insert(o);
+      assertThat(orderDao.getOrderById(id), equalTo(o));
+      assertThat(orderDao.getOrdersByUid(uid).get(0), equalTo(o));
+    }
+  }
+
+  @DB(table = "order")
+  interface OrderDao {
+
+    @SQL("insert into #table(id, uid, price) values(:id, :uid, :price)")
+    @Sharding(shardingStrategy = OrderIdShardingStrategy.class)
+    int insert(@ShardingBy("id") Order order);
+
+    @SQL("select id, uid, price from #table where id = :1")
+    @Sharding(shardingStrategy = OrderIdShardingStrategy.class)
+    public Order getOrderById(@ShardingBy String id);
+
+    @SQL("select id, uid, price from #table where uid = :1")
+    @Sharding(shardingStrategy = OrderUidShardingStrategy.class)
+    public List<Order> getOrdersByUid(@ShardingBy int uid);
+
+  }
+
+  static class OrderIdShardingStrategy implements ShardingStrategy<String, String> {
+
+    @Override
+    public String getDatabase(String id) {
+      return "db" + id.substring(0, 1);
     }
 
-    @Test
-    public void test() throws Exception {
-        int price = 0;
-        for (int uid = 1; uid < 100; uid++) {
-            String id = getOrderIdByUid(uid);
-            Order o = new Order();
-            o.setId(id);
-            o.setUid(uid);
-            o.setPrice(price);
-            orderDao.insert(o);
-            assertThat(orderDao.getOrderById(id), equalTo(o));
-            assertThat(orderDao.getOrdersByUid(uid).get(0), equalTo(o));
-        }
+    @Override
+    public String getTargetTable(String table, String id) {
+      return table + "_" + id.substring(1, 2);
     }
 
-    @DB(table = "order")
-    interface OrderDao {
+  }
 
-        @SQL("insert into #table(id, uid, price) values(:id, :uid, :price)")
-        @Sharding(shardingStrategy = OrderIdShardingStrategy.class)
-        int insert(@ShardingBy("id") Order order);
+  static class OrderUidShardingStrategy implements ShardingStrategy<Integer, Integer> {
 
-        @SQL("select id, uid, price from #table where id = :1")
-        @Sharding(shardingStrategy = OrderIdShardingStrategy.class)
-        public Order getOrderById(@ShardingBy String id);
-
-        @SQL("select id, uid, price from #table where uid = :1")
-        @Sharding(shardingStrategy = OrderUidShardingStrategy.class)
-        public List<Order> getOrdersByUid(@ShardingBy int uid);
-
+    @Override
+    public String getDatabase(Integer uid) {
+      return "db" + String.valueOf((uid / 10) % 4 + 1);
     }
 
-    static class OrderIdShardingStrategy implements ShardingStrategy<String, String> {
-
-        @Override
-        public String getDatabase(String id) {
-            return "db" + id.substring(0, 1);
-        }
-
-        @Override
-        public String getTargetTable(String table, String id) {
-            return table + "_" + id.substring(1, 2);
-        }
-
+    @Override
+    public String getTargetTable(String table, Integer uid) {
+      return table + "_" + String.valueOf(uid % 10);
     }
 
-    static class OrderUidShardingStrategy implements ShardingStrategy<Integer, Integer> {
+  }
 
-        @Override
-        public String getDatabase(Integer uid) {
-            return "db" + String.valueOf((uid / 10) % 4 + 1);
-        }
+  private static final AtomicInteger num = new AtomicInteger(1);
 
-        @Override
-        public String getTargetTable(String table, Integer uid) {
-            return table + "_" + String.valueOf(uid % 10);
-        }
-
-    }
-
-    private static final AtomicInteger num = new AtomicInteger(1);
-    private static String getOrderIdByUid(int uid) {
-        String dbInfo = String.valueOf((uid / 10) % 4 + 1);
-        String tableInfo = String.valueOf(uid % 10);
-        return dbInfo + tableInfo + num.getAndIncrement();
-    }
+  private static String getOrderIdByUid(int uid) {
+    String dbInfo = String.valueOf((uid / 10) % 4 + 1);
+    String tableInfo = String.valueOf(uid % 10);
+    return dbInfo + tableInfo + num.getAndIncrement();
+  }
 
 }

@@ -23,10 +23,10 @@ import org.junit.Test;
  */
 public class ConsoleLoggerTest {
 
-    @Test
-    public void testMsg() throws Exception {
-        ConsoleLogger logger = new ConsoleLogger("org");
-        logger.trace("ok");
-    }
+  @Test
+  public void testMsg() throws Exception {
+    ConsoleLogger logger = new ConsoleLogger("org");
+    logger.trace("ok");
+  }
 
 }

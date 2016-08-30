@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-import org.jfaster.mango.exception.jdbc.UncategorizedSQLException;
 import org.jfaster.mango.base.logging.InternalLogger;
 import org.jfaster.mango.base.logging.InternalLoggerFactory;
+import org.jfaster.mango.exception.jdbc.DataAccessException;
+import org.jfaster.mango.exception.jdbc.UncategorizedSQLException;
 
 import java.sql.SQLException;
 
@@ -28,35 +28,35 @@ import java.sql.SQLException;
  */
 public abstract class AbstractFallbackSQLExceptionTranslator implements SQLExceptionTranslator {
 
-    protected final static InternalLogger logger = InternalLoggerFactory.getInstance(AbstractFallbackSQLExceptionTranslator.class);
+  protected final static InternalLogger logger = InternalLoggerFactory.getInstance(AbstractFallbackSQLExceptionTranslator.class);
 
-    private SQLExceptionTranslator fallbackTranslator;
+  private SQLExceptionTranslator fallbackTranslator;
 
-    @Override
-    public DataAccessException translate(String sql, SQLException ex) {
-        DataAccessException dex = doTranslate(sql, ex);
-        if (dex != null) {
-            return dex;
-        }
-        SQLExceptionTranslator fallback = getFallbackTranslator();
-        if (fallback != null) {
-            return fallback.translate(sql, ex);
-        }
-        return new UncategorizedSQLException(sql, ex);
+  @Override
+  public DataAccessException translate(String sql, SQLException ex) {
+    DataAccessException dex = doTranslate(sql, ex);
+    if (dex != null) {
+      return dex;
     }
-
-    protected abstract DataAccessException doTranslate(String sql, SQLException ex);
-
-    protected String buildMessage(String sql, SQLException ex) {
-        return "SQL [" + sql + "]; " + ex.getMessage();
+    SQLExceptionTranslator fallback = getFallbackTranslator();
+    if (fallback != null) {
+      return fallback.translate(sql, ex);
     }
+    return new UncategorizedSQLException(sql, ex);
+  }
 
-    public SQLExceptionTranslator getFallbackTranslator() {
-        return fallbackTranslator;
-    }
+  protected abstract DataAccessException doTranslate(String sql, SQLException ex);
 
-    public void setFallbackTranslator(SQLExceptionTranslator fallbackTranslator) {
-        this.fallbackTranslator = fallbackTranslator;
-    }
+  protected String buildMessage(String sql, SQLException ex) {
+    return "SQL [" + sql + "]; " + ex.getMessage();
+  }
+
+  public SQLExceptionTranslator getFallbackTranslator() {
+    return fallbackTranslator;
+  }
+
+  public void setFallbackTranslator(SQLExceptionTranslator fallbackTranslator) {
+    this.fallbackTranslator = fallbackTranslator;
+  }
 
 }

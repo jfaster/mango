@@ -23,9 +23,9 @@ package org.jfaster.mango.sharding;
  */
 public class ModTenTableShardingStrategy implements TableShardingStrategy<Number> {
 
-    @Override
-    public String getTargetTable(String table, Number shardingParameter) {
-        return table + "_" + Math.abs(shardingParameter.longValue() % 10);
-    }
+  @Override
+  public String getTargetTable(String table, Number shardingParameter) {
+    return table + "_" + Math.abs(shardingParameter.longValue() % 10);
+  }
 
 }

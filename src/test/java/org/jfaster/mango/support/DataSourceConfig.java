@@ -28,70 +28,70 @@ import javax.sql.DataSource;
  */
 public class DataSourceConfig {
 
-    private static String DIR = "hsqldb";
-    private static Configuration[] CONFIGS;
+  private static String DIR = "hsqldb";
+  private static Configuration[] CONFIGS;
 
-    static {
-        try {
-            CONFIGS = new Configuration[5];
-            CONFIGS[0] = new PropertiesConfiguration(DIR + "/database.properties");
-            CONFIGS[1] = new PropertiesConfiguration(DIR + "/database1.properties");
-            CONFIGS[2] = new PropertiesConfiguration(DIR + "/database2.properties");
-            CONFIGS[3] = new PropertiesConfiguration(DIR + "/database3.properties");
-            CONFIGS[4] = new PropertiesConfiguration(DIR + "/database4.properties");
-        } catch (ConfigurationException e) {
-            e.printStackTrace();
-        }
+  static {
+    try {
+      CONFIGS = new Configuration[5];
+      CONFIGS[0] = new PropertiesConfiguration(DIR + "/database.properties");
+      CONFIGS[1] = new PropertiesConfiguration(DIR + "/database1.properties");
+      CONFIGS[2] = new PropertiesConfiguration(DIR + "/database2.properties");
+      CONFIGS[3] = new PropertiesConfiguration(DIR + "/database3.properties");
+      CONFIGS[4] = new PropertiesConfiguration(DIR + "/database4.properties");
+    } catch (ConfigurationException e) {
+      e.printStackTrace();
     }
+  }
 
-    public static boolean isUseMySQL() {
-        return "mysql".equals(DIR);
-    }
+  public static boolean isUseMySQL() {
+    return "mysql".equals(DIR);
+  }
 
-    public static String getDir() {
-        return DIR;
-    }
+  public static String getDir() {
+    return DIR;
+  }
 
-    public static DataSource getDataSource() {
-        return getDataSource(0, true, 1);
-    }
+  public static DataSource getDataSource() {
+    return getDataSource(0, true, 1);
+  }
 
-    public static DataSource getDataSource(int i) {
-        return getDataSource(i, true, 1);
-    }
+  public static DataSource getDataSource(int i) {
+    return getDataSource(i, true, 1);
+  }
 
-    public static DataSource getDataSource(int i, boolean autoCommit, int maxActive) {
-        String driverClassName = getDriverClassName(i);
-        String url = getUrl(i);
-        String username = getUsername(i);
-        String password = getPassword(i);
+  public static DataSource getDataSource(int i, boolean autoCommit, int maxActive) {
+    String driverClassName = getDriverClassName(i);
+    String url = getUrl(i);
+    String username = getUsername(i);
+    String password = getPassword(i);
 
-        BasicDataSource ds = new BasicDataSource();
-        ds.setUrl(url);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        ds.setInitialSize(1);
-        ds.setMaxActive(maxActive);
-        ds.setDriverClassName(driverClassName);
-        ds.setDefaultAutoCommit(autoCommit);
-        return ds;
-    }
+    BasicDataSource ds = new BasicDataSource();
+    ds.setUrl(url);
+    ds.setUsername(username);
+    ds.setPassword(password);
+    ds.setInitialSize(1);
+    ds.setMaxActive(maxActive);
+    ds.setDriverClassName(driverClassName);
+    ds.setDefaultAutoCommit(autoCommit);
+    return ds;
+  }
 
 
-    private static String getDriverClassName(int i) {
-        return CONFIGS[i].getString("jdbc.driver");
-    }
+  private static String getDriverClassName(int i) {
+    return CONFIGS[i].getString("jdbc.driver");
+  }
 
-    private static String getUrl(int i) {
-        return CONFIGS[i].getString("jdbc.url");
-    }
+  private static String getUrl(int i) {
+    return CONFIGS[i].getString("jdbc.url");
+  }
 
-    private static String getUsername(int i) {
-        return CONFIGS[i].getString("jdbc.username");
-    }
+  private static String getUsername(int i) {
+    return CONFIGS[i].getString("jdbc.username");
+  }
 
-    private static String getPassword(int i) {
-        return CONFIGS[i].getString("jdbc.password");
-    }
+  private static String getPassword(int i) {
+    return CONFIGS[i].getString("jdbc.password");
+  }
 
 }

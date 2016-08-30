@@ -22,19 +22,19 @@ package org.jfaster.mango.base;
 public abstract class Ticker {
 
 
-    public abstract long read();
+  public abstract long read();
 
-    public static Ticker systemTicker() {
-        return SYSTEM_TICKER;
+  public static Ticker systemTicker() {
+    return SYSTEM_TICKER;
+  }
+
+  private static final Ticker SYSTEM_TICKER = new Ticker() {
+
+    @Override
+    public long read() {
+      return System.nanoTime();
     }
 
-    private static final Ticker SYSTEM_TICKER = new Ticker() {
-
-        @Override
-        public long read() {
-            return System.nanoTime();
-        }
-
-    };
+  };
 
 }

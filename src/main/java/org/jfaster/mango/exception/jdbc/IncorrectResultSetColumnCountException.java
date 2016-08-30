@@ -24,12 +24,12 @@ package org.jfaster.mango.exception.jdbc;
 public class IncorrectResultSetColumnCountException extends DataRetrievalFailureException {
 
 
-    public IncorrectResultSetColumnCountException(String msg) {
-        super(msg);
-    }
+  public IncorrectResultSetColumnCountException(String msg) {
+    super(msg);
+  }
 
-    public IncorrectResultSetColumnCountException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public IncorrectResultSetColumnCountException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
 }

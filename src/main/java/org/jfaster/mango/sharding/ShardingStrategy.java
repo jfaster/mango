@@ -21,10 +21,10 @@ package org.jfaster.mango.sharding;
  */
 public interface ShardingStrategy<D, T> extends DatabaseShardingStrategy<D>, TableShardingStrategy<T> {
 
-    @Override
-    public String getDatabase(D shardingParameter);
+  @Override
+  public String getDatabase(D shardingParameter);
 
-    @Override
-    public String getTargetTable(String table, T shardingParameter);
+  @Override
+  public String getTargetTable(String table, T shardingParameter);
 
 }

@@ -21,6 +21,6 @@ package org.jfaster.mango.invoker;
  */
 public interface NamedObject {
 
-    public String getName();
+  public String getName();
 
 }

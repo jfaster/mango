@@ -20,24 +20,24 @@ package org.jfaster.mango.base.logging;
  * The log level that {@link org.jfaster.mango.base.logging.InternalLogger} can log at.
  */
 public enum InternalLogLevel {
-    /**
-     * 'TRACE' log level.
-     */
-    TRACE,
-    /**
-     * 'DEBUG' log level.
-     */
-    DEBUG,
-    /**
-     * 'INFO' log level.
-     */
-    INFO,
-    /**
-     * 'WARN' log level.
-     */
-    WARN,
-    /**
-     * 'ERROR' log level.
-     */
-    ERROR
+  /**
+   * 'TRACE' log level.
+   */
+  TRACE,
+  /**
+   * 'DEBUG' log level.
+   */
+  DEBUG,
+  /**
+   * 'INFO' log level.
+   */
+  INFO,
+  /**
+   * 'WARN' log level.
+   */
+  WARN,
+  /**
+   * 'ERROR' log level.
+   */
+  ERROR
 }

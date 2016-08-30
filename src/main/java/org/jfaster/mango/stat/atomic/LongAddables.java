@@ -25,54 +25,54 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Louis Wasserman
  */
 public final class LongAddables {
-    private static final Supplier<LongAddable> SUPPLIER;
+  private static final Supplier<LongAddable> SUPPLIER;
 
-    static {
-        Supplier<LongAddable> supplier;
-        try {
-            new LongAdder();
-            supplier = new Supplier<LongAddable>() {
-                @Override
-                public LongAddable get() {
-                    return new LongAdder();
-                }
-            };
-        } catch (Throwable t) { // we really want to catch *everything*
-            supplier = new Supplier<LongAddable>() {
-                @Override
-                public LongAddable get() {
-                    return new PureJavaLongAddable();
-                }
-            };
-        }
-        SUPPLIER = supplier;
-    }
-
-    public static LongAddable create() {
-        return SUPPLIER.get();
-    }
-
-    private static final class PureJavaLongAddable extends AtomicLong implements LongAddable {
+  static {
+    Supplier<LongAddable> supplier;
+    try {
+      new LongAdder();
+      supplier = new Supplier<LongAddable>() {
         @Override
-        public void increment() {
-            getAndIncrement();
+        public LongAddable get() {
+          return new LongAdder();
         }
-
+      };
+    } catch (Throwable t) { // we really want to catch *everything*
+      supplier = new Supplier<LongAddable>() {
         @Override
-        public void add(long x) {
-            getAndAdd(x);
+        public LongAddable get() {
+          return new PureJavaLongAddable();
         }
+      };
+    }
+    SUPPLIER = supplier;
+  }
 
-        @Override
-        public long sum() {
-            return get();
-        }
+  public static LongAddable create() {
+    return SUPPLIER.get();
+  }
+
+  private static final class PureJavaLongAddable extends AtomicLong implements LongAddable {
+    @Override
+    public void increment() {
+      getAndIncrement();
     }
 
-    private static interface Supplier<T> {
-
-        T get();
-
+    @Override
+    public void add(long x) {
+      getAndAdd(x);
     }
+
+    @Override
+    public long sum() {
+      return get();
+    }
+  }
+
+  private static interface Supplier<T> {
+
+    T get();
+
+  }
 
 }

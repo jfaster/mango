@@ -23,54 +23,54 @@ import com.google.common.base.Objects;
  */
 public class Position {
 
-    private int x;
+  private int x;
 
-    private int y;
+  private int y;
 
-    private int v;
+  private int v;
 
-    public Position() {
-    }
+  public Position() {
+  }
 
-    public Position(int x, int y, int v) {
-        this.x = x;
-        this.y = y;
-        this.v = v;
-    }
+  public Position(int x, int y, int v) {
+    this.x = x;
+    this.y = y;
+    this.v = v;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Position other = (Position) obj;
-        return Objects.equal(this.x, other.x)
-                && Objects.equal(this.y, other.y)
-                && Objects.equal(this.v, other.v);
-    }
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final Position other = (Position) obj;
+    return Objects.equal(this.x, other.x)
+        && Objects.equal(this.y, other.y)
+        && Objects.equal(this.v, other.v);
+  }
 
-    public int getX() {
-        return x;
-    }
+  public int getX() {
+    return x;
+  }
 
-    public void setX(int x) {
-        this.x = x;
-    }
+  public void setX(int x) {
+    this.x = x;
+  }
 
-    public int getY() {
-        return y;
-    }
+  public int getY() {
+    return y;
+  }
 
-    public void setY(int y) {
-        this.y = y;
-    }
+  public void setY(int y) {
+    this.y = y;
+  }
 
-    public int getV() {
-        return v;
-    }
+  public int getV() {
+    return v;
+  }
 
-    public void setV(int v) {
-        this.v = v;
-    }
+  public void setV(int v) {
+    this.v = v;
+  }
 }

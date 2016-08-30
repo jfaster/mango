@@ -33,100 +33,100 @@ import static org.hamcrest.Matchers.nullValue;
  */
 public class LocalCacheHandlerTest {
 
-    @Test
-    public void testGet() throws Exception {
-        Ticker4Test t = new Ticker4Test();
-        LocalCacheHandler cache = new LocalCacheHandler(t);
-        int seconds = 100;
-        String key = "key";
-        String value = "value";
-        cache.set(key, value, seconds);
-        assertThat((String) cache.get(key), equalTo(value));
-        t.addSeconds(seconds + 1);
-        assertThat(cache.get(key), nullValue());
+  @Test
+  public void testGet() throws Exception {
+    Ticker4Test t = new Ticker4Test();
+    LocalCacheHandler cache = new LocalCacheHandler(t);
+    int seconds = 100;
+    String key = "key";
+    String value = "value";
+    cache.set(key, value, seconds);
+    assertThat((String) cache.get(key), equalTo(value));
+    t.addSeconds(seconds + 1);
+    assertThat(cache.get(key), nullValue());
+  }
+
+  @Test
+  public void testGetBulk() throws Exception {
+    Ticker4Test t = new Ticker4Test();
+    LocalCacheHandler cache = new LocalCacheHandler(t);
+    int seconds = 100;
+    String key = "key";
+    String value = "value";
+    int seconds2 = 200;
+    String key2 = "key2";
+    String value2 = "value2";
+    cache.set(key, value, seconds);
+    cache.set(key2, value2, seconds2);
+
+    Set<String> keys = Sets.newHashSet(key, key2);
+
+    Map<String, Object> map = cache.getBulk(keys);
+    assertThat(map.size(), equalTo(2));
+    assertThat((String) map.get(key), equalTo(value));
+    assertThat((String) map.get(key2), equalTo(value2));
+
+    t.addSeconds(seconds + 1);
+
+    map = cache.getBulk(keys);
+    assertThat(map.size(), equalTo(1));
+    assertThat((String) map.get(key2), equalTo(value2));
+
+    t.reset();
+    t.addSeconds(seconds2 + 1);
+
+    map = cache.getBulk(keys);
+    assertThat(map.size(), equalTo(0));
+  }
+
+  @Test
+  public void testDelete() throws Exception {
+    Ticker4Test t = new Ticker4Test();
+    LocalCacheHandler cache = new LocalCacheHandler(t);
+    int seconds = 100;
+    String key = "key";
+    String value = "value";
+    cache.set(key, value, seconds);
+    assertThat((String) cache.get(key), equalTo(value));
+    cache.delete(key);
+    assertThat(cache.get(key), nullValue());
+  }
+
+  @Test
+  public void testAdd() throws Exception {
+    Ticker4Test t = new Ticker4Test();
+    LocalCacheHandler cache = new LocalCacheHandler(t);
+    int seconds = 100;
+    String key = "key";
+    String value = "value";
+    int seconds2 = 200;
+    String key2 = "key2";
+    String value2 = "value2";
+    cache.set(key, value, seconds);
+    cache.add(key, value2, seconds);
+    cache.add(key2, value2, seconds2);
+
+    assertThat((String) cache.get(key), equalTo(value));
+    assertThat((String) cache.get(key2), equalTo(value2));
+  }
+
+  private static class Ticker4Test extends Ticker {
+
+    private long now = System.nanoTime();
+
+    @Override
+    public long read() {
+      return now;
     }
 
-    @Test
-    public void testGetBulk() throws Exception {
-        Ticker4Test t = new Ticker4Test();
-        LocalCacheHandler cache = new LocalCacheHandler(t);
-        int seconds = 100;
-        String key = "key";
-        String value = "value";
-        int seconds2 = 200;
-        String key2 = "key2";
-        String value2 = "value2";
-        cache.set(key, value, seconds);
-        cache.set(key2, value2, seconds2);
-
-        Set<String> keys = Sets.newHashSet(key, key2);
-
-        Map<String, Object> map = cache.getBulk(keys);
-        assertThat(map.size(), equalTo(2));
-        assertThat((String) map.get(key), equalTo(value));
-        assertThat((String) map.get(key2), equalTo(value2));
-
-        t.addSeconds(seconds + 1);
-
-        map = cache.getBulk(keys);
-        assertThat(map.size(), equalTo(1));
-        assertThat((String) map.get(key2), equalTo(value2));
-
-        t.reset();
-        t.addSeconds(seconds2 + 1);
-
-        map = cache.getBulk(keys);
-        assertThat(map.size(), equalTo(0));
+    public void reset() {
+      this.now = System.nanoTime();
     }
 
-    @Test
-    public void testDelete() throws Exception {
-        Ticker4Test t = new Ticker4Test();
-        LocalCacheHandler cache = new LocalCacheHandler(t);
-        int seconds = 100;
-        String key = "key";
-        String value = "value";
-        cache.set(key, value, seconds);
-        assertThat((String) cache.get(key), equalTo(value));
-        cache.delete(key);
-        assertThat(cache.get(key), nullValue());
+    public void addSeconds(long seconds) {
+      now += TimeUnit.SECONDS.toNanos(seconds);
     }
 
-    @Test
-    public void testAdd() throws Exception {
-        Ticker4Test t = new Ticker4Test();
-        LocalCacheHandler cache = new LocalCacheHandler(t);
-        int seconds = 100;
-        String key = "key";
-        String value = "value";
-        int seconds2 = 200;
-        String key2 = "key2";
-        String value2 = "value2";
-        cache.set(key, value, seconds);
-        cache.add(key, value2, seconds);
-        cache.add(key2, value2, seconds2);
-
-        assertThat((String) cache.get(key), equalTo(value));
-        assertThat((String) cache.get(key2), equalTo(value2));
-    }
-
-    private static class Ticker4Test extends Ticker {
-
-        private long now = System.nanoTime();
-
-        @Override
-        public long read() {
-            return now;
-        }
-
-        public void reset() {
-            this.now = System.nanoTime();
-        }
-
-        public void addSeconds(long seconds) {
-            now += TimeUnit.SECONDS.toNanos(seconds);
-        }
-
-    }
+  }
 
 }

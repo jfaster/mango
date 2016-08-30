@@ -25,44 +25,44 @@ import java.util.Map;
  */
 public abstract class TransactionSynchronizationManager {
 
-    private static final ThreadLocal<Map<DataSource, ConnectionHolder>> CONNECTION_HOLDERS =
-            new ThreadLocal<Map<DataSource, ConnectionHolder>>();
+  private static final ThreadLocal<Map<DataSource, ConnectionHolder>> CONNECTION_HOLDERS =
+      new ThreadLocal<Map<DataSource, ConnectionHolder>>();
 
-    public static void bindConnectionHolder(DataSource dataSource, ConnectionHolder connHolder) {
-        Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
-        if (map == null) {
-            map = new HashMap<DataSource, ConnectionHolder>();
-            CONNECTION_HOLDERS.set(map);
-        }
-        ConnectionHolder oldConnHolder = map.put(dataSource, connHolder);
-        if (oldConnHolder != null) {
-            throw new IllegalStateException("Already ConnectionHolder [" + oldConnHolder + "] for DataSource [" +
-                    dataSource + "] bound to thread [" + Thread.currentThread().getName() + "]");
-        }
+  public static void bindConnectionHolder(DataSource dataSource, ConnectionHolder connHolder) {
+    Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
+    if (map == null) {
+      map = new HashMap<DataSource, ConnectionHolder>();
+      CONNECTION_HOLDERS.set(map);
     }
+    ConnectionHolder oldConnHolder = map.put(dataSource, connHolder);
+    if (oldConnHolder != null) {
+      throw new IllegalStateException("Already ConnectionHolder [" + oldConnHolder + "] for DataSource [" +
+          dataSource + "] bound to thread [" + Thread.currentThread().getName() + "]");
+    }
+  }
 
-    public static void unbindConnectionHolder(DataSource dataSource) {
-        Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
-        if (map == null) {
-            throw new IllegalStateException(
-                    "No value for DataSource [" + dataSource + "] bound to " +
-                            "thread [" + Thread.currentThread().getName() + "]");
-        }
-        ConnectionHolder connHolder = map.remove(dataSource);
-        if (map.isEmpty()) {
-            CONNECTION_HOLDERS.remove();
-        }
-        if (connHolder == null) {
-            throw new IllegalStateException(
-                    "No value for DataSource [" + dataSource + "] bound to " +
-                            "thread [" + Thread.currentThread().getName() + "]");
-        }
+  public static void unbindConnectionHolder(DataSource dataSource) {
+    Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
+    if (map == null) {
+      throw new IllegalStateException(
+          "No value for DataSource [" + dataSource + "] bound to " +
+              "thread [" + Thread.currentThread().getName() + "]");
     }
+    ConnectionHolder connHolder = map.remove(dataSource);
+    if (map.isEmpty()) {
+      CONNECTION_HOLDERS.remove();
+    }
+    if (connHolder == null) {
+      throw new IllegalStateException(
+          "No value for DataSource [" + dataSource + "] bound to " +
+              "thread [" + Thread.currentThread().getName() + "]");
+    }
+  }
 
-    public static ConnectionHolder getConnectionHolder(DataSource dataSource) {
-        Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
-        return map == null ? null : map.get(dataSource);
-    }
+  public static ConnectionHolder getConnectionHolder(DataSource dataSource) {
+    Map<DataSource, ConnectionHolder> map = CONNECTION_HOLDERS.get();
+    return map == null ? null : map.get(dataSource);
+  }
 
 }
 

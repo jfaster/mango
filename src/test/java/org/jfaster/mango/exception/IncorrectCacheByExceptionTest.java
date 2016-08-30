@@ -39,38 +39,39 @@ import java.util.List;
  */
 public class IncorrectCacheByExceptionTest {
 
-    private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
-    static {
-        mango.setDefaultLazyInit(true);
-    }
+  private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  static {
+    mango.setDefaultLazyInit(true);
+  }
 
-    @Test
-    public void test() {
-        thrown.expect(IncorrectCacheByException.class);
-        thrown.expectMessage("CacheBy :2 can't match any db parameter");
-        Dao dao = mango.create(Dao.class, new LocalCacheHandler());
-        dao.add(1, 2);
-    }
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public void test2() {
-        thrown.expect(IncorrectCacheByException.class);
-        thrown.expectMessage("CacheBy :1 can't match any db parameter");
-        Dao dao = mango.create(Dao.class, new LocalCacheHandler());
-        dao.batchAdd(new ArrayList<Integer>());
-    }
+  @Test
+  public void test() {
+    thrown.expect(IncorrectCacheByException.class);
+    thrown.expectMessage("CacheBy :2 can't match any db parameter");
+    Dao dao = mango.create(Dao.class, new LocalCacheHandler());
+    dao.add(1, 2);
+  }
 
-    @DB
-    @Cache(prefix = "dao_", expire = Day.class)
-    static interface Dao {
-        @SQL("insert into ${1 + :1} ...")
-        public int add(int a, @CacheBy int b);
+  @Test
+  public void test2() {
+    thrown.expect(IncorrectCacheByException.class);
+    thrown.expectMessage("CacheBy :1 can't match any db parameter");
+    Dao dao = mango.create(Dao.class, new LocalCacheHandler());
+    dao.batchAdd(new ArrayList<Integer>());
+  }
 
-        @SQL("insert into ...")
-        public int[] batchAdd(@CacheBy List<Integer> ids);
-    }
+  @DB
+  @Cache(prefix = "dao_", expire = Day.class)
+  static interface Dao {
+    @SQL("insert into ${1 + :1} ...")
+    public int add(int a, @CacheBy int b);
+
+    @SQL("insert into ...")
+    public int[] batchAdd(@CacheBy List<Integer> ids);
+  }
 
 }

@@ -25,9 +25,9 @@ import java.lang.annotation.Annotation;
  */
 public class MockReturnGeneratedId implements Annotation, ReturnGeneratedId {
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    throw new UnsupportedOperationException();
+  }
 
 }

@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
  */
 public interface RuntimeSetterFunction<I, O> extends DummySetterFunction<I, O> {
 
-    @Nullable
-    public abstract O apply(@Nullable I input, Type runtimeOutputType);
+  @Nullable
+  public abstract O apply(@Nullable I input, Type runtimeOutputType);
 
 }

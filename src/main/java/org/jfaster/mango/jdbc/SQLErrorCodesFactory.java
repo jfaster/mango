@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.jdbc.MetaDataAccessException;
 import org.jfaster.mango.base.PatternMatchUtils;
 import org.jfaster.mango.base.logging.InternalLogger;
 import org.jfaster.mango.base.logging.InternalLoggerFactory;
+import org.jfaster.mango.exception.jdbc.MetaDataAccessException;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -30,87 +30,87 @@ import java.util.Map;
  */
 public class SQLErrorCodesFactory {
 
-    protected final static InternalLogger logger = InternalLoggerFactory.getInstance(SQLErrorCodesFactory.class);
+  protected final static InternalLogger logger = InternalLoggerFactory.getInstance(SQLErrorCodesFactory.class);
 
-    private final static SQLErrorCodesFactory instance = new SQLErrorCodesFactory();
+  private final static SQLErrorCodesFactory instance = new SQLErrorCodesFactory();
 
-    private final Map<DataSource, SQLErrorCodes> dataSourceCache = new HashMap<DataSource, SQLErrorCodes>(16);
+  private final Map<DataSource, SQLErrorCodes> dataSourceCache = new HashMap<DataSource, SQLErrorCodes>(16);
 
-    private final Map<String, SQLErrorCodes> errorCodesMap;
+  private final Map<String, SQLErrorCodes> errorCodesMap;
 
-    public SQLErrorCodesFactory() {
-        this.errorCodesMap = buildErrorCodesMap();
+  public SQLErrorCodesFactory() {
+    this.errorCodesMap = buildErrorCodesMap();
+  }
+
+  public static SQLErrorCodesFactory getInstance() {
+    return instance;
+  }
+
+  public SQLErrorCodes getErrorCodes(DataSource dataSource) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Looking up default SQLErrorCodes for DataSource [" + dataSource + "]");
     }
 
-    public static SQLErrorCodesFactory getInstance() {
-        return instance;
-    }
-
-    public SQLErrorCodes getErrorCodes(DataSource dataSource) {
+    synchronized (this.dataSourceCache) {
+      SQLErrorCodes sec = this.dataSourceCache.get(dataSource);
+      if (sec != null) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Looking up default SQLErrorCodes for DataSource [" + dataSource + "]");
+          logger.debug("SQLErrorCodes found in cache for DataSource [" +
+              dataSource.getClass().getName() + '@' + Integer.toHexString(dataSource.hashCode()) + "]");
         }
-
-        synchronized (this.dataSourceCache) {
-            SQLErrorCodes sec = this.dataSourceCache.get(dataSource);
-            if (sec != null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("SQLErrorCodes found in cache for DataSource [" +
-                            dataSource.getClass().getName() + '@' + Integer.toHexString(dataSource.hashCode()) + "]");
-                }
-                return sec;
-            }
-            try {
-                String dbName = JdbcUtils.fetchDatabaseProductName(dataSource);
-                if (dbName != null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Database product name cached for DataSource [" +
-                                dataSource.getClass().getName() + '@' + Integer.toHexString(dataSource.hashCode()) +
-                                "]: name is '" + dbName + "'");
-                    }
-                    sec = getErrorCodes(dbName);
-                    this.dataSourceCache.put(dataSource, sec);
-                    return sec;
-                }
-            } catch (MetaDataAccessException ex) {
-                logger.warn("Error while extracting database product name - falling back to empty error codes", ex);
-            }
+        return sec;
+      }
+      try {
+        String dbName = JdbcUtils.fetchDatabaseProductName(dataSource);
+        if (dbName != null) {
+          if (logger.isDebugEnabled()) {
+            logger.debug("Database product name cached for DataSource [" +
+                dataSource.getClass().getName() + '@' + Integer.toHexString(dataSource.hashCode()) +
+                "]: name is '" + dbName + "'");
+          }
+          sec = getErrorCodes(dbName);
+          this.dataSourceCache.put(dataSource, sec);
+          return sec;
         }
-
-        // 失败返回空的SQLErrorCodes
-        return SQLErrorCodes.EMPTY;
+      } catch (MetaDataAccessException ex) {
+        logger.warn("Error while extracting database product name - falling back to empty error codes", ex);
+      }
     }
 
-    private SQLErrorCodes getErrorCodes(String dbName) {
-        SQLErrorCodes sec = this.errorCodesMap.get(dbName);
-        if (sec == null) {
-            for (SQLErrorCodes candidate : this.errorCodesMap.values()) {
-                if (PatternMatchUtils.simpleMatch(candidate.getDatabaseProductNames(), dbName)) {
-                    sec = candidate;
-                    break;
-                }
-            }
-        }
+    // 失败返回空的SQLErrorCodes
+    return SQLErrorCodes.EMPTY;
+  }
 
-        if (sec != null) {
-            return sec;
+  private SQLErrorCodes getErrorCodes(String dbName) {
+    SQLErrorCodes sec = this.errorCodesMap.get(dbName);
+    if (sec == null) {
+      for (SQLErrorCodes candidate : this.errorCodesMap.values()) {
+        if (PatternMatchUtils.simpleMatch(candidate.getDatabaseProductNames(), dbName)) {
+          sec = candidate;
+          break;
         }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("SQL error codes for '" + dbName + "' not found");
-        }
-        return SQLErrorCodes.EMPTY;
+      }
     }
 
-    private Map<String, SQLErrorCodes> buildErrorCodesMap() {
-        Map<String, SQLErrorCodes> errorCodesMap = new HashMap<String, SQLErrorCodes>();
-        for (SQLErrorCodes errorCodes : SQLErrorCodes.values()) {
-            if (errorCodes != SQLErrorCodes.EMPTY) {
-                errorCodes.init();
-                errorCodesMap.put(errorCodes.name(), errorCodes);
-            }
-        }
-        return errorCodesMap;
+    if (sec != null) {
+      return sec;
     }
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("SQL error codes for '" + dbName + "' not found");
+    }
+    return SQLErrorCodes.EMPTY;
+  }
+
+  private Map<String, SQLErrorCodes> buildErrorCodesMap() {
+    Map<String, SQLErrorCodes> errorCodesMap = new HashMap<String, SQLErrorCodes>();
+    for (SQLErrorCodes errorCodes : SQLErrorCodes.values()) {
+      if (errorCodes != SQLErrorCodes.EMPTY) {
+        errorCodes.init();
+        errorCodesMap.put(errorCodes.name(), errorCodes);
+      }
+    }
+    return errorCodesMap;
+  }
 
 }

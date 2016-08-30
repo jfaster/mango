@@ -24,45 +24,45 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public abstract class AbstractMangoFactoryBean implements FactoryBean {
 
-    private Class<?> daoClass;
+  private Class<?> daoClass;
 
-    private static volatile Mango mango;
+  private static volatile Mango mango;
 
-    public abstract Mango createMango();
+  public abstract Mango createMango();
 
-    public Object createDao(Mango mango, Class<?> daoClass) {
-        return mango.create(daoClass);
-    }
+  public Object createDao(Mango mango, Class<?> daoClass) {
+    return mango.create(daoClass);
+  }
 
-    @Override
-    public Object getObject() throws Exception {
-        Mango mango = getMango();
-        return mango.create(daoClass);
-    }
+  @Override
+  public Object getObject() throws Exception {
+    Mango mango = getMango();
+    return mango.create(daoClass);
+  }
 
-    @Override
-    public Class<?> getObjectType() {
-        return daoClass;
-    }
+  @Override
+  public Class<?> getObjectType() {
+    return daoClass;
+  }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
+  @Override
+  public boolean isSingleton() {
+    return true;
+  }
 
-    public Mango getMango() {
+  public Mango getMango() {
+    if (mango == null) {
+      synchronized (AbstractMangoFactoryBean.class) {
         if (mango == null) {
-            synchronized (AbstractMangoFactoryBean.class) {
-                if (mango == null) {
-                    mango = createMango();
-                }
-            }
+          mango = createMango();
         }
-        return mango;
+      }
     }
+    return mango;
+  }
 
-    public void setDaoClass(Class<?> daoClass) {
-        this.daoClass = daoClass;
-    }
+  public void setDaoClass(Class<?> daoClass) {
+    this.daoClass = daoClass;
+  }
 
 }
