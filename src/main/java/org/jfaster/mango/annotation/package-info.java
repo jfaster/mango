@@ -15,6 +15,9 @@
  */
 
 /**
- * Annotations for Mango
+ * mango框架所有注解
+ *
+ * 依赖包:
+ *  ignore
  */
 package org.jfaster.mango.annotation;

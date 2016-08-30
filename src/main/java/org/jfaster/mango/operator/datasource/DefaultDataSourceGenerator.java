@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.operator.datasource;
 
-import org.jfaster.mango.base.logging.InternalLogger;
-import org.jfaster.mango.base.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;

@@ -17,7 +17,7 @@
 package org.jfaster.mango.support;
 
 import org.jfaster.mango.DbTest;
-import org.jfaster.mango.base.ScriptRunner;
+import org.jfaster.mango.util.ScriptRunner;
 
 import javax.sql.DataSource;
 import java.io.IOException;

@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.base.Objects;
-import org.jfaster.mango.base.Strings;
+import org.jfaster.mango.util.Objects;
+import org.jfaster.mango.util.Strings;
 
 /**
  * @author ash

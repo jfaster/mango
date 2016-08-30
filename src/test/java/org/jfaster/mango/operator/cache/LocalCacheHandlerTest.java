@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator.cache;
 
 import com.google.common.collect.Sets;
-import org.jfaster.mango.base.Ticker;
+import org.jfaster.mango.util.Ticker;
 import org.junit.Test;
 
 import java.util.Map;

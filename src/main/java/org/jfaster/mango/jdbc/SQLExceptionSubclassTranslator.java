@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.jdbc.*;
+import org.jfaster.mango.jdbc.exception.*;
 
 import java.sql.*;
 

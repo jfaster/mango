@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.interceptor;
 
-import org.jfaster.mango.base.sql.PreparedSql;
-import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.util.sql.PreparedSql;
+import org.jfaster.mango.util.sql.SQLType;
 
 import java.util.LinkedList;
 import java.util.List;

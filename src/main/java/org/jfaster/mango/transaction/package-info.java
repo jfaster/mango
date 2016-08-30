@@ -15,6 +15,12 @@
  */
 
 /**
- * transaction
+ * 事务
+ *
+ * 依赖包:
+ *  datasource
+ *  exception
+ *  operator.Mango
+ *  util
  */
 package org.jfaster.mango.transaction;

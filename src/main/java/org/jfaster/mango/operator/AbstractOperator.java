@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.base.Config;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;

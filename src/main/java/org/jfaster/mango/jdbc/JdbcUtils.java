@@ -16,18 +16,15 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.base.Primitives;
-import org.jfaster.mango.base.logging.InternalLogger;
-import org.jfaster.mango.base.logging.InternalLoggerFactory;
-import org.jfaster.mango.datasource.DataSourceUtils;
-import org.jfaster.mango.exception.jdbc.CannotGetJdbcConnectionException;
-import org.jfaster.mango.exception.jdbc.MetaDataAccessException;
+import org.jfaster.mango.transaction.DataSourceUtils;
+import org.jfaster.mango.jdbc.exception.CannotGetJdbcConnectionException;
+import org.jfaster.mango.jdbc.exception.MetaDataAccessException;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author ash
@@ -172,45 +169,6 @@ public class JdbcUtils {
       ps.setObject(index, value);
     }
   }
-
-  private final static Set<Class<?>> singleColumClassSet = new HashSet<Class<?>>();
-
-  static {
-    // 字符串
-    singleColumClassSet.add(String.class);
-
-    // 特殊类型
-    singleColumClassSet.add(java.math.BigDecimal.class);
-    singleColumClassSet.add(java.math.BigInteger.class);
-    singleColumClassSet.add(java.util.Date.class);
-
-    // jdbc中的类型
-    singleColumClassSet.add(byte[].class);
-    singleColumClassSet.add(java.sql.Date.class);
-    singleColumClassSet.add(java.sql.Time.class);
-    singleColumClassSet.add(java.sql.Timestamp.class);
-    singleColumClassSet.add(java.sql.Blob.class);
-    singleColumClassSet.add(java.sql.Clob.class);
-
-    // 基本数据类型
-    for (Class<?> type : Primitives.allPrimitiveTypes()) { // int.class等
-      singleColumClassSet.add(type);
-    }
-    for (Class<?> type : Primitives.allWrapperTypes()) { // Integer.class等
-      singleColumClassSet.add(type);
-    }
-  }
-
-  /**
-   * 返回是否是单列类型
-   *
-   * @param clazz
-   * @return
-   */
-  public static boolean isSingleColumnClass(Class clazz) {
-    return singleColumClassSet.contains(clazz);
-  }
-
 
   /**
    * 返回列序号对应的列名字

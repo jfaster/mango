@@ -16,11 +16,11 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.base.Config;
-import org.jfaster.mango.base.Iterables;
-import org.jfaster.mango.base.Strings;
-import org.jfaster.mango.base.logging.InternalLogger;
-import org.jfaster.mango.base.logging.InternalLoggerFactory;
+import org.jfaster.mango.operator.Config;
+import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.binding.BindingException;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.exception.DescriptionException;
@@ -270,7 +270,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
       } else if (returnDescriptor.isArray()) {
 
-        return org.jfaster.mango.base.Arrays.toArray(hitValueList, valueClass);
+        return org.jfaster.mango.util.Arrays.toArray(hitValueList, valueClass);
 
       } else {
         return !hitValueList.isEmpty() ? hitValueList.get(0) : null;

@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.base.sql.PreparedSql;
-import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.util.sql.PreparedSql;
+import org.jfaster.mango.util.sql.SQLType;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.binding.InvocationContextFactory;

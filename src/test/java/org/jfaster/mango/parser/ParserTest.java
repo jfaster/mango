@@ -18,8 +18,8 @@ package org.jfaster.mango.parser;
 
 import com.google.common.collect.Lists;
 import org.hamcrest.Matchers;
-import org.jfaster.mango.base.sql.PreparedSql;
-import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.util.sql.PreparedSql;
+import org.jfaster.mango.util.sql.SQLType;
 import org.jfaster.mango.binding.DefaultInvocationContext;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContext;

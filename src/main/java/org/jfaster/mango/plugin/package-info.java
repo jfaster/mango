@@ -15,6 +15,14 @@
  */
 
 /**
- * plugins
+ * 插件
+ *
+ * 依赖包:
+ *  annotation
+ *  datasource
+ *  operator
+ *  sharding
+ *  stat
+ *  util
  */
 package org.jfaster.mango.plugin;

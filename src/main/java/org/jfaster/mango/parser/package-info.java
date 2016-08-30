@@ -15,6 +15,13 @@
  */
 
 /**
- * sql parse
+ * SQL解析
+ *
+ * 依赖包:
+ *  binding
+ *  exception
+ *  jdbc
+ *  reflect
+ *  util
  */
 package org.jfaster.mango.parser;

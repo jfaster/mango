@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.exception.jdbc.DataAccessException;
+import org.jfaster.mango.jdbc.exception.DataAccessException;
 
 import javax.sql.DataSource;
 import java.util.List;

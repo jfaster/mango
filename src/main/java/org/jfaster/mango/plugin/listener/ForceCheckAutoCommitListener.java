@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.plugin.listener;
 
-import org.jfaster.mango.datasource.DataSourceMonitor;
+import org.jfaster.mango.transaction.DataSourceMonitor;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

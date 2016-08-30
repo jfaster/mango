@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.reflect.descriptor;
 
-import org.jfaster.mango.base.Objects;
+import org.jfaster.mango.util.Objects;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

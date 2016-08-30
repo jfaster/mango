@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.invoker;
 
-import org.jfaster.mango.base.PropertyTokenizer;
+import org.jfaster.mango.util.PropertyTokenizer;
 
 /**
  * @author ash

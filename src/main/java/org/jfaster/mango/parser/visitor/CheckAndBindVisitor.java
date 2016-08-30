@@ -19,9 +19,9 @@ package org.jfaster.mango.parser.visitor;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.jdbc.JdbcUtils;
 import org.jfaster.mango.parser.*;
 import org.jfaster.mango.reflect.TypeWrapper;
+import org.jfaster.mango.util.SingleColumns;
 
 import java.lang.reflect.Type;
 
@@ -86,7 +86,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     Type type = invoker.getTargetType();
     TypeWrapper tw = new TypeWrapper(type);
     Class<?> mappedClass = tw.getMappedClass();
-    if (mappedClass == null || tw.isIterable() || !JdbcUtils.isSingleColumnClass(mappedClass)) {
+    if (mappedClass == null || tw.isIterable() || !SingleColumns.isSingleColumnClass(mappedClass)) {
       throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
           "expected a class can be identified by jdbc but " + type);
     }
@@ -106,7 +106,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
           "expected array or implementations of java.util.List or implementations of java.util.Set " +
           "but " + type);
     }
-    if (mappedClass == null || !JdbcUtils.isSingleColumnClass(mappedClass)) {
+    if (mappedClass == null || !SingleColumns.isSingleColumnClass(mappedClass)) {
       String s = tw.isArray() ? "component" : "actual";
       throw new IncorrectParameterTypeException("invalid " + s + " type of " + node.getFullName() + ", " +
           s + " type of " + node.getFullName() + " expected a class can be identified by jdbc " +

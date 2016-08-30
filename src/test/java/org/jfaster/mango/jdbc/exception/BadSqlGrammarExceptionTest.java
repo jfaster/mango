@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc.exception;
 
-import org.jfaster.mango.exception.jdbc.BadSqlGrammarException;
+import org.jfaster.mango.jdbc.exception.BadSqlGrammarException;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;

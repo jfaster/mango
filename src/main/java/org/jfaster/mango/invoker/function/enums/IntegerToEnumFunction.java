@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.invoker.function.enums;
 
-import org.jfaster.mango.base.local.CacheLoader;
-import org.jfaster.mango.base.local.DoubleCheckCache;
-import org.jfaster.mango.base.local.LoadingCache;
+import org.jfaster.mango.util.local.CacheLoader;
+import org.jfaster.mango.util.local.DoubleCheckCache;
+import org.jfaster.mango.util.local.LoadingCache;
 import org.jfaster.mango.invoker.RuntimeSetterFunction;
 import org.jfaster.mango.reflect.TypeToken;
 

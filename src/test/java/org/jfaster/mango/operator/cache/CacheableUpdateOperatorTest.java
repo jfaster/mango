@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.base.Config;
+import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.operator.Operator;

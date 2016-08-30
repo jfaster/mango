@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.base.NestedProperty;
-import org.jfaster.mango.base.PropertyTokenizer;
+import org.jfaster.mango.util.NestedProperty;
+import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.UnreachablePropertyException;

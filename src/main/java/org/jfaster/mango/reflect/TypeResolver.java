@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.reflect;
 
-import org.jfaster.mango.base.Objects;
+import org.jfaster.mango.util.Objects;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.*;

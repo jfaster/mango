@@ -16,5 +16,12 @@
 
 /**
  * jdbc
+ *
+ * 依赖包:
+ *  datasource
+ *  exception
+ *  invoker
+ *  reflect
+ *  util
  */
 package org.jfaster.mango.jdbc;

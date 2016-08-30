@@ -15,6 +15,9 @@
  */
 
 /**
- * Sharding, include database sharding and table sharding
+ * 数据库分片与表分片（也即分库分表）
+ *
+ * 依赖包:
+ *  none
  */
 package org.jfaster.mango.sharding;

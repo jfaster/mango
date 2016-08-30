@@ -19,8 +19,6 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
-import org.jfaster.mango.base.Config;
-import org.jfaster.mango.base.sql.PreparedSql;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -28,6 +26,8 @@ import org.jfaster.mango.parser.EmptyObjectException;
 import org.jfaster.mango.reflect.Reflection;
 import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
 import org.jfaster.mango.reflect.descriptor.ReturnDescriptor;
+import org.jfaster.mango.util.SingleColumns;
+import org.jfaster.mango.util.sql.PreparedSql;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Array;
@@ -140,7 +140,7 @@ public class QueryOperator extends AbstractOperator {
     if (mapperAnno != null) { // 自定义mapper
       return Reflection.instantiateClass(mapperAnno.value());
     }
-    if (JdbcUtils.isSingleColumnClass(clazz)) { // 单列mapper
+    if (SingleColumns.isSingleColumnClass(clazz)) { // 单列mapper
       return new SingleColumnRowMapper<T>(clazz);
     }
 

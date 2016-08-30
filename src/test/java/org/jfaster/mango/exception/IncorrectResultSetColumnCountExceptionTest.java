@@ -18,7 +18,7 @@ package org.jfaster.mango.exception;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.exception.jdbc.IncorrectResultSetColumnCountException;
+import org.jfaster.mango.jdbc.exception.IncorrectResultSetColumnCountException;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
@@ -32,7 +32,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 
 /**
- * 测试{@link org.jfaster.mango.exception.jdbc.IncorrectResultSetColumnCountException}
+ * 测试{@link org.jfaster.mango.jdbc.exception.IncorrectResultSetColumnCountException}
  *
  * @author ash
  */

@@ -15,6 +15,11 @@
  */
 
 /**
- * reflect
+ * 反射工具
+ *
+ * 依赖包:
+ *  annotation
+ *  exception
+ *  util
  */
 package org.jfaster.mango.reflect;

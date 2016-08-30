@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.base.sql.SQLType;
+import org.jfaster.mango.util.sql.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
 
 /**

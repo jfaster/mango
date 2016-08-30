@@ -15,6 +15,11 @@
  */
 
 /**
- * DataSourceFactory
+ * 数据源工厂
+ *
+ * 依赖包:
+ *  exception
+ *  transaction
+ *  util
  */
 package org.jfaster.mango.datasource;

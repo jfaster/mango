@@ -17,7 +17,7 @@
 package org.jfaster.mango.sharding;
 
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.base.HashUtil;
+import org.jfaster.mango.util.HashUtil;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;

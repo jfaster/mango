@@ -15,6 +15,20 @@
  */
 
 /**
- * core code
+ * 数据访问操作
+ *
+ * 依赖包:
+ *  annotation
+ *  binding
+ *  datasource
+ *  exception
+ *  interceptor
+ *  invoker
+ *  jdbc
+ *  parser
+ *  reflect
+ *  sharding
+ *  stat
+ *  util
  */
 package org.jfaster.mango.operator;

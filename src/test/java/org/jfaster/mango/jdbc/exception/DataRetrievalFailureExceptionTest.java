@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc.exception;
 
-import org.jfaster.mango.exception.jdbc.DataRetrievalFailureException;
+import org.jfaster.mango.jdbc.exception.DataRetrievalFailureException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.support.DataSourceConfig;

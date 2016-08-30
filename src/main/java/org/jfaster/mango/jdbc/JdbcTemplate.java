@@ -16,14 +16,14 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.base.local.CacheLoader;
-import org.jfaster.mango.base.local.DoubleCheckCache;
-import org.jfaster.mango.base.local.LoadingCache;
-import org.jfaster.mango.base.logging.InternalLogger;
-import org.jfaster.mango.base.logging.InternalLoggerFactory;
-import org.jfaster.mango.datasource.DataSourceUtils;
-import org.jfaster.mango.exception.jdbc.DataAccessException;
-import org.jfaster.mango.exception.jdbc.DataRetrievalFailureException;
+import org.jfaster.mango.util.local.CacheLoader;
+import org.jfaster.mango.util.local.DoubleCheckCache;
+import org.jfaster.mango.util.local.LoadingCache;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.transaction.DataSourceUtils;
+import org.jfaster.mango.jdbc.exception.DataAccessException;
+import org.jfaster.mango.jdbc.exception.DataRetrievalFailureException;
 
 import javax.sql.DataSource;
 import java.sql.*;

@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.base.PropertyTokenizer;
-import org.jfaster.mango.base.Strings;
-import org.jfaster.mango.base.logging.InternalLogger;
-import org.jfaster.mango.base.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.PropertyTokenizer;
+import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.invoker.FunctionalSetterInvokerGroup;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.SetterInvoker;
