@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.stat;
 
-import org.jfaster.mango.util.sql.OperatorType;
+import org.jfaster.mango.util.jdbc.OperatorType;
 
 import java.lang.reflect.Method;
 

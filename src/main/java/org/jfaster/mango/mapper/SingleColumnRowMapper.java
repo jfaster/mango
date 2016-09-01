@@ -16,10 +16,11 @@
 
 package org.jfaster.mango.mapper;
 
-import org.jfaster.mango.jdbc.JdbcUtils;
+import org.jfaster.mango.type.TypeHandler;
+import org.jfaster.mango.type.TypeHandlerRegistry;
+import org.jfaster.mango.util.jdbc.ResultSetWrapper;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
@@ -37,24 +38,23 @@ public class SingleColumnRowMapper<T> implements RowMapper<T> {
 
   @SuppressWarnings("unchecked")
   public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-    // 验证列数
-    ResultSetMetaData rsmd = rs.getMetaData();
-    int nrOfColumns = rsmd.getColumnCount();
-    if (nrOfColumns != 1) {
-      throw new MappingException("incorrect column count, expected 1 but " + nrOfColumns);
+    ResultSetWrapper rsw = new ResultSetWrapper(rs);
+    if (rsw.getColumnCount() != 1) {
+      throw new MappingException("incorrect column count, expected 1 but " + rsw.getColumnCount());
     }
-
-    Object result = getColumnValue(rs, 1, this.mappedClass);
-    return (T) result;
+    int index = 1;
+    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(mappedClass, rsw.getJdbcType(index));
+    if (typeHandler == null) {
+      // TODO
+      throw new IllegalStateException();
+    }
+    Object value = typeHandler.getResult(rsw.getResultSet(), index);
+    return (T) value;
   }
 
   @Override
   public Class<T> getMappedClass() {
     return mappedClass;
-  }
-
-  protected Object getColumnValue(ResultSet rs, int index, Class requiredType) throws SQLException {
-    return JdbcUtils.getResultSetValue(rs, index, requiredType);
   }
 
 }

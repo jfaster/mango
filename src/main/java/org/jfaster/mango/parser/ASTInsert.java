@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.util.sql.SQLType;
+import org.jfaster.mango.util.jdbc.SQLType;
 
 public class ASTInsert extends AbstractDMLNode {
 

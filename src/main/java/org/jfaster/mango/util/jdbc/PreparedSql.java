@@ -1,4 +1,4 @@
-package org.jfaster.mango.util.sql;
+package org.jfaster.mango.util.jdbc;
 
 import java.util.List;
 

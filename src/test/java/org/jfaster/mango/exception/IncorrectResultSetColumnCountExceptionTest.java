@@ -18,7 +18,7 @@ package org.jfaster.mango.exception;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.jdbc.exception.IncorrectResultSetColumnCountException;
+import org.jfaster.mango.mapper.MappingException;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
@@ -57,7 +57,7 @@ public class IncorrectResultSetColumnCountExceptionTest {
 
   @Test
   public void test() {
-    thrown.expect(IncorrectResultSetColumnCountException.class);
+    thrown.expect(MappingException.class);
     thrown.expectMessage("incorrect column count, expected 1 but 2");
     PersonDao dao = mango.create(PersonDao.class);
     int id = 1;

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.util.sql.PreparedSql;
+import org.jfaster.mango.util.jdbc.PreparedSql;
 
 import javax.annotation.Nullable;
 import java.util.List;

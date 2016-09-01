@@ -16,19 +16,20 @@
 
 package org.jfaster.mango.mapper;
 
-import org.jfaster.mango.jdbc.JdbcUtils;
-import org.jfaster.mango.util.PropertyTokenizer;
-import org.jfaster.mango.util.Strings;
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.invoker.FunctionalSetterInvokerGroup;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.invoker.UnreachablePropertyException;
+import org.jfaster.mango.type.TypeHandler;
+import org.jfaster.mango.type.TypeHandlerRegistry;
+import org.jfaster.mango.util.PropertyTokenizer;
+import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.jdbc.ResultSetWrapper;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.Reflection;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -89,63 +90,73 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
   public T mapRow(ResultSet rs, int rowNumber) throws SQLException {
     T mappedObject = Reflection.instantiate(mappedClass);
 
-    ResultSetMetaData rsmd = rs.getMetaData();
-    int columnCount = rsmd.getColumnCount();
+    ResultSetWrapper rsw = new ResultSetWrapper(rs);
+    int columnCount = rsw.getColumnCount();
 
     for (int index = 1; index <= columnCount; index++) {
-      String originalColumn = JdbcUtils.lookupColumnName(rsmd, index).trim();
-      String column = originalColumn.toLowerCase();
-      String propertyPath = columnToPropertyMap.get(column);
+      String columnName = rsw.getColumnName(index);
+      String lowerCaseColumnName = columnName.toLowerCase();
+      String propertyPath = columnToPropertyMap.get(lowerCaseColumnName);
       if (propertyPath != null) { // 使用自定义多级映射
-        setValueByPropertyPath(mappedObject, propertyPath, rs, index, rowNumber, originalColumn);
+        setValueByPropertyPath(mappedObject, propertyPath, rsw, index, rowNumber);
       } else {
-        PropertyTokenizer prop = new PropertyTokenizer(originalColumn);
+        PropertyTokenizer prop = new PropertyTokenizer(columnName);
         if (prop.hasNext()) { // select语句中的字段存在多级映射
-          setValueByPropertyPath(mappedObject, originalColumn, rs, index, rowNumber, originalColumn);
+          setValueByPropertyPath(mappedObject, columnName, rsw, index, rowNumber);
         } else { // 单级映射（包含约定和自定义）
-          setValueByProperty(mappedObject, column, rs, index, rowNumber, originalColumn);
+          setValueByProperty(mappedObject, lowerCaseColumnName, rsw, index, rowNumber);
         }
       }
     }
     return mappedObject;
   }
 
-  private void setValueByPropertyPath(Object mappedObject, String propertyPath, ResultSet rs,
-                                      int index, int rowNumber, String originalColumn) throws SQLException {
+  private void setValueByPropertyPath(Object mappedObject, String propertyPath, ResultSetWrapper rsw,
+                                      int index, int rowNumber) throws SQLException {
 
     FunctionalSetterInvokerGroup g = null;
     try {
       g = FunctionalSetterInvokerGroup.create(mappedClass, propertyPath);
     } catch (UnreachablePropertyException e) {
       if (checkColumn) {
-        throw new MappingException("Unable to map column '" + originalColumn +
-            "' to property '" + propertyPath + "'; Cause: " + e.getMessage());
+        throw new MappingException("Unable to map column '" + rsw.getColumnName(index) +
+            "' to property '" + propertyPath + "'");
       }
     }
     if (g != null) {
-      Object value = JdbcUtils.getResultSetValue(rs, index, g.getTargetType());
+      TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(g.getTargetType(), rsw.getJdbcType(index));
+      if (typeHandler == null) {
+        // TODO
+        throw new IllegalStateException();
+      }
+      Object value = typeHandler.getResult(rsw.getResultSet(), index);
       if (logger.isDebugEnabled() && rowNumber == 0) {
-        logger.debug("Mapping column '" + originalColumn + "' to property '" +
+        logger.debug("Mapping column '" + rsw.getColumnName(index) + "' to property '" +
             propertyPath + "' of type " + g.getTargetType());
       }
       g.invoke(mappedObject, value);
     }
   }
 
-  private void setValueByProperty(Object mappedObject, String column, ResultSet rs,
-                                  int index, int rowNumber, String originalColumn) throws SQLException {
+  private void setValueByProperty(Object mappedObject, String lowerCaseColumnName, ResultSetWrapper rsw,
+                                  int index, int rowNumber) throws SQLException {
 
-    SetterInvoker invoker = invokerMap.get(column);
+    SetterInvoker invoker = invokerMap.get(lowerCaseColumnName);
     if (invoker != null) {
-      Object value = JdbcUtils.getResultSetValue(rs, index, invoker.getParameterRawType());
+      TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(invoker.getParameterType(), rsw.getJdbcType(index));
+      if (typeHandler == null) {
+        // TODO
+        throw new IllegalStateException();
+      }
+      Object value = typeHandler.getResult(rsw.getResultSet(), index);
       if (logger.isDebugEnabled() && rowNumber == 0) {
-        logger.debug("Mapping column '" + originalColumn + "' to property '" +
+        logger.debug("Mapping column '" + rsw.getColumnName(index) + "' to property '" +
             invoker.getName() + "' of type " + invoker.getParameterRawType());
       }
       invoker.invoke(mappedObject, value);
     } else {
       if (checkColumn) {
-        throw new MappingException("Unable to map column '" + originalColumn +
+        throw new MappingException("Unable to map column '" + rsw.getColumnName(index) +
             "' to any property of '" + mappedClass + "'");
       }
     }

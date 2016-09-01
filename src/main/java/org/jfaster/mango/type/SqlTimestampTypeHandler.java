@@ -14,50 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.sql;
+package org.jfaster.mango.type;
+
+import org.jfaster.mango.util.jdbc.JdbcType;
+
+import java.sql.*;
 
 /**
+ * @author Clinton Begin
  * @author ash
  */
-public enum SQLType {
+public class SqlTimestampTypeHandler extends BaseTypeHandler<Timestamp> {
 
-  /**
-   * 增
-   */
-  INSERT(true),
-
-  /**
-   * 删
-   */
-  DELETE(true),
-
-  /**
-   * 改
-   */
-  UPDATE(true),
-
-  /**
-   * 查
-   */
-  SELECT(false),
-
-  /**
-   * mysql中的replace
-   */
-  REPLACE(true),
-
-  /**
-   * oracle中的merge
-   */
-  MERGE(true);
-
-  private boolean needChangeData;
-
-  private SQLType(boolean needChangeData) {
-    this.needChangeData = needChangeData;
+  @Override
+  public void setNonNullParameter(PreparedStatement ps, int index, Timestamp parameter, JdbcType jdbcType)
+      throws SQLException {
+    ps.setTimestamp(index, parameter);
   }
 
-  public boolean needChangeData() {
-    return needChangeData;
+  @Override
+  public Timestamp getNullableResult(ResultSet rs, int index)
+      throws SQLException {
+    return rs.getTimestamp(index);
   }
+
 }

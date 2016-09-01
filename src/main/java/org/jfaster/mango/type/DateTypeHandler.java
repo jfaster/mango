@@ -14,25 +14,33 @@
  * under the License.
  */
 
-package org.jfaster.mango.interceptor;
+package org.jfaster.mango.type;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
-import org.jfaster.mango.util.jdbc.SQLType;
+import org.jfaster.mango.util.jdbc.JdbcType;
 
-import java.util.List;
+import java.sql.*;
+import java.util.Date;
 
 /**
+ * @author Clinton Begin
  * @author ash
  */
-public abstract class UpdateInterceptor implements Interceptor {
+public class DateTypeHandler extends BaseTypeHandler<Date> {
 
   @Override
-  public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
-    if (sqlType.needChangeData()) {
-      interceptUpdate(preparedSql, parameters, sqlType);
-    }
+  public void setNonNullParameter(PreparedStatement ps, int index, Date parameter, JdbcType jdbcType)
+      throws SQLException {
+    ps.setTimestamp(index, new Timestamp((parameter).getTime()));
   }
 
-  public abstract void interceptUpdate(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType);
+  @Override
+  public Date getNullableResult(ResultSet rs, int index)
+      throws SQLException {
+    Timestamp sqlTimestamp = rs.getTimestamp(index);
+    if (sqlTimestamp != null) {
+      return new Date(sqlTimestamp.getTime());
+    }
+    return null;
+  }
 
 }

@@ -14,28 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.parser;
+package org.jfaster.mango.type;
 
-import org.jfaster.mango.util.jdbc.SQLType;
+import org.jfaster.mango.util.jdbc.JdbcType;
 
-public class ASTSelect extends AbstractDMLNode {
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-  public ASTSelect(int id) {
-    super(id);
-  }
+/**
+ * @author Clinton Begin
+ * @author ash
+ */
+public class ByteTypeHandler extends BaseTypeHandler<Byte> {
 
-  public ASTSelect(Parser p, int id) {
-    super(p, id);
+  @Override
+  public void setNonNullParameter(PreparedStatement ps, int index, Byte parameter, JdbcType jdbcType)
+      throws SQLException {
+    ps.setByte(index, parameter);
   }
 
   @Override
-  public SQLType getSQLType() {
-    return SQLType.SELECT;
-  }
-
-  @Override
-  public Object jjtAccept(ParserVisitor visitor, Object data) {
-    return visitor.visit(this, data);
+  public Byte getNullableResult(ResultSet rs, int index)
+      throws SQLException {
+    return rs.getByte(index);
   }
 
 }

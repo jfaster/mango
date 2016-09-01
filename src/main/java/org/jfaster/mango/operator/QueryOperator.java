@@ -28,7 +28,7 @@ import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.util.SingleColumns;
-import org.jfaster.mango.util.sql.PreparedSql;
+import org.jfaster.mango.util.jdbc.PreparedSql;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Array;

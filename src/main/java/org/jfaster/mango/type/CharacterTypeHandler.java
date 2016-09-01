@@ -14,31 +14,33 @@
  * under the License.
  */
 
-package org.jfaster.mango.parser;
+package org.jfaster.mango.type;
 
-import org.jfaster.mango.util.jdbc.SQLType;
+import org.jfaster.mango.util.jdbc.JdbcType;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
+ * @author Clinton Begin
  * @author ash
  */
-public class ASTDelete extends AbstractDMLNode {
+public class CharacterTypeHandler extends BaseTypeHandler<Character> {
 
-  public ASTDelete(int id) {
-    super(id);
-  }
-
-  public ASTDelete(Parser p, int id) {
-    super(p, id);
+  @Override
+  public void setNonNullParameter(PreparedStatement ps, int index, Character parameter, JdbcType jdbcType) throws SQLException {
+    ps.setString(index, parameter.toString());
   }
 
   @Override
-  public SQLType getSQLType() {
-    return SQLType.DELETE;
-  }
-
-  @Override
-  public Object jjtAccept(ParserVisitor visitor, Object data) {
-    return visitor.visit(this, data);
+  public Character getNullableResult(ResultSet rs, int index) throws SQLException {
+    String columnValue = rs.getString(index);
+    if (columnValue != null) {
+      return columnValue.charAt(0);
+    } else {
+      return null;
+    }
   }
 
 }

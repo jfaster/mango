@@ -14,28 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.parser;
+package org.jfaster.mango.util.jdbc;
 
-import org.jfaster.mango.util.jdbc.SQLType;
+/**
+ * @author ash
+ */
+public enum OperatorType {
 
-public class ASTSelect extends AbstractDMLNode {
+  QUERY,
 
-  public ASTSelect(int id) {
-    super(id);
-  }
+  UPDATE,
 
-  public ASTSelect(Parser p, int id) {
-    super(p, id);
-  }
-
-  @Override
-  public SQLType getSQLType() {
-    return SQLType.SELECT;
-  }
-
-  @Override
-  public Object jjtAccept(ParserVisitor visitor, Object data) {
-    return visitor.visit(this, data);
-  }
+  BATCHUPDATE,
 
 }

@@ -14,17 +14,31 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.sql;
+package org.jfaster.mango.type;
 
 /**
+ * @author Clinton Begin
  * @author ash
  */
-public enum OperatorType {
+class ByteArrayUtils {
 
-  QUERY,
+  private ByteArrayUtils() {
+    // Prevent Instantiation
+  }
 
-  UPDATE,
+  static byte[] convertToPrimitiveArray(Byte[] objects) {
+    final byte[] bytes = new byte[objects.length];
+    for (int i = 0; i < objects.length; i++) {
+      bytes[i] = objects[i];
+    }
+    return bytes;
+  }
 
-  BATCHUPDATE,
-
+  static Byte[] convertToObjectArray(byte[] bytes) {
+    final Byte[] objects = new Byte[bytes.length];
+    for (int i = 0; i < bytes.length; i++) {
+      objects[i] = bytes[i];
+    }
+    return objects;
+  }
 }

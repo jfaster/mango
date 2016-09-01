@@ -18,8 +18,8 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.util.ToStringHelper;
-import org.jfaster.mango.util.sql.PreparedSql;
-import org.jfaster.mango.util.sql.SQLType;
+import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;

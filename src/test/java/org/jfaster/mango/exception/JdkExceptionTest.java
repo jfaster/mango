@@ -21,6 +21,7 @@ import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.binding.BindingException;
+import org.jfaster.mango.mapper.MappingException;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.operator.cache.LocalCacheHandler;
@@ -87,7 +88,7 @@ public class JdkExceptionTest {
 
   @Test
   public void testNoData() throws Exception {
-    thrown.expect(NullPointerException.class);
+    thrown.expect(MappingException.class);
     thrown.expectMessage("no data, can't cast null to primitive type int");
     AccountDao dao = mango.create(AccountDao.class);
     dao.getBalance(1);
@@ -95,7 +96,7 @@ public class JdkExceptionTest {
 
   @Test
   public void testDataIsNull() throws Exception {
-    thrown.expect(NullPointerException.class);
+    thrown.expect(MappingException.class);
     thrown.expectMessage("data is null, can't cast null to primitive type int");
     AccountDao dao = mango.create(AccountDao.class);
     int id = 1;
