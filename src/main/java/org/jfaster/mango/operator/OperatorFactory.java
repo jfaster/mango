@@ -34,8 +34,8 @@ import org.jfaster.mango.operator.table.TableGenerator;
 import org.jfaster.mango.operator.table.TableGeneratorFactory;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.stat.StatsCounter;
 
 import java.util.ArrayList;

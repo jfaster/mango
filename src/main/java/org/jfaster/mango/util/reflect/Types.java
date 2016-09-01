@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.util.reflect;
 
 import org.jfaster.mango.util.Joiner;
 import org.jfaster.mango.util.Objects;

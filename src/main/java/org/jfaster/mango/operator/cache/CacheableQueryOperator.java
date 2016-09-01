@@ -29,7 +29,7 @@ import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.operator.QueryOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.MethodDescriptor;
 
 import java.util.*;
 

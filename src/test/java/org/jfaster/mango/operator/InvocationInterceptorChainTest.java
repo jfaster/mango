@@ -25,8 +25,8 @@ import org.jfaster.mango.interceptor.Interceptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.interceptor.Parameter;
-import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.support.model4table.User;
 import org.junit.Test;
 

@@ -18,10 +18,10 @@ package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.annotation.Setter;
 import org.jfaster.mango.exception.UncheckedException;
-import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.TokenTuple;
-import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.reflect.Types;
+import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TokenTuple;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.Types;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;

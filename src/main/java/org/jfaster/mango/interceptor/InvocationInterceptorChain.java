@@ -19,7 +19,7 @@ package org.jfaster.mango.interceptor;
 import org.jfaster.mango.util.sql.PreparedSql;
 import org.jfaster.mango.util.sql.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;

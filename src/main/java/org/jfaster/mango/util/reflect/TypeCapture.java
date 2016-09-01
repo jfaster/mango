@@ -14,24 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect.descriptor;
+package org.jfaster.mango.util.reflect;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
- * 根据参数序号定义参数名字
- *
  * @author ash
  */
-public class SerialNumberParameterNameDiscover implements ParameterNameDiscover {
+abstract class TypeCapture<T> {
 
-  @Override
-  public String[] getParameterNames(Method method) {
-    String[] names = new String[method.getGenericParameterTypes().length];
-    for (int i = 0; i < names.length; i++) {
-      names[i] = String.valueOf(i + 1);
+  final Type capture() {
+    Type superclass = getClass().getGenericSuperclass();
+    if (!(superclass instanceof ParameterizedType)) {
+      throw new IllegalArgumentException(superclass + " isn't parameterized");
     }
-    return names;
+    return ((ParameterizedType) superclass).getActualTypeArguments()[0];
   }
 
 }

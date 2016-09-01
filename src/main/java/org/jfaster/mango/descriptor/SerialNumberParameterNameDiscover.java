@@ -14,21 +14,24 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.descriptor;
 
-import org.jfaster.mango.exception.MangoException;
+import java.lang.reflect.Method;
 
 /**
+ * 根据参数序号定义参数名字
+ *
  * @author ash
  */
-public class MappingException extends MangoException {
+public class SerialNumberParameterNameDiscover implements ParameterNameDiscover {
 
-  public MappingException(String msg) {
-    super(msg);
-  }
-
-  public MappingException(String msg, Throwable cause) {
-    super(msg, cause);
+  @Override
+  public String[] getParameterNames(Method method) {
+    String[] names = new String[method.getGenericParameterTypes().length];
+    for (int i = 0; i < names.length; i++) {
+      names[i] = String.valueOf(i + 1);
+    }
+    return names;
   }
 
 }

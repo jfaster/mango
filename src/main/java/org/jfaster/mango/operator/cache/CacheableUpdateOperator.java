@@ -24,7 +24,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.operator.UpdateOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.MethodDescriptor;
 
 import java.util.List;
 import java.util.Set;

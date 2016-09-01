@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

@@ -21,7 +21,7 @@ import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.UnreachablePropertyException;
-import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

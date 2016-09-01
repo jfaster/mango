@@ -14,27 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.mapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author ash
  */
-public class TokenTuple {
+public interface RowMapper<T> {
 
-  private final TypeToken<?> first;
-  private final TypeToken<?> second;
+  T mapRow(ResultSet rs, int rowNum) throws SQLException;
 
-  public TokenTuple(TypeToken<?> first, TypeToken<?> second) {
-    this.first = first;
-    this.second = second;
-  }
-
-  public TypeToken<?> getFirst() {
-    return first;
-  }
-
-  public TypeToken<?> getSecond() {
-    return second;
-  }
+  Class<T> getMappedClass();
 
 }

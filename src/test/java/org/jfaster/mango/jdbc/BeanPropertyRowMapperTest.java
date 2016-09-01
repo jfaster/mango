@@ -19,6 +19,7 @@ package org.jfaster.mango.jdbc;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jfaster.mango.annotation.*;
+import org.jfaster.mango.mapper.MappingException;
 import org.jfaster.mango.util.logging.MangoLogger;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;

@@ -20,7 +20,7 @@ import org.jfaster.mango.util.local.CacheLoader;
 import org.jfaster.mango.util.local.DoubleCheckCache;
 import org.jfaster.mango.util.local.LoadingCache;
 import org.jfaster.mango.invoker.RuntimeSetterFunction;
-import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;

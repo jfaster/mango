@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect.descriptor;
+package org.jfaster.mango.descriptor;
 
 import org.jfaster.mango.util.Objects;
 

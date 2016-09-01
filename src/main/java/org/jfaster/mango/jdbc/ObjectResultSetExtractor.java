@@ -16,6 +16,9 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.mapper.MappingException;
+import org.jfaster.mango.mapper.RowMapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -39,11 +42,11 @@ public class ObjectResultSetExtractor<T> implements ResultSetExtractor<T> {
 
     // 原生类型
     if (!rs.next()) {
-      throw new NullPointerException("no data, can't cast null to primitive type " + mappedClass);
+      throw new MappingException("no data, can't cast null to primitive type " + mappedClass);
     }
     T r = rowMapper.mapRow(rs, 0);
     if (r == null) {
-      throw new NullPointerException("data is null, can't cast null to primitive type " + mappedClass);
+      throw new MappingException("data is null, can't cast null to primitive type " + mappedClass);
     }
     return r;
   }

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 
 import javax.annotation.Nullable;
 import java.util.List;

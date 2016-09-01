@@ -32,12 +32,12 @@ import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.operator.cache.CacheHandler;
-import org.jfaster.mango.reflect.AbstractInvocationHandler;
-import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
-import org.jfaster.mango.reflect.descriptor.Methods;
-import org.jfaster.mango.reflect.descriptor.ParameterNameDiscover;
-import org.jfaster.mango.reflect.descriptor.SerialNumberParameterNameDiscover;
+import org.jfaster.mango.util.reflect.AbstractInvocationHandler;
+import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.Methods;
+import org.jfaster.mango.descriptor.ParameterNameDiscover;
+import org.jfaster.mango.descriptor.SerialNumberParameterNameDiscover;
 import org.jfaster.mango.stat.OperatorStats;
 import org.jfaster.mango.stat.StatsCounter;
 

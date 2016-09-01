@@ -21,11 +21,12 @@ import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.jdbc.*;
+import org.jfaster.mango.mapper.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
-import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
-import org.jfaster.mango.reflect.descriptor.ReturnDescriptor;
+import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.util.SingleColumns;
 import org.jfaster.mango.util.sql.PreparedSql;
 

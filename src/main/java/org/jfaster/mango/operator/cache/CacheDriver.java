@@ -29,10 +29,10 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.TypeWrapper;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TypeWrapper;
+import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.stat.StatsCounter;
 
 import javax.annotation.Nullable;

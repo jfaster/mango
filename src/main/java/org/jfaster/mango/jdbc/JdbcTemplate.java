@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.mapper.*;
 import org.jfaster.mango.util.local.CacheLoader;
 import org.jfaster.mango.util.local.DoubleCheckCache;
 import org.jfaster.mango.util.local.LoadingCache;

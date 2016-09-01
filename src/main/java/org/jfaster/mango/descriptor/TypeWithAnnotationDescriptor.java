@@ -14,10 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect.descriptor;
+package org.jfaster.mango.descriptor;
 
-import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.reflect.TypeWrapper;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;

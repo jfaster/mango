@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.invoker.function.LongListToStringFunction;
-import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

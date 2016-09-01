@@ -17,6 +17,9 @@
 package org.jfaster.mango.support;
 
 import org.jfaster.mango.jdbc.*;
+import org.jfaster.mango.jdbc.ListSupplier;
+import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.jdbc.SetSupplier;
 
 import javax.sql.DataSource;
 import java.util.List;

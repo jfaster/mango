@@ -14,17 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect.descriptor;
+package org.jfaster.mango.mapper;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
- * 参数名探测器
- *
  * @author ash
  */
-public interface ParameterNameDiscover {
+public abstract class AbstractRowMapper<T> implements RowMapper<T> {
 
-  String[] getParameterNames(Method method);
+  private Class<T> mappedClass;
+
+  @SuppressWarnings("unchecked")
+  protected AbstractRowMapper() {
+    Type genType = getClass().getGenericSuperclass();
+    Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+    mappedClass = (Class<T>) params[0];
+  }
+
+  @Override
+  public Class<T> getMappedClass() {
+    return mappedClass;
+  }
 
 }

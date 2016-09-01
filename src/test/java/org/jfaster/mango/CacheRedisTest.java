@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.MockRedisCacheHandler;
 import org.jfaster.mango.support.Randoms;

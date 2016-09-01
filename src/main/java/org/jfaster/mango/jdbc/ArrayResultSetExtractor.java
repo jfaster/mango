@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.util.Arrays;
 
 import java.sql.ResultSet;

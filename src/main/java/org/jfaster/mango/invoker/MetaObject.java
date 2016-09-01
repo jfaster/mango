@@ -16,7 +16,7 @@
 package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.util.PropertyTokenizer;
-import org.jfaster.mango.reflect.Reflection;
+import org.jfaster.mango.util.reflect.Reflection;
 
 /**
  * @author Clinton Begin

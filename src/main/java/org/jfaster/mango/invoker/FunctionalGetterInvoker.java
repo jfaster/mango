@@ -18,9 +18,9 @@ package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.annotation.Getter;
 import org.jfaster.mango.exception.UncheckedException;
-import org.jfaster.mango.reflect.Reflection;
-import org.jfaster.mango.reflect.TokenTuple;
-import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TokenTuple;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

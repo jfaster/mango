@@ -25,7 +25,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
-import org.jfaster.mango.reflect.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.MethodDescriptor;
 
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;

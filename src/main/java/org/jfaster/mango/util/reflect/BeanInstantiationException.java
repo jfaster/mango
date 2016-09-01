@@ -14,12 +14,30 @@
  * under the License.
  */
 
+package org.jfaster.mango.util.reflect;
+
+import org.jfaster.mango.exception.MangoException;
+
 /**
- * 反射工具
+ * 运行时实例化类异常
  *
- * 依赖包:
- *  annotation
- *  exception
- *  util
+ * @author ash
  */
-package org.jfaster.mango.reflect;
+public class BeanInstantiationException extends MangoException {
+
+  private Class beanClass;
+
+  public BeanInstantiationException(Class beanClass, String msg) {
+    this(beanClass, msg, null);
+  }
+
+  public BeanInstantiationException(Class beanClass, String msg, Throwable cause) {
+    super("Could not instantiate bean class [" + beanClass.getName() + "]: " + msg, cause);
+    this.beanClass = beanClass;
+  }
+
+  public Class getBeanClass() {
+    return beanClass;
+  }
+
+}

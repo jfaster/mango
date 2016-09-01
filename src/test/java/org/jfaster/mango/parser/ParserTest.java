@@ -24,8 +24,8 @@ import org.jfaster.mango.binding.DefaultInvocationContext;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.binding.ParameterContext;
-import org.jfaster.mango.reflect.TypeToken;
-import org.jfaster.mango.reflect.descriptor.ParameterDescriptor;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;

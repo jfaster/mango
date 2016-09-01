@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.reflect;
+package org.jfaster.mango.util.reflect;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.reflect.*;

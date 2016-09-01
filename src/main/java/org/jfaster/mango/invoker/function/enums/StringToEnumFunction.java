@@ -17,7 +17,7 @@
 package org.jfaster.mango.invoker.function.enums;
 
 import org.jfaster.mango.invoker.RuntimeSetterFunction;
-import org.jfaster.mango.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;

@@ -14,9 +14,9 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc;
+package org.jfaster.mango.mapper;
 
-import org.jfaster.mango.jdbc.exception.IncorrectResultSetColumnCountException;
+import org.jfaster.mango.jdbc.JdbcUtils;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -41,7 +41,7 @@ public class SingleColumnRowMapper<T> implements RowMapper<T> {
     ResultSetMetaData rsmd = rs.getMetaData();
     int nrOfColumns = rsmd.getColumnCount();
     if (nrOfColumns != 1) {
-      throw new IncorrectResultSetColumnCountException("incorrect column count, expected 1 but " + nrOfColumns);
+      throw new MappingException("incorrect column count, expected 1 but " + nrOfColumns);
     }
 
     Object result = getColumnValue(rs, 1, this.mappedClass);
