@@ -18,6 +18,8 @@ package org.jfaster.mango.type;
 
 import org.jfaster.mango.util.jdbc.JdbcType;
 
+import java.io.ByteArrayInputStream;
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,22 +28,33 @@ import java.sql.SQLException;
  * @author Clinton Begin
  * @author ash
  */
-public class ByteArrayTypeHandler extends BaseTypeHandler<byte[]> {
+public class BlobByteObjectArrayTypeHandler extends BaseTypeHandler<Byte[]> {
 
   @Override
-  public void setNonNullParameter(PreparedStatement ps, int index, byte[] parameter, JdbcType jdbcType)
+  public void setNonNullParameter(PreparedStatement ps, int i, Byte[] parameter, JdbcType jdbcType)
       throws SQLException {
-    ps.setBytes(index, parameter);
+    ByteArrayInputStream bis = new ByteArrayInputStream(ByteArrayUtils.convertToPrimitiveArray(parameter));
+    ps.setBinaryStream(i, bis, parameter.length);
   }
 
   @Override
-  public byte[] getNullableResult(ResultSet rs, int index)
+  public Byte[] getNullableResult(ResultSet rs, int columnIndex)
       throws SQLException {
-    return rs.getBytes(index);
+    Blob blob = rs.getBlob(columnIndex);
+    return getBytes(blob);
+  }
+
+  private Byte[] getBytes(Blob blob) throws SQLException {
+    Byte[] returnValue = null;
+    if (blob != null) {
+      returnValue = ByteArrayUtils.convertToObjectArray(blob.getBytes(1, (int) blob.length()));
+    }
+    return returnValue;
   }
 
   @Override
   public JdbcType getJdbcType() {
     return JdbcType.LONGVARBINARY;
   }
+
 }

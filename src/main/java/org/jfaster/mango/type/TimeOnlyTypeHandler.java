@@ -21,27 +21,33 @@ import org.jfaster.mango.util.jdbc.JdbcType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.util.Date;
 
 /**
  * @author Clinton Begin
  * @author ash
  */
-public class ByteArrayTypeHandler extends BaseTypeHandler<byte[]> {
+public class TimeOnlyTypeHandler extends BaseTypeHandler<Date> {
 
   @Override
-  public void setNonNullParameter(PreparedStatement ps, int index, byte[] parameter, JdbcType jdbcType)
+  public void setNonNullParameter(PreparedStatement ps, int index, Date parameter, JdbcType jdbcType)
       throws SQLException {
-    ps.setBytes(index, parameter);
+    ps.setTime(index, new Time(parameter.getTime()));
   }
 
   @Override
-  public byte[] getNullableResult(ResultSet rs, int index)
+  public Date getNullableResult(ResultSet rs, int index)
       throws SQLException {
-    return rs.getBytes(index);
+    Time sqlTime = rs.getTime(index);
+    if (sqlTime != null) {
+      return new Date(sqlTime.getTime());
+    }
+    return null;
   }
 
   @Override
   public JdbcType getJdbcType() {
-    return JdbcType.LONGVARBINARY;
+    return JdbcType.TIME;
   }
 }

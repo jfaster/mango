@@ -28,17 +28,17 @@ public class BindingParameterTest {
 
   @Test
   public void testGetFullName() throws Exception {
-    BindingParameter bp = BindingParameter.create("a", "b");
+    BindingParameter bp = BindingParameter.create("a", "b", null);
     assertThat(bp.getFullName(), equalTo(":a.b"));
-    bp = BindingParameter.create("a", "");
+    bp = BindingParameter.create("a", "", null);
     assertThat(bp.getFullName(), equalTo(":a"));
 
   }
 
   @Test
   public void testEquals() throws Exception {
-    BindingParameter bp = BindingParameter.create("a", "b");
-    BindingParameter bp2 = BindingParameter.create("a", "b");
+    BindingParameter bp = BindingParameter.create("a", "b", null);
+    BindingParameter bp2 = BindingParameter.create("a", "b", null);
     assertThat(bp.equals(bp2), equalTo(true));
     assertThat(bp.equals(null), equalTo(false));
     assertThat(bp.equals(new Object()), equalTo(false));

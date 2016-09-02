@@ -22,15 +22,15 @@ import org.jfaster.mango.annotation.ShardingBy;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.ParameterContext;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.util.reflect.Reflection;
-import org.jfaster.mango.util.reflect.TypeToken;
-import org.jfaster.mango.util.reflect.TypeWrapper;
-import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.NotUseDatabaseShardingStrategy;
 import org.jfaster.mango.sharding.NotUseShardingStrategy;
+import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -73,7 +73,7 @@ public class DatabaseGeneratorFactory {
     if (strategy != null) {
       if (shardingParameterNum == 1) {
         BindingParameterInvoker shardingParameterInvoker
-            = context.getBindingParameterInvoker(BindingParameter.create(shardingParameterName, shardingParameterProperty));
+            = context.getBindingParameterInvoker(BindingParameter.create(shardingParameterName, shardingParameterProperty, null));
         Type shardingParameterType = shardingParameterInvoker.getTargetType();
         TypeWrapper tw = new TypeWrapper(shardingParameterType);
         Class<?> mappedClass = tw.getMappedClass();

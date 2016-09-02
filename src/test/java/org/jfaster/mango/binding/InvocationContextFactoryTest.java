@@ -26,9 +26,9 @@ public class InvocationContextFactoryTest {
     InvocationContextFactory factory = InvocationContextFactory.create(paramCtx);
     InvocationContext invCtx = factory.newInvocationContext(new Object[]{"ash", 9527});
     BindingParameterInvoker nameInvoker =
-        FunctionalBindingParameterInvoker.create(String.class, BindingParameter.create("name"));
+        FunctionalBindingParameterInvoker.create(String.class, BindingParameter.create("name", "", null));
     BindingParameterInvoker idInvoker =
-        FunctionalBindingParameterInvoker.create(String.class, BindingParameter.create("id"));
+        FunctionalBindingParameterInvoker.create(String.class, BindingParameter.create("id", "", null));
     assertThat(invCtx.getNullableBindingValue(nameInvoker), equalTo((Object) "ash"));
     assertThat(invCtx.getNullableBindingValue(idInvoker), equalTo((Object) 9527));
 

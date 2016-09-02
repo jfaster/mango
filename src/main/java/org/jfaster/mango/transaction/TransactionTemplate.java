@@ -16,8 +16,8 @@
 
 package org.jfaster.mango.transaction;
 
-import org.jfaster.mango.transaction.exception.TransactionException;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.transaction.exception.TransactionException;
 
 /**
  * @author ash

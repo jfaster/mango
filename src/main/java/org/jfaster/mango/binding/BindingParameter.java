@@ -18,6 +18,7 @@ package org.jfaster.mango.binding;
 
 import org.jfaster.mango.util.Objects;
 import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.jdbc.JdbcType;
 
 /**
  * @author ash
@@ -28,24 +29,23 @@ public class BindingParameter {
 
   private final String propertyPath;
 
-  private BindingParameter(String parameterName, String propertyPath) {
+  private final JdbcType jdbcType;
+
+  public BindingParameter(String parameterName, String propertyPath, JdbcType jdbcType) {
     this.parameterName = parameterName;
     this.propertyPath = propertyPath;
+    this.jdbcType = jdbcType;
   }
 
-  public static BindingParameter create(String parameterName) {
-    return new BindingParameter(parameterName, "");
-  }
-
-  public static BindingParameter create(String parameterName, String propertyPath) {
-    return new BindingParameter(parameterName, propertyPath);
+  public static BindingParameter create(String parameterName, String propertyPath, JdbcType jdbcType) {
+    return new BindingParameter(parameterName, propertyPath, jdbcType);
   }
 
   public BindingParameter rightShift() {
     String newPropertyPath = Strings.isNotEmpty(propertyPath) ?
         parameterName + "." + propertyPath :
         parameterName;
-    return BindingParameter.create("", newPropertyPath);
+    return BindingParameter.create("", newPropertyPath, jdbcType);
   }
 
   public String getParameterName() {
@@ -54,6 +54,10 @@ public class BindingParameter {
 
   public String getPropertyPath() {
     return propertyPath;
+  }
+
+  public JdbcType getJdbcType() {
+    return jdbcType;
   }
 
   public String getFullName() {
@@ -68,12 +72,13 @@ public class BindingParameter {
       return false;
     final BindingParameter other = (BindingParameter) obj;
     return Objects.equal(this.getParameterName(), other.getParameterName())
-        && Objects.equal(this.getPropertyPath(), other.getPropertyPath());
+        && Objects.equal(this.getPropertyPath(), other.getPropertyPath())
+        && Objects.equal(this.getJdbcType(), other.getJdbcType());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(getParameterName(), getPropertyPath());
+    return Objects.hashCode(getParameterName(), getPropertyPath(), getJdbcType());
   }
 
   @Override

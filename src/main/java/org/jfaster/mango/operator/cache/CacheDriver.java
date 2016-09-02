@@ -19,21 +19,21 @@ package org.jfaster.mango.operator.cache;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.CacheBy;
 import org.jfaster.mango.annotation.CacheIgnored;
-import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.binding.ParameterContext;
+import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeWrapper;
-import org.jfaster.mango.descriptor.MethodDescriptor;
-import org.jfaster.mango.descriptor.ParameterDescriptor;
-import org.jfaster.mango.stat.StatsCounter;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -301,7 +301,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         String propertyPaths = cacheByAnno.value();
         for (String propertyPath : propertyPaths.split(",")) {
           propertyPath = propertyPath.trim();
-          BindingParameterInvoker invokerGroup = context.getBindingParameterInvoker(BindingParameter.create(parameterName, propertyPath));
+          BindingParameterInvoker invokerGroup = context.getBindingParameterInvoker(BindingParameter.create(parameterName, propertyPath, null));
           Type cacheByType = invokerGroup.getTargetType();
           TypeWrapper tw = new TypeWrapper(cacheByType);
           cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerGroup));

@@ -16,13 +16,13 @@
 
 package org.jfaster.mango.operator.datasource;
 
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.operator.datasource.database.DatabaseGenerator;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
 

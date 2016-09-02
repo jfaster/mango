@@ -33,9 +33,9 @@ public class FunctionalBindingParameterInvokerTest {
 
   @Test
   public void testAll() throws Exception {
-    BindingParameter bp = BindingParameter.create("user", "userBag.item.itemId");
-    BindingParameter bp2 = BindingParameter.create("user", "userBag.item.objItemId");
-    BindingParameter bp3 = BindingParameter.create("user", "userId");
+    BindingParameter bp = BindingParameter.create("user", "userBag.item.itemId", null);
+    BindingParameter bp2 = BindingParameter.create("user", "userBag.item.objItemId", null);
+    BindingParameter bp3 = BindingParameter.create("user", "userId", null);
     BindingParameterInvoker invoker = FunctionalBindingParameterInvoker.create(User.class, bp);
     BindingParameterInvoker invoker2 = FunctionalBindingParameterInvoker.create(User.class, bp2);
     BindingParameterInvoker invoker3 = FunctionalBindingParameterInvoker.create(User.class, bp3);
@@ -70,7 +70,7 @@ public class FunctionalBindingParameterInvokerTest {
     thrown.expect(BindingException.class);
     thrown.expectMessage("Parameter ':user' is null");
     BindingParameterInvoker invoker = FunctionalBindingParameterInvoker.create(
-        User.class, BindingParameter.create("user", "userBag.item.itemId"));
+        User.class, BindingParameter.create("user", "userBag.item.itemId", null));
     invoker.invoke(null);
   }
 
@@ -79,7 +79,7 @@ public class FunctionalBindingParameterInvokerTest {
     thrown.expect(BindingException.class);
     thrown.expectMessage("Parameter ':user.userBag' is null");
     BindingParameterInvoker invoker = FunctionalBindingParameterInvoker.create(
-        User.class, BindingParameter.create("user", "userBag.item.itemId"));
+        User.class, BindingParameter.create("user", "userBag.item.itemId", null));
     User user = new User();
     user.setUserId("ash");
     invoker.invoke(user);
@@ -90,7 +90,7 @@ public class FunctionalBindingParameterInvokerTest {
     thrown.expect(BindingException.class);
     thrown.expectMessage("Parameter ':user.userBag.item' is null");
     BindingParameterInvoker invoker = FunctionalBindingParameterInvoker.create(
-        User.class, BindingParameter.create("user", "userBag.item.itemId"));
+        User.class, BindingParameter.create("user", "userBag.item.itemId", null));
     UserBag userBag = new UserBag();
     User user = new User();
     user.setUserId("ash");
@@ -103,7 +103,7 @@ public class FunctionalBindingParameterInvokerTest {
     thrown.expect(BindingException.class);
     thrown.expectMessage("Parameter ':user.userBag.ite' can't be readable; " +
         "caused by: There is no getter for property named 'ite' in 'class org.jfaster.mango.binding.FunctionalBindingParameterInvokerTest$UserBag'");
-    FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("user", "userBag.ite"));
+    FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("user", "userBag.ite", null));
   }
 
   public static class User {

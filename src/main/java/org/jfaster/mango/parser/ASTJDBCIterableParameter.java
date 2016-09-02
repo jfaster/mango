@@ -16,11 +16,11 @@
 
 package org.jfaster.mango.parser;
 
-import org.jfaster.mango.type.TypeHandler;
-import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.type.TypeHandler;
+import org.jfaster.mango.util.Iterables;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +58,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     if (!propertyPath.isEmpty()) {
       propertyPath = propertyPath.substring(1);  // .property变为property
     }
-    bindingParameter = BindingParameter.create(parameterName, propertyPath);
+    bindingParameter = BindingParameter.create(parameterName, propertyPath, null);
   }
 
   @Override

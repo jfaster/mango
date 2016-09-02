@@ -16,11 +16,11 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.util.NestedProperty;
-import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.invoker.GetterInvoker;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.UnreachablePropertyException;
+import org.jfaster.mango.util.NestedProperty;
+import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -78,7 +78,7 @@ public class FunctionalBindingParameterInvoker implements BindingParameterInvoke
         for (int j = 0; j < i; j++) {
           np.append(invokers.get(j).getName());
         }
-        BindingParameter bp = BindingParameter.create(bindingParameter.getParameterName(), np.getNestedProperty());
+        BindingParameter bp = BindingParameter.create(bindingParameter.getParameterName(), np.getNestedProperty(), null);
         throw new BindingException("Parameter '" + bp + "' is null");
       }
       r = invokers.get(i).invoke(r);

@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.transaction;
 
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.transaction.exception.IllegalTransactionStateException;
 import org.jfaster.mango.transaction.exception.TransactionSystemException;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

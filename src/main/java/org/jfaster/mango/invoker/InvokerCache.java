@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.invoker;
 
+import org.jfaster.mango.exception.UncheckedException;
 import org.jfaster.mango.util.local.CacheLoader;
 import org.jfaster.mango.util.local.DoubleCheckCache;
 import org.jfaster.mango.util.local.LoadingCache;
-import org.jfaster.mango.exception.UncheckedException;
 
 import javax.annotation.Nullable;
 import java.beans.Introspector;

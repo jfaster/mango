@@ -22,15 +22,15 @@ import org.jfaster.mango.annotation.TableShardingBy;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.ParameterContext;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
-import org.jfaster.mango.util.reflect.Reflection;
-import org.jfaster.mango.util.reflect.TypeToken;
-import org.jfaster.mango.util.reflect.TypeWrapper;
-import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.sharding.NotUseShardingStrategy;
 import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
 import org.jfaster.mango.sharding.TableShardingStrategy;
+import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -88,7 +88,7 @@ public class TableGeneratorFactory {
     TableGenerator tableGenerator;
     if (isUseTableShardingStrategy) {
       if (num == 1) {
-        BindingParameter bp = BindingParameter.create(parameterName, propertyPath);
+        BindingParameter bp = BindingParameter.create(parameterName, propertyPath, null);
         BindingParameterInvoker invoker = context.getBindingParameterInvoker(bp);
         Type targetType = invoker.getTargetType();
         TypeWrapper tw = new TypeWrapper(targetType);

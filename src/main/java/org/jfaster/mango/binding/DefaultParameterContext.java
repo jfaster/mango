@@ -72,7 +72,7 @@ public class DefaultParameterContext implements ParameterContext {
     String parameterName = bindingParameter.getParameterName();
     Type type = nameToTypeMap.get(parameterName);
     if (type == null) {
-      throw new BindingException("Parameter '" + BindingParameter.create(bindingParameter.getParameterName()) +
+      throw new BindingException("Parameter '" + BindingParameter.create(bindingParameter.getParameterName(), "", null) +
           "' not found, available root parameters are " + transToBindingParameters(nameToTypeMap.keySet()));
     }
     return FunctionalBindingParameterInvoker.create(type, bindingParameter);
@@ -105,7 +105,10 @@ public class DefaultParameterContext implements ParameterContext {
           throw new BindingException("Root parameters " + transToBindingParameters(parameterNames) +
               " has the same property '" + newBindingParameter.getPropertyPath() + "', so can't auto expand");
         }
-        return BindingParameter.create(parameterNames.get(0), newBindingParameter.getPropertyPath());
+        return BindingParameter.create(
+            parameterNames.get(0),
+            newBindingParameter.getPropertyPath(),
+            newBindingParameter.getJdbcType());
       }
     }
     return null;
@@ -114,7 +117,7 @@ public class DefaultParameterContext implements ParameterContext {
   private Set<BindingParameter> transToBindingParameters(Collection<String> parameterNames) {
     Set<BindingParameter> rs = new LinkedHashSet<BindingParameter>();
     for (String parameterName : parameterNames) {
-      rs.add(BindingParameter.create(parameterName));
+      rs.add(BindingParameter.create(parameterName, "", null));
     }
     return rs;
   }

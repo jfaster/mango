@@ -17,13 +17,13 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.UseMaster;
-import org.jfaster.mango.util.jdbc.OperatorType;
-import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
+import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
@@ -34,9 +34,9 @@ import org.jfaster.mango.operator.table.TableGenerator;
 import org.jfaster.mango.operator.table.TableGeneratorFactory;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
-import org.jfaster.mango.descriptor.MethodDescriptor;
-import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.util.jdbc.OperatorType;
+import org.jfaster.mango.util.jdbc.SQLType;
 
 import java.util.ArrayList;
 import java.util.List;

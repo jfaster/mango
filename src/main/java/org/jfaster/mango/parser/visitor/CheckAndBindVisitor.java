@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.parser.visitor;
 
+import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
@@ -83,11 +84,12 @@ public enum CheckAndBindVisitor implements ParserVisitor {
   @Override
   public Object visit(ASTJDBCParameter node, Object data) {
     ParameterContext context = getParameterContext(data);
-    BindingParameterInvoker invoker = context.getBindingParameterInvoker(node.getBindingParameter());
+    BindingParameter bp = node.getBindingParameter();
+    BindingParameterInvoker invoker = context.getBindingParameterInvoker(bp);
     Type type = invoker.getTargetType();
     TypeWrapper tw = new TypeWrapper(type);
     Class<?> mappedClass = tw.getMappedClass();
-    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(mappedClass);
+    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(mappedClass, bp.getJdbcType());
     if (mappedClass == null || tw.isIterable() || typeHandler == null) {
       throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
           "expected a class can be identified by jdbc but " + type);

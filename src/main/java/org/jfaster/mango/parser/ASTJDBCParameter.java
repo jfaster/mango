@@ -20,6 +20,8 @@ import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.type.TypeHandler;
+import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.jdbc.JdbcType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,17 +47,28 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
   }
 
   public void init(String str) {
-    Pattern p = Pattern.compile(":(\\w+)(\\.\\w+)*");
+    Pattern p = Pattern.compile(":(\\w+)((\\.\\w+)*)(\\@\\w+)?");
     Matcher m = p.matcher(str);
     if (!m.matches()) {
       throw new IllegalStateException("Can't compile string '" + str + "'");
     }
-    String parameterName = m.group(1);
-    String propertyPath = str.substring(m.end(1));
-    if (!propertyPath.isEmpty()) {
-      propertyPath = propertyPath.substring(1);  // .property变为property
+    String group1 = m.group(1);
+    String group2 = m.group(2);
+    String group4 = m.group(4);
+    String parameterName = group1;
+    String propertyPath = Strings.isNotEmpty(group2) ?
+        group2.substring(1) :
+        "";
+    JdbcType jdbcType = null;
+    if (group4 != null) {
+      try {
+        jdbcType = JdbcType.valueOf(group4.substring(1).toUpperCase());
+      } catch (Exception e) {
+        // TODO 优化异常提示
+        throw new IllegalStateException(e);
+      }
     }
-    bindingParameter = BindingParameter.create(parameterName, propertyPath);
+    bindingParameter = BindingParameter.create(parameterName, propertyPath, jdbcType);
   }
 
   @Override
@@ -106,4 +119,5 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
   public void setTypeHandler(TypeHandler<?> typeHandler) {
     this.typeHandler = typeHandler;
   }
+
 }

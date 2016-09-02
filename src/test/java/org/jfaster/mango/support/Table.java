@@ -45,7 +45,9 @@ public enum Table {
   BT("bt.sql"),
   BILL_PARTITION("bill_partition.sql"),
   ORDER_PARTITION("order_partition.sql"),
-  PRODUCT_PARTITION("product_partition.sql"),;
+  PRODUCT_PARTITION("product_partition.sql"),
+  TABLE_INCLUDE_ALL_TYPES("table_include_all_types.sql"),
+  ;
 
   private String name;
 

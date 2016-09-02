@@ -16,9 +16,9 @@
 
 package org.jfaster.mango.stat;
 
-import org.jfaster.mango.util.jdbc.OperatorType;
 import org.jfaster.mango.stat.atomic.LongAddable;
 import org.jfaster.mango.stat.atomic.LongAddables;
+import org.jfaster.mango.util.jdbc.OperatorType;
 
 /**
  * @author ash

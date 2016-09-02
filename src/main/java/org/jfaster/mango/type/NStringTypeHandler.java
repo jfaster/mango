@@ -26,22 +26,23 @@ import java.sql.SQLException;
  * @author Clinton Begin
  * @author ash
  */
-public class ByteArrayTypeHandler extends BaseTypeHandler<byte[]> {
+public class NStringTypeHandler extends BaseTypeHandler<String> {
 
   @Override
-  public void setNonNullParameter(PreparedStatement ps, int index, byte[] parameter, JdbcType jdbcType)
+  public void setNonNullParameter(PreparedStatement ps, int index, String parameter, JdbcType jdbcType)
       throws SQLException {
-    ps.setBytes(index, parameter);
+    ps.setNString(index, parameter);
   }
 
   @Override
-  public byte[] getNullableResult(ResultSet rs, int index)
+  public String getNullableResult(ResultSet rs, int index)
       throws SQLException {
-    return rs.getBytes(index);
+    return rs.getNString(index);
   }
 
   @Override
   public JdbcType getJdbcType() {
-    return JdbcType.LONGVARBINARY;
+    return JdbcType.NVARCHAR;
   }
+
 }

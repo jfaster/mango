@@ -16,10 +16,10 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.util.logging.InternalLogger;
-import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.jdbc.exception.DataAccessException;
 import org.jfaster.mango.jdbc.exception.UncategorizedSQLException;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import java.sql.SQLException;
 

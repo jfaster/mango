@@ -53,7 +53,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
     if (!propertyPath.isEmpty()) {
       propertyPath = propertyPath.substring(1);  // .property变为property
     }
-    bindingParameter = BindingParameter.create(parameterName, propertyPath);
+    bindingParameter = BindingParameter.create(parameterName, propertyPath, null);
   }
 
   @Override

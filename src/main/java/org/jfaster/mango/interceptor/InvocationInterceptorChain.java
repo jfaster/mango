@@ -17,9 +17,9 @@
 package org.jfaster.mango.interceptor;
 
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
+import org.jfaster.mango.util.jdbc.SQLType;
 
 import java.util.ArrayList;
 import java.util.List;

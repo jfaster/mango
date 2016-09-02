@@ -62,7 +62,7 @@ public class DefaultParameterContextTest {
   }
 
   private void checkBindingParameterInvoker(ParameterContext ctx, String parameterName, String propertyPath, Type type) {
-    assertThat(ctx.getBindingParameterInvoker(BindingParameter.create(parameterName, propertyPath)).getTargetType(), equalTo(type));
+    assertThat(ctx.getBindingParameterInvoker(BindingParameter.create(parameterName, propertyPath, null)).getTargetType(), equalTo(type));
   }
 
   @Test
@@ -86,15 +86,15 @@ public class DefaultParameterContextTest {
 
     ParameterContext ctx = DefaultParameterContext.create(pds);
 
-    BindingParameter bp = BindingParameter.create("userBag", "item.itemId");
+    BindingParameter bp = BindingParameter.create("userBag", "item.itemId", null);
     BindingParameter nbp = ctx.tryExpandBindingParameter(bp);
-    assertThat(nbp, equalTo(BindingParameter.create("2", "userBag.item.itemId")));
+    assertThat(nbp, equalTo(BindingParameter.create("2", "userBag.item.itemId", null)));
 
-    bp = BindingParameter.create("userId", "");
+    bp = BindingParameter.create("userId", "", null);
     nbp = ctx.tryExpandBindingParameter(bp);
-    assertThat(nbp, equalTo(BindingParameter.create("2", "userId")));
+    assertThat(nbp, equalTo(BindingParameter.create("2", "userId", null)));
 
-    bp = BindingParameter.create("userIds", "");
+    bp = BindingParameter.create("userIds", "", null);
     nbp = ctx.tryExpandBindingParameter(bp);
     assertThat(nbp, nullValue());
   }
@@ -121,7 +121,7 @@ public class DefaultParameterContextTest {
     ParameterDescriptor p1 = ParameterDescriptor.create(1, String.class, empty, "param2");
     List<ParameterDescriptor> pds = Arrays.asList(p0, p1);
     ParameterContext ctx = DefaultParameterContext.create(pds);
-    ctx.getBindingParameterInvoker(BindingParameter.create("user", "id"));
+    ctx.getBindingParameterInvoker(BindingParameter.create("user", "id", null));
   }
 
   @Test
@@ -133,7 +133,7 @@ public class DefaultParameterContextTest {
     ParameterDescriptor p1 = ParameterDescriptor.create(1, User.class, empty, "2");
     List<ParameterDescriptor> pds = Arrays.asList(p0, p1);
     ParameterContext ctx = DefaultParameterContext.create(pds);
-    ctx.tryExpandBindingParameter(BindingParameter.create("userId", ""));
+    ctx.tryExpandBindingParameter(BindingParameter.create("userId", "", null));
   }
 
   public static class User {

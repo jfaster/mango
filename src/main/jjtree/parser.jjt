@@ -40,6 +40,7 @@ TOKEN:
     |   <#NUMBER : ["1"-"9"] (["0"-"9"])* >
     |   <#DOT : "." >
     |   <#FIELD : ["a"-"z","_"] (["a"-"z","_", "0"-"9"])* >
+    |   <#JDBC_TYPE : (["a"-"z"])+ >
     |   <#WHITESPACE : (" ")* >
 }
 
@@ -49,6 +50,7 @@ TOKEN:
         <BLANK : (" ")+ >
     |   <QUOTE_TEXT: "'" (~["'"])* "'" >
     |   <JDBC_ITERABLE_PARAMETER: "in" <WHITESPACE> "(" <WHITESPACE> <PARAMETER> <WHITESPACE> ")"  >
+    |   <JDBC_PARAMETER: <PARAMETER> ("@" <JDBC_TYPE>)? >
     |   <GLOBAL_TABLE: "#table" >
     |   <JOIN_PARAMETER: "#{" <WHITESPACE> <PARAMETER> <WHITESPACE> "}" >
     |   <IF_DIRECTIVE: "#if" > {SwitchTo(EXPRESSION);}
@@ -195,7 +197,7 @@ void JDBCParameter() :
     Token t;
 }
 {
-    t=<PARAMETER>
+    t=<JDBC_PARAMETER>
     {
         jjtThis.init(t.image);
     }

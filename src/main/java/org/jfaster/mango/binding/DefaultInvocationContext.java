@@ -67,7 +67,7 @@ public class DefaultInvocationContext implements InvocationContext {
     }
     String parameterName = invoker.getBindingParameter().getParameterName();
     if (!parameterNameToValueMap.containsKey(parameterName)) { // ParameterContext进行过检测，理论上这段代码执行不到
-      throw new BindingException("Parameter '" + BindingParameter.create(parameterName) + "' not found, " +
+      throw new BindingException("Parameter '" + BindingParameter.create(parameterName, "", null) + "' not found, " +
           "available root parameters are " + transToBindingParameters(parameterNameToValueMap.keySet()));
     }
     Object obj = parameterNameToValueMap.get(parameterName);
@@ -121,7 +121,7 @@ public class DefaultInvocationContext implements InvocationContext {
   private Set<BindingParameter> transToBindingParameters(Collection<String> parameterNames) {
     Set<BindingParameter> rs = new LinkedHashSet<BindingParameter>();
     for (String parameterName : parameterNames) {
-      rs.add(BindingParameter.create(parameterName));
+      rs.add(BindingParameter.create(parameterName, "", null));
     }
     return rs;
   }

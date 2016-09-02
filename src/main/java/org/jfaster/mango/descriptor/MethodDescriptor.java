@@ -17,8 +17,8 @@
 package org.jfaster.mango.descriptor;
 
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.exception.DescriptionException;
+import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;

@@ -51,7 +51,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     if (!propertyPath.isEmpty()) {
       propertyPath = propertyPath.substring(1);  // .property变为property
     }
-    bindingParameter = BindingParameter.create(parameterName, propertyPath);
+    bindingParameter = BindingParameter.create(parameterName, propertyPath, null);
   }
 
   @Override
