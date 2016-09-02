@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.type.TypeHandler;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -32,6 +32,7 @@ public class DefaultInvocationContext implements InvocationContext {
 
   private final StringBuilder sql = new StringBuilder();
   private final List<Object> args = new LinkedList<Object>();
+  private final List<TypeHandler<?>> typeHandlers = new LinkedList<TypeHandler<?>>();
 
   private String globalTable;
 
@@ -98,13 +99,14 @@ public class DefaultInvocationContext implements InvocationContext {
   }
 
   @Override
-  public void appendToArgs(Object obj) {
+  public void appendToArgs(Object obj, TypeHandler<?> typeHandler) {
     args.add(obj);
+    typeHandlers.add(typeHandler);
   }
 
   @Override
-  public PreparedSql getPreparedSql() {
-    return new PreparedSql(sql.toString(), args);
+  public BoundSql getBoundSql() {
+    return new BoundSql(sql.toString(), args, typeHandlers);
   }
 
   @Override

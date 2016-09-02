@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.interceptor;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.jdbc.SQLType;
 
 import java.util.List;
@@ -26,6 +26,6 @@ import java.util.List;
  */
 public interface Interceptor {
 
-  public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType);
+  public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType);
 
 }

@@ -41,4 +41,9 @@ public class BigDecimalTypeHandler extends BaseTypeHandler<BigDecimal> {
     return rs.getBigDecimal(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.DECIMAL;
+  }
+
 }

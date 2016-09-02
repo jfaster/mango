@@ -40,4 +40,8 @@ public class BooleanTypeHandler extends BaseTypeHandler<Boolean> {
     return rs.getBoolean(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.BOOLEAN;
+  }
 }

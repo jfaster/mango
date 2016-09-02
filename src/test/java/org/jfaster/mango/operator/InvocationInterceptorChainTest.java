@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContext;
@@ -57,7 +57,7 @@ public class InvocationInterceptorChainTest {
     InterceptorChain ic = new InterceptorChain();
     ic.addInterceptor(new Interceptor() {
       @Override
-      public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
+      public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
         assertThat(preparedSql.getSql(), equalTo(sql));
         assertThat(preparedSql.getArgs(), equalTo(args));
         assertThat((User) parameters.get(0).getValue(), equalTo(user));
@@ -73,7 +73,8 @@ public class InvocationInterceptorChainTest {
 
     InvocationContextFactory f = InvocationContextFactory.create(DefaultParameterContext.create(pds));
     InvocationContext ctx = f.newInvocationContext(new Object[]{user});
-    PreparedSql ps = new PreparedSql(sql, args);
+    // TODO null处理
+    BoundSql ps = new BoundSql(sql, args, null);
     iic.intercept(ps, ctx);
   }
 

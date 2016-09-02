@@ -19,6 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.mapper.*;
@@ -28,7 +29,6 @@ import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.util.SingleColumns;
-import org.jfaster.mango.util.jdbc.PreparedSql;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Array;
@@ -83,17 +83,14 @@ public class QueryOperator extends AbstractOperator {
       }
     }
 
-    PreparedSql preparedSql = context.getPreparedSql();
-    invocationInterceptorChain.intercept(preparedSql, context); // 拦截器
-
-    String sql = preparedSql.getSql();
-    Object[] args = preparedSql.getArgs().toArray();
+    BoundSql boundSql = context.getBoundSql();
+    invocationInterceptorChain.intercept(boundSql, context); // 拦截器
 
     DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
-    return executeFromDb(ds, sql, args);
+    return executeFromDb(ds, boundSql);
   }
 
-  private Object executeFromDb(final DataSource ds, final String sql, final Object[] args) {
+  private Object executeFromDb(final DataSource ds, final BoundSql boundSql) {
     Object r;
     boolean success = false;
     long now = System.nanoTime();
@@ -103,23 +100,23 @@ public class QueryOperator extends AbstractOperator {
 
         @Override
         Object visitForList() {
-          return jdbcOperations.queryForList(ds, sql, args, listSupplier, rowMapper);
+          return jdbcOperations.queryForList(ds, boundSql, listSupplier, rowMapper);
         }
 
         @Override
         Object visitForSet() {
-          return jdbcOperations.queryForSet(ds, sql, args, setSupplier, rowMapper);
+          return jdbcOperations.queryForSet(ds, boundSql, setSupplier, rowMapper);
         }
 
         @Override
         Object visitForArray() {
-          return jdbcOperations.queryForArray(ds, sql, args, rowMapper);
+          return jdbcOperations.queryForArray(ds, boundSql, rowMapper);
 
         }
 
         @Override
         Object visitForObject() {
-          return jdbcOperations.queryForObject(ds, sql, args, rowMapper);
+          return jdbcOperations.queryForObject(ds, boundSql, rowMapper);
         }
       }.visit();
 
@@ -141,6 +138,7 @@ public class QueryOperator extends AbstractOperator {
     if (mapperAnno != null) { // 自定义mapper
       return Reflection.instantiateClass(mapperAnno.value());
     }
+    // TODO 单列判断
     if (SingleColumns.isSingleColumnClass(clazz)) { // 单列mapper
       return new SingleColumnRowMapper<T>(clazz);
     }

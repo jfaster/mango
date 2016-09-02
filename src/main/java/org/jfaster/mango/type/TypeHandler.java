@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.type;
 
-import org.jfaster.mango.util.jdbc.JdbcType;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,7 +26,7 @@ import java.sql.SQLException;
  */
 public interface TypeHandler<T> {
 
-  void setParameter(PreparedStatement ps, int index, T parameter, JdbcType jdbcType) throws SQLException;
+  void setParameter(PreparedStatement ps, int index, T parameter) throws SQLException;
 
   T getResult(ResultSet rs, int index) throws SQLException;
 

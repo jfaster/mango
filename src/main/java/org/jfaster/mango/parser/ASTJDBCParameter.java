@@ -19,6 +19,7 @@ package org.jfaster.mango.parser;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.type.TypeHandler;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +34,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
 
   private BindingParameter bindingParameter;
   private BindingParameterInvoker bindingParameterInvoker;
+  private TypeHandler<?> typeHandler;
 
   public ASTJDBCParameter(int i) {
     super(i);
@@ -73,7 +75,7 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
     }
     context.writeToSqlBuffer("?");
     Object obj = context.getNullableBindingValue(bindingParameterInvoker);
-    context.appendToArgs(obj);
+    context.appendToArgs(obj, typeHandler);
     return true;
   }
 
@@ -99,5 +101,9 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
   @Override
   public void setBindingParameterInvoker(BindingParameterInvoker bindingParameterInvoker) {
     this.bindingParameterInvoker = bindingParameterInvoker;
+  }
+
+  public void setTypeHandler(TypeHandler<?> typeHandler) {
+    this.typeHandler = typeHandler;
   }
 }

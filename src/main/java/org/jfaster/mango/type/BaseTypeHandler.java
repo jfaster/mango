@@ -31,7 +31,8 @@ import java.sql.SQLException;
 public abstract class BaseTypeHandler<T> implements TypeHandler<T> {
 
   @Override
-  public void setParameter(PreparedStatement ps, int index, @Nullable T parameter, JdbcType jdbcType) throws SQLException {
+  public void setParameter(PreparedStatement ps, int index, @Nullable T parameter) throws SQLException {
+    JdbcType jdbcType = getJdbcType();
     if (parameter == null) {
       try {
         ps.setNull(index, jdbcType.TYPE_CODE);
@@ -68,4 +69,5 @@ public abstract class BaseTypeHandler<T> implements TypeHandler<T> {
 
   public abstract T getNullableResult(ResultSet rs, int index) throws SQLException;
 
+  public abstract JdbcType getJdbcType();
 }

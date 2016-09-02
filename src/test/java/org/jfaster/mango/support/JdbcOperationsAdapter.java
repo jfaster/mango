@@ -16,8 +16,10 @@
 
 package org.jfaster.mango.support;
 
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.jdbc.ListSupplier;
+import org.jfaster.mango.jdbc.exception.DataAccessException;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.jdbc.SetSupplier;
 
@@ -30,45 +32,39 @@ import java.util.Set;
  */
 public class JdbcOperationsAdapter implements JdbcOperations {
 
+
   @Override
-  public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+  public <T> T queryForObject(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
-                                  ListSupplier listSupplier, RowMapper<T> rowMapper) {
+  public <T> List<T> queryForList(DataSource ds, BoundSql boundSql, ListSupplier listSupplier, RowMapper<T> rowMapper) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args,
-                                SetSupplier setSupplier, RowMapper<T> rowMapper) {
+  public <T> Set<T> queryForSet(DataSource ds, BoundSql boundSql, SetSupplier setSupplier, RowMapper<T> rowMapper) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+  public <T> Object queryForArray(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int update(DataSource ds, String sql, Object[] args) {
+  public int update(DataSource ds, BoundSql boundSql) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
+  public int update(DataSource ds, BoundSql boundSql, GeneratedKeyHolder holder) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public int[] batchUpdate(DataSource ds, List<String> sqls, List<Object[]> batchArgs) {
+  public int[] batchUpdate(DataSource ds, List<BoundSql> boundSql) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 

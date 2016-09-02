@@ -38,4 +38,9 @@ public class SqlTimestampTypeHandler extends BaseTypeHandler<Timestamp> {
     return rs.getTimestamp(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.TIMESTAMP;
+  }
+
 }

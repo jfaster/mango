@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.interceptor;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
@@ -43,7 +43,7 @@ public class InvocationInterceptorChain {
     this.sqlType = sqlType;
   }
 
-  public void intercept(PreparedSql preparedSql, InvocationContext context) {
+  public void intercept(BoundSql preparedSql, InvocationContext context) {
     if (interceptorChain.getInterceptors() != null) {
       List<Object> parameterValues = context.getParameterValues();
       List<Parameter> parameters = new ArrayList<Parameter>(parameterValues.size());

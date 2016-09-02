@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator.cache;
 
 import org.hamcrest.Matchers;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.interceptor.InterceptorChain;
@@ -93,7 +94,9 @@ public class CacheableQueryOperatorTest {
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
 
       @Override
-      public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+      public <T> T queryForObject(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id=?";
         assertThat(sql, Matchers.equalTo(descSql));
         assertThat(args.length, Matchers.equalTo(1));
@@ -163,8 +166,10 @@ public class CacheableQueryOperatorTest {
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+      public <T> List<T> queryForList(DataSource ds, BoundSql boundSql,
                                       ListSupplier listSupplier, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id in (?,?,?)";
         assertThat(sql, Matchers.equalTo(descSql));
         assertThat(args.length, Matchers.equalTo(3));
@@ -216,8 +221,10 @@ public class CacheableQueryOperatorTest {
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+      public <T> List<T> queryForList(DataSource ds, BoundSql boundSql,
                                       ListSupplier listSupplier, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id in (?,?)";
         assertThat(sql, Matchers.equalTo(descSql));
         assertThat(args.length, Matchers.equalTo(2));

@@ -38,4 +38,9 @@ public class SqlDateTypeHandler extends BaseTypeHandler<Date> {
     return rs.getDate(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.DATE;
+  }
+
 }

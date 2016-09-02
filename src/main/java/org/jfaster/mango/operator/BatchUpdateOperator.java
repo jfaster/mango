@@ -16,13 +16,13 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.util.Iterables;
-import org.jfaster.mango.util.ToStringHelper;
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.ToStringHelper;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -71,12 +71,10 @@ public class BatchUpdateOperator extends AbstractOperator {
     }
 
     rootNode.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    invocationInterceptorChain.intercept(preparedSql, context); // 拦截器
+    BoundSql boundSql = context.getBoundSql();
+    invocationInterceptorChain.intercept(boundSql, context); // 拦截器
 
-    String sql = preparedSql.getSql();
-    Object[] args = preparedSql.getArgs().toArray();
-    group.add(sql, args, position);
+    group.add(boundSql, position);
   }
 
   protected Iterables getIterables(Object[] values) {
@@ -95,12 +93,9 @@ public class BatchUpdateOperator extends AbstractOperator {
     try {
       for (Map.Entry<DataSource, Group> entry : groupMap.entrySet()) {
         DataSource ds = entry.getKey();
-        List<String> sqls = entry.getValue().getSqls();
-        List<Object[]> batchArgs = entry.getValue().getBatchArgs();
+        List<BoundSql> boundSqls = entry.getValue().getBoundSqls();
         List<Integer> positions = entry.getValue().getPositions();
-        int[] ints = isUniqueSql(sqls) ?
-            jdbcOperations.batchUpdate(ds, sqls.get(0), batchArgs) :
-            jdbcOperations.batchUpdate(ds, sqls, batchArgs);
+        int[] ints = jdbcOperations.batchUpdate(ds, boundSqls);
         for (int i = 0; i < ints.length; i++) {
           r[positions.get(i)] = ints[i];
         }
@@ -117,35 +112,17 @@ public class BatchUpdateOperator extends AbstractOperator {
     return r;
   }
 
-  protected boolean isUniqueSql(List<String> sqls) {
-    String sql = sqls.get(0);
-    boolean r = true;
-    for (int i = 1; i < sqls.size(); i++) {
-      if (!sql.equals(sqls.get(i))) {
-        r = false;
-        break;
-      }
-    }
-    return r;
-  }
-
   protected static class Group {
-    private List<String> sqls = new LinkedList<String>();
-    private List<Object[]> batchArgs = new LinkedList<Object[]>();
+    private List<BoundSql> boundSqls = new LinkedList<BoundSql>();
     private List<Integer> positions = new LinkedList<Integer>();
 
-    public void add(String sql, Object[] args, int position) {
-      sqls.add(sql);
-      batchArgs.add(args);
+    public void add(BoundSql boundSql, int position) {
+      boundSqls.add(boundSql);
       positions.add(position);
     }
 
-    public List<String> getSqls() {
-      return sqls;
-    }
-
-    public List<Object[]> getBatchArgs() {
-      return batchArgs;
+    public List<BoundSql> getBoundSqls() {
+      return boundSqls;
     }
 
     public List<Integer> getPositions() {

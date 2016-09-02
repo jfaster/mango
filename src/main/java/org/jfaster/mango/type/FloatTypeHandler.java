@@ -40,4 +40,9 @@ public class FloatTypeHandler extends BaseTypeHandler<Float> {
     return rs.getFloat(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.FLOAT;
+  }
+
 }

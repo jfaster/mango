@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.interceptor;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.jdbc.SQLType;
 
 import java.util.LinkedList;
@@ -34,7 +34,7 @@ public class InterceptorChain {
     interceptors.add(interceptor);
   }
 
-  public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
+  public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
     if (getInterceptors() != null) {
       for (Interceptor interceptor : getInterceptors()) {
         interceptor.intercept(preparedSql, parameters, sqlType);

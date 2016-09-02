@@ -40,4 +40,9 @@ public class LongTypeHandler extends BaseTypeHandler<Long> {
     return rs.getLong(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.BIGINT;
+  }
+
 }

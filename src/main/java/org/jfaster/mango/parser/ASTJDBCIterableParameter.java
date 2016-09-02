@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.parser;
 
+import org.jfaster.mango.type.TypeHandler;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
@@ -33,6 +34,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
   private BindingParameter bindingParameter;
   private BindingParameterInvoker bindingParameterInvoker;
+  private TypeHandler<?> typeHandler;
 
   private String propertyOfMapper; // "msg_id in (:1)"中的msg_id
 
@@ -92,7 +94,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     context.writeToSqlBuffer("in (");
     int t = 0;
     for (Object obj : iterables) {
-      context.appendToArgs(obj);
+      context.appendToArgs(obj, typeHandler);
       if (t == 0) {
         context.writeToSqlBuffer("?");
       } else {
@@ -126,6 +128,10 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
   @Override
   public void setBindingParameterInvoker(BindingParameterInvoker bindingParameterInvoker) {
     this.bindingParameterInvoker = bindingParameterInvoker;
+  }
+
+  public void setTypeHandler(TypeHandler<?> typeHandler) {
+    this.typeHandler = typeHandler;
   }
 
   public String getPropertyOfMapper() {

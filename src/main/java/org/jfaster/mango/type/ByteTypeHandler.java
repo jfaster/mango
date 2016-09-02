@@ -40,4 +40,8 @@ public class ByteTypeHandler extends BaseTypeHandler<Byte> {
     return rs.getByte(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.TINYINT;
+  }
 }

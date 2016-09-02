@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -91,11 +90,12 @@ public class DefaultInvocationContextTest {
     int t = 0;
     for (Object obj : objs) {
       ctx.addParameter("id" + t++, obj);
-      ctx.appendToArgs(obj);
+      // TODO
+      ctx.appendToArgs(obj, null);
     }
-    PreparedSql preparedSql = ctx.getPreparedSql();
-    assertThat(preparedSql.getSql(), equalTo("select * from t_user"));
-    assertThat(preparedSql.getArgs(), equalTo(objs));
+    BoundSql boundSql = ctx.getBoundSql();
+    assertThat(boundSql.getSql(), equalTo("select * from t_user"));
+    assertThat(boundSql.getArgs(), equalTo(objs));
     assertThat(ctx.getParameterValues(), equalTo(objs));
   }
 

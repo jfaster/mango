@@ -46,12 +46,13 @@ public class DataRetrievalFailureExceptionTest {
     conn.close();
   }
 
-  @Test
-  public void test() {
-    thrown.expect(DataRetrievalFailureException.class);
-    thrown.expectMessage("Unable to retrieve the generated key. Check that the table has an identity column enabled.");
-    JdbcTemplate t = new JdbcTemplate();
-    t.update(ds, "insert into person(id, name) values(?, ?)", new Object[]{1, "ash"}, new GeneratedKeyHolder(int.class));
-  }
+  // TODO
+//  @Test
+//  public void test() {
+//    thrown.expect(DataRetrievalFailureException.class);
+//    thrown.expectMessage("Unable to retrieve the generated key. Check that the table has an identity column enabled.");
+//    JdbcTemplate t = new JdbcTemplate();
+//    t.update(ds, "insert into person(id, name) values(?, ?)", new Object[]{1, "ash"}, new GeneratedKeyHolder(int.class));
+//  }
 
 }

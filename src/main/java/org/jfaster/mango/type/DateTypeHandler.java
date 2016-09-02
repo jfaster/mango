@@ -43,4 +43,8 @@ public class DateTypeHandler extends BaseTypeHandler<Date> {
     return null;
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.TIMESTAMP;
+  }
 }

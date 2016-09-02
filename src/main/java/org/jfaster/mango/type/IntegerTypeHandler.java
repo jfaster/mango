@@ -40,4 +40,8 @@ public class IntegerTypeHandler extends BaseTypeHandler<Integer> {
     return rs.getInt(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.INTEGER;
+  }
 }

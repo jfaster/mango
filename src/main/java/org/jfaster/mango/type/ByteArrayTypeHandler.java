@@ -41,4 +41,8 @@ public class ByteArrayTypeHandler extends BaseTypeHandler<byte[]> {
     return rs.getBytes(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.LONGVARBINARY;
+  }
 }

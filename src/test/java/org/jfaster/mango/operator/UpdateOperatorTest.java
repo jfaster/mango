@@ -16,17 +16,18 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
-import org.jfaster.mango.exception.DescriptionException;
-import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.jdbc.GeneratedKeyHolder;
-import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
+import org.jfaster.mango.exception.DescriptionException;
+import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -57,12 +58,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args) {
+      public int update(DataSource ds, BoundSql boundSql) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "update user set name=? where id=?";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) "ash"));
-        assertThat(args[1], equalTo((Object) 100));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) "ash"));
+        assertThat(args.get(1), equalTo((Object) 100));
         return 1;
       }
     });
@@ -85,12 +88,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args) {
+      public int update(DataSource ds,  BoundSql boundSql) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "update user set name=? where id=?";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) "ash"));
-        assertThat(args[1], equalTo((Object) 100));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) "ash"));
+        assertThat(args.get(1), equalTo((Object) 100));
         return 1;
       }
     });
@@ -113,12 +118,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args) {
+      public int update(DataSource ds, BoundSql boundSql) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "update user set name=? where id=?";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) "ash"));
-        assertThat(args[1], equalTo((Object) 100));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) "ash"));
+        assertThat(args.get(1), equalTo((Object) 100));
         return 0;
       }
     });
@@ -141,12 +148,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
+      public int update(DataSource ds, BoundSql boundSql, GeneratedKeyHolder holder) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "insert into user(id, name) values(?, ?)";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) 100));
-        assertThat(args[1], equalTo((Object) "ash"));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) 100));
+        assertThat(args.get(1), equalTo((Object) "ash"));
         assertThat(holder.getKeyClass().equals(int.class), is(true));
         holder.setKey(100);
         return 1;
@@ -171,12 +180,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
+      public int update(DataSource ds, BoundSql boundSql, GeneratedKeyHolder holder) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "insert into user(id, name) values(?, ?)";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) 100));
-        assertThat(args[1], equalTo((Object) "ash"));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) 100));
+        assertThat(args.get(1), equalTo((Object) "ash"));
         assertThat(holder.getKeyClass().equals(long.class), is(true));
         holder.setKey(100L);
         return 1;
@@ -201,12 +212,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args) {
+      public int update(DataSource ds, BoundSql boundSql) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "update user set name=? where id=?";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) "ash"));
-        assertThat(args[1], equalTo((Object) 100));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) "ash"));
+        assertThat(args.get(1), equalTo((Object) 100));
         return 1;
       }
     });
@@ -250,12 +263,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args) {
+      public int update(DataSource ds, BoundSql boundSql) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "update user set name=? where id=?";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) "ash"));
-        assertThat(args[1], equalTo((Object) 100));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) "ash"));
+        assertThat(args.get(1), equalTo((Object) 100));
         return 1;
       }
     });
@@ -281,12 +296,14 @@ public class UpdateOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args, GeneratedKeyHolder holder) {
+      public int update(DataSource ds, BoundSql boundSql, GeneratedKeyHolder holder) {
+        String sql = boundSql.getSql();
+        List<Object> args = boundSql.getArgs();
         String descSql = "insert into user(id, name) values(?, ?)";
         assertThat(sql, equalTo(descSql));
-        assertThat(args.length, equalTo(2));
-        assertThat(args[0], equalTo((Object) 100));
-        assertThat(args[1], equalTo((Object) "ash"));
+        assertThat(args.size(), equalTo(2));
+        assertThat(args.get(0), equalTo((Object) 100));
+        assertThat(args.get(1), equalTo((Object) "ash"));
         assertThat(holder.getKeyClass().equals(int.class), is(true));
         holder.setKey(100);
         return 1;

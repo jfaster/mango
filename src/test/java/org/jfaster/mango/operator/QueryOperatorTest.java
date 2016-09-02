@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.ListSupplier;
@@ -56,7 +57,9 @@ public class QueryOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+      public <T> T queryForObject(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id=? and name=?";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(2));
@@ -85,8 +88,10 @@ public class QueryOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+      public <T> List<T> queryForList(DataSource ds, BoundSql boundSql,
                                       ListSupplier listSupplier, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id=? and name=?";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(2));
@@ -115,8 +120,10 @@ public class QueryOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> Set<T> queryForSet(DataSource ds, String sql, Object[] args,
+      public <T> Set<T> queryForSet(DataSource ds, BoundSql boundSql,
                                     SetSupplier setSupplier, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id=? and name=?";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(2));
@@ -145,7 +152,9 @@ public class QueryOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> Object queryForArray(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+      public <T> Object queryForArray(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id=? and name=?";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(2));
@@ -175,8 +184,10 @@ public class QueryOperatorTest {
     operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> List<T> queryForList(DataSource ds, String sql, Object[] args,
+      public <T> List<T> queryForList(DataSource ds, BoundSql boundSql,
                                       ListSupplier listSupplier, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select * from user where id in (?,?,?)";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(3));
@@ -206,7 +217,9 @@ public class QueryOperatorTest {
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @SuppressWarnings("unchecked")
       @Override
-      public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+      public <T> T queryForObject(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "select count(1) from user where id in (?,?,?)";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(3));
@@ -237,7 +250,7 @@ public class QueryOperatorTest {
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public <T> T queryForObject(DataSource ds, String sql, Object[] args, RowMapper<T> rowMapper) {
+      public <T> T queryForObject(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
         return null;
       }
     });

@@ -18,12 +18,9 @@ package org.jfaster.mango.parser;
 
 import com.google.common.collect.Lists;
 import org.hamcrest.Matchers;
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.binding.*;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.jdbc.SQLType;
-import org.jfaster.mango.binding.DefaultInvocationContext;
-import org.jfaster.mango.binding.DefaultParameterContext;
-import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.junit.Test;
@@ -58,9 +55,9 @@ public class ParserTest {
     context.addParameter("2", Arrays.asList(9, 5, 2, 7));
     context.addParameter("3", "ash");
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select id from user where id in (?,?,?,?) and name=?"));
-    assertThat(preparedSql.getArgs(), contains(new Object[]{9, 5, 2, 7, "ash"}));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select id from user where id in (?,?,?,?) and name=?"));
+    assertThat(boundSql.getArgs(), contains(new Object[]{9, 5, 2, 7, "ash"}));
   }
 
   @Test
@@ -72,9 +69,9 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", 100);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1  and id>? "));
-    assertThat(preparedSql.getArgs(), contains(new Object[]{100}));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1  and id>? "));
+    assertThat(boundSql.getArgs(), contains(new Object[]{100}));
   }
 
   @Test
@@ -86,9 +83,9 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", 100);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 "));
-    assertThat(preparedSql.getArgs().size(), equalTo(0));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1 "));
+    assertThat(boundSql.getArgs().size(), equalTo(0));
   }
 
   @Test
@@ -105,9 +102,9 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", 100);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id>?"));
-    assertThat(preparedSql.getArgs(), contains(new Object[]{100}));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1 and id>?"));
+    assertThat(boundSql.getArgs(), contains(new Object[]{100}));
   }
 
   @Test
@@ -124,9 +121,9 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", -100);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id<?"));
-    assertThat(preparedSql.getArgs(), contains(new Object[]{-100}));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1 and id<?"));
+    assertThat(boundSql.getArgs(), contains(new Object[]{-100}));
   }
 
   @Test
@@ -145,9 +142,9 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", 100);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id>?"));
-    assertThat(preparedSql.getArgs(), contains(new Object[]{100}));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1 and id>?"));
+    assertThat(boundSql.getArgs(), contains(new Object[]{100}));
   }
 
   @Test
@@ -166,9 +163,9 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", -100);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id<?"));
-    assertThat(preparedSql.getArgs(), contains(new Object[]{-100}));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1 and id<?"));
+    assertThat(boundSql.getArgs(), contains(new Object[]{-100}));
   }
 
   @Test
@@ -187,9 +184,9 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", 0);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1 and id=?"));
-    assertThat(preparedSql.getArgs(), contains(new Object[]{0}));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1 and id=?"));
+    assertThat(boundSql.getArgs(), contains(new Object[]{0}));
   }
 
   @Test
@@ -204,8 +201,8 @@ public class ParserTest {
     context.addParameter("2", new Object());
     context.addParameter("3", true);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("select where 1=1  and id>10 "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("select where 1=1  and id>10 "));
   }
 
   @Test
@@ -214,8 +211,8 @@ public class ParserTest {
     ASTRootNode n = new Parser(sql).parse().init();
     InvocationContext context = DefaultInvocationContext.create();
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("SELECT * from user where id in ( select id from user2 )"));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("SELECT * from user where id in ( select id from user2 )"));
   }
 
   @Test
@@ -227,8 +224,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", Long.MAX_VALUE);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select  ok "));
   }
 
   @Test
@@ -240,8 +237,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", Long.MAX_VALUE);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select  ok "));
   }
 
   @Test
@@ -253,8 +250,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", 100);
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select "));
   }
 
   @Test
@@ -266,8 +263,8 @@ public class ParserTest {
     n.checkAndBind(ctx);
     InvocationContext context = DefaultInvocationContext.create();
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("replace xxx into replace xxx"));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("replace xxx into replace xxx"));
     assertThat(n.getSQLType(), is(SQLType.REPLACE));
   }
 
@@ -280,8 +277,8 @@ public class ParserTest {
     n.checkAndBind(ctx);
     InvocationContext context = DefaultInvocationContext.create();
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("merge xxx into merge xxx"));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("merge xxx into merge xxx"));
     assertThat(n.getSQLType(), is(SQLType.MERGE));
   }
 
@@ -294,8 +291,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", "hello");
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select  ok "));
   }
 
   @Test
@@ -307,8 +304,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", "hello2");
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select "));
   }
 
   @Test
@@ -320,8 +317,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", "hello2");
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select "));
   }
 
   @Test
@@ -333,8 +330,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", "hello2");
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select  ok "));
   }
 
   @Test
@@ -346,8 +343,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", "he");
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select  ok "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select  ok "));
   }
 
   @Test
@@ -359,8 +356,8 @@ public class ParserTest {
     InvocationContext context = DefaultInvocationContext.create();
     context.addParameter("1", "");
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql(), Matchers.equalTo("select "));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select "));
   }
 
   @Test
@@ -373,9 +370,9 @@ public class ParserTest {
     n.checkAndBind(ctx);
     InvocationContext context = DefaultInvocationContext.create();
     n.render(context);
-    PreparedSql preparedSql = context.getPreparedSql();
-    assertThat(preparedSql.getSql().toString(), equalTo("insert into table ... values(':dd',':xx')"));
-    assertThat(preparedSql.getArgs(), hasSize(0));
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql().toString(), equalTo("insert into table ... values(':dd',':xx')"));
+    assertThat(boundSql.getArgs(), hasSize(0));
   }
 
   private ParameterContext getParameterContext(List<Type> types) {

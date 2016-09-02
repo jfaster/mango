@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.binding;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.type.TypeHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -42,9 +42,9 @@ public interface InvocationContext {
 
   public void writeToSqlBuffer(String str);
 
-  public void appendToArgs(Object obj);
+  public void appendToArgs(Object obj, TypeHandler<?> typeHandler);
 
-  public PreparedSql getPreparedSql();
+  public BoundSql getBoundSql();
 
   public List<Object> getParameterValues();
 

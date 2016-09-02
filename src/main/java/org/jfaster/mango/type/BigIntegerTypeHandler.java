@@ -41,4 +41,9 @@ public class BigIntegerTypeHandler extends BaseTypeHandler<BigInteger> {
     return bigDecimal == null ? null : bigDecimal.toBigInteger();
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.DECIMAL;
+  }
+
 }

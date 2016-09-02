@@ -40,4 +40,9 @@ public class ShortTypeHandler extends BaseTypeHandler<Short> {
     return rs.getShort(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.SMALLINT;
+  }
+
 }

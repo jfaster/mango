@@ -38,4 +38,9 @@ public class StringTypeHandler extends BaseTypeHandler<String> {
     return rs.getString(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.VARCHAR;
+  }
+
 }

@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.interceptor;
 
-import org.jfaster.mango.util.jdbc.PreparedSql;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.jdbc.SQLType;
 
 import java.util.List;
@@ -27,12 +27,12 @@ import java.util.List;
 public abstract class QueryInterceptor implements Interceptor {
 
   @Override
-  public void intercept(PreparedSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
+  public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
     if (!sqlType.needChangeData()) {
       interceptQuery(preparedSql, parameters);
     }
   }
 
-  public abstract void interceptQuery(PreparedSql preparedSql, List<Parameter> parameters);
+  public abstract void interceptQuery(BoundSql preparedSql, List<Parameter> parameters);
 
 }

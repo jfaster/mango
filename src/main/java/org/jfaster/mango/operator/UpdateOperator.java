@@ -17,8 +17,8 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.ReturnGeneratedId;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.ToStringHelper;
-import org.jfaster.mango.util.jdbc.PreparedSql;
 import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.exception.DescriptionException;
@@ -91,27 +91,24 @@ public class UpdateOperator extends AbstractOperator {
       }
     }
 
-    PreparedSql preparedSql = context.getPreparedSql();
-    invocationInterceptorChain.intercept(preparedSql, context);  // 拦截器
-
-    String sql = preparedSql.getSql();
-    Object[] args = preparedSql.getArgs().toArray();
+    BoundSql boundSql = context.getBoundSql();
+    invocationInterceptorChain.intercept(boundSql, context);  // 拦截器
 
     DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
-    Number r = executeDb(ds, sql, args);
+    Number r = executeDb(ds, boundSql);
     return transformer.transform(r);
   }
 
-  private Number executeDb(DataSource ds, String sql, Object[] args) {
+  private Number executeDb(DataSource ds, BoundSql boundSql) {
     Number r = null;
     long now = System.nanoTime();
     try {
       if (returnGeneratedId) {
         GeneratedKeyHolder holder = new GeneratedKeyHolder(numberRawType);
-        jdbcOperations.update(ds, sql, args, holder);
+        jdbcOperations.update(ds, boundSql, holder);
         r = holder.getKey();
       } else {
-        r = jdbcOperations.update(ds, sql, args);
+        r = jdbcOperations.update(ds, boundSql);
       }
     } finally {
       long cost = System.nanoTime() - now;

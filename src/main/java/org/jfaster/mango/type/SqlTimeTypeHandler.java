@@ -38,4 +38,9 @@ public class SqlTimeTypeHandler extends BaseTypeHandler<Time> {
     return rs.getTime(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.TIME;
+  }
+
 }

@@ -40,4 +40,8 @@ public class DoubleTypeHandler extends BaseTypeHandler<Double> {
     return rs.getDouble(index);
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.DOUBLE;
+  }
 }

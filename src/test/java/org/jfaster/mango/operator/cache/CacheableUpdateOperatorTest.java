@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.interceptor.InterceptorChain;
@@ -59,7 +60,9 @@ public class CacheableUpdateOperatorTest {
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args) {
+      public int update(DataSource ds, BoundSql boundSql) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "update user set name=? where id=?";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(2));
@@ -96,7 +99,9 @@ public class CacheableUpdateOperatorTest {
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
-      public int update(DataSource ds, String sql, Object[] args) {
+      public int update(DataSource ds, BoundSql boundSql) {
+        String sql = boundSql.getSql();
+        Object[] args = boundSql.getArgs().toArray();
         String descSql = "update user set name=ash where id in (?,?)";
         assertThat(sql, equalTo(descSql));
         assertThat(args.length, equalTo(2));

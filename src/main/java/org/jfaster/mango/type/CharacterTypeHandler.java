@@ -43,4 +43,8 @@ public class CharacterTypeHandler extends BaseTypeHandler<Character> {
     }
   }
 
+  @Override
+  public JdbcType getJdbcType() {
+    return JdbcType.VARCHAR;
+  }
 }

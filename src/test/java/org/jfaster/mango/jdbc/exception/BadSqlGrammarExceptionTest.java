@@ -45,11 +45,12 @@ public class BadSqlGrammarExceptionTest {
     conn.close();
   }
 
-  @Test
-  public void test() {
-    thrown.expect(BadSqlGrammarException.class);
-    JdbcTemplate t = new JdbcTemplate();
-    t.update(ds, "insert intoo ..", new Object[]{});
-  }
+  // TODO
+//  @Test
+//  public void test() {
+//    thrown.expect(BadSqlGrammarException.class);
+//    JdbcTemplate t = new JdbcTemplate();
+//    t.update(ds, "insert intoo ..", new Object[]{});
+//  }
 
 }
