@@ -105,22 +105,22 @@ public class JdbcTemplate implements JdbcOperations {
           throw new DataRetrievalFailureException("Unable to retrieve the generated key. " +
               "Check that the table has an identity column enabled.");
         }
-        Object key = JdbcUtils.getResultSetValue(rs, 1, holder.getKeyClass());
+        Number key = holder.getTypeHandler().getResult(rs, 1);
         holder.setKey(key);
       }
       return r;
     } catch (SQLException e) {
-      JdbcUtils.closeResultSet(rs);
+      closeResultSet(rs);
       rs = null;
-      JdbcUtils.closeStatement(ps);
+      closeStatement(ps);
       ps = null;
       DataSourceUtils.releaseConnection(conn, dataSource);
       conn = null;
 
       throw getExceptionTranslator(dataSource).translate(sql, e);
     } finally {
-      JdbcUtils.closeResultSet(rs);
-      JdbcUtils.closeStatement(ps);
+      closeResultSet(rs);
+      closeStatement(ps);
       DataSourceUtils.releaseConnection(conn, dataSource);
     }
   }
@@ -150,17 +150,17 @@ public class JdbcTemplate implements JdbcOperations {
       rs = ps.executeQuery();
       return rse.extractData(rs);
     } catch (SQLException e) {
-      JdbcUtils.closeResultSet(rs);
+      closeResultSet(rs);
       rs = null;
-      JdbcUtils.closeStatement(ps);
+      closeStatement(ps);
       ps = null;
       DataSourceUtils.releaseConnection(conn, dataSource);
       conn = null;
 
       throw getExceptionTranslator(dataSource).translate(sql, e);
     } finally {
-      JdbcUtils.closeResultSet(rs);
-      JdbcUtils.closeStatement(ps);
+      closeResultSet(rs);
+      closeStatement(ps);
       DataSourceUtils.releaseConnection(conn, dataSource);
     }
   }
@@ -184,14 +184,14 @@ public class JdbcTemplate implements JdbcOperations {
 
       return ps.executeBatch();
     } catch (SQLException e) {
-      JdbcUtils.closeStatement(ps);
+      closeStatement(ps);
       ps = null;
       DataSourceUtils.releaseConnection(conn, dataSource);
       conn = null;
 
       throw getExceptionTranslator(dataSource).translate(sql, e);
     } finally {
-      JdbcUtils.closeStatement(ps);
+      closeStatement(ps);
       DataSourceUtils.releaseConnection(conn, dataSource);
     }
   }
@@ -216,14 +216,14 @@ public class JdbcTemplate implements JdbcOperations {
 
           r[i] = ps.executeUpdate();
         } catch (SQLException e) {
-          JdbcUtils.closeStatement(ps);
+          closeStatement(ps);
           ps = null;
           DataSourceUtils.releaseConnection(conn, dataSource);
           conn = null;
 
           throw getExceptionTranslator(dataSource).translate(sql, e);
         } finally {
-          JdbcUtils.closeStatement(ps);
+          closeStatement(ps);
         }
       }
     } finally {
@@ -274,6 +274,40 @@ public class JdbcTemplate implements JdbcOperations {
           return new SQLErrorCodeSQLExceptionTranslator(dataSource);
         }
       });
+
+  /**
+   * 关闭语句
+   *
+   * @param stmt
+   */
+  private void closeStatement(Statement stmt) {
+    if (stmt != null) {
+      try {
+        stmt.close();
+      } catch (SQLException e) {
+        logger.error("Could not close JDBC Statement", e);
+      } catch (Throwable e) {
+        logger.error("Unexpected exception on closing JDBC Statement", e);
+      }
+    }
+  }
+
+  /**
+   * 关闭结果集
+   *
+   * @param rs
+   */
+  private void closeResultSet(ResultSet rs) {
+    if (rs != null) {
+      try {
+        rs.close();
+      } catch (SQLException e) {
+        logger.error("Could not close JDBC ResultSet", e);
+      } catch (Throwable e) {
+        logger.error("Unexpected exception on closing JDBC ResultSet", e);
+      }
+    }
+  }
 
 }
 

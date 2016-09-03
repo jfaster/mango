@@ -80,6 +80,10 @@ public final class TypeHandlerRegistry {
     register(java.sql.Timestamp.class, new SqlTimestampTypeHandler());
   }
 
+  public static boolean hasTypeHandler(Class<?> javaType) {
+    return getTypeHandler(javaType) != null;
+  }
+
   @Nullable
   public static <T> TypeHandler<T> getTypeHandler(Class<T> type) {
     return getTypeHandler((Type) type, null);

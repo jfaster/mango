@@ -27,6 +27,8 @@ import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
+import org.jfaster.mango.type.IntegerTypeHandler;
+import org.jfaster.mango.type.LongTypeHandler;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.Test;
@@ -156,7 +158,7 @@ public class UpdateOperatorTest {
         assertThat(args.size(), equalTo(2));
         assertThat(args.get(0), equalTo((Object) 100));
         assertThat(args.get(1), equalTo((Object) "ash"));
-        assertThat(holder.getKeyClass().equals(int.class), is(true));
+        assertThat(holder.getTypeHandler().getClass().equals(IntegerTypeHandler.class), is(true));
         holder.setKey(100);
         return 1;
       }
@@ -188,7 +190,8 @@ public class UpdateOperatorTest {
         assertThat(args.size(), equalTo(2));
         assertThat(args.get(0), equalTo((Object) 100));
         assertThat(args.get(1), equalTo((Object) "ash"));
-        assertThat(holder.getKeyClass().equals(long.class), is(true));
+        System.out.println(holder.getTypeHandler());
+        assertThat(holder.getTypeHandler().getClass().equals(LongTypeHandler.class), is(true));
         holder.setKey(100L);
         return 1;
       }
@@ -304,7 +307,7 @@ public class UpdateOperatorTest {
         assertThat(args.size(), equalTo(2));
         assertThat(args.get(0), equalTo((Object) 100));
         assertThat(args.get(1), equalTo((Object) "ash"));
-        assertThat(holder.getKeyClass().equals(int.class), is(true));
+        assertThat(holder.getTypeHandler().getClass().equals(IntegerTypeHandler.class), is(true));
         holder.setKey(100);
         return 1;
       }

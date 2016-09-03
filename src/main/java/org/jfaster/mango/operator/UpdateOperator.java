@@ -24,6 +24,8 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
+import org.jfaster.mango.type.TypeHandler;
+import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.jdbc.SQLType;
 
@@ -40,7 +42,7 @@ public class UpdateOperator extends AbstractOperator {
 
   private Transformer transformer;
 
-  private Class<? extends Number> numberRawType;
+  private TypeHandler<? extends Number> generatedKeyTypeHandler;
 
   public UpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
     super(rootNode, md.getDaoClass(), config);
@@ -60,7 +62,11 @@ public class UpdateOperator extends AbstractOperator {
         throw new DescriptionException("the return type of update(returnGeneratedId) " +
             "expected one of " + expected + " but " + returnRawType);
       }
-      numberRawType = gt.getRawType();
+      generatedKeyTypeHandler = TypeHandlerRegistry.getTypeHandler(gt.getRawType());
+      if (generatedKeyTypeHandler == null) {
+        // TODO
+        throw new IllegalStateException("");
+      }
       transformer = gt;
     } else {
       transformer = TRANSFORMERS.get(returnRawType);
@@ -104,7 +110,7 @@ public class UpdateOperator extends AbstractOperator {
     long now = System.nanoTime();
     try {
       if (returnGeneratedId) {
-        GeneratedKeyHolder holder = new GeneratedKeyHolder(numberRawType);
+        GeneratedKeyHolder holder = new GeneratedKeyHolder(generatedKeyTypeHandler);
         jdbcOperations.update(ds, boundSql, holder);
         r = holder.getKey();
       } else {

@@ -29,7 +29,7 @@ import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
-import org.jfaster.mango.util.SingleColumns;
+import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.reflect.Reflection;
 
 import javax.sql.DataSource;
@@ -140,8 +140,7 @@ public class QueryOperator extends AbstractOperator {
     if (mapperAnno != null) { // 自定义mapper
       return Reflection.instantiateClass(mapperAnno.value());
     }
-    // TODO 单列判断
-    if (SingleColumns.isSingleColumnClass(clazz)) { // 单列mapper
+    if (TypeHandlerRegistry.hasTypeHandler(clazz)) { // 单列mapper
       return new SingleColumnRowMapper<T>(clazz);
     }
 

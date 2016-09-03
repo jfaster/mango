@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.type.TypeHandler;
+
 /**
  * @author ash
  */
@@ -23,21 +25,21 @@ public class GeneratedKeyHolder {
 
   private Number key;
 
-  private Class<? extends Number> keyClass;
+  private final TypeHandler<? extends Number> typeHandler;
 
-  public GeneratedKeyHolder(Class<? extends Number> keyClass) {
-    this.keyClass = keyClass;
+  public GeneratedKeyHolder(TypeHandler<? extends Number> typeHandler) {
+    this.typeHandler = typeHandler;
   }
 
   public Number getKey() {
     return key;
   }
 
-  public void setKey(Object key) {
-    this.key = Number.class.cast(key);
+  public void setKey(Number key) {
+    this.key = key;
   }
 
-  public Class<? extends Number> getKeyClass() {
-    return keyClass;
+  public TypeHandler<? extends Number> getTypeHandler() {
+    return typeHandler;
   }
 }

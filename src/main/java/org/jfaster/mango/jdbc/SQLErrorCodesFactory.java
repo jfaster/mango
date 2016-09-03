@@ -16,12 +16,17 @@
 
 package org.jfaster.mango.jdbc;
 
+import org.jfaster.mango.jdbc.exception.CannotGetJdbcConnectionException;
 import org.jfaster.mango.jdbc.exception.MetaDataAccessException;
+import org.jfaster.mango.transaction.DataSourceUtils;
 import org.jfaster.mango.util.PatternMatchUtils;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +66,7 @@ public class SQLErrorCodesFactory {
         return sec;
       }
       try {
-        String dbName = JdbcUtils.fetchDatabaseProductName(dataSource);
+        String dbName = fetchDatabaseProductName(dataSource);
         if (dbName != null) {
           if (logger.isDebugEnabled()) {
             logger.debug("Database product name cached for DataSource [" +
@@ -111,6 +116,28 @@ public class SQLErrorCodesFactory {
       }
     }
     return errorCodesMap;
+  }
+
+  /**
+   * 获取数据库名称
+   *
+   * @param dataSource
+   * @return
+   * @throws MetaDataAccessException
+   */
+  private String fetchDatabaseProductName(DataSource dataSource) throws MetaDataAccessException {
+    Connection conn = null;
+    try {
+      conn = DataSourceUtils.getConnection(dataSource);
+      DatabaseMetaData metaData = conn.getMetaData();
+      return metaData.getDatabaseProductName();
+    } catch (CannotGetJdbcConnectionException ex) {
+      throw new MetaDataAccessException("Could not get Connection for extracting meta data", ex);
+    } catch (SQLException ex) {
+      throw new MetaDataAccessException("Error while extracting DatabaseMetaData", ex);
+    } finally {
+      DataSourceUtils.releaseConnection(conn, dataSource);
+    }
   }
 
 }
