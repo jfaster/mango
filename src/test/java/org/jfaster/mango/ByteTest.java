@@ -57,9 +57,6 @@ public class ByteTest {
     dao.insert(arrayByte, singleByte);
     int id = dao.insert(arrayByte, singleByte);
     assertThat(Arrays.toString(dao.getArrayByte(id)), equalTo(Arrays.toString(arrayByte)));
-    for (Byte b : dao.getByteSingles(singleByte)) {
-      assertThat(b, equalTo(singleByte));
-    }
   }
 
   @DB
@@ -71,9 +68,6 @@ public class ByteTest {
 
     @SQL("select array_byte from byte_info where id=:1")
     public byte[] getArrayByte(int id);
-
-    @SQL("select single_byte from byte_info where single_byte=:1")
-    public Byte[] getByteSingles(int singByte);
 
   }
 

@@ -21,6 +21,8 @@ import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.type.TypeHandler;
 import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.jdbc.JdbcType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,18 +49,28 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
   }
 
   public void init(String str) {
-    Pattern p = Pattern.compile("in\\s*\\(\\s*(:(\\w+)(\\.\\w+)*)\\s*\\)", Pattern.CASE_INSENSITIVE);
+    Pattern p = Pattern.compile("in\\s*\\(\\s*:(\\w+)((\\.\\w+)*)(\\@\\w+)?\\s*\\)", Pattern.CASE_INSENSITIVE);
     Matcher m = p.matcher(str);
     if (!m.matches()) {
       throw new IllegalStateException("Can't compile string '" + str + "'");
     }
-    String fullName = m.group(1);
-    String parameterName = m.group(2);
-    String propertyPath = fullName.substring(parameterName.length() + 1);
-    if (!propertyPath.isEmpty()) {
-      propertyPath = propertyPath.substring(1);  // .property变为property
+    String group1 = m.group(1);
+    String group2 = m.group(2);
+    String group4 = m.group(4);
+    String parameterName = group1;
+    String propertyPath = Strings.isNotEmpty(group2) ?
+        group2.substring(1) :
+        "";
+    JdbcType jdbcType = null;
+    if (group4 != null) {
+      try {
+        jdbcType = JdbcType.valueOf(group4.substring(1).toUpperCase());
+      } catch (Exception e) {
+        // TODO 优化异常提示
+        throw new IllegalStateException(e);
+      }
     }
-    bindingParameter = BindingParameter.create(parameterName, propertyPath, null);
+    bindingParameter = BindingParameter.create(parameterName, propertyPath, jdbcType);
   }
 
   @Override
@@ -140,6 +152,18 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
 
   public void setPropertyOfMapper(String propertyOfMapper) {
     this.propertyOfMapper = propertyOfMapper;
+  }
+
+  public static void main(String[] args) {
+    String str = "in (:1)";
+    Pattern p = Pattern.compile("in\\s*\\(\\s*:(\\w+)((\\.\\w+)*)(\\@\\w+)?\\s*\\)", Pattern.CASE_INSENSITIVE);
+    Matcher m = p.matcher(str);
+    if (m.matches()) {
+      System.out.println(m.group(1));
+      System.out.println(m.group(2));
+      System.out.println(m.group(3));
+      System.out.println(m.group(4));
+    }
   }
 
 }

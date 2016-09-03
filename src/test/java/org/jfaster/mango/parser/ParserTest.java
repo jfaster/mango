@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import org.hamcrest.Matchers;
 import org.jfaster.mango.binding.*;
 import org.jfaster.mango.binding.BoundSql;
+import org.jfaster.mango.support.ParserVisitorAdapter;
+import org.jfaster.mango.util.jdbc.JdbcType;
 import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
@@ -30,6 +32,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -364,7 +367,6 @@ public class ParserTest {
   public void testQuote() throws Exception {
     String sql = "insert into table ... values(':dd',':xx')";
     ASTRootNode n = new Parser(sql).parse().init();
-    n.dump("");
     List<Type> types = Lists.newArrayList();
     ParameterContext ctx = getParameterContext(types);
     n.checkAndBind(ctx);
@@ -373,6 +375,35 @@ public class ParserTest {
     BoundSql boundSql = context.getBoundSql();
     assertThat(boundSql.getSql().toString(), equalTo("insert into table ... values(':dd',':xx')"));
     assertThat(boundSql.getArgs(), hasSize(0));
+  }
+
+  @Test
+  public void testJdbcType() throws Exception {
+    String sql = "insert into table ... values(:1.b.c@blob) a in (:2.x.y@clob)";
+    ASTRootNode n = new Parser(sql).parse().init();
+    final AtomicInteger t = new AtomicInteger(0);
+    n.jjtAccept(new ParserVisitorAdapter() {
+      @Override
+      public Object visit(ASTJDBCParameter node, Object data) {
+        BindingParameter bp = node.getBindingParameter();
+        assertThat(bp.getParameterName(), equalTo("1"));
+        assertThat(bp.getPropertyPath(), equalTo("b.c"));
+        assertThat(bp.getJdbcType(), equalTo(JdbcType.BLOB));
+        t.incrementAndGet();
+        return super.visit(node, data);
+      }
+
+      @Override
+      public Object visit(ASTJDBCIterableParameter node, Object data) {
+        BindingParameter bp = node.getBindingParameter();
+        assertThat(bp.getParameterName(), equalTo("2"));
+        assertThat(bp.getPropertyPath(), equalTo("x.y"));
+        assertThat(bp.getJdbcType(), equalTo(JdbcType.CLOB));
+        t.incrementAndGet();
+        return super.visit(node, data);
+      }
+    }, null);
+    assertThat(t.intValue(), equalTo(2));
   }
 
   private ParameterContext getParameterContext(List<Type> types) {
@@ -386,6 +417,8 @@ public class ParserTest {
     ParameterContext ctx = DefaultParameterContext.create(pds);
     return ctx;
   }
+
+
 
 }
 
