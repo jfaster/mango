@@ -19,7 +19,7 @@
  *
  * 依赖包:
  *  binding
- *  reflect
+ *  descriptor
  *  util
  */
 package org.jfaster.mango.interceptor;

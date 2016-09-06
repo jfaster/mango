@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.datasource.database;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;

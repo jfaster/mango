@@ -18,7 +18,6 @@
  * 事务
  *
  * 依赖包:
- *  datasource
  *  exception
  *  operator.Mango
  *  util

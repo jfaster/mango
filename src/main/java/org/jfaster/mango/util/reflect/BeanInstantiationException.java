@@ -16,14 +16,12 @@
 
 package org.jfaster.mango.util.reflect;
 
-import org.jfaster.mango.exception.MangoException;
-
 /**
  * 运行时实例化类异常
  *
  * @author ash
  */
-public class BeanInstantiationException extends MangoException {
+public class BeanInstantiationException extends RuntimeException {
 
   private Class beanClass;
 

@@ -21,14 +21,16 @@
  *  annotation
  *  binding
  *  datasource
+ *  descriptor
  *  exception
  *  interceptor
  *  invoker
  *  jdbc
+ *  mapper
  *  parser
- *  reflect
  *  sharding
  *  stat
+ *  type
  *  util
  */
 package org.jfaster.mango.operator;

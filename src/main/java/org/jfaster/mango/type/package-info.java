@@ -15,9 +15,10 @@
  */
 
 /**
- * 数据源工厂
+ * java类型到jdbc类型
  *
  * 依赖包:
- *  none
+ *  exception
+ *  util
  */
-package org.jfaster.mango.datasource;
+package org.jfaster.mango.type;

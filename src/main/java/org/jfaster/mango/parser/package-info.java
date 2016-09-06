@@ -20,8 +20,7 @@
  * 依赖包:
  *  binding
  *  exception
- *  jdbc
- *  reflect
+ *  type
  *  util
  */
 package org.jfaster.mango.parser;

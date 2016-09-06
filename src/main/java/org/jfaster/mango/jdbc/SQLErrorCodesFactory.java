@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc;
 
-import org.jfaster.mango.jdbc.exception.CannotGetJdbcConnectionException;
+import org.jfaster.mango.transaction.exception.CannotGetJdbcConnectionException;
 import org.jfaster.mango.jdbc.exception.MetaDataAccessException;
 import org.jfaster.mango.transaction.DataSourceUtils;
 import org.jfaster.mango.util.PatternMatchUtils;

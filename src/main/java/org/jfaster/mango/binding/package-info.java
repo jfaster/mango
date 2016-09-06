@@ -19,9 +19,10 @@
  *
  * 依赖包:
  *  annotation
+ *  descriptor
  *  exception
  *  invoker
- *  reflect
+ *  type
  *  util
  */
 package org.jfaster.mango.binding;

@@ -14,20 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.jdbc.exception;
-
 /**
- * 不能获得jdbc连接异常
+ * 方法描述
  *
- * @author ash
+ * 依赖包:
+ *  annotation
+ *  exception
+ *  util
  */
-public class CannotGetJdbcConnectionException extends DataAccessResourceFailureException {
-
-  public CannotGetJdbcConnectionException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public CannotGetJdbcConnectionException(String message) {
-    super(message);
-  }
-}
+package org.jfaster.mango.descriptor;

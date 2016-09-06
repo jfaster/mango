@@ -14,14 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.datasource;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.operator.datasource.database.DatabaseGenerator;
-import org.jfaster.mango.operator.datasource.database.DatabaseGeneratorFactory;
 
 import javax.annotation.Nullable;
 

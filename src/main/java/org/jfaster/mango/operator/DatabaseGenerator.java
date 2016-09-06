@@ -14,17 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.operator;
+
+import org.jfaster.mango.binding.InvocationContext;
 
 /**
+ * database生成器
+ *
  * @author ash
  */
-public interface SetterInvokerGroup {
+public interface DatabaseGenerator {
 
-  public Class<?> getOriginalType();
-
-  public Class<?> getTargetType();
-
-  public void invoke(Object obj, Object value);
+  public String getDatabase(InvocationContext context);
 
 }

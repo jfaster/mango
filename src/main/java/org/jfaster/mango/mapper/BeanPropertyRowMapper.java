@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.mapper;
 
-import org.jfaster.mango.invoker.FunctionalSetterInvokerGroup;
 import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.invoker.UnreachablePropertyException;

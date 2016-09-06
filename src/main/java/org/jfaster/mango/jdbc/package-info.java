@@ -18,10 +18,11 @@
  * jdbc
  *
  * 依赖包:
- *  datasource
+ *  binding
  *  exception
- *  invoker
- *  reflect
+ *  mapper
+ *  transaction
+ *  type
  *  util
  */
 package org.jfaster.mango.jdbc;

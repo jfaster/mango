@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator.table;
+package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.annotation.ShardingBy;

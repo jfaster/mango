@@ -13,8 +13,11 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.jfaster.mango.invoker;
+package org.jfaster.mango.mapper;
 
+import org.jfaster.mango.invoker.GetterInvoker;
+import org.jfaster.mango.invoker.InvokerCache;
+import org.jfaster.mango.invoker.SetterInvoker;
 import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.util.reflect.Reflection;
 

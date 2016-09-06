@@ -19,10 +19,10 @@
  *
  * 依赖包:
  *  annotation
- *  datasource
  *  operator
  *  sharding
  *  stat
+ *  transaction
  *  util
  */
 package org.jfaster.mango.plugin;

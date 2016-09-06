@@ -14,10 +14,22 @@
  * under the License.
  */
 
+package org.jfaster.mango.transaction.exception;
+
+import org.jfaster.mango.jdbc.exception.DataAccessResourceFailureException;
+
 /**
- * 数据源工厂
+ * 不能获得jdbc连接异常
  *
- * 依赖包:
- *  none
+ * @author ash
  */
-package org.jfaster.mango.datasource;
+public class CannotGetJdbcConnectionException extends DataAccessResourceFailureException {
+
+  public CannotGetJdbcConnectionException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public CannotGetJdbcConnectionException(String message) {
+    super(message);
+  }
+}

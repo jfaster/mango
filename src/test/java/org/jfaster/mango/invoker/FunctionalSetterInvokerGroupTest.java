@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.invoker;
 
+import org.jfaster.mango.mapper.FunctionalSetterInvokerGroup;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;

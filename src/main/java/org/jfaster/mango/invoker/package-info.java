@@ -20,7 +20,6 @@
  * 依赖包:
  *  annotation
  *  exception
- *  reflect
  *  util
  */
 package org.jfaster.mango.invoker;
