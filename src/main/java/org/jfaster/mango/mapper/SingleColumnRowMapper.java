@@ -44,10 +44,6 @@ public class SingleColumnRowMapper<T> implements RowMapper<T> {
     }
     int index = 1;
     TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(mappedClass, rsw.getJdbcType(index));
-    if (typeHandler == null) {
-      // TODO
-      throw new IllegalStateException();
-    }
     Object value = typeHandler.getResult(rsw.getResultSet(), index);
     return (T) value;
   }

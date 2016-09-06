@@ -60,12 +60,13 @@ public class ASTJDBCParameter extends AbstractRenderableNode implements Paramete
         group2.substring(1) :
         "";
     JdbcType jdbcType = null;
+    String jdbcTypeStr = null;
     if (group4 != null) {
       try {
-        jdbcType = JdbcType.valueOf(group4.substring(1).toUpperCase());
+        jdbcTypeStr = group4.substring(1).toUpperCase();
+        jdbcType = JdbcType.valueOf(jdbcTypeStr);
       } catch (Exception e) {
-        // TODO 优化异常提示
-        throw new IllegalStateException(e);
+        throw new IllegalStateException("error jdbc type '" + jdbcTypeStr + "'");
       }
     }
     bindingParameter = BindingParameter.create(parameterName, propertyPath, jdbcType);

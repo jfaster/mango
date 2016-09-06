@@ -237,7 +237,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   public String getCacheKey(InvocationContext context) {
     StringBuilder key = new StringBuilder(prefix);
     for (CacheByItem item : cacheByItems) {
-      Object obj = context.getBindingValue(item.getInvokerGroup());
+      Object obj = context.getBindingValue(item.getbindingParameterInvoker());
       if (obj == null) {
         throw new NullPointerException("value of " + item.getFullName() + " can't be null");
       }
@@ -270,7 +270,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   @Override
   public Object getOnlyCacheByObj(InvocationContext context) {
     CacheByItem item = getOnlyCacheByItem(cacheByItems);
-    Object obj = context.getBindingValue(item.getInvokerGroup());
+    Object obj = context.getBindingValue(item.getbindingParameterInvoker());
     if (obj == null) {
       throw new NullPointerException("value of " + item.getFullName() + " can't be null");
     }
@@ -280,7 +280,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   @Override
   public void setOnlyCacheByObj(InvocationContext context, Object obj) {
     CacheByItem item = getOnlyCacheByItem(cacheByItems);
-    context.setBindingValue(item.getInvokerGroup(), obj);
+    context.setBindingValue(item.getbindingParameterInvoker(), obj);
   }
 
   @Override
@@ -301,10 +301,10 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
         String propertyPaths = cacheByAnno.value();
         for (String propertyPath : propertyPaths.split(",")) {
           propertyPath = propertyPath.trim();
-          BindingParameterInvoker invokerGroup = context.getBindingParameterInvoker(BindingParameter.create(parameterName, propertyPath, null));
-          Type cacheByType = invokerGroup.getTargetType();
+          BindingParameterInvoker invoker = context.getBindingParameterInvoker(BindingParameter.create(parameterName, propertyPath, null));
+          Type cacheByType = invoker.getTargetType();
           TypeWrapper tw = new TypeWrapper(cacheByType);
-          cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invokerGroup));
+          cacheByItems.add(new CacheByItem(parameterName, propertyPath, tw.getMappedClass(), invoker));
           useMultipleKeys = useMultipleKeys || tw.isIterable();
         }
       }
@@ -406,13 +406,17 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
     private final Class<?> actualClass;
 
-    private final BindingParameterInvoker invokerGroup;
+    private final BindingParameterInvoker bindingParameterInvoker;
 
-    public CacheByItem(String parameterName, String propertyPath, Class<?> actualClass, BindingParameterInvoker invokerGroup) {
+    public CacheByItem(
+        String parameterName,
+        String propertyPath,
+        Class<?> actualClass,
+        BindingParameterInvoker bindingParameterInvoker) {
       this.parameterName = parameterName;
       this.propertyPath = propertyPath;
       this.actualClass = actualClass;
-      this.invokerGroup = invokerGroup;
+      this.bindingParameterInvoker = bindingParameterInvoker;
     }
 
     public String getParameterName() {
@@ -427,8 +431,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
       return actualClass;
     }
 
-    private BindingParameterInvoker getInvokerGroup() {
-      return invokerGroup;
+    private BindingParameterInvoker getbindingParameterInvoker() {
+      return bindingParameterInvoker;
     }
 
     public String getFullName() {

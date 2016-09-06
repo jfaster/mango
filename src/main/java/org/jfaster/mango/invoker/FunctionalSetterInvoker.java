@@ -55,7 +55,7 @@ public class FunctionalSetterInvoker extends MethodNamedObject implements Setter
       } else if (RuntimeSetterFunction.class.isAssignableFrom(funcClass)) {
         functionAdapter = new RuntimeSetterFunctionAdapter((RuntimeSetterFunction) Reflection.instantiateClass(funcClass));
       } else {
-        throw new IllegalArgumentException(); // TODO
+        throw new IllegalArgumentException("error func class '" + funcClass + "'");
       }
 
       TokenTuple tokenTuple = TypeToken.of(funcClass).resolveFatherClassTuple(DummySetterFunction.class);

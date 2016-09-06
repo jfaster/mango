@@ -81,22 +81,35 @@ public final class TypeHandlerRegistry {
   }
 
   public static boolean hasTypeHandler(Class<?> javaType) {
-    return getTypeHandler(javaType) != null;
+    return getNullableTypeHandler(javaType) != null;
+  }
+
+  @Nullable
+  public static <T> TypeHandler<T> getNullableTypeHandler(Class<T> type) {
+    return getNullableTypeHandler((Type) type, null);
   }
 
   @Nullable
   public static <T> TypeHandler<T> getTypeHandler(Class<T> type) {
-    return getTypeHandler((Type) type, null);
+    return getTypeHandler(type, null);
   }
 
   @Nullable
+  public static <T> TypeHandler<T> getNullableTypeHandler(Class<T> type, JdbcType jdbcType) {
+    return getNullableTypeHandler((Type) type, jdbcType);
+  }
+
   public static <T> TypeHandler<T> getTypeHandler(Class<T> type, JdbcType jdbcType) {
-    return getTypeHandler((Type) type, jdbcType);
+    TypeHandler<T> typeHandler = getNullableTypeHandler((Type) type, jdbcType);
+    if (typeHandler == null) {
+      throw new TypeException("Can't get type handle, java type is '" + type + "', jdbc type is '" + jdbcType + "'");
+    }
+    return typeHandler;
   }
 
   @SuppressWarnings("unchecked")
   @Nullable
-  public static <T> TypeHandler<T> getTypeHandler(Type type, JdbcType jdbcType) {
+  private static <T> TypeHandler<T> getNullableTypeHandler(Type type, JdbcType jdbcType) {
     Map<JdbcType, TypeHandler<?>> jdbcHandlerMap = TYPE_HANDLER_MAP.get(type);
     TypeHandler<?> handler = null;
     if (jdbcHandlerMap != null) {

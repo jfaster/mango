@@ -89,7 +89,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
     Type type = invoker.getTargetType();
     TypeWrapper tw = new TypeWrapper(type);
     Class<?> mappedClass = tw.getMappedClass();
-    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(mappedClass, bp.getJdbcType());
+    TypeHandler<?> typeHandler = TypeHandlerRegistry.getNullableTypeHandler(mappedClass, bp.getJdbcType());
     if (mappedClass == null || tw.isIterable() || typeHandler == null) {
       throw new IncorrectParameterTypeException("invalid type of " + node.getFullName() + ", " +
           "expected a class can be identified by jdbc but " + type);
@@ -111,7 +111,7 @@ public enum CheckAndBindVisitor implements ParserVisitor {
           "expected array or implementations of java.util.List or implementations of java.util.Set " +
           "but " + type);
     }
-    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(mappedClass);
+    TypeHandler<?> typeHandler = TypeHandlerRegistry.getNullableTypeHandler(mappedClass);
     if (mappedClass == null || typeHandler == null) {
       String s = tw.isArray() ? "component" : "actual";
       throw new IncorrectParameterTypeException("invalid " + s + " type of " + node.getFullName() + ", " +

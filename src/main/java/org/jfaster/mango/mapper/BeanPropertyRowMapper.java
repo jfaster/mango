@@ -124,10 +124,6 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     }
     if (g != null) {
       TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(g.getTargetType(), rsw.getJdbcType(index));
-      if (typeHandler == null) {
-        // TODO
-        throw new IllegalStateException();
-      }
       Object value = typeHandler.getResult(rsw.getResultSet(), index);
       if (logger.isDebugEnabled() && rowNumber == 0) {
         logger.debug("Mapping column '" + rsw.getColumnName(index) + "' to property '" +
@@ -142,11 +138,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
     SetterInvoker invoker = invokerMap.get(lowerCaseColumnName);
     if (invoker != null) {
-      TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(invoker.getParameterType(), rsw.getJdbcType(index));
-      if (typeHandler == null) {
-        // TODO
-        throw new IllegalStateException();
-      }
+      TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(invoker.getParameterRawType(), rsw.getJdbcType(index));
       Object value = typeHandler.getResult(rsw.getResultSet(), index);
       if (logger.isDebugEnabled() && rowNumber == 0) {
         logger.debug("Mapping column '" + rsw.getColumnName(index) + "' to property '" +

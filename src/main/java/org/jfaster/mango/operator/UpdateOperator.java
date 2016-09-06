@@ -63,10 +63,6 @@ public class UpdateOperator extends AbstractOperator {
             "expected one of " + expected + " but " + returnRawType);
       }
       generatedKeyTypeHandler = TypeHandlerRegistry.getTypeHandler(gt.getRawType());
-      if (generatedKeyTypeHandler == null) {
-        // TODO
-        throw new IllegalStateException("");
-      }
       transformer = gt;
     } else {
       transformer = TRANSFORMERS.get(returnRawType);
