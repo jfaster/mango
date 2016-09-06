@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.jdbc.exception;
 
-import org.jfaster.mango.jdbc.exception.BadSqlGrammarException;
+import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
@@ -45,12 +45,12 @@ public class BadSqlGrammarExceptionTest {
     conn.close();
   }
 
-  // TODO
-//  @Test
-//  public void test() {
-//    thrown.expect(BadSqlGrammarException.class);
-//    JdbcTemplate t = new JdbcTemplate();
-//    t.update(ds, "insert intoo ..", new Object[]{});
-//  }
+  @Test
+  public void test() {
+    thrown.expect(BadSqlGrammarException.class);
+    JdbcTemplate t = new JdbcTemplate();
+    BoundSql boundSql = new BoundSql("insert intoo ..");
+    t.update(ds, boundSql);
+  }
 
 }

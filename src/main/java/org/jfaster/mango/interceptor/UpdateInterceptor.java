@@ -27,12 +27,12 @@ import java.util.List;
 public abstract class UpdateInterceptor implements Interceptor {
 
   @Override
-  public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
+  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
     if (sqlType.needChangeData()) {
-      interceptUpdate(preparedSql, parameters, sqlType);
+      interceptUpdate(boundSql, parameters, sqlType);
     }
   }
 
-  public abstract void interceptUpdate(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType);
+  public abstract void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType);
 
 }

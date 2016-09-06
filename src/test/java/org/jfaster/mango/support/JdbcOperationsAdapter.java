@@ -64,7 +64,7 @@ public class JdbcOperationsAdapter implements JdbcOperations {
   }
 
   @Override
-  public int[] batchUpdate(DataSource ds, List<BoundSql> boundSql) throws DataAccessException {
+  public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) throws DataAccessException {
     throw new UnsupportedOperationException();
   }
 

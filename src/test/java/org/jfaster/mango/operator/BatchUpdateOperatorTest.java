@@ -23,14 +23,18 @@ import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
+import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.jdbc.exception.DataAccessException;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
 import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.reflect.TypeToken;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
@@ -169,128 +173,144 @@ public class BatchUpdateOperatorTest {
   }
 
 
-  // TODO 测试
-//  @Test
-//  public void testExecuteMulti() throws Exception {
-//    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
-//    };
-//    TypeToken<int[]> rt = TypeToken.of(int[].class);
-//    String srcSql = "update #table set name=:1.name where id=:1.id";
-//    Operator operator = getOperator2(pt, rt, srcSql);
-//
-//    StatsCounter sc = new StatsCounter();
-//    operator.setStatsCounter(sc);
-//    operator.setJdbcOperations(new JdbcOperationsAdapter() {
-//      @Override
-//      public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
-//        List<String> descSqls = Arrays.asList("update user_10 set name=? where id=?",
-//            "update user_20 set name=? where id=?");
-//        List<String> sqls = new ArrayList<String>;
-//        for (BoundSql boundSql : boundSqls) {
-//          sqls.add(boundSql.getSql());
-//        }
-//        assertThat(sqls, equalTo(descSqls));
-//        assertThat(boundSqls.size(), equalTo(2));
-//        assertThat(boundSqls.get(0).getArgs().get(0), equalTo((Object) "ash"));
-//        assertThat(boundSqls.get(0).getArgs().get(1), equalTo((Object) 10));
-//        assertThat(boundSqls.get(1).getArgs().get(0), equalTo((Object) "lucy"));
-//        assertThat(boundSqls.get(1).getArgs().get(1), equalTo((Object) 20));
-//        return new int[]{5, 8};
-//      }
-//
-//      @Override
-//      public int[] batchUpdate(DataSource ds, String sql, List<Object[]> batchArgs) {
-//        String descSql = "update user_60 set name=? where id=?";
-//        assertThat(sql, equalTo(descSql));
-//        assertThat(batchArgs.size(), equalTo(1));
-//        assertThat(batchArgs.get(0)[0], equalTo((Object) "lily"));
-//        assertThat(batchArgs.get(0)[1], equalTo((Object) 60));
-//        return new int[]{6};
-//      }
-//    });
-//
-//    List<User> users = Arrays.asList(new User(10, "ash"), new User(20, "lucy"), new User(60, "lily"));
-//    int[] actualInts = (int[]) operator.execute(new Object[]{users});
-//    assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(new int[]{5, 8, 6})));
-//  }
-//
-//  @Test
-//  public void testStatsCounter() throws Exception {
-//    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
-//    };
-//    TypeToken<int[]> rt = TypeToken.of(int[].class);
-//    String srcSql = "update user set name=:1.name where id=:1.id";
-//    Operator operator = getOperator(pt, rt, srcSql);
-//
-//    StatsCounter sc = new StatsCounter();
-//    operator.setStatsCounter(sc);
-//    operator.setJdbcOperations(new JdbcOperationsAdapter() {
-//      @Override
-//      public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
-//        String descSql = "update user set name=? where id=?";
-//        assertThat(sql, equalTo(descSql));
-//        assertThat(batchArgs.size(), equalTo(2));
-//        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-//        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-//        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-//        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-//        return new int[]{9, 7};
-//      }
-//    });
-//    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-//    operator.execute(new Object[]{users});
-//    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
-//    operator.execute(new Object[]{users});
-//    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
-//
-//    operator.setJdbcOperations(new JdbcOperationsAdapter());
-//    try {
-//      operator.execute(new Object[]{users});
-//    } catch (UnsupportedOperationException e) {
-//    }
-//    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
-//    try {
-//      operator.execute(new Object[]{users});
-//    } catch (UnsupportedOperationException e) {
-//    }
-//    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
-//  }
-//
-//  @Rule
-//  public ExpectedException thrown = ExpectedException.none();
-//
-//  @Test
-//  public void testExecuteReturnTypeError() throws Exception {
-//    thrown.expect(DescriptionException.class);
-//    thrown.expectMessage("the return type of batch update expected one of " +
-//        "[void, int, int[], Void, Integer, Integer[]] but class java.lang.String");
-//
-//    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
-//    };
-//    TypeToken<String> rt = TypeToken.of(String.class);
-//    String srcSql = "update user set name=:1.name where id=:1.id";
-//    Operator operator = getOperator(pt, rt, srcSql);
-//
-//    final int[] expectedInts = new int[]{1, 2};
-//    StatsCounter sc = new StatsCounter();
-//    operator.setStatsCounter(sc);
-//    operator.setJdbcOperations(new JdbcOperationsAdapter() {
-//      @Override
-//      public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
-//        String descSql = "update user set name=? where id=?";
-//        assertThat(sql, equalTo(descSql));
-//        assertThat(batchArgs.size(), equalTo(2));
-//        assertThat(batchArgs.get(0)[0], equalTo((Object) "ash"));
-//        assertThat(batchArgs.get(0)[1], equalTo((Object) 100));
-//        assertThat(batchArgs.get(1)[0], equalTo((Object) "lucy"));
-//        assertThat(batchArgs.get(1)[1], equalTo((Object) 200));
-//        return expectedInts;
-//      }
-//    });
-//
-//    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-//    operator.execute(new Object[]{users});
-//  }
+  @Test
+  public void testExecuteMulti() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<int[]> rt = TypeToken.of(int[].class);
+    String srcSql = "update #table set name=:1.name where id=:1.id";
+    Operator operator = getOperator2(pt, rt, srcSql);
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+
+      @Override
+      public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) throws DataAccessException {
+        if (boundSqls.size() == 3) {
+          List<String> descSqls = Arrays.asList(
+              "update user_30 set name=? where id=?",
+              "update user_10 set name=? where id=?",
+              "update user_20 set name=? where id=?");
+          List<String> sqls = new ArrayList<String>();
+          for (BoundSql boundSql : boundSqls) {
+            sqls.add(boundSql.getSql());
+          }
+          assertThat(sqls, equalTo(descSqls));
+          assertThat(boundSqls.size(), equalTo(3));
+          assertThat(boundSqls.get(0).getArgs().get(0), equalTo((Object) "ash"));
+          assertThat(boundSqls.get(0).getArgs().get(1), equalTo((Object) 30));
+          assertThat(boundSqls.get(1).getArgs().get(0), equalTo((Object) "lily"));
+          assertThat(boundSqls.get(1).getArgs().get(1), equalTo((Object) 10));
+          assertThat(boundSqls.get(2).getArgs().get(0), equalTo((Object) "gill"));
+          assertThat(boundSqls.get(2).getArgs().get(1), equalTo((Object) 20));
+          return new int[] {3, 1, 2};
+        } else if (boundSqls.size() == 2) {
+          List<String> descSqls = Arrays.asList(
+              "update user_60 set name=? where id=?",
+              "update user_55 set name=? where id=?");
+          List<String> sqls = new ArrayList<String>();
+          for (BoundSql boundSql : boundSqls) {
+            sqls.add(boundSql.getSql());
+          }
+          assertThat(sqls, equalTo(descSqls));
+          assertThat(boundSqls.size(), equalTo(2));
+          assertThat(boundSqls.get(0).getArgs().get(0), equalTo((Object) "lucy"));
+          assertThat(boundSqls.get(0).getArgs().get(1), equalTo((Object) 60));
+          assertThat(boundSqls.get(1).getArgs().get(0), equalTo((Object) "liu"));
+          assertThat(boundSqls.get(1).getArgs().get(1), equalTo((Object) 55));
+          return new int[] {6, 5};
+        } else {
+          throw new IllegalStateException();
+        }
+      }
+
+    });
+
+    List<User> users = Arrays.asList(
+        new User(30, "ash"), new User(60, "lucy"), new User(10, "lily"),
+        new User(20, "gill"), new User(55, "liu"));
+    int[] actualInts = (int[]) operator.execute(new Object[]{users});
+    assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(new int[]{3, 6, 1, 2, 5})));
+  }
+
+  @Test
+  public void testStatsCounter() throws Exception {
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<int[]> rt = TypeToken.of(int[].class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
+
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(boundSqls.get(0).getSql(), equalTo(descSql));
+        assertThat(boundSqls.size(), equalTo(2));
+        assertThat(boundSqls.get(0).getArgs().get(0), equalTo((Object) "ash"));
+        assertThat(boundSqls.get(0).getArgs().get(1), equalTo((Object) 100));
+        assertThat(boundSqls.get(1).getArgs().get(0), equalTo((Object) "lucy"));
+        assertThat(boundSqls.get(1).getArgs().get(1), equalTo((Object) 200));
+        return new int[]{9, 7};
+      }
+    });
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    operator.execute(new Object[]{users});
+    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
+    operator.execute(new Object[]{users});
+    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
+
+    operator.setJdbcOperations(new JdbcOperationsAdapter());
+    try {
+      operator.execute(new Object[]{users});
+    } catch (UnsupportedOperationException e) {
+    }
+    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
+    try {
+      operator.execute(new Object[]{users});
+    } catch (UnsupportedOperationException e) {
+    }
+    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
+  }
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void testExecuteReturnTypeError() throws Exception {
+    thrown.expect(DescriptionException.class);
+    thrown.expectMessage("the return type of batch update expected one of " +
+        "[void, int, int[], Void, Integer, Integer[]] but class java.lang.String");
+
+    TypeToken<List<User>> pt = new TypeToken<List<User>>() {
+    };
+    TypeToken<String> rt = TypeToken.of(String.class);
+    String srcSql = "update user set name=:1.name where id=:1.id";
+    Operator operator = getOperator(pt, rt, srcSql);
+
+    final int[] expectedInts = new int[]{1, 2};
+    StatsCounter sc = new StatsCounter();
+    operator.setStatsCounter(sc);
+    operator.setJdbcOperations(new JdbcOperationsAdapter() {
+      @Override
+      public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
+        String descSql = "update user set name=? where id=?";
+        assertThat(boundSqls.get(0).getSql(), equalTo(descSql));
+        assertThat(boundSqls.size(), equalTo(2));
+        assertThat(boundSqls.get(0).getArgs().get(0), equalTo((Object) "ash"));
+        assertThat(boundSqls.get(0).getArgs().get(1), equalTo((Object) 100));
+        assertThat(boundSqls.get(1).getArgs().get(0), equalTo((Object) "lucy"));
+        assertThat(boundSqls.get(1).getArgs().get(1), equalTo((Object) 200));
+        return expectedInts;
+      }
+    });
+
+    List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
+    operator.execute(new Object[]{users});
+  }
 
   private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
     List<Annotation> empty = Collections.emptyList();

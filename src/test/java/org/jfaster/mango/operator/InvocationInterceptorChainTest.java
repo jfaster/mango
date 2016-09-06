@@ -17,21 +17,20 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.binding.InvocationContextFactory;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.interceptor.Interceptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.interceptor.Parameter;
-import org.jfaster.mango.util.reflect.TypeToken;
-import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.support.model4table.User;
+import org.jfaster.mango.util.jdbc.SQLType;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,10 +45,10 @@ public class InvocationInterceptorChainTest {
 
   @Test
   public void testIntercept() throws Exception {
-    final List<Object> args = new ArrayList<Object>();
-    args.add(1);
-    args.add("ash");
     final String sql = "select * from user where id=? and name=?";
+    BoundSql boundSql = new BoundSql(sql);
+    boundSql.addNonNullArg(1);
+    boundSql.addNonNullArg("ash");
     final User user = new User();
     user.setId(100);
     user.setName("lucy");
@@ -57,9 +56,10 @@ public class InvocationInterceptorChainTest {
     InterceptorChain ic = new InterceptorChain();
     ic.addInterceptor(new Interceptor() {
       @Override
-      public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
-        assertThat(preparedSql.getSql(), equalTo(sql));
-        assertThat(preparedSql.getArgs(), equalTo(args));
+      public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+        assertThat(boundSql.getSql(), equalTo(sql));
+        assertThat(boundSql.getArgs(), equalTo(boundSql.getArgs()));
+        assertThat(boundSql.getTypeHandlers(), equalTo(boundSql.getTypeHandlers()));
         assertThat((User) parameters.get(0).getValue(), equalTo(user));
         assertThat(sqlType, equalTo(SQLType.SELECT));
       }
@@ -73,9 +73,7 @@ public class InvocationInterceptorChainTest {
 
     InvocationContextFactory f = InvocationContextFactory.create(DefaultParameterContext.create(pds));
     InvocationContext ctx = f.newInvocationContext(new Object[]{user});
-    // TODO null处理
-    BoundSql ps = new BoundSql(sql, args, null);
-    iic.intercept(ps, ctx);
+    iic.intercept(boundSql, ctx);
   }
 
 }

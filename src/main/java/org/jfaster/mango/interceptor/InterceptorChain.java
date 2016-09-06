@@ -34,10 +34,10 @@ public class InterceptorChain {
     interceptors.add(interceptor);
   }
 
-  public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType) {
+  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
     if (getInterceptors() != null) {
       for (Interceptor interceptor : getInterceptors()) {
-        interceptor.intercept(preparedSql, parameters, sqlType);
+        interceptor.intercept(boundSql, parameters, sqlType);
       }
     }
   }

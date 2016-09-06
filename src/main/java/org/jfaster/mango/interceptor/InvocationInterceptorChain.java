@@ -43,7 +43,7 @@ public class InvocationInterceptorChain {
     this.sqlType = sqlType;
   }
 
-  public void intercept(BoundSql preparedSql, InvocationContext context) {
+  public void intercept(BoundSql boundSql, InvocationContext context) {
     if (interceptorChain.getInterceptors() != null) {
       List<Object> parameterValues = context.getParameterValues();
       List<Parameter> parameters = new ArrayList<Parameter>(parameterValues.size());
@@ -51,7 +51,7 @@ public class InvocationInterceptorChain {
         ParameterDescriptor pd = parameterDescriptors.get(i);
         parameters.add(new Parameter(pd, parameterValues.get(i)));
       }
-      interceptorChain.intercept(preparedSql, parameters, sqlType);
+      interceptorChain.intercept(boundSql, parameters, sqlType);
     }
   }
 

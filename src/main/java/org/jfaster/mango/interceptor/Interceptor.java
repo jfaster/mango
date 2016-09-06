@@ -26,6 +26,6 @@ import java.util.List;
  */
 public interface Interceptor {
 
-  public void intercept(BoundSql preparedSql, List<Parameter> parameters, SQLType sqlType);
+  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType);
 
 }
