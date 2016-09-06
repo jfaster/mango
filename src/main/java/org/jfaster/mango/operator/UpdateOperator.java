@@ -44,8 +44,8 @@ public class UpdateOperator extends AbstractOperator {
 
   private TypeHandler<? extends Number> generatedKeyTypeHandler;
 
-  public UpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
-    super(rootNode, md.getDaoClass(), config);
+  public UpdateOperator(ASTRootNode rootNode, MethodDescriptor md, ConfigHolder configHolder) {
+    super(rootNode, md.getDaoClass(), configHolder);
     init(md, rootNode.getSQLType());
   }
 
@@ -86,6 +86,7 @@ public class UpdateOperator extends AbstractOperator {
     try {
       rootNode.render(context);
     } catch (EmptyObjectException e) {
+      final Config config = configHolder.get();
       if (config.isCompatibleWithEmptyList()) {
         return transformer.transform(0);
       } else {

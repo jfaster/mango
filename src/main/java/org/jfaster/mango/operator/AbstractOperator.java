@@ -28,15 +28,6 @@ import org.jfaster.mango.stat.StatsCounter;
 public abstract class AbstractOperator implements Operator {
 
   /**
-   * 用于对db进行操作
-   */
-  protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, Config config) {
-    this.rootNode = rootNode;
-    this.daoClass = daoClass;
-    this.config = config;
-  }
-
-  /**
    * 渲染sql的树节点
    */
   protected final ASTRootNode rootNode;
@@ -79,7 +70,16 @@ public abstract class AbstractOperator implements Operator {
   /**
    * mango全局配置信息
    */
-  protected Config config;
+  protected final ConfigHolder configHolder;
+
+  /**
+   * 用于对db进行操作
+   */
+  protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, ConfigHolder configHolder) {
+    this.rootNode = rootNode;
+    this.daoClass = daoClass;
+    this.configHolder = configHolder;
+  }
 
   @Override
   public void setJdbcOperations(JdbcOperations jdbcOperations) {

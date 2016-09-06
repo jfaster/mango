@@ -18,20 +18,20 @@ package org.jfaster.mango.operator.cache;
 
 import org.hamcrest.Matchers;
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
-import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.jdbc.ListSupplier;
-import org.jfaster.mango.mapper.RowMapper;
-import org.jfaster.mango.operator.Operator;
-import org.jfaster.mango.operator.OperatorFactory;
-import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
+import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.jdbc.ListSupplier;
+import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.operator.ConfigHolder;
+import org.jfaster.mango.operator.Operator;
+import org.jfaster.mango.operator.OperatorFactory;
 import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -296,7 +296,7 @@ public class CacheableQueryOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-        ch, new InterceptorChain(), null, new Config());
+        ch, new InterceptorChain(), null, new ConfigHolder());
 
     Operator operator = factory.getOperator(md, sc);
     return operator;

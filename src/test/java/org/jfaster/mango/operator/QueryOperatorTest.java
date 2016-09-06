@@ -289,7 +289,7 @@ public class QueryOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-        null, new InterceptorChain(), null, new Config());
+        null, new InterceptorChain(), null, new ConfigHolder());
 
     Operator operator = factory.getOperator(md, new StatsCounter());
     return operator;

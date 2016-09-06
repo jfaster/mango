@@ -18,6 +18,7 @@ package org.jfaster.mango;
 
 import com.google.common.collect.Lists;
 import org.jfaster.mango.annotation.*;
+import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -427,20 +428,24 @@ public class CacheRedisTest {
   public void testQueryEmpty() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
     UserDao dao = mango.create(UserDao.class, cacheHandler);
-    boolean old = mango.isCompatibleWithEmptyList();
-    mango.setCompatibleWithEmptyList(true);
+    Config oldConfig = mango.getConfig();
+    Config newConfig = new Config();
+    newConfig.setCompatibleWithEmptyList(true);
+    mango.setConfig(newConfig);
     assertThat(dao.getUserArray(new ArrayList<Integer>()).length, equalTo(0));
-    mango.setCompatibleWithEmptyList(old);
+    mango.setConfig(oldConfig);
   }
 
   @Test
   public void testUpdateEmpty() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
     UserDao dao = mango.create(UserDao.class, cacheHandler);
-    boolean old = mango.isCompatibleWithEmptyList();
-    mango.setCompatibleWithEmptyList(true);
+    Config oldConfig = mango.getConfig();
+    Config newConfig = new Config();
+    newConfig.setCompatibleWithEmptyList(true);
+    mango.setConfig(newConfig);
     assertThat(dao.updateWithInStatement(new ArrayList<Integer>(), "ash"), equalTo(0));
-    mango.setCompatibleWithEmptyList(old);
+    mango.setConfig(oldConfig);
   }
 
   private String getUserKey(int id) {

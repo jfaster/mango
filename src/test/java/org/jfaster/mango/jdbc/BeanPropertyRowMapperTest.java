@@ -20,6 +20,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.mapper.MappingException;
+import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.util.logging.MangoLogger;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -103,11 +104,19 @@ public class BeanPropertyRowMapperTest {
   public void testException() {
     thrown.expect(MappingException.class);
     thrown.expectMessage("Unable to map column 'ID' to any property of 'class org.jfaster.mango.jdbc.BeanPropertyRowMapperTest$MullMsg'");
+    Config oldConfig = mango.getConfig();
+    Config newConfig = new Config();
+    newConfig.setCheckColumn(true);
+    mango.setConfig(newConfig);
     Msg2Dao dao = mango.create(Msg2Dao.class);
     MullMsg msg = MullMsg.createRandomMsg();
     int id = dao.insert(msg.getUid(), msg.getYyCon());
     assertThat(id, greaterThan(0));
-    System.out.println(dao.getMsg(id));
+    try {
+      dao.getMsg(id);
+    } finally {
+      mango.setConfig(oldConfig);
+    }
   }
 
   @DB(table = "msg")

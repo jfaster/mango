@@ -19,7 +19,7 @@ package org.jfaster.mango.operator.cache;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
-import org.jfaster.mango.operator.Config;
+import org.jfaster.mango.operator.ConfigHolder;
 import org.jfaster.mango.operator.UpdateOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
@@ -38,8 +38,8 @@ public class CacheableUpdateOperator extends UpdateOperator {
 
   private CacheDriver driver;
 
-  public CacheableUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver, Config config) {
-    super(rootNode, md, config);
+  public CacheableUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, CacheDriver cacheDriver, ConfigHolder configHolder) {
+    super(rootNode, md, configHolder);
 
     this.driver = cacheDriver;
 

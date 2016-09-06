@@ -97,7 +97,7 @@ public class Mango {
   /**
    * mango全局配置信息
    */
-  private Config config = new Config();
+  private ConfigHolder configHolder = new ConfigHolder();
 
   /**
    * mango实例
@@ -327,11 +327,11 @@ public class Mango {
   }
 
   public Config getConfig() {
-    return config;
+    return configHolder.get();
   }
 
   public void setConfig(Config config) {
-    this.config = config;
+    configHolder.set(config);
   }
 
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
@@ -358,7 +358,7 @@ public class Mango {
     private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
       statsCounterMap = mango.statsCounterMap;
       operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
-          mango.interceptorChain, mango.jdbcOperations, mango.config);
+          mango.interceptorChain, mango.jdbcOperations, mango.configHolder);
       parameterNameDiscover = mango.parameterNameDiscover;
     }
 

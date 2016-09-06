@@ -20,20 +20,17 @@ import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
-import org.jfaster.mango.exception.DescriptionException;
-import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
+import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
 import org.jfaster.mango.stat.StatsCounter;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
-import org.junit.Rule;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
@@ -308,7 +305,7 @@ public class BatchUpdateOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-        null, new InterceptorChain(), null, new Config());
+        null, new InterceptorChain(), null, new ConfigHolder());
 
     Operator operator = factory.getOperator(md, new StatsCounter());
     return operator;
@@ -332,7 +329,7 @@ public class BatchUpdateOperatorTest {
     map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
     map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
     DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
-    OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new Config());
+    OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new ConfigHolder());
     Operator operator = factory.getOperator(md, new StatsCounter());
     return operator;
   }
