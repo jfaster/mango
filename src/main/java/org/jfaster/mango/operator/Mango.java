@@ -97,7 +97,7 @@ public class Mango {
   /**
    * mango全局配置信息
    */
-  private final Config config = new Config();
+  private Config config = new Config();
 
   /**
    * mango实例
@@ -326,13 +326,12 @@ public class Mango {
     return this;
   }
 
-  public boolean isCompatibleWithEmptyList() {
-    return config.isCompatibleWithEmptyList();
+  public Config getConfig() {
+    return config;
   }
 
-  public Mango setCompatibleWithEmptyList(boolean isCompatibleWithEmptyList) {
-    config.setCompatibleWithEmptyList(isCompatibleWithEmptyList);
-    return this;
+  public void setConfig(Config config) {
+    this.config = config;
   }
 
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {

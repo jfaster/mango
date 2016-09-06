@@ -25,7 +25,7 @@ public class Config {
 
   private boolean compatibleWithEmptyList = true;
 
-  private boolean checkColumn = true;
+  private boolean checkColumn = false;
 
   public boolean isCompatibleWithEmptyList() {
     return compatibleWithEmptyList;

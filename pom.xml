@@ -278,9 +278,9 @@
                         <exclude>**/parser/Token.class</exclude>
                         <exclude>**/parser/TokenMgrError.class</exclude>
                         <exclude>**/util/logging/**</exclude>
-                        <exclude>**/util/concurrent/atomic/**</exclude>
+                        <exclude>**/stat/atomic/**</exclude>
+                        <exclude>**/exception/**</exclude>
                         <exclude>**/mango/plugin/**</exclude>
-                        <exclude>**/mango/exception/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
