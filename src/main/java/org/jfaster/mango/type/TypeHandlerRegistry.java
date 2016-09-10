@@ -89,7 +89,6 @@ public final class TypeHandlerRegistry {
     return getNullableTypeHandler((Type) type, null);
   }
 
-  @Nullable
   public static <T> TypeHandler<T> getTypeHandler(Class<T> type) {
     return getTypeHandler(type, null);
   }
