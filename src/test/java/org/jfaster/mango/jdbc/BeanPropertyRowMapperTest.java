@@ -103,7 +103,6 @@ public class BeanPropertyRowMapperTest {
   @Test
   public void testException() {
     thrown.expect(MappingException.class);
-    thrown.expectMessage("Unable to map column 'ID' to any property of 'class org.jfaster.mango.jdbc.BeanPropertyRowMapperTest$MullMsg'");
     Config oldConfig = mango.getConfig();
     Config newConfig = new Config();
     newConfig.setCheckColumn(true);
