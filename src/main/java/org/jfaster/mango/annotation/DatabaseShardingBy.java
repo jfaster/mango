@@ -37,6 +37,4 @@ public @interface DatabaseShardingBy {
    */
   String value() default "";
 
-  int type() default 0;
-
 }

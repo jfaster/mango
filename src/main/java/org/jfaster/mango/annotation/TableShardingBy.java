@@ -37,6 +37,4 @@ public @interface TableShardingBy {
    */
   String value() default "";
 
-  int type() default 0;
-
 }
