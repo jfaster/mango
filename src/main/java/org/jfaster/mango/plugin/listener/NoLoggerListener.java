@@ -14,20 +14,25 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.logging;
+package org.jfaster.mango.plugin.listener;
 
+import org.jfaster.mango.util.logging.MangoLogger;
 
-import java.util.logging.Logger;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
- * Logger factory which creates a
- * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/logging/">java.util.logging</a>
- * logger.
+ * @author ash
  */
-public class JdkLoggerFactory extends InternalLoggerFactory {
+public class NoLoggerListener implements ServletContextListener {
 
   @Override
-  public InternalLogger newInstance(String name) {
-    return new JdkLogger(Logger.getLogger(name));
+  public void contextInitialized(ServletContextEvent servletContextEvent) {
+    MangoLogger.useNoLogger();
   }
+
+  @Override
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {
+  }
+
 }

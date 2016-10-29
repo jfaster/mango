@@ -14,21 +14,25 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.logging;
+package org.jfaster.mango.plugin.listener;
 
+import org.jfaster.mango.util.logging.MangoLogger;
 
-import org.apache.commons.logging.LogFactory;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
- * Logger factory which creates an
- * <a href="http://commons.apache.org/logging/">Apache Commons Logging</a>
- * logger.
+ * @author ash
  */
-public class CommonsLoggerFactory extends InternalLoggerFactory {
+public class Log4J2LoggerListener implements ServletContextListener {
 
   @Override
-  public InternalLogger newInstance(String name) {
-    return new CommonsLogger(LogFactory.getLog(name), name);
+  public void contextInitialized(ServletContextEvent servletContextEvent) {
+    MangoLogger.useLog4J2Logger();
+  }
+
+  @Override
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {
   }
 
 }
