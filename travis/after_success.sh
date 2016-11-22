@@ -23,7 +23,5 @@ VER=`java -version 2>&1 | sed 's/java version "\(.*\)\.\(.*\)\..*"/\1\2/; 1q'`
 echo "Java detected: ${VER}"
 
 if [ $VER == "18" ]; then
-  mvn clean test jacoco:report coveralls:report -Pjava18
-else
-  echo "Travis build skipped"
+  mvn clean test jacoco:report coveralls:report
 fi
