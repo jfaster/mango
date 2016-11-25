@@ -28,7 +28,8 @@ import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.exception.DataAccessException;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
-import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.stat.MetaStat;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -57,8 +58,6 @@ public class BatchUpdateOperatorTest {
     Operator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
@@ -75,7 +74,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    Object actual = operator.execute(new Object[]{users});
+    Object actual = operator.execute(new Object[]{users}, OneExecuteStat.create());
     assertThat(actual, nullValue());
   }
 
@@ -88,8 +87,6 @@ public class BatchUpdateOperatorTest {
     Operator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
@@ -106,7 +103,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    int actual = (Integer) operator.execute(new Object[]{users});
+    int actual = (Integer) operator.execute(new Object[]{users}, OneExecuteStat.create());
     assertThat(actual, is(3));
   }
 
@@ -119,8 +116,6 @@ public class BatchUpdateOperatorTest {
     Operator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
@@ -137,7 +132,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    int[] actualInts = (int[]) operator.execute(new Object[]{users});
+    int[] actualInts = (int[]) operator.execute(new Object[]{users}, OneExecuteStat.create());
     assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
   }
 
@@ -150,8 +145,6 @@ public class BatchUpdateOperatorTest {
     Operator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
@@ -168,7 +161,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    Integer[] actualInts = (Integer[]) operator.execute(new Object[]{users});
+    Integer[] actualInts = (Integer[]) operator.execute(new Object[]{users}, OneExecuteStat.create());
     assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
   }
 
@@ -181,8 +174,6 @@ public class BatchUpdateOperatorTest {
     String srcSql = "update #table set name=:1.name where id=:1.id";
     Operator operator = getOperator2(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
 
       @Override
@@ -230,7 +221,7 @@ public class BatchUpdateOperatorTest {
     List<User> users = Arrays.asList(
         new User(30, "ash"), new User(60, "lucy"), new User(10, "lily"),
         new User(20, "gill"), new User(55, "liu"));
-    int[] actualInts = (int[]) operator.execute(new Object[]{users});
+    int[] actualInts = (int[]) operator.execute(new Object[]{users}, OneExecuteStat.create());
     assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(new int[]{3, 6, 1, 2, 5})));
   }
 
@@ -242,8 +233,6 @@ public class BatchUpdateOperatorTest {
     String srcSql = "update user set name=:1.name where id=:1.id";
     Operator operator = getOperator(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
@@ -258,22 +247,23 @@ public class BatchUpdateOperatorTest {
       }
     });
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    operator.execute(new Object[]{users});
-    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
-    operator.execute(new Object[]{users});
-    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
+    OneExecuteStat stat = OneExecuteStat.create();
+    operator.execute(new Object[]{users}, stat);
+    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));
+    operator.execute(new Object[]{users}, stat);
+    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(2L));
 
     operator.setJdbcOperations(new JdbcOperationsAdapter());
     try {
-      operator.execute(new Object[]{users});
+      operator.execute(new Object[]{users}, stat);
     } catch (UnsupportedOperationException e) {
     }
-    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
+    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(1L));
     try {
-      operator.execute(new Object[]{users});
+      operator.execute(new Object[]{users}, stat);
     } catch (UnsupportedOperationException e) {
     }
-    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
+    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(2L));
   }
 
   @Rule
@@ -292,8 +282,6 @@ public class BatchUpdateOperatorTest {
     Operator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int[] batchUpdate(DataSource ds, List<BoundSql> boundSqls) {
@@ -309,7 +297,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    operator.execute(new Object[]{users});
+    operator.execute(new Object[]{users}, OneExecuteStat.create());
   }
 
   private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
@@ -327,7 +315,7 @@ public class BatchUpdateOperatorTest {
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
         null, new InterceptorChain(), null, new ConfigHolder());
 
-    Operator operator = factory.getOperator(md, new StatsCounter());
+    Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 
@@ -350,7 +338,7 @@ public class BatchUpdateOperatorTest {
     map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
     DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
     OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new ConfigHolder());
-    Operator operator = factory.getOperator(md, new StatsCounter());
+    Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 

@@ -26,6 +26,7 @@ import org.jfaster.mango.operator.ConfigHolder;
 import org.jfaster.mango.operator.QueryOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -72,14 +73,15 @@ public class CacheableQueryOperator extends QueryOperator {
   }
 
   @Override
-  public Object execute(Object[] values) {
+  public Object execute(Object[] values, OneExecuteStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
     return driver.isUseMultipleKeys() ?
-        multipleKeysCache(context, rowMapper.getMappedClass(), driver.getOnlyCacheByClass()) :
-        singleKeyCache(context);
+        multipleKeysCache(context, rowMapper.getMappedClass(), driver.getOnlyCacheByClass(), stat) :
+        singleKeyCache(context, stat);
   }
 
-  private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass, Class<U> cacheByActualClass) {
+  private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass,
+                                          Class<U> cacheByActualClass, OneExecuteStat stat) {
     boolean isDebugEnabled = logger.isDebugEnabled();
     boolean isCacheNullObj = driver.isCacheNullObject();
     Set<String> keys = driver.getCacheKeys(context);
@@ -88,7 +90,7 @@ public class CacheableQueryOperator extends QueryOperator {
     }
 
     // 从缓存中批量取数据
-    Map<String, Object> cachedResults = driver.getBulkFromCache(keys);
+    Map<String, Object> cachedResults = driver.getBulkFromCache(keys, stat);
 
     AddableObject<T> addableObj = new AddableObject<T>(mappedClass); // 存储最后返回的结果
     int hitNum = 0;
@@ -117,8 +119,8 @@ public class CacheableQueryOperator extends QueryOperator {
         }
       }
     }
-    statsCounter.recordHits(hitNum);
-    statsCounter.recordMisses(missCacheByActualObjs.size());
+    stat.recordHits(hitNum);
+    stat.recordMisses(missCacheByActualObjs.size());
     if (isDebugEnabled) {
       if (!hitKeys.isEmpty()) {
         logger.debug("Cache hit for multiple keys {}", hitKeys);
@@ -130,7 +132,7 @@ public class CacheableQueryOperator extends QueryOperator {
 
     if (!missCacheByActualObjs.isEmpty()) { // 有缓存没命中的数据
       driver.setOnlyCacheByObj(context, missCacheByActualObjs);
-      Object dbValues = execute(context);
+      Object dbValues = execute(context, stat);
 
       // 用于 debug log
       List<String> needSetKeys = isDebugEnabled ? new ArrayList<String>() : null;
@@ -145,7 +147,7 @@ public class CacheableQueryOperator extends QueryOperator {
         }
         U cacheByActualObj = cacheByActualClass.cast(propertyObj);
         String key = driver.getCacheKey(cacheByActualObj);
-        driver.setToCache(key, dbValue);
+        driver.setToCache(key, dbValue, stat);
         if (isCacheNullObj) {
           missCacheByActualObjs.remove(cacheByActualObj);
         }
@@ -163,7 +165,7 @@ public class CacheableQueryOperator extends QueryOperator {
         List<String> needAddKeys = isDebugEnabled ? new ArrayList<String>() : null;
         for (U missCacheByActualObj : missCacheByActualObjs) {
           String key = driver.getCacheKey(missCacheByActualObj);
-          driver.addToCache(key, createNullObject());
+          driver.addToCache(key, createNullObject(), stat);
           if (isDebugEnabled) {
             needAddKeys.add(key);
           }
@@ -177,33 +179,33 @@ public class CacheableQueryOperator extends QueryOperator {
     return addableObj.getReturn();
   }
 
-  private Object singleKeyCache(InvocationContext context) {
+  private Object singleKeyCache(InvocationContext context, OneExecuteStat stat) {
     boolean isDebugEnabled = logger.isDebugEnabled();
     String key = driver.getCacheKey(context);
-    Object value = driver.getFromCache(key);
+    Object value = driver.getFromCache(key, stat);
     if (value == null) {
-      statsCounter.recordMisses(1);
+      stat.recordMisses(1);
       if (isDebugEnabled) {
         logger.debug("Cache miss for single key [{}]", key);
       }
-      value = execute(context);
+      value = execute(context, stat);
       if (value != null) {
         if (driver.isCacheEmptyList() || isNotEmptyList(value)) {
-          driver.setToCache(key, value);
+          driver.setToCache(key, value, stat);
           if (isDebugEnabled) {
             logger.debug("Cache set for single key [{}], exptime: {}",
                 key, driver.getExptimeSeconds());
           }
         }
       } else if (driver.isCacheNullObject()) { // 缓存null对象
-        driver.addToCache(key, createNullObject());
+        driver.addToCache(key, createNullObject(), stat);
         if (isDebugEnabled) {
           logger.debug("Cache add for single key [{}], exptime: {}",
               key, driver.getExptimeSeconds());
         }
       }
     } else {
-      statsCounter.recordHits(1);
+      stat.recordHits(1);
       if (isDebugEnabled) {
         logger.debug("Cache hit for single key [{}]", key);
       }

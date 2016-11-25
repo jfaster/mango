@@ -21,6 +21,7 @@ import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.ToStringHelper;
 
@@ -45,7 +46,7 @@ public class BatchUpdateOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values) {
+  public Object execute(Object[] values, OneExecuteStat stat) {
     Iterables iterables = getIterables(values);
     if (iterables.isEmpty()) {
       return transformer.transform(new int[]{});
@@ -57,7 +58,7 @@ public class BatchUpdateOperator extends AbstractOperator {
       InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
       group(context, gorupMap, t++);
     }
-    int[] ints = executeDb(gorupMap, t);
+    int[] ints = executeDb(gorupMap, t, stat);
     return transformer.transform(ints);
   }
 
@@ -86,7 +87,7 @@ public class BatchUpdateOperator extends AbstractOperator {
     return iterables;
   }
 
-  protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum) {
+  protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum, OneExecuteStat stat) {
     int[] r = new int[batchNum];
     long now = System.nanoTime();
     int t = 0;
@@ -104,9 +105,9 @@ public class BatchUpdateOperator extends AbstractOperator {
     } finally {
       long cost = System.nanoTime() - now;
       if (t == groupMap.entrySet().size()) {
-        statsCounter.recordDatabaseExecuteSuccess(cost);
+        stat.recordDatabaseExecuteSuccess(cost);
       } else {
-        statsCounter.recordDatabaseExecuteException(cost);
+        stat.recordDatabaseExecuteException(cost);
       }
     }
     return r;

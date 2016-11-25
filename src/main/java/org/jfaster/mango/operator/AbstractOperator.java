@@ -20,7 +20,6 @@ import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.stat.StatsCounter;
 
 /**
  * @author ash
@@ -41,11 +40,6 @@ public abstract class AbstractOperator implements Operator {
    * 拦截器链
    */
   protected InvocationInterceptorChain invocationInterceptorChain;
-
-  /**
-   * 状态统计
-   */
-  protected StatsCounter statsCounter;
 
   /**
    * 全局表
@@ -104,11 +98,6 @@ public abstract class AbstractOperator implements Operator {
   @Override
   public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain) {
     this.invocationInterceptorChain = invocationInterceptorChain;
-  }
-
-  @Override
-  public void setStatsCounter(StatsCounter statsCounter) {
-    this.statsCounter = statsCounter;
   }
 
 }

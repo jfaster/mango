@@ -24,6 +24,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.type.TypeHandler;
 import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.ToStringHelper;
@@ -75,12 +76,12 @@ public class UpdateOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values) {
+  public Object execute(Object[] values, OneExecuteStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
-    return execute(context);
+    return execute(context, stat);
   }
 
-  public Object execute(InvocationContext context) {
+  public Object execute(InvocationContext context, OneExecuteStat stat) {
     context.setGlobalTable(tableGenerator.getTable(context));
 
     try {
@@ -98,11 +99,11 @@ public class UpdateOperator extends AbstractOperator {
     invocationInterceptorChain.intercept(boundSql, context);  // 拦截器
 
     DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
-    Number r = executeDb(ds, boundSql);
+    Number r = executeDb(ds, boundSql, stat);
     return transformer.transform(r);
   }
 
-  private Number executeDb(DataSource ds, BoundSql boundSql) {
+  private Number executeDb(DataSource ds, BoundSql boundSql, OneExecuteStat stat) {
     Number r = null;
     long now = System.nanoTime();
     try {
@@ -116,9 +117,9 @@ public class UpdateOperator extends AbstractOperator {
     } finally {
       long cost = System.nanoTime() - now;
       if (r != null) {
-        statsCounter.recordDatabaseExecuteSuccess(cost);
+        stat.recordDatabaseExecuteSuccess(cost);
       } else {
-        statsCounter.recordDatabaseExecuteException(cost);
+        stat.recordDatabaseExecuteException(cost);
       }
     }
     return r;

@@ -21,6 +21,7 @@ import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.operator.BatchUpdateOperator;
 import org.jfaster.mango.operator.ConfigHolder;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
@@ -46,7 +47,7 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
   }
 
   @Override
-  public Object execute(Object[] values) {
+  public Object execute(Object[] values, OneExecuteStat stat) {
     Iterables iterables = getIterables(values);
     if (iterables.isEmpty()) {
       return transformer.transform(new int[]{});
@@ -61,11 +62,11 @@ public class CacheableBatchUpdateOperator extends BatchUpdateOperator {
       keys.add(driver.getCacheKey(context));
       group(context, groupMap, t++);
     }
-    int[] ints = executeDb(groupMap, t);
+    int[] ints = executeDb(groupMap, t, stat);
     if (logger.isDebugEnabled()) {
       logger.debug("Cache delete for multiple keys {}", keys);
     }
-    driver.batchDeleteFromCache(keys);
+    driver.batchDeleteFromCache(keys, stat);
     return transformer.transform(ints);
   }
 

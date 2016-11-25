@@ -24,7 +24,8 @@ import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
-import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.stat.MetaStat;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.type.IntegerTypeHandler;
@@ -56,8 +57,6 @@ public class UpdateOperatorTest {
     String srcSql = "update user set name=:1.name where id=:1.id";
     Operator operator = getOperator(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds, BoundSql boundSql) {
@@ -75,7 +74,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user});
+    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
     assertThat(r.getClass().equals(Integer.class), is(true));
   }
 
@@ -86,8 +85,6 @@ public class UpdateOperatorTest {
     String srcSql = "update user set name=:1.name where id=:1.id";
     Operator operator = getOperator(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds,  BoundSql boundSql) {
@@ -105,7 +102,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user});
+    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
     assertThat(r, nullValue());
   }
 
@@ -116,8 +113,6 @@ public class UpdateOperatorTest {
     String srcSql = "update user set name=:1.name where id=:1.id";
     Operator operator = getOperator(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds, BoundSql boundSql) {
@@ -135,7 +130,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    boolean r = (Boolean) operator.execute(new Object[]{user});
+    boolean r = (Boolean) operator.execute(new Object[]{user}, OneExecuteStat.create());
     assertThat(r, is(false));
   }
 
@@ -146,8 +141,6 @@ public class UpdateOperatorTest {
     String srcSql = "insert into user(id, name) values(:1.id, :1.name)";
     Operator operator = getOperatorReturnGeneratedId(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds, BoundSql boundSql, GeneratedKeyHolder holder) {
@@ -167,7 +160,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user});
+    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
     assertThat(r.getClass().equals(Integer.class), is(true));
   }
 
@@ -178,8 +171,6 @@ public class UpdateOperatorTest {
     String srcSql = "insert into user(id, name) values(:1.id, :1.name)";
     Operator operator = getOperatorReturnGeneratedId(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds, BoundSql boundSql, GeneratedKeyHolder holder) {
@@ -200,7 +191,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user});
+    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
     assertThat(r.getClass().equals(Long.class), is(true));
   }
 
@@ -211,8 +202,6 @@ public class UpdateOperatorTest {
     String srcSql = "update user set name=:1.name where id=:1.id";
     Operator operator = getOperator(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds, BoundSql boundSql) {
@@ -230,22 +219,23 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user});
-    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
-    operator.execute(new Object[]{user});
-    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
+    OneExecuteStat stat = OneExecuteStat.create();
+    operator.execute(new Object[]{user}, stat);
+    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));
+    operator.execute(new Object[]{user}, stat);
+    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(2L));
 
     operator.setJdbcOperations(new JdbcOperationsAdapter());
     try {
-      operator.execute(new Object[]{user});
+      operator.execute(new Object[]{user}, stat);
     } catch (UnsupportedOperationException e) {
     }
-    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
+    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(1L));
     try {
-      operator.execute(new Object[]{user});
+      operator.execute(new Object[]{user}, stat);
     } catch (UnsupportedOperationException e) {
     }
-    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
+    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(2L));
   }
 
   @Rule
@@ -262,8 +252,6 @@ public class UpdateOperatorTest {
     String srcSql = "update user set name=:1.name where id=:1.id";
     Operator operator = getOperator(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds, BoundSql boundSql) {
@@ -281,7 +269,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user});
+    operator.execute(new Object[]{user}, OneExecuteStat.create());
   }
 
   @Test
@@ -295,8 +283,6 @@ public class UpdateOperatorTest {
     String srcSql = "insert into user(id, name) values(:1.id, :1.name)";
     Operator operator = getOperatorReturnGeneratedId(pt, rt, srcSql);
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public int update(DataSource ds, BoundSql boundSql, GeneratedKeyHolder holder) {
@@ -316,7 +302,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user});
+    operator.execute(new Object[]{user}, OneExecuteStat.create());
   }
 
 
@@ -335,7 +321,7 @@ public class UpdateOperatorTest {
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
         null, new InterceptorChain(), null, new ConfigHolder());
 
-    Operator operator = factory.getOperator(md, new StatsCounter());
+    Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 
@@ -355,7 +341,7 @@ public class UpdateOperatorTest {
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
         null, new InterceptorChain(), null, new ConfigHolder());
 
-    Operator operator = factory.getOperator(md, new StatsCounter());
+    Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 

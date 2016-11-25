@@ -21,18 +21,16 @@ import org.jfaster.mango.util.jdbc.OperatorType;
 import java.lang.reflect.Method;
 
 /**
- * db与cache的数据统计
- *
  * @author ash
  */
-public class OperatorStats {
+public class OperatorStat {
 
-  private Method method;
+  private final Method method;
 
   /**
    * query or update or batchupdate
    */
-  private final OperatorType type;
+  private final OperatorType operatorType;
 
   /**
    * 是否使用缓存
@@ -110,9 +108,9 @@ public class OperatorStats {
   private final long cacheBatchDeleteExceptionCount;
   private final long totalCacheBatchDeleteTime;
 
-
-  public OperatorStats(
-      OperatorType type,
+  public OperatorStat(
+      Method method,
+      OperatorType operatorType,
       boolean isCacheable,
       boolean isUseMultipleKeys,
       boolean isCacheNullObject,
@@ -141,7 +139,8 @@ public class OperatorStats {
       long cacheBatchDeleteSuccessCount,
       long cacheBatchDeleteExceptionCount,
       long totalCacheBatchDeleteTime) {
-    this.type = type;
+    this.method = method;
+    this.operatorType = operatorType;
     this.isCacheable = isCacheable;
     this.isUseMultipleKeys = isUseMultipleKeys;
     this.isCacheNullObject = isCacheNullObject;
@@ -176,8 +175,8 @@ public class OperatorStats {
     return method;
   }
 
-  public OperatorType getType() {
-    return type;
+  public OperatorType getOperatorType() {
+    return operatorType;
   }
 
   public boolean isCacheable() {
@@ -566,10 +565,6 @@ public class OperatorStats {
     return (totalCacheBatchDeleteCount == 0)
         ? 0
         : totalCacheBatchDeleteTime / totalCacheBatchDeleteCount;
-  }
-
-  public void setMethod(Method method) {
-    this.method = method;
   }
 
 }

@@ -30,7 +30,7 @@ import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
-import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.stat.MetaStat;
 import org.jfaster.mango.util.jdbc.OperatorType;
 import org.jfaster.mango.util.jdbc.SQLType;
 
@@ -59,11 +59,11 @@ public class OperatorFactory {
     this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactory);
   }
 
-  public Operator getOperator(MethodDescriptor md, StatsCounter statsCounter) {
+  public Operator getOperator(MethodDescriptor md, MetaStat stat) {
     ASTRootNode rootNode = SqlParser.parse(md.getSQL()).init(); // 初始化抽象语法树
     List<ParameterDescriptor> pds = md.getParameterDescriptors(); // 方法参数描述
     OperatorType operatorType = getOperatorType(pds, rootNode);
-    statsCounter.setOperatorType(operatorType);
+    stat.setOperatorType(operatorType);
     if (operatorType == OperatorType.BATCHUPDATE) { // 批量更新重新组装ParameterDescriptorList
       ParameterDescriptor pd = pds.get(0);
       pds = new ArrayList<ParameterDescriptor>(1);
@@ -86,10 +86,10 @@ public class OperatorFactory {
 
     Operator operator;
     if (md.isUseCache()) {
-      CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context, statsCounter);
-      statsCounter.setCacheable(true);
-      statsCounter.setUseMultipleKeys(driver.isUseMultipleKeys());
-      statsCounter.setCacheNullObject(driver.isCacheNullObject());
+      CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context);
+      stat.setCacheable(true);
+      stat.setUseMultipleKeys(driver.isUseMultipleKeys());
+      stat.setCacheNullObject(driver.isCacheNullObject());
       switch (operatorType) {
         case QUERY:
           operator = new CacheableQueryOperator(rootNode, md, driver, configHolder);
@@ -126,7 +126,6 @@ public class OperatorFactory {
     operator.setInvocationContextFactory(InvocationContextFactory.create(context));
     operator.setInvocationInterceptorChain(chain);
     operator.setJdbcOperations(jdbcOperations);
-    operator.setStatsCounter(statsCounter);
     return operator;
   }
 

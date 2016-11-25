@@ -69,7 +69,7 @@ public class MangoStatsServlet extends HttpServlet {
         if (mangos.size() != 1) {
           throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
         }
-        mangos.get(0).resetAllStats();
+        mangos.get(0).resetAndGetStats();
         String url = req.getRequestURL().toString();
         if (key != null) {
           url = url + "?" + KEY_NAME + "=" + key;

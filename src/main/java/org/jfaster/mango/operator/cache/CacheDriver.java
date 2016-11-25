@@ -29,7 +29,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.reflect.Reflection;
@@ -48,8 +48,6 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
    * 具体的缓存实现，通过{@link this#setCacheHandler(CacheHandler)}初始化
    */
   private CacheHandler cacheHandler;
-
-  private StatsCounter statsCounter;
 
   private Class<?> daoClass;
 
@@ -97,10 +95,8 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
    */
   private String propertyOfMapper;
 
-  public CacheDriver(MethodDescriptor md, ASTRootNode rootNode, CacheHandler cacheHandler,
-                     ParameterContext context, StatsCounter statsCounter) {
+  public CacheDriver(MethodDescriptor md, ASTRootNode rootNode, CacheHandler cacheHandler, ParameterContext context) {
     this.cacheHandler = cacheHandler;
-    this.statsCounter = statsCounter;
     this.daoClass = md.getDaoClass();
     this.returnType = md.getReturnType();
     this.elementType = md.getReturnDescriptor().getMappedType();
@@ -123,7 +119,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   }
 
   @Override
-  public void setToCache(String key, Object value) {
+  public void setToCache(String key, Object value, OneExecuteStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -132,15 +128,15 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     } finally {
       long cost = System.nanoTime() - now;
       if (success) {
-        statsCounter.recordCacheSetSuccess(cost);
+        stat.recordCacheSetSuccess(cost);
       } else {
-        statsCounter.recordCacheSetException(cost);
+        stat.recordCacheSetException(cost);
       }
     }
   }
 
   @Override
-  public void addToCache(String key, Object value) {
+  public void addToCache(String key, Object value, OneExecuteStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -149,15 +145,15 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     } finally {
       long cost = System.nanoTime() - now;
       if (success) {
-        statsCounter.recordCacheAddSuccess(cost);
+        stat.recordCacheAddSuccess(cost);
       } else {
-        statsCounter.recordCacheAddException(cost);
+        stat.recordCacheAddException(cost);
       }
     }
   }
 
   @Override
-  public void deleteFromCache(String key) {
+  public void deleteFromCache(String key, OneExecuteStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -166,15 +162,15 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     } finally {
       long cost = System.nanoTime() - now;
       if (success) {
-        statsCounter.recordCacheDeleteSuccess(cost);
+        stat.recordCacheDeleteSuccess(cost);
       } else {
-        statsCounter.recordCacheDeleteException(cost);
+        stat.recordCacheDeleteException(cost);
       }
     }
   }
 
   @Override
-  public void batchDeleteFromCache(Set<String> keys) {
+  public void batchDeleteFromCache(Set<String> keys, OneExecuteStat stat) {
     if (keys.size() > 0) {
       boolean success = false;
       long now = System.nanoTime();
@@ -184,9 +180,9 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
       } finally {
         long cost = System.nanoTime() - now;
         if (success) {
-          statsCounter.recordCacheBatchDeleteSuccess(cost);
+          stat.recordCacheBatchDeleteSuccess(cost);
         } else {
-          statsCounter.recordCacheBatchDeleteException(cost);
+          stat.recordCacheBatchDeleteException(cost);
         }
       }
     }
@@ -194,7 +190,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
   @Nullable
   @Override
-  public Object getFromCache(String key) {
+  public Object getFromCache(String key, OneExecuteStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -204,16 +200,16 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
     } finally {
       long cost = System.nanoTime() - now;
       if (success) {
-        statsCounter.recordCacheGetSuccess(cost);
+        stat.recordCacheGetSuccess(cost);
       } else {
-        statsCounter.recordCacheGetException(cost);
+        stat.recordCacheGetException(cost);
       }
     }
   }
 
   @Nullable
   @Override
-  public Map<String, Object> getBulkFromCache(Set<String> keys) {
+  public Map<String, Object> getBulkFromCache(Set<String> keys, OneExecuteStat stat) {
     if (keys.size() > 0) {
       boolean success = false;
       long now = System.nanoTime();
@@ -224,9 +220,9 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
       } finally {
         long cost = System.nanoTime() - now;
         if (success) {
-          statsCounter.recordCacheGetBulkSuccess(cost);
+          stat.recordCacheGetBulkSuccess(cost);
         } else {
-          statsCounter.recordCacheGetBulkException(cost);
+          stat.recordCacheGetBulkException(cost);
         }
       }
     }

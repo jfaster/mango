@@ -18,20 +18,21 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
-import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.jdbc.ListSupplier;
-import org.jfaster.mango.mapper.RowMapper;
-import org.jfaster.mango.jdbc.SetSupplier;
-import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
-import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.jdbc.ListSupplier;
+import org.jfaster.mango.jdbc.SetSupplier;
+import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.stat.MetaStat;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;
 import org.jfaster.mango.support.MockSQL;
 import org.jfaster.mango.support.model4table.User;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -53,8 +54,6 @@ public class QueryOperatorTest {
     String srcSql = "select * from user where id=:1.id and name=:1.name";
     Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public <T> T queryForObject(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
@@ -73,7 +72,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user});
+    operator.execute(new Object[]{user}, OneExecuteStat.create());
   }
 
   @Test
@@ -84,8 +83,6 @@ public class QueryOperatorTest {
     String srcSql = "select * from user where id=:1.id and name=:1.name";
     Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public <T> List<T> queryForList(DataSource ds, BoundSql boundSql,
@@ -105,7 +102,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user});
+    operator.execute(new Object[]{user}, OneExecuteStat.create());
   }
 
   @Test
@@ -116,8 +113,6 @@ public class QueryOperatorTest {
     String srcSql = "select * from user where id=:1.id and name=:1.name";
     Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public <T> Set<T> queryForSet(DataSource ds, BoundSql boundSql,
@@ -137,7 +132,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user});
+    operator.execute(new Object[]{user}, OneExecuteStat.create());
   }
 
   @Test
@@ -148,8 +143,6 @@ public class QueryOperatorTest {
     String srcSql = "select * from user where id=:1.id and name=:1.name";
     Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public <T> Object queryForArray(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
@@ -168,7 +161,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user});
+    operator.execute(new Object[]{user}, OneExecuteStat.create());
   }
 
   @Test
@@ -180,8 +173,6 @@ public class QueryOperatorTest {
     String srcSql = "select * from user where id in (:1)";
     Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
       public <T> List<T> queryForList(DataSource ds, BoundSql boundSql,
@@ -200,7 +191,7 @@ public class QueryOperatorTest {
     });
 
     List<Integer> ids = Arrays.asList(100, 200, 300);
-    operator.execute(new Object[]{ids});
+    operator.execute(new Object[]{ids}, OneExecuteStat.create());
   }
 
   @Test
@@ -212,8 +203,6 @@ public class QueryOperatorTest {
     String srcSql = "select count(1) from user where id in (:1)";
     Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @SuppressWarnings("unchecked")
       @Override
@@ -232,7 +221,7 @@ public class QueryOperatorTest {
     });
 
     List<Integer> ids = Arrays.asList(100, 200, 300);
-    Integer r = (Integer) operator.execute(new Object[]{ids});
+    Integer r = (Integer) operator.execute(new Object[]{ids}, OneExecuteStat.create());
     assertThat(r, is(3));
   }
 
@@ -242,8 +231,6 @@ public class QueryOperatorTest {
     String srcSql = "select * from user where id=:1.id and name=:1.name";
     Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
 
-    StatsCounter sc = new StatsCounter();
-    operator.setStatsCounter(sc);
     User user = new User();
     user.setId(100);
     user.setName("ash");
@@ -254,22 +241,23 @@ public class QueryOperatorTest {
         return null;
       }
     });
-    operator.execute(new Object[]{user});
-    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(1L));
-    operator.execute(new Object[]{user});
-    assertThat(sc.snapshot().getDatabaseExecuteSuccessCount(), equalTo(2L));
+    OneExecuteStat stat = OneExecuteStat.create();
+    operator.execute(new Object[]{user}, stat);
+    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));
+    operator.execute(new Object[]{user}, stat);
+    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(2L));
 
     operator.setJdbcOperations(new JdbcOperationsAdapter());
     try {
-      operator.execute(new Object[]{user});
+      operator.execute(new Object[]{user}, stat);
     } catch (UnsupportedOperationException e) {
     }
-    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(1L));
+    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(1L));
     try {
-      operator.execute(new Object[]{user});
+      operator.execute(new Object[]{user}, stat);
     } catch (UnsupportedOperationException e) {
     }
-    assertThat(sc.snapshot().getDatabaseExecuteExceptionCount(), equalTo(2L));
+    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(2L));
   }
 
   private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
@@ -291,7 +279,7 @@ public class QueryOperatorTest {
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
         null, new InterceptorChain(), null, new ConfigHolder());
 
-    Operator operator = factory.getOperator(md, new StatsCounter());
+    Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 

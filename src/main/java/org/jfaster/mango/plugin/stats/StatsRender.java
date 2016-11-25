@@ -17,7 +17,7 @@
 package org.jfaster.mango.plugin.stats;
 
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.stat.OperatorStats;
+import org.jfaster.mango.stat.OperatorStat;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +34,10 @@ public class StatsRender {
       throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
     }
     Mango mango = mangos.get(0);
-    Map<String, OperatorStats> osMap = new HashMap<String, OperatorStats>();
+    Map<String, OperatorStat> osMap = new HashMap<String, OperatorStat>();
     Map<String, ExtendStats> esMap = new HashMap<String, ExtendStats>();
     int index = 0;
-    for (OperatorStats os : mango.getAllStats()) {
+    for (OperatorStat os : mango.getStats()) {
       osMap.put(String.valueOf(index), os);
       esMap.put(String.valueOf(index), new ExtendStats(os));
       index++;

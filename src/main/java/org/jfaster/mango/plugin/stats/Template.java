@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.plugin.stats;
 
-import org.jfaster.mango.stat.OperatorStats;
+import org.jfaster.mango.stat.OperatorStat;
 
 import java.util.Map;
 
@@ -25,13 +25,13 @@ import java.util.Map;
  */
 public class Template {
 
-  public static String render(Map<String, OperatorStats> osMap, Map<String, ExtendStats> esMap, boolean isFetchAll, String key) {
+  public static String render(Map<String, OperatorStat> osMap, Map<String, ExtendStats> esMap, boolean isFetchAll, String key) {
     StringBuilder sb = new StringBuilder();
     for (String c1 : c1s) {
       sb.append(c1).append("\n");
     }
     for (String sKey : osMap.keySet()) {
-      OperatorStats os = osMap.get(sKey);
+      OperatorStat os = osMap.get(sKey);
       ExtendStats es = esMap.get(sKey);
       if (isFetchAll || os.getDatabaseExecuteCount() > 0 || os.getHitCount() > 0) {
         sb.append("<tr>").append("\n");

@@ -26,7 +26,8 @@ import org.jfaster.mango.jdbc.exception.DataAccessException;
 import org.jfaster.mango.operator.ConfigHolder;
 import org.jfaster.mango.operator.Operator;
 import org.jfaster.mango.operator.OperatorFactory;
-import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.stat.MetaStat;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -50,7 +51,6 @@ public class CacheableBatchUpdateOperatorTest {
     };
     TypeToken<int[]> rt = TypeToken.of(int[].class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    StatsCounter sc = new StatsCounter();
     Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
       @Override
       public void batchDelete(Set<String> keys, Class<?> daoClass) {
@@ -59,7 +59,7 @@ public class CacheableBatchUpdateOperatorTest {
         set.add("user_200");
         assertThat(keys, equalTo(set));
       }
-    }, new MockCacheBy("id"), sc);
+    }, new MockCacheBy("id"));
     final int[] expectedInts = new int[]{1, 2};
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
@@ -75,13 +75,14 @@ public class CacheableBatchUpdateOperatorTest {
       }
     });
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    int[] actualInts = (int[]) operator.execute(new Object[]{users});
+    OneExecuteStat stat = OneExecuteStat.create();
+    int[] actualInts = (int[]) operator.execute(new Object[]{users}, stat);
     assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
-    assertThat(sc.snapshot().getCacheBatchDeleteSuccessCount(), equalTo(1L));
+    assertThat(stat.getCacheBatchDeleteSuccessCount(), equalTo(1L));
   }
 
   private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
-                               CacheHandler ch, MockCacheBy cacheBy, StatsCounter sc) throws Exception {
+                               CacheHandler ch, MockCacheBy cacheBy) throws Exception {
     List<Annotation> pAnnos = new ArrayList<Annotation>();
     pAnnos.add(cacheBy);
     ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), pAnnos, "1");
@@ -98,7 +99,7 @@ public class CacheableBatchUpdateOperatorTest {
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()), ch,
         new InterceptorChain(), null, new ConfigHolder());
 
-    Operator operator = factory.getOperator(md, sc);
+    Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 

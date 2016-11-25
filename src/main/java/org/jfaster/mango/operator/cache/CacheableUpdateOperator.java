@@ -23,6 +23,7 @@ import org.jfaster.mango.operator.ConfigHolder;
 import org.jfaster.mango.operator.UpdateOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -51,23 +52,23 @@ public class CacheableUpdateOperator extends UpdateOperator {
   }
 
   @Override
-  public Object execute(Object[] values) {
+  public Object execute(Object[] values, OneExecuteStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
-    Object r = execute(context);
+    Object r = execute(context, stat);
     if (driver.isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);
       Set<String> keys = driver.getCacheKeys(context);
       if (!keys.isEmpty()) {
         if (logger.isDebugEnabled()) {
           logger.debug("Cache delete for multiple keys {}", keys);
         }
-        driver.batchDeleteFromCache(keys);
+        driver.batchDeleteFromCache(keys, stat);
       }
     } else { // 单个key，例如：update table set name='ash' where id ＝ 1;
       String key = driver.getCacheKey(context);
       if (logger.isDebugEnabled()) {
         logger.debug("Cache delete for single key [{}]", key);
       }
-      driver.deleteFromCache(key);
+      driver.deleteFromCache(key, stat);
     }
     return r;
   }

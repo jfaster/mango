@@ -30,8 +30,7 @@ import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.operator.cache.CacheHandler;
-import org.jfaster.mango.stat.OperatorStats;
-import org.jfaster.mango.stat.StatsCounter;
+import org.jfaster.mango.stat.*;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.local.CacheLoader;
 import org.jfaster.mango.util.local.DoubleCheckCache;
@@ -46,8 +45,8 @@ import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * mango框架DAO工厂
@@ -89,10 +88,9 @@ public class Mango {
   private ParameterNameDiscover parameterNameDiscover = new SerialNumberParameterNameDiscover();
 
   /**
-   * 统计map
+   * 统计收集器
    */
-  private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap =
-      new ConcurrentHashMap<Method, StatsCounter>();
+  private final StatCollector statCollector = new StatCollector();
 
   /**
    * mango全局配置信息
@@ -224,26 +222,28 @@ public class Mango {
   /**
    * 返回各个方法对应的状态
    */
-  public List<OperatorStats> getAllStats() {
-    List<OperatorStats> oss = new ArrayList<OperatorStats>();
-    Set<Map.Entry<Method, StatsCounter>> entrySet = statsCounterMap.entrySet();
-    for (Map.Entry<Method, StatsCounter> entry : entrySet) {
-      Method method = entry.getKey();
-      OperatorStats os = entry.getValue().snapshot();
-      os.setMethod(method);
-      oss.add(os);
+  public List<OperatorStat> getStats() {
+    List<OperatorStat> stats = new ArrayList<OperatorStat>();
+    for (CombinedStat combinedStat : statCollector.getCombinedStats()) {
+      stats.add(combinedStat.toOperatorStat());
     }
-    return oss;
+    return stats;
   }
 
   /**
    * 重置各个方法的状态
    */
-  public void resetAllStats() {
-    Set<Map.Entry<Method, StatsCounter>> entrySet = statsCounterMap.entrySet();
-    for (Map.Entry<Method, StatsCounter> entry : entrySet) {
-      entry.getValue().reset();
+  public List<OperatorStat> resetAndGetStats() {
+    List<OperatorStat> operatorStats = new ArrayList<OperatorStat>();
+    List<CombinedStat> combinedStats = statCollector.resetAndCombinedStats();
+    try {
+      TimeUnit.MILLISECONDS.sleep(10); // 等待并发状态累加完成
+    } catch (InterruptedException e) {
     }
+    for (CombinedStat combinedStat : combinedStats) {
+      operatorStats.add(combinedStat.toOperatorStat());
+    }
+    return operatorStats;
   }
 
   /**
@@ -336,7 +336,7 @@ public class Mango {
 
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
-    private final ConcurrentHashMap<Method, StatsCounter> statsCounterMap;
+    private final StatCollector statCollector;
     private final OperatorFactory operatorFactory;
     private final ParameterNameDiscover parameterNameDiscover;
 
@@ -346,17 +346,20 @@ public class Mango {
             if (logger.isInfoEnabled()) {
               logger.info("Initializing operator for {}", ToStringHelper.toString(method));
             }
-            StatsCounter statsCounter = getStatusCounter(method);
+            CombinedStat combinedStat = statCollector.getCombinedStat(method);
+            MetaStat metaStat = combinedStat.getMetaStat();
+            InitStat initStat = combinedStat.getInitStat();
             long now = System.nanoTime();
             MethodDescriptor md = Methods.getMethodDescriptor(method, parameterNameDiscover);
-            Operator operator = operatorFactory.getOperator(md, statsCounter);
-            statsCounter.recordInit(System.nanoTime() - now);
+            Operator operator = operatorFactory.getOperator(md, metaStat);
+            initStat.recordInit(System.nanoTime() - now);
+            metaStat.setMethod(method);
             return operator;
           }
         });
 
     private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
-      statsCounterMap = mango.statsCounterMap;
+      statCollector = mango.statCollector;
       operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
           mango.interceptorChain, mango.jdbcOperations, mango.configHolder);
       parameterNameDiscover = mango.parameterNameDiscover;
@@ -368,27 +371,17 @@ public class Mango {
         logger.debug("Invoking {}", ToStringHelper.toString(method));
       }
       Operator operator = getOperator(method);
-      Object r = operator.execute(args);
-      return r;
+      OneExecuteStat stat = OneExecuteStat.create();
+      try {
+        Object r = operator.execute(args, stat);
+        return r;
+      } finally {
+        statCollector.getCombinedStat(method).getExecuteStat().accumulate(stat);
+      }
     }
 
     Operator getOperator(Method method) {
       return cache.get(method);
-    }
-
-    /**
-     * 一个mango对象可能会创建多个相同的dao，这里多个相同的dao使用同一个StatsCounter
-     */
-    private StatsCounter getStatusCounter(Method method) {
-      StatsCounter statsCounter = statsCounterMap.get(method);
-      if (statsCounter == null) {
-        statsCounter = new StatsCounter();
-        StatsCounter old = statsCounterMap.putIfAbsent(method, statsCounter);
-        if (old != null) { // 已经存在，就用老的，这样能保证单例
-          statsCounter = old;
-        }
-      }
-      return statsCounter;
     }
 
   }

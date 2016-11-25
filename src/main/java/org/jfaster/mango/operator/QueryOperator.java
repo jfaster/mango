@@ -29,6 +29,7 @@ import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
+import org.jfaster.mango.stat.OneExecuteStat;
 import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.reflect.Reflection;
 
@@ -67,12 +68,12 @@ public class QueryOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values) {
+  public Object execute(Object[] values, OneExecuteStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
-    return execute(context);
+    return execute(context, stat);
   }
 
-  protected Object execute(InvocationContext context) {
+  protected Object execute(InvocationContext context, OneExecuteStat stat) {
     context.setGlobalTable(tableGenerator.getTable(context));
 
     try {
@@ -90,10 +91,10 @@ public class QueryOperator extends AbstractOperator {
     invocationInterceptorChain.intercept(boundSql, context); // 拦截器
 
     DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
-    return executeFromDb(ds, boundSql);
+    return executeFromDb(ds, boundSql, stat);
   }
 
-  private Object executeFromDb(final DataSource ds, final BoundSql boundSql) {
+  private Object executeFromDb(final DataSource ds, final BoundSql boundSql, OneExecuteStat stat) {
     Object r;
     boolean success = false;
     long now = System.nanoTime();
@@ -127,9 +128,9 @@ public class QueryOperator extends AbstractOperator {
     } finally {
       long cost = System.nanoTime() - now;
       if (success) {
-        statsCounter.recordDatabaseExecuteSuccess(cost);
+        stat.recordDatabaseExecuteSuccess(cost);
       } else {
-        statsCounter.recordDatabaseExecuteException(cost);
+        stat.recordDatabaseExecuteException(cost);
       }
     }
     return r;

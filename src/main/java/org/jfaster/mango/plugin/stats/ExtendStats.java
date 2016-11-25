@@ -20,7 +20,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
-import org.jfaster.mango.stat.OperatorStats;
+import org.jfaster.mango.stat.OperatorStat;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.ToStringHelper;
 
@@ -34,13 +34,13 @@ import java.util.List;
  */
 public class ExtendStats {
 
-  private OperatorStats operatorStats;
+  private OperatorStat operatorStat;
 
   private Method method;
 
-  public ExtendStats(OperatorStats operatorStats) {
-    this.operatorStats = operatorStats;
-    this.method = operatorStats.getMethod();
+  public ExtendStats(OperatorStat operatorStat) {
+    this.operatorStat = operatorStat;
+    this.method = operatorStat.getMethod();
   }
 
   public String getSimpleClassName() {
@@ -78,7 +78,7 @@ public class ExtendStats {
   }
 
   public String getType() {
-    return operatorStats.getType().name().toLowerCase();
+    return operatorStat.getOperatorType().name().toLowerCase();
   }
 
 }
