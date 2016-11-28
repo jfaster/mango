@@ -37,7 +37,7 @@ public class LocalCacheHandler extends SimpleCacheHandler {
   private final Ticker ticker;
 
   public LocalCacheHandler() {
-    ticker = Ticker.systemTicker();
+    this(Ticker.systemTicker());
   }
 
   public LocalCacheHandler(Ticker ticker) {

@@ -44,9 +44,10 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * mango框架DAO工厂
@@ -317,8 +318,14 @@ public class Mango {
     return configHolder.get();
   }
 
-  public void setConfig(Config config) {
+  public Mango setConfig(Config config) {
     configHolder.set(config);
+    return this;
+  }
+
+  public Mango setStatMonitor(StatMonitor statMonitor) {
+    statCollector.initStatMonitor(statMonitor);
+    return this;
   }
 
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {

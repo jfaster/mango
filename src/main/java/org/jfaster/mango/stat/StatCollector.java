@@ -16,10 +16,15 @@
 
 package org.jfaster.mango.stat;
 
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,12 +32,35 @@ import java.util.concurrent.TimeUnit;
  */
 public class StatCollector {
 
+  private final static InternalLogger logger = InternalLoggerFactory.getInstance(StatCollector.class);
+
   private final ConcurrentHashMap<Method, CombinedStat> combinedStatMap = new ConcurrentHashMap<Method, CombinedStat>();
 
-  private long timestamp = System.currentTimeMillis();
+  private long timestamp = currentTimeMillis();
+
+  private ScheduledExecutorService scheduler;
+
+  public synchronized void initStatMonitor(final StatMonitor statMonitor) {
+    if (scheduler != null) {
+      throw new IllegalStateException("StatMonitor is initialized many times");
+    }
+    scheduler = Executors.newSingleThreadScheduledExecutor();
+    long period = statMonitor.getCheckPeriodSecond();
+    scheduler.scheduleAtFixedRate(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          StatInfo statInfo = resetAndGetStatInfo();
+          statMonitor.check(statInfo.getStatStartTime(), statInfo.getStatEndTime(), statInfo.getStats());
+        } catch (Exception e) {
+          logger.error("StatMonitor check error", e);
+        }
+      }
+    }, period, period, TimeUnit.SECONDS);
+  }
 
   public synchronized StatInfo getStatInfo() {
-    long now = System.currentTimeMillis();
+    long now = currentTimeMillis();
     List<OperatorStat> operatorStats = new ArrayList<OperatorStat>();
     for (CombinedStat combinedStat : combinedStatMap.values()) {
       operatorStats.add(combinedStat.toOperatorStat());
@@ -41,7 +69,7 @@ public class StatCollector {
   }
 
   public synchronized StatInfo resetAndGetStatInfo() {
-    long now = System.currentTimeMillis();
+    long now = currentTimeMillis();
     List<CombinedStat> combinedStats = new ArrayList<CombinedStat>();
     for (CombinedStat combinedStat : combinedStatMap.values()) {
       final ExecuteStat executeStat = combinedStat.getExecuteStat();
@@ -71,6 +99,10 @@ public class StatCollector {
       }
     }
     return stat;
+  }
+
+  private long currentTimeMillis() {
+    return System.currentTimeMillis();
   }
 
 }
