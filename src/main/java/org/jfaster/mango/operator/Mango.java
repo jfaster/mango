@@ -220,30 +220,17 @@ public class Mango {
   }
 
   /**
-   * 返回各个方法对应的状态
+   * 返回状态信息
    */
-  public List<OperatorStat> getStats() {
-    List<OperatorStat> stats = new ArrayList<OperatorStat>();
-    for (CombinedStat combinedStat : statCollector.getCombinedStats()) {
-      stats.add(combinedStat.toOperatorStat());
-    }
-    return stats;
+  public StatInfo getStatInfo() {
+    return statCollector.getStatInfo();
   }
 
   /**
-   * 重置各个方法的状态
+   * 重置状态信息并返回老的状态信息
    */
-  public List<OperatorStat> resetAndGetStats() {
-    List<OperatorStat> operatorStats = new ArrayList<OperatorStat>();
-    List<CombinedStat> combinedStats = statCollector.resetAndCombinedStats();
-    try {
-      TimeUnit.MILLISECONDS.sleep(10); // 等待并发状态累加完成
-    } catch (InterruptedException e) {
-    }
-    for (CombinedStat combinedStat : combinedStats) {
-      operatorStats.add(combinedStat.toOperatorStat());
-    }
-    return operatorStats;
+  public StatInfo resetAndGetStatInfo() {
+    return statCollector.resetAndGetStatInfo();
   }
 
   /**

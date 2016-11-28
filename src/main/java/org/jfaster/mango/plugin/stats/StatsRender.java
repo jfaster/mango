@@ -37,7 +37,7 @@ public class StatsRender {
     Map<String, OperatorStat> osMap = new HashMap<String, OperatorStat>();
     Map<String, ExtendStats> esMap = new HashMap<String, ExtendStats>();
     int index = 0;
-    for (OperatorStat os : mango.getStats()) {
+    for (OperatorStat os : mango.getStatInfo().getStats()) {
       osMap.put(String.valueOf(index), os);
       esMap.put(String.valueOf(index), new ExtendStats(os));
       index++;

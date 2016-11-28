@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ash
@@ -28,22 +29,36 @@ public class StatCollector {
 
   private final ConcurrentHashMap<Method, CombinedStat> combinedStatMap = new ConcurrentHashMap<Method, CombinedStat>();
 
-  public List<CombinedStat> getCombinedStats() {
-    List<CombinedStat> stats = new ArrayList<CombinedStat>();
-    for (CombinedStat stat : combinedStatMap.values()) {
-      stats.add(stat);
+  private long timestamp = System.currentTimeMillis();
+
+  public synchronized StatInfo getStatInfo() {
+    long now = System.currentTimeMillis();
+    List<OperatorStat> operatorStats = new ArrayList<OperatorStat>();
+    for (CombinedStat combinedStat : combinedStatMap.values()) {
+      operatorStats.add(combinedStat.toOperatorStat());
     }
-    return stats;
+    return StatInfo.create(timestamp, now, operatorStats);
   }
 
-  public List<CombinedStat> resetAndCombinedStats() {
-    List<CombinedStat> stats = new ArrayList<CombinedStat>();
-    for (CombinedStat stat : combinedStatMap.values()) {
-      final ExecuteStat executeStat = stat.getExecuteStat();
-      stat.setExecuteStat(ExecuteStat.create());
-      stats.add(CombinedStat.create(stat.getMetaStat(), stat.getInitStat(), executeStat));
+  public synchronized StatInfo resetAndGetStatInfo() {
+    long now = System.currentTimeMillis();
+    List<CombinedStat> combinedStats = new ArrayList<CombinedStat>();
+    for (CombinedStat combinedStat : combinedStatMap.values()) {
+      final ExecuteStat executeStat = combinedStat.getExecuteStat();
+      combinedStat.setExecuteStat(ExecuteStat.create());
+      combinedStats.add(CombinedStat.create(combinedStat.getMetaStat(), combinedStat.getInitStat(), executeStat));
     }
-    return stats;
+    try {
+      TimeUnit.MILLISECONDS.sleep(10); // 等待并发状态累加完成
+    } catch (InterruptedException e) {
+    }
+    List<OperatorStat> operatorStats = new ArrayList<OperatorStat>();
+    for (CombinedStat combinedStat : combinedStats) {
+      operatorStats.add(combinedStat.toOperatorStat());
+    }
+    StatInfo statInfo = StatInfo.create(timestamp, now, operatorStats);
+    timestamp = now;
+    return statInfo;
   }
 
   public CombinedStat getCombinedStat(Method method) {
