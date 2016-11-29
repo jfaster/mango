@@ -41,7 +41,7 @@ public class StatCollectorTest {
     final AtomicInteger t = new AtomicInteger();
     sc.initStatMonitor(new StatMonitor() {
       @Override
-      public void check(long statStartTime, long statEndTime, List<OperatorStat> stats) throws Exception {
+      public void check(long statBeginTime, long statEndTime, List<OperatorStat> stats) throws Exception {
         int round = t.incrementAndGet();
         if (round == 1) {
           assertThat(stats.size(), equalTo(1));

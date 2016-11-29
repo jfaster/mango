@@ -23,24 +23,24 @@ import java.util.List;
  */
 public class StatInfo {
 
-  private final long statStartTime;
+  private final long statBeginTime;
 
   private final long statEndTime;
 
   private final List<OperatorStat> stats;
 
-  private StatInfo(long statStartTime, long statEndTime, List<OperatorStat> stats) {
-    this.statStartTime = statStartTime;
+  private StatInfo(long statBeginTime, long statEndTime, List<OperatorStat> stats) {
+    this.statBeginTime = statBeginTime;
     this.statEndTime = statEndTime;
     this.stats = stats;
   }
 
-  public static StatInfo create(long statStartTime, long statEndTime, List<OperatorStat> stats) {
-    return new StatInfo(statStartTime, statEndTime, stats);
+  public static StatInfo create(long statBeginTime, long statEndTime, List<OperatorStat> stats) {
+    return new StatInfo(statBeginTime, statEndTime, stats);
   }
 
-  public long getStatStartTime() {
-    return statStartTime;
+  public long getStatBeginTime() {
+    return statBeginTime;
   }
 
   public long getStatEndTime() {

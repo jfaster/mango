@@ -45,18 +45,21 @@ public class StatCollector {
       throw new IllegalStateException("StatMonitor is initialized many times");
     }
     scheduler = Executors.newSingleThreadScheduledExecutor();
-    long period = statMonitor.getCheckPeriodSecond();
+    long periodSecond = statMonitor.getCheckPeriodSecond();
+    long nowSecond = currentTimeMillis() / 1000;
+    long delay = (nowSecond / periodSecond) * periodSecond + periodSecond - nowSecond; // 对齐时间
     scheduler.scheduleAtFixedRate(new Runnable() {
       @Override
       public void run() {
         try {
           StatInfo statInfo = resetAndGetStatInfo();
-          statMonitor.check(statInfo.getStatStartTime(), statInfo.getStatEndTime(), statInfo.getStats());
+          statMonitor.check(statInfo.getStatBeginTime(), statInfo.getStatEndTime(), statInfo.getStats());
         } catch (Exception e) {
+          e.printStackTrace();
           logger.error("StatMonitor check error", e);
         }
       }
-    }, period, period, TimeUnit.SECONDS);
+    }, delay, periodSecond, TimeUnit.SECONDS);
   }
 
   public synchronized StatInfo getStatInfo() {
