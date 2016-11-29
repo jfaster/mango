@@ -38,25 +38,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class SimpleStatMonitorTest {
 
-  private static UserDao dao;
-
-  @Before
-  public void before() throws Exception {
+  @Test
+  public void test() throws Exception {
     MangoLogger.useNoLogger();
     DataSource ds = DataSourceConfig.getDataSource();
     Table.USER.load(ds);
     Mango mango = Mango.newInstance(ds);
     mango.setStatMonitor(new SimpleStatMonitor(1));
-    dao = mango.create(UserDao.class);
-  }
-
-  @Test
-  public void test() throws Exception {
+    UserDao dao = mango.create(UserDao.class);
     int id = dao.insertUser(createRandomUser());
     long end = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
     while (System.currentTimeMillis() < end) {
       dao.getName(id);
     }
+    mango.shutDownStatMonitor();
   }
 
   @DB(table = "user")

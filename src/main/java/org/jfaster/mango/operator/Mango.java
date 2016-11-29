@@ -328,6 +328,10 @@ public class Mango {
     return this;
   }
 
+  public void shutDownStatMonitor() {
+    statCollector.shutDown();
+  }
+
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
     private final StatCollector statCollector;

@@ -22,10 +22,7 @@ import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author ash
@@ -40,26 +37,43 @@ public class StatCollector {
 
   private ScheduledExecutorService scheduler;
 
+  private ExecutorService worker;
+
   public synchronized void initStatMonitor(final StatMonitor statMonitor) {
     if (scheduler != null) {
       throw new IllegalStateException("StatMonitor is initialized many times");
     }
     scheduler = Executors.newSingleThreadScheduledExecutor();
+    worker = Executors.newSingleThreadExecutor();
     long periodSecond = statMonitor.getCheckPeriodSecond();
     long nowSecond = currentTimeMillis() / 1000;
     long delay = (nowSecond / periodSecond) * periodSecond + periodSecond - nowSecond; // 对齐时间
     scheduler.scheduleAtFixedRate(new Runnable() {
       @Override
       public void run() {
-        try {
-          StatInfo statInfo = resetAndGetStatInfo();
-          statMonitor.check(statInfo.getStatBeginTime(), statInfo.getStatEndTime(), statInfo.getStats());
-        } catch (Exception e) {
-          e.printStackTrace();
-          logger.error("StatMonitor check error", e);
-        }
+        final StatInfo statInfo = resetAndGetStatInfo();
+        worker.execute(new Runnable() {
+          @Override
+          public void run() {
+            try {
+              statMonitor.check(statInfo.getStatBeginTime(), statInfo.getStatEndTime(), statInfo.getStats());
+            } catch (Exception e) {
+              e.printStackTrace();
+              logger.error("StatMonitor check error", e);
+            }
+          }
+        });
       }
     }, delay, periodSecond, TimeUnit.SECONDS);
+  }
+
+  public synchronized void shutDown() {
+    if (scheduler != null) {
+      scheduler.shutdown();
+    }
+    if (worker != null) {
+      worker.shutdown();
+    }
   }
 
   public synchronized StatInfo getStatInfo() {

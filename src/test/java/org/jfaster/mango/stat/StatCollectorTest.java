@@ -53,8 +53,6 @@ public class StatCollectorTest {
           assertThat(stats.get(0).getDatabaseExecuteSuccessCount(), equalTo(1L));
           assertThat(stats.get(0).getTotalDatabaseExecuteTime(), equalTo(100L));
           cdl2.countDown();
-        } else {
-          throw new Exception();
         }
       }
 
@@ -72,6 +70,8 @@ public class StatCollectorTest {
     stat.recordDatabaseExecuteSuccess(100);
     sc.getCombinedStat(m).getExecuteStat().accumulate(stat);
     cdl2.await();
+
+    sc.shutDown();
   }
 
 }
