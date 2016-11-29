@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author ash
  */
-public class MangoStatsServlet extends HttpServlet {
+public class MangoStatServlet extends HttpServlet {
 
   private final static String KEY_NAME = "key";
   private String key;
@@ -45,14 +45,6 @@ public class MangoStatsServlet extends HttpServlet {
     resp.setCharacterEncoding("UTF-8");
     resp.setHeader("content-type", "text/html;charset=UTF-8");
     PrintWriter out = resp.getWriter();
-
-    try {
-      Class.forName("freemarker.template.Template");
-    } catch (ClassNotFoundException e) {
-      out.println("need freemarker");
-      out.flush();
-      return;
-    }
 
     String pKey = req.getParameter(KEY_NAME);
     if (key != null && !key.equals(pKey)) {

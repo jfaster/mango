@@ -32,13 +32,13 @@ import java.util.List;
 /**
  * @author ash
  */
-public class ExtendStats {
+public class ExtendStat {
 
   private OperatorStat operatorStat;
 
   private Method method;
 
-  public ExtendStats(OperatorStat operatorStat) {
+  public ExtendStat(OperatorStat operatorStat) {
     this.operatorStat = operatorStat;
     this.method = operatorStat.getMethod();
   }

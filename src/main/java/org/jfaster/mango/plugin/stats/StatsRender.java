@@ -35,11 +35,11 @@ public class StatsRender {
     }
     Mango mango = mangos.get(0);
     Map<String, OperatorStat> osMap = new HashMap<String, OperatorStat>();
-    Map<String, ExtendStats> esMap = new HashMap<String, ExtendStats>();
+    Map<String, ExtendStat> esMap = new HashMap<String, ExtendStat>();
     int index = 0;
     for (OperatorStat os : mango.getStatInfo().getStats()) {
       osMap.put(String.valueOf(index), os);
-      esMap.put(String.valueOf(index), new ExtendStats(os));
+      esMap.put(String.valueOf(index), new ExtendStat(os));
       index++;
     }
     String html = Template.render(osMap, esMap, isFetchAll, key);

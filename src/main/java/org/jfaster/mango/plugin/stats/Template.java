@@ -25,14 +25,14 @@ import java.util.Map;
  */
 public class Template {
 
-  public static String render(Map<String, OperatorStat> osMap, Map<String, ExtendStats> esMap, boolean isFetchAll, String key) {
+  public static String render(Map<String, OperatorStat> osMap, Map<String, ExtendStat> esMap, boolean isFetchAll, String key) {
     StringBuilder sb = new StringBuilder();
     for (String c1 : c1s) {
       sb.append(c1).append("\n");
     }
     for (String sKey : osMap.keySet()) {
       OperatorStat os = osMap.get(sKey);
-      ExtendStats es = esMap.get(sKey);
+      ExtendStat es = esMap.get(sKey);
       if (isFetchAll || os.getDatabaseExecuteCount() > 0 || os.getHitCount() > 0) {
         sb.append("<tr>").append("\n");
         buildTD(sb, os.isCacheable() ? "yes" : "no");

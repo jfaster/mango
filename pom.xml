@@ -270,7 +270,7 @@
                         <exclude>**/parser/Token.class</exclude>
                         <exclude>**/parser/TokenMgrError.class</exclude>
                         <exclude>**/util/logging/**</exclude>
-                        <exclude>**/stat/**</exclude>
+                        <exclude>**/stat/atomic/**</exclude>
                         <exclude>**/exception/**</exclude>
                         <exclude>**/mango/plugin/**</exclude>
                     </excludes>
