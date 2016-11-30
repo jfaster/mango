@@ -316,6 +316,19 @@ public class DbTest {
     mango.setConfig(oldConfig);
   }
 
+  @Test
+  public void testTrancate() throws Exception {
+    if (DataSourceConfig.isUseMySQL()) {
+      assertThat(dao.count(), equalTo(0));
+      User user = createRandomUser();
+      dao.insertUser(user);
+      dao.insertUser(user);
+      assertThat(dao.count(), equalTo(2));
+      dao.trancate();
+      assertThat(dao.count(), equalTo(0));
+    }
+  }
+
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
@@ -606,6 +619,12 @@ public class DbTest {
 
     @SQL("select max(id) from user")
     public int getMaxInt();
+
+    @SQL("select count(1) from user")
+    public int count();
+
+    @SQL("truncate user")
+    public int trancate();
 
     /**
      * *******************************************************************

@@ -69,7 +69,7 @@ public abstract class ParserVisitorAdapter implements ParserVisitor {
   }
 
   @Override
-  public Object visit(ASTTrancate node, Object data) {
+  public Object visit(ASTTruncate node, Object data) {
     return node.childrenAccept(this, data);
   }
 

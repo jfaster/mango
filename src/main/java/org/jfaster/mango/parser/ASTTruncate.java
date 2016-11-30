@@ -18,13 +18,13 @@ package org.jfaster.mango.parser;
 
 import org.jfaster.mango.util.jdbc.SQLType;
 
-public class ASTTrancate extends AbstractDMLNode {
+public class ASTTruncate extends AbstractDMLNode {
 
-  public ASTTrancate(int id) {
+  public ASTTruncate(int id) {
     super(id);
   }
 
-  public ASTTrancate(Parser p, int id) {
+  public ASTTruncate(Parser p, int id) {
     super(p, id);
   }
 

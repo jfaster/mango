@@ -55,7 +55,7 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int MERGE = 22;
   /** RegularExpression Id. */
-  int TRANCATE = 23;
+  int TRUNCATE = 23;
   /** RegularExpression Id. */
   int TEXT = 24;
   /** RegularExpression Id. */
@@ -123,7 +123,7 @@ public interface ParserConstants {
     "\"select\"",
     "\"replace\"",
     "\"merge\"",
-    "\"trancate\"",
+    "\"truncate\"",
     "<TEXT>",
     "\" \"",
     "<LOGICAL_AND>",

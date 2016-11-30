@@ -180,7 +180,7 @@ private int jjMoveStringLiteralDfa2_0(long old0, long active0)
    {
       case 65:
       case 97:
-         return jjMoveStringLiteralDfa3_0(active0, 0x800800L);
+         return jjMoveStringLiteralDfa3_0(active0, 0x800L);
       case 68:
       case 100:
          return jjMoveStringLiteralDfa3_0(active0, 0x80000L);
@@ -204,6 +204,9 @@ private int jjMoveStringLiteralDfa2_0(long old0, long active0)
       case 83:
       case 115:
          return jjMoveStringLiteralDfa3_0(active0, 0x20000L);
+      case 85:
+      case 117:
+         return jjMoveStringLiteralDfa3_0(active0, 0x800000L);
       default :
          break;
    }

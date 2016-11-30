@@ -39,7 +39,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
-          case TRANCATE:
+          case TRUNCATE:
           case TEXT:
             ;
             break;
@@ -116,8 +116,8 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
     case MERGE:
       Merge();
       break;
-    case TRANCATE:
-      Trancate();
+    case TRUNCATE:
+      Truncate();
       break;
     default:
       jj_la1[1] = jj_gen;
@@ -246,14 +246,14 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
     }
   }
 
-  final public void Trancate() throws ParseException {
- /*@bgen(jjtree) Trancate */
-    ASTTrancate jjtn000 = new ASTTrancate(JJTTRANCATE);
+  final public void Truncate() throws ParseException {
+ /*@bgen(jjtree) Truncate */
+    ASTTruncate jjtn000 = new ASTTruncate(JJTTRUNCATE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));Token t;
     try {
-      t = jj_consume_token(TRANCATE);
+      t = jj_consume_token(TRUNCATE);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
@@ -292,7 +292,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
     case SELECT:
     case REPLACE:
     case MERGE:
-    case TRANCATE:
+    case TRUNCATE:
     case TEXT:
       Text();
       break;
@@ -431,8 +431,8 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
       case MERGE:
         t = jj_consume_token(MERGE);
         break;
-      case TRANCATE:
-        t = jj_consume_token(TRANCATE);
+      case TRUNCATE:
+        t = jj_consume_token(TRUNCATE);
         break;
       default:
         jj_la1[3] = jj_gen;
@@ -503,7 +503,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
-          case TRANCATE:
+          case TRUNCATE:
           case TEXT:
             ;
             break;
@@ -612,7 +612,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
-          case TRANCATE:
+          case TRUNCATE:
           case TEXT:
             ;
             break;
@@ -696,7 +696,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
-          case TRANCATE:
+          case TRUNCATE:
           case TEXT:
             ;
             break;

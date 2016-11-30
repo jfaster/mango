@@ -12,7 +12,7 @@ public interface ParserTreeConstants
   public int JJTSELECT = 6;
   public int JJTREPLACE = 7;
   public int JJTMERGE = 8;
-  public int JJTTRANCATE = 9;
+  public int JJTTRUNCATE = 9;
   public int JJTJDBCPARAMETER = 10;
   public int JJTJDBCITERABLEPARAMETER = 11;
   public int JJTGLOBALTABLE = 12;
@@ -51,7 +51,7 @@ public interface ParserTreeConstants
     "Select",
     "Replace",
     "Merge",
-    "Trancate",
+    "Truncate",
     "JDBCParameter",
     "JDBCIterableParameter",
     "GlobalTable",
@@ -80,4 +80,4 @@ public interface ParserTreeConstants
     "Null",
   };
 }
-/* JavaCC - OriginalChecksum=e433270c6ff277803a670fc31a844394 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ba6d950d59bcd10414b00dd05310a3bf (do not edit this line) */
