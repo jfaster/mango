@@ -68,6 +68,11 @@ public enum NodeCollectVisitor implements ParserVisitor {
   }
 
   @Override
+  public Object visit(ASTTrancate node, Object data) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public Object visit(ASTBlock node, Object data) {
     return node.childrenAccept(this, data);
   }

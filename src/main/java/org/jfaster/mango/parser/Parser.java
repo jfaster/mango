@@ -39,6 +39,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
+          case TRANCATE:
           case TEXT:
             ;
             break;
@@ -114,6 +115,9 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
       break;
     case MERGE:
       Merge();
+      break;
+    case TRANCATE:
+      Trancate();
       break;
     default:
       jj_la1[1] = jj_gen;
@@ -242,6 +246,26 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
     }
   }
 
+  final public void Trancate() throws ParseException {
+ /*@bgen(jjtree) Trancate */
+    ASTTrancate jjtn000 = new ASTTrancate(JJTTRANCATE);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));Token t;
+    try {
+      t = jj_consume_token(TRANCATE);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtn000.jjtSetLastToken(getToken(0));
+        jjtn000.setValue(t.image);
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+  }
+
   final public void Statement() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case JDBC_PARAMETER:
@@ -268,6 +292,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
     case SELECT:
     case REPLACE:
     case MERGE:
+    case TRANCATE:
     case TEXT:
       Text();
       break;
@@ -406,6 +431,9 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
       case MERGE:
         t = jj_consume_token(MERGE);
         break;
+      case TRANCATE:
+        t = jj_consume_token(TRANCATE);
+        break;
       default:
         jj_la1[3] = jj_gen;
         jj_consume_token(-1);
@@ -475,6 +503,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
+          case TRANCATE:
           case TEXT:
             ;
             break;
@@ -583,6 +612,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
+          case TRANCATE:
           case TEXT:
             ;
             break;
@@ -666,6 +696,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case SELECT:
           case REPLACE:
           case MERGE:
+          case TRANCATE:
           case TEXT:
             ;
             break;
@@ -1229,10 +1260,10 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xfe3f80,0x7e0000,0xfe3f80,0xfe0000,0xfe3f80,0x4000,0x4000,0x8000,0xfe3f80,0xfe3f80,0x4000000,0x2000000,0xf8000000,0xf8000000,0x0,0x0,};
+      jj_la1_0 = new int[] {0x1fe3f80,0xfe0000,0x1fe3f80,0x1fe0000,0x1fe3f80,0x4000,0x4000,0x8000,0x1fe3f80,0x1fe3f80,0x8000000,0x4000000,0xf0000000,0xf0000000,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x1,0x27e,0x27c,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x3,0x4fc,0x4f8,};
    }
 
   /** Constructor with InputStream. */
@@ -1352,7 +1383,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[42];
+    boolean[] la1tokens = new boolean[43];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -1369,7 +1400,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
         }
       }
     }
-    for (int i = 0; i < 42; i++) {
+    for (int i = 0; i < 43; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

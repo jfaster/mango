@@ -14,55 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.jdbc;
+package org.jfaster.mango.parser;
 
-/**
- * @author ash
- */
-public enum SQLType {
+import org.jfaster.mango.util.jdbc.SQLType;
 
-  /**
-   * 增
-   */
-  INSERT(true),
+public class ASTTrancate extends AbstractDMLNode {
 
-  /**
-   * 删
-   */
-  DELETE(true),
-
-  /**
-   * 改
-   */
-  UPDATE(true),
-
-  /**
-   * 查
-   */
-  SELECT(false),
-
-  /**
-   * mysql中的replace
-   */
-  REPLACE(true),
-
-  /**
-   * oracle中的merge
-   */
-  MERGE(true),
-
-  /**
-   * 清空表
-   */
-  TRANCATE(true);
-
-  private boolean needChangeData;
-
-  private SQLType(boolean needChangeData) {
-    this.needChangeData = needChangeData;
+  public ASTTrancate(int id) {
+    super(id);
   }
 
-  public boolean needChangeData() {
-    return needChangeData;
+  public ASTTrancate(Parser p, int id) {
+    super(p, id);
   }
+
+  @Override
+  public SQLType getSQLType() {
+    return SQLType.TRANCATE;
+  }
+
+  @Override
+  public Object jjtAccept(ParserVisitor visitor, Object data) {
+    return visitor.visit(this, data);
+  }
+
 }

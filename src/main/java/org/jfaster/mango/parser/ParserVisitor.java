@@ -12,6 +12,7 @@ public interface ParserVisitor
   public Object visit(ASTSelect node, Object data);
   public Object visit(ASTReplace node, Object data);
   public Object visit(ASTMerge node, Object data);
+  public Object visit(ASTTrancate node, Object data);
   public Object visit(ASTJDBCParameter node, Object data);
   public Object visit(ASTJDBCIterableParameter node, Object data);
   public Object visit(ASTGlobalTable node, Object data);
@@ -39,4 +40,4 @@ public interface ParserVisitor
   public Object visit(ASTFalse node, Object data);
   public Object visit(ASTNull node, Object data);
 }
-/* JavaCC - OriginalChecksum=666501dccf48ee189dd9d2d17bb9e8ac (do not edit this line) */
+/* JavaCC - OriginalChecksum=871dcf8160957512cd507d4e75ca544d (do not edit this line) */

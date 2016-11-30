@@ -69,6 +69,11 @@ public enum TextBlankJoinVisitor implements ParserVisitor {
   }
 
   @Override
+  public Object visit(ASTTrancate node, Object data) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public Object visit(ASTBlock father, Object data) {
     int num = father.jjtGetNumChildren();
     int i = 0;

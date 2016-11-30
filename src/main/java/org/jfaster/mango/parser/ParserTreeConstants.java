@@ -12,32 +12,33 @@ public interface ParserTreeConstants
   public int JJTSELECT = 6;
   public int JJTREPLACE = 7;
   public int JJTMERGE = 8;
-  public int JJTJDBCPARAMETER = 9;
-  public int JJTJDBCITERABLEPARAMETER = 10;
-  public int JJTGLOBALTABLE = 11;
-  public int JJTJOINPARAMETER = 12;
-  public int JJTQUOTETEXT = 13;
-  public int JJTTEXT = 14;
-  public int JJTBLANK = 15;
-  public int JJTIFSTATEMENT = 16;
-  public int JJTELSESTATEMENT = 17;
-  public int JJTELSEIFSTATEMENT = 18;
-  public int JJTEXPRESSION = 19;
-  public int JJTORNODE = 20;
-  public int JJTANDNODE = 21;
-  public int JJTLTNODE = 22;
-  public int JJTGTNODE = 23;
-  public int JJTLENODE = 24;
-  public int JJTGENODE = 25;
-  public int JJTEQNODE = 26;
-  public int JJTNENODE = 27;
-  public int JJTNOTNODE = 28;
-  public int JJTEXPRESSIONPARAMETER = 29;
-  public int JJTINTEGERLITERAL = 30;
-  public int JJTSTRINGLITERAL = 31;
-  public int JJTTRUE = 32;
-  public int JJTFALSE = 33;
-  public int JJTNULL = 34;
+  public int JJTTRANCATE = 9;
+  public int JJTJDBCPARAMETER = 10;
+  public int JJTJDBCITERABLEPARAMETER = 11;
+  public int JJTGLOBALTABLE = 12;
+  public int JJTJOINPARAMETER = 13;
+  public int JJTQUOTETEXT = 14;
+  public int JJTTEXT = 15;
+  public int JJTBLANK = 16;
+  public int JJTIFSTATEMENT = 17;
+  public int JJTELSESTATEMENT = 18;
+  public int JJTELSEIFSTATEMENT = 19;
+  public int JJTEXPRESSION = 20;
+  public int JJTORNODE = 21;
+  public int JJTANDNODE = 22;
+  public int JJTLTNODE = 23;
+  public int JJTGTNODE = 24;
+  public int JJTLENODE = 25;
+  public int JJTGENODE = 26;
+  public int JJTEQNODE = 27;
+  public int JJTNENODE = 28;
+  public int JJTNOTNODE = 29;
+  public int JJTEXPRESSIONPARAMETER = 30;
+  public int JJTINTEGERLITERAL = 31;
+  public int JJTSTRINGLITERAL = 32;
+  public int JJTTRUE = 33;
+  public int JJTFALSE = 34;
+  public int JJTNULL = 35;
 
 
   public String[] jjtNodeName = {
@@ -50,6 +51,7 @@ public interface ParserTreeConstants
     "Select",
     "Replace",
     "Merge",
+    "Trancate",
     "JDBCParameter",
     "JDBCIterableParameter",
     "GlobalTable",
@@ -78,4 +80,4 @@ public interface ParserTreeConstants
     "Null",
   };
 }
-/* JavaCC - OriginalChecksum=a38814d94a078542c390480f964c48f9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e433270c6ff277803a670fc31a844394 (do not edit this line) */

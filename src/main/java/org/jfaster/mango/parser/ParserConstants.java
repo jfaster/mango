@@ -55,41 +55,43 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int MERGE = 22;
   /** RegularExpression Id. */
-  int TEXT = 23;
+  int TRANCATE = 23;
   /** RegularExpression Id. */
-  int LOGICAL_AND = 25;
+  int TEXT = 24;
   /** RegularExpression Id. */
-  int LOGICAL_OR = 26;
+  int LOGICAL_AND = 26;
   /** RegularExpression Id. */
-  int LOGICAL_LT = 27;
+  int LOGICAL_OR = 27;
   /** RegularExpression Id. */
-  int LOGICAL_LE = 28;
+  int LOGICAL_LT = 28;
   /** RegularExpression Id. */
-  int LOGICAL_GT = 29;
+  int LOGICAL_LE = 29;
   /** RegularExpression Id. */
-  int LOGICAL_GE = 30;
+  int LOGICAL_GT = 30;
   /** RegularExpression Id. */
-  int LOGICAL_EQ = 31;
+  int LOGICAL_GE = 31;
   /** RegularExpression Id. */
-  int LOGICAL_NE = 32;
+  int LOGICAL_EQ = 32;
   /** RegularExpression Id. */
-  int LOGICAL_NOT = 33;
+  int LOGICAL_NE = 33;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 34;
+  int LOGICAL_NOT = 34;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 35;
+  int INTEGER_LITERAL = 35;
   /** RegularExpression Id. */
-  int TRUE = 36;
+  int STRING_LITERAL = 36;
   /** RegularExpression Id. */
-  int FALSE = 37;
+  int TRUE = 37;
   /** RegularExpression Id. */
-  int NULL = 38;
+  int FALSE = 38;
   /** RegularExpression Id. */
-  int LPAREN = 39;
+  int NULL = 39;
   /** RegularExpression Id. */
-  int RPAREN = 40;
+  int LPAREN = 40;
   /** RegularExpression Id. */
-  int PARAMETER = 41;
+  int RPAREN = 41;
+  /** RegularExpression Id. */
+  int PARAMETER = 42;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -121,6 +123,7 @@ public interface ParserConstants {
     "\"select\"",
     "\"replace\"",
     "\"merge\"",
+    "\"trancate\"",
     "<TEXT>",
     "\" \"",
     "<LOGICAL_AND>",

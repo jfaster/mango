@@ -63,6 +63,7 @@ TOKEN:
     |   <SELECT: "select" >
     |   <REPLACE: "replace" >
     |   <MERGE: "merge" >
+    |   <TRANCATE: "trancate" >
     |   <TEXT: (~[":", "#", " ", "'"])+ >
 }
 
@@ -110,7 +111,7 @@ ASTRootNode parse()  #RootNode : {}
 
 void DML() #void : {}
 {
-    Insert() | Delete() | Update() | Select() | Replace() | Merge()
+    Insert() | Delete() | Update() | Select() | Replace() | Merge() | Trancate()
 }
 
 
@@ -175,6 +176,17 @@ void Merge() :
 }
 {
     t=<MERGE>
+    {
+        jjtThis.setValue(t.image);
+    }
+}
+
+void Trancate() :
+{
+    Token t;
+}
+{
+    t=<TRANCATE>
     {
         jjtThis.setValue(t.image);
     }
@@ -247,7 +259,7 @@ void Text() :
     Token t;
 }
 {
-    ( t=<TEXT> | t=<INSERT> | t=<DELETE> | t=<UPDATE> | t=<SELECT> | t=<REPLACE> | t=<MERGE> )
+    ( t=<TEXT> | t=<INSERT> | t=<DELETE> | t=<UPDATE> | t=<SELECT> | t=<REPLACE> | t=<MERGE> | t=<TRANCATE> )
     {
         jjtThis.setValue(t.image);
     }

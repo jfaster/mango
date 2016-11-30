@@ -69,6 +69,11 @@ public abstract class ParserVisitorAdapter implements ParserVisitor {
   }
 
   @Override
+  public Object visit(ASTTrancate node, Object data) {
+    return node.childrenAccept(this, data);
+  }
+
+  @Override
   public Object visit(ASTJDBCParameter node, Object data) {
     return node.childrenAccept(this, data);
   }
