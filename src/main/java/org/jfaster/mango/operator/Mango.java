@@ -228,13 +228,6 @@ public class Mango {
   }
 
   /**
-   * 重置状态信息并返回老的状态信息
-   */
-  public StatInfo resetAndGetStatInfo() {
-    return statCollector.resetAndGetStatInfo();
-  }
-
-  /**
    * 根据数据源名字获得主库数据源
    */
   public DataSource getMasterDataSource(String database) {

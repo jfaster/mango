@@ -16,8 +16,6 @@
 
 package org.jfaster.mango.plugin.stats;
 
-import org.jfaster.mango.operator.Mango;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * @author ash
@@ -55,21 +52,7 @@ public class MangoStatServlet extends HttpServlet {
     }
 
     try {
-      String type = req.getParameter("type");
-      if ("reset".equals(type)) {
-        List<Mango> mangos = Mango.getInstances();
-        if (mangos.size() != 1) {
-          throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
-        }
-        mangos.get(0).resetAndGetStatInfo();
-        String url = req.getRequestURL().toString();
-        if (key != null) {
-          url = url + "?" + KEY_NAME + "=" + key;
-        }
-        resp.sendRedirect(url);
-        return;
-      }
-      out.println(StatsRender.getHtml(Boolean.valueOf(req.getParameter("all")), key));
+      out.println(StatsRender.getHtml(Boolean.valueOf(req.getParameter("all"))));
       out.flush();
     } catch (Exception e) {
       out.println(e.getMessage());

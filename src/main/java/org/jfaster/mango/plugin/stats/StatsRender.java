@@ -18,7 +18,10 @@ package org.jfaster.mango.plugin.stats;
 
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.stat.OperatorStat;
+import org.jfaster.mango.stat.StatInfo;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +31,7 @@ import java.util.Map;
  */
 public class StatsRender {
 
-  public static String getHtml(boolean isFetchAll, String key) throws Exception {
+  public static String getHtml(boolean isFetchAll) throws Exception {
     List<Mango> mangos = Mango.getInstances();
     if (mangos.size() != 1) {
       throw new IllegalStateException("instance of mango expected 1 but " + mangos.size());
@@ -36,13 +39,20 @@ public class StatsRender {
     Mango mango = mangos.get(0);
     Map<String, OperatorStat> osMap = new HashMap<String, OperatorStat>();
     Map<String, ExtendStat> esMap = new HashMap<String, ExtendStat>();
+    StatInfo info = mango.getStatInfo();
     int index = 0;
-    for (OperatorStat os : mango.getStatInfo().getStats()) {
+    for (OperatorStat os : info.getStats()) {
       osMap.put(String.valueOf(index), os);
       esMap.put(String.valueOf(index), new ExtendStat(os));
       index++;
     }
-    String html = Template.render(osMap, esMap, isFetchAll, key);
+    String html = Template.render(format(info.getStatBeginTime()), format(info.getStatEndTime()), osMap, esMap, isFetchAll);
     return html;
   }
+
+  private static String format(long time) {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    return format.format(new Date(time));
+  }
+
 }
