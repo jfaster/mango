@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.interceptor;
 
 import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.binding.DefaultParameterContext;
