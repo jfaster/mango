@@ -11,7 +11,7 @@
     <groupId>org.jfaster</groupId>
     <artifactId>mango</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.3</version>
+    <version>1.4.4-SNAPSHOT</version>
 
     <name>mango</name>
     <url>http://mango.jfaster.org/</url>
