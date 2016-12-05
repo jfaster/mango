@@ -23,8 +23,8 @@ import java.util.List;
  */
 public interface StatMonitor {
 
-  public void check(long statBeginTime, long statEndTime, List<OperatorStat> stats) throws Exception;
+  public void handleStat(long statBeginTime, long statEndTime, List<OperatorStat> stats) throws Exception;
 
-  public int getCheckPeriodSecond();
+  public int periodSecond();
 
 }

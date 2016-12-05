@@ -27,20 +27,20 @@ public class SimpleStatMonitor implements StatMonitor {
 
   private static final String NEWLINE = System.getProperty("line.separator");
 
-  private static final int DEFAULT_CHECK_PERIOD_SECOND = 10;
+  private static final int DEFAULT_PERIOD_SECOND = 10;
 
-  private final int checkPeriodSecond;
+  private int periodSecond;
 
   public SimpleStatMonitor() {
-    this(DEFAULT_CHECK_PERIOD_SECOND);
+    this(DEFAULT_PERIOD_SECOND);
   }
 
-  public SimpleStatMonitor(int checkPeriodSecond) {
-    this.checkPeriodSecond = checkPeriodSecond;
+  public SimpleStatMonitor(int periodSecond) {
+    this.periodSecond = periodSecond;
   }
 
   @Override
-  public void check(long statBeginTime, long statEndTime, List<OperatorStat> stats) throws Exception {
+  public void handleStat(long statBeginTime, long statEndTime, List<OperatorStat> stats) throws Exception {
     StringBuilder data = new StringBuilder();
     data.append("Performance Statistics  [")
         .append(format(statBeginTime))
@@ -64,8 +64,8 @@ public class SimpleStatMonitor implements StatMonitor {
   }
 
   @Override
-  public int getCheckPeriodSecond() {
-    return checkPeriodSecond;
+  public int periodSecond() {
+    return periodSecond;
   }
 
   private String format(long time) {
@@ -73,4 +73,7 @@ public class SimpleStatMonitor implements StatMonitor {
     return format.format(new Date(time));
   }
 
+  public void setPeriodSecond(int periodSecond) {
+    this.periodSecond = periodSecond;
+  }
 }

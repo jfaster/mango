@@ -45,7 +45,7 @@ public class StatCollector {
     }
     scheduler = Executors.newSingleThreadScheduledExecutor();
     worker = Executors.newSingleThreadExecutor();
-    long periodSecond = statMonitor.getCheckPeriodSecond();
+    long periodSecond = statMonitor.periodSecond();
     long nowSecond = currentTimeMillis() / 1000;
     long delay = (nowSecond / periodSecond) * periodSecond + periodSecond - nowSecond; // 对齐时间
     scheduler.scheduleAtFixedRate(new Runnable() {
@@ -56,10 +56,10 @@ public class StatCollector {
           @Override
           public void run() {
             try {
-              statMonitor.check(statInfo.getStatBeginTime(), statInfo.getStatEndTime(), statInfo.getStats());
+              statMonitor.handleStat(statInfo.getStatBeginTime(), statInfo.getStatEndTime(), statInfo.getStats());
             } catch (Exception e) {
               e.printStackTrace();
-              logger.error("StatMonitor check error", e);
+              logger.error("StatMonitor handle stat error", e);
             }
           }
         });
