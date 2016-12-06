@@ -101,7 +101,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Don't upgrade to 2.4+ until mybatis switches to java 7 -->
+        <!-- Don't upgrade to 2.4+ until mango switches to java 7 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
