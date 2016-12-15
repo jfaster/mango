@@ -55,7 +55,7 @@ public class SimpleStatMonitor implements StatMonitor {
       String dao = stat.getMethod().getDeclaringClass().getSimpleName() + "." + stat.getMethod().getName();
       data.append(String.format("%-36s%-12.1f%-12s%-12s%n",
           dao,
-          (double) stat.getAverageDatabaseExecutePenalty() / (1000*1000),
+          (double) stat.getDatabaseAverageExecutePenalty() / (1000*1000),
           stat.getDatabaseExecuteCount(),
           stat.getDatabaseExecuteExceptionCount()));
       }

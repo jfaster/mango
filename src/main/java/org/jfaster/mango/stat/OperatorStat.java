@@ -202,7 +202,7 @@ public class OperatorStat {
   /**
    * 返回平均初始化时间，单位为纳秒
    */
-  public long getAverageInitPenalty() {
+  public long getInitAveragePenalty() {
     return (initCount == 0)
         ? 0
         : totalInitTime / initCount;
@@ -250,7 +250,7 @@ public class OperatorStat {
   /**
    * 返回平均每次db执行时间，单位为纳秒
    */
-  public long getAverageDatabaseExecutePenalty() {
+  public long getDatabaseAverageExecutePenalty() {
     long totalDatabaseExecuteCount = getDatabaseExecuteCount();
     return (totalDatabaseExecuteCount == 0)
         ? 0
@@ -315,7 +315,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[get]执行时间，单位为纳秒
    */
-  public long getAverageCacheGetPenalty() {
+  public long getCacheAverageGetPenalty() {
     long totalCacheGetCount = getCacheGetCount();
     return (totalCacheGetCount == 0)
         ? 0
@@ -364,7 +364,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[getBulk]执行时间，单位为纳秒
    */
-  public long getAverageCacheGetBulkPenalty() {
+  public long getCacheAverageGetBulkPenalty() {
     long totalCacheGetBulkCount = getCacheGetBulkCount();
     return (totalCacheGetBulkCount == 0)
         ? 0
@@ -413,7 +413,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[set]执行时间，单位为纳秒
    */
-  public long getAverageCacheSetPenalty() {
+  public long getCacheAverageSetPenalty() {
     long totalCacheSetCount = getCacheSetCount();
     return (totalCacheSetCount == 0)
         ? 0
@@ -462,7 +462,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[add]执行时间，单位为纳秒
    */
-  public long getAverageCacheAddPenalty() {
+  public long getCacheAverageAddPenalty() {
     long totalCacheAddCount = getCacheAddCount();
     return (totalCacheAddCount == 0)
         ? 0
@@ -511,7 +511,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[delete]执行时间，单位为纳秒
    */
-  public long getAverageCacheDeletePenalty() {
+  public long getCacheAverageDeletePenalty() {
     long totalCacheDeleteCount = getCacheDeleteCount();
     return (totalCacheDeleteCount == 0)
         ? 0
@@ -560,7 +560,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[batchDelete]执行时间，单位为纳秒
    */
-  public long getAverageCacheBatchDeletePenalty() {
+  public long getCacheAverageBatchDeletePenalty() {
     long totalCacheBatchDeleteCount = getCacheBatchDeleteCount();
     return (totalCacheBatchDeleteCount == 0)
         ? 0
