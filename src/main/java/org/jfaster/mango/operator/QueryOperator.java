@@ -24,9 +24,9 @@ import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.jdbc.*;
-import org.jfaster.mango.mapper.BeanPropertyRowMapper;
-import org.jfaster.mango.mapper.RowMapper;
-import org.jfaster.mango.mapper.SingleColumnRowMapper;
+import org.jfaster.mango.mapper.*;
+import org.jfaster.mango.mapper.tuple.Tuple2;
+import org.jfaster.mango.mapper.tuple.Tuple3;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
 import org.jfaster.mango.stat.OneExecuteStat;
@@ -138,15 +138,22 @@ public class QueryOperator extends AbstractOperator {
 
   private <T> RowMapper<?> getRowMapper(Class<T> clazz, ReturnDescriptor rd) {
     Mapper mapperAnno = rd.getAnnotation(Mapper.class);
-    Results resultsAnoo = rd.getAnnotation(Results.class);
     if (mapperAnno != null) { // 自定义mapper
       return Reflection.instantiateClass(mapperAnno.value());
     }
+    if (Tuple2.class.equals(clazz)) { // 使用Tuple2RowMapper
+      return new Tuple2RowMapper(rd.getType());
+    }
+    if (Tuple3.class.equals(clazz)) {
+      return new Tuple3RowMapper(rd.getType()); // 使用Tuple3RowMapper
+    }
+
     if (TypeHandlerRegistry.hasTypeHandler(clazz)) { // 单列mapper
       return new SingleColumnRowMapper<T>(clazz);
     }
 
     // 类属性mapper
+    Results resultsAnoo = rd.getAnnotation(Results.class);
     Map<String, String> ptc = new HashMap<String, String>();
     if (resultsAnoo != null) {
       Result[] resultAnnos = resultsAnoo.value();
