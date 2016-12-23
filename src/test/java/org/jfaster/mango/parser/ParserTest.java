@@ -378,6 +378,48 @@ public class ParserTest {
   }
 
   @Test
+  public void testExpressionParameter4In() throws Exception {
+    String sql = "select #if (:1) id in (:1) #end";
+    ASTRootNode n = new Parser(sql).parse().init();
+    ParameterContext ctx = getParameterContext(Lists.newArrayList(new TypeToken<List<Integer>>(){}.getType()));
+    n.checkAndBind(ctx);
+    InvocationContext context = DefaultInvocationContext.create();
+    List<Integer> ids = Lists.newArrayList(1, 2, 3);
+    context.addParameter("1", ids);
+    n.render(context);
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select  id in (?,?,?) "));
+  }
+
+  @Test
+  public void testExpressionParameter4InEmpty() throws Exception {
+    String sql = "select #if (:1) id in (:1) #end";
+    ASTRootNode n = new Parser(sql).parse().init();
+    ParameterContext ctx = getParameterContext(Lists.newArrayList(new TypeToken<List<Integer>>(){}.getType()));
+    n.checkAndBind(ctx);
+    InvocationContext context = DefaultInvocationContext.create();
+    List<Integer> ids = Lists.newArrayList();
+    context.addParameter("1", ids);
+    n.render(context);
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select "));
+  }
+
+  @Test
+  public void testExpressionParameter4InNull() throws Exception {
+    String sql = "select #if (:1) id in (:1) #end";
+    ASTRootNode n = new Parser(sql).parse().init();
+    ParameterContext ctx = getParameterContext(Lists.newArrayList(new TypeToken<List<Integer>>(){}.getType()));
+    n.checkAndBind(ctx);
+    InvocationContext context = DefaultInvocationContext.create();
+    List<Integer> ids = null;
+    context.addParameter("1", ids);
+    n.render(context);
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("select "));
+  }
+
+  @Test
   public void testJdbcType() throws Exception {
     String sql = "insert into table ... values(:1.b.c@blob) a in (:2.x.y@clob)";
     ASTRootNode n = new Parser(sql).parse().init();
