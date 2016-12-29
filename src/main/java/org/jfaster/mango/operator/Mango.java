@@ -22,8 +22,6 @@ import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.Methods;
-import org.jfaster.mango.descriptor.ParameterNameDiscover;
-import org.jfaster.mango.descriptor.SerialNumberParameterNameDiscover;
 import org.jfaster.mango.exception.InitializationException;
 import org.jfaster.mango.interceptor.Interceptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
@@ -82,11 +80,6 @@ public class Mango {
    * jdbc操作
    */
   private JdbcOperations jdbcOperations = new JdbcTemplate();
-
-  /**
-   * 参数名发现器
-   */
-  private ParameterNameDiscover parameterNameDiscover = new SerialNumberParameterNameDiscover();
 
   /**
    * 统计收集器
@@ -295,18 +288,6 @@ public class Mango {
     return this;
   }
 
-  public ParameterNameDiscover getParameterNameDiscover() {
-    return parameterNameDiscover;
-  }
-
-  public Mango setParameterNameDiscover(ParameterNameDiscover parameterNameDiscover) {
-    if (parameterNameDiscover == null) {
-      throw new NullPointerException("parameterNameDiscover can't be null");
-    }
-    this.parameterNameDiscover = parameterNameDiscover;
-    return this;
-  }
-
   public Config getConfig() {
     return configHolder.get();
   }
@@ -329,7 +310,6 @@ public class Mango {
 
     private final StatCollector statCollector;
     private final OperatorFactory operatorFactory;
-    private final ParameterNameDiscover parameterNameDiscover;
 
     private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
         new CacheLoader<Method, Operator>() {
@@ -341,7 +321,7 @@ public class Mango {
             MetaStat metaStat = combinedStat.getMetaStat();
             InitStat initStat = combinedStat.getInitStat();
             long now = System.nanoTime();
-            MethodDescriptor md = Methods.getMethodDescriptor(method, parameterNameDiscover);
+            MethodDescriptor md = Methods.getMethodDescriptor(method);
             Operator operator = operatorFactory.getOperator(md, metaStat);
             initStat.recordInit(System.nanoTime() - now);
             metaStat.setMethod(method);
@@ -353,7 +333,6 @@ public class Mango {
       statCollector = mango.statCollector;
       operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
           mango.interceptorChain, mango.jdbcOperations, mango.configHolder);
-      parameterNameDiscover = mango.parameterNameDiscover;
     }
 
     @Override
