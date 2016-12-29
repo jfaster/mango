@@ -52,7 +52,10 @@ public class DbTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private final static Mango mango = Mango.newInstance(ds);
-  private final static UserDao dao = mango.create(UserDao.class, true);
+  static {
+    mango.setLazyInit(true);
+  }
+  private final static UserDao dao = mango.create(UserDao.class);
 
   @Before
   public void before() throws Exception {

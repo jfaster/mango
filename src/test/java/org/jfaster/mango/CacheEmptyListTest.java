@@ -43,7 +43,6 @@ import static org.hamcrest.Matchers.hasSize;
 public class CacheEmptyListTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
-  private final static Mango mango = Mango.newInstance(ds);
 
   @Before
   public void before() throws Exception {
@@ -57,7 +56,9 @@ public class CacheEmptyListTest {
   public void testSingleKeyReturnList() throws Exception {
     LocalCacheHandler cacheHandler = new LocalCacheHandler();
     List<Msg> msgs = new ArrayList<Msg>();
-    MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    MsgDao dao = mango.create(MsgDao.class);
     int uid = 100;
     String key = getMsgKey(uid);
 

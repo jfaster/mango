@@ -48,7 +48,7 @@ public class JdkExceptionTest {
   private final static Mango mango = Mango.newInstance(ds);
 
   static {
-    mango.setDefaultLazyInit(true);
+    mango.setLazyInit(true);
   }
 
   @Rule
@@ -82,7 +82,10 @@ public class JdkExceptionTest {
   public void testIterableParameterNullWithCache() {
     thrown.expect(BindingException.class);
     thrown.expectMessage("Parameter ':1' need a non-null value");
-    MsgCacheDao dao = mango.create(MsgCacheDao.class, new LocalCacheHandler());
+    Mango mango = Mango.newInstance(ds);
+    mango.setLazyInit(true);
+    mango.setCacheHandler(new LocalCacheHandler());
+    MsgCacheDao dao = mango.create(MsgCacheDao.class);
     dao.getMsgs(null);
   }
 

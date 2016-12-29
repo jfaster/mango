@@ -34,12 +34,6 @@ import org.junit.rules.ExpectedException;
  */
 public class IllegalStateExceptionTest {
 
-  private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
-
-  static {
-    mango.setDefaultLazyInit(true);
-  }
-
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
@@ -47,6 +41,8 @@ public class IllegalStateExceptionTest {
   public void test() {
     thrown.expect(IllegalStateException.class);
     thrown.expectMessage("dao interface expected one @DB annotation but not found");
+    Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
+    mango.setLazyInit(true);
     mango.create(Dao.class);
   }
 
@@ -54,7 +50,10 @@ public class IllegalStateExceptionTest {
   public void test2() {
     thrown.expect(DescriptionException.class);
     thrown.expectMessage("each method expected one @SQL annotation but not found");
-    Dao2 dao = mango.create(Dao2.class, new LocalCacheHandler());
+    Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
+    mango.setLazyInit(true);
+    mango.setCacheHandler(new LocalCacheHandler());
+    Dao2 dao = mango.create(Dao2.class);
     dao.add();
   }
 
@@ -63,7 +62,10 @@ public class IllegalStateExceptionTest {
     thrown.expect(IllegalStateException.class);
     thrown.expectMessage("if use cache, each method expected one or more " +
         "@CacheBy annotation on parameter but found 0");
-    Dao3 dao = mango.create(Dao3.class, new LocalCacheHandler());
+    Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
+    mango.setLazyInit(true);
+    mango.setCacheHandler(new LocalCacheHandler());
+    Dao3 dao = mango.create(Dao3.class);
     dao.add();
   }
 

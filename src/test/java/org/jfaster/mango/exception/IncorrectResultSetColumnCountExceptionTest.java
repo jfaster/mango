@@ -42,7 +42,7 @@ public class IncorrectResultSetColumnCountExceptionTest {
   private final static Mango mango = Mango.newInstance(ds);
 
   static {
-    mango.setDefaultLazyInit(true);
+    mango.setLazyInit(true);
   }
 
   @Rule

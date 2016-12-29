@@ -42,7 +42,8 @@ public class IncorrectCacheByExceptionTest {
   private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
 
   static {
-    mango.setDefaultLazyInit(true);
+    mango.setLazyInit(true);
+    mango.setCacheHandler(new LocalCacheHandler());
   }
 
   @Rule
@@ -52,7 +53,7 @@ public class IncorrectCacheByExceptionTest {
   public void test() {
     thrown.expect(IncorrectCacheByException.class);
     thrown.expectMessage("CacheBy :2 can't match any db parameter");
-    Dao dao = mango.create(Dao.class, new LocalCacheHandler());
+    Dao dao = mango.create(Dao.class);
     dao.add(1, 2);
   }
 
@@ -60,7 +61,7 @@ public class IncorrectCacheByExceptionTest {
   public void test2() {
     thrown.expect(IncorrectCacheByException.class);
     thrown.expectMessage("CacheBy :1 can't match any db parameter");
-    Dao dao = mango.create(Dao.class, new LocalCacheHandler());
+    Dao dao = mango.create(Dao.class);
     dao.batchAdd(new ArrayList<Integer>());
   }
 

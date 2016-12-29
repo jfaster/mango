@@ -36,7 +36,7 @@ public class IncorrectParameterTypeExceptionTest {
   private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
 
   static {
-    mango.setDefaultLazyInit(true);
+    mango.setLazyInit(true);
   }
 
   @Rule

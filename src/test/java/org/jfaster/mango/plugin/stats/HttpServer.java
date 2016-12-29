@@ -49,7 +49,8 @@ public class HttpServer {
     Table.USER.load(ds);
     Table.MSG_PARTITION.load(ds);
     Mango mango = Mango.newInstance(ds);
-    mango.setDefaultCacheHandler(new LocalCacheHandler() {
+    mango.setLazyInit(true);
+    mango.setCacheHandler(new LocalCacheHandler() {
       void sleep() {
         try {
           Thread.sleep(10);
@@ -93,8 +94,8 @@ public class HttpServer {
         super.delete(key);
       }
     });
-    final UserDao userDao = mango.create(UserDao.class, true);
-    final MsgDao msgDao = mango.create(MsgDao.class, true);
+    final UserDao userDao = mango.create(UserDao.class);
+    final MsgDao msgDao = mango.create(MsgDao.class);
 
     int id = 1;
     userDao.getIntegerId(id);

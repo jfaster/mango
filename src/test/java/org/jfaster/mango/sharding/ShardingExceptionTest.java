@@ -39,6 +39,9 @@ public class ShardingExceptionTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private final static Mango mango = Mango.newInstance(ds);
+  static {
+    mango.setLazyInit(true);
+  }
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -54,7 +57,7 @@ public class ShardingExceptionTest {
   public void testGenericException() throws Exception {
     thrown.expect(ClassCastException.class);
     thrown.expectMessage("DatabaseShardingStrategy[class org.jfaster.mango.sharding.ShardingExceptionTest$UserDatabaseShardingStrategy]'s generic type[class java.lang.String] must be assignable from the type of parameter Modified @DatabaseShardingBy [long], please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
-    UserDao dao = mango.create(UserDao.class, true);
+    UserDao dao = mango.create(UserDao.class);
     dao.getUser(1);
   }
 
@@ -62,7 +65,7 @@ public class ShardingExceptionTest {
   public void testGenericException2() throws Exception {
     thrown.expect(ClassCastException.class);
     thrown.expectMessage("TableShardingStrategy[class org.jfaster.mango.sharding.ShardingExceptionTest$UserTableShardingStrategy]'s generic type[class java.lang.String] must be assignable from the type of parameter Modified @TableShardingBy [long], please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
-    UserDao2 dao = mango.create(UserDao2.class, true);
+    UserDao2 dao = mango.create(UserDao2.class);
     dao.getUser(1);
   }
 

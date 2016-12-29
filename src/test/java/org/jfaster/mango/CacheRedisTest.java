@@ -49,7 +49,6 @@ import static org.hamcrest.Matchers.*;
 public class CacheRedisTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
-  private final static Mango mango = Mango.newInstance(ds);
 
   @Before
   public void before() throws Exception {
@@ -62,7 +61,9 @@ public class CacheRedisTest {
   @Test
   public void testSingleKey() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     User user = createRandomUser();
     int id = dao.insert(user);
     String key = getUserKey(id);
@@ -86,7 +87,9 @@ public class CacheRedisTest {
   @Test
   public void testMultiKeysReturnList() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     List<User> users = createRandomUsers(5);
     List<Integer> ids = new ArrayList<Integer>();
     for (User user : users) {
@@ -114,7 +117,9 @@ public class CacheRedisTest {
   @Test
   public void testMultiKeysReturnSet() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     List<User> users = createRandomUsers(5);
     List<Integer> ids = new ArrayList<Integer>();
     for (User user : users) {
@@ -142,7 +147,9 @@ public class CacheRedisTest {
   @Test
   public void testMultiKeysReturnArray() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     List<User> users = createRandomUsers(5);
     List<Integer> ids = new ArrayList<Integer>();
     for (User user : users) {
@@ -172,8 +179,10 @@ public class CacheRedisTest {
     Type type = new TypeToken<List<Msg>>() {
     }.getType();
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
     List<Msg> msgs = new ArrayList<Msg>();
-    MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+    MsgDao dao = mango.create(MsgDao.class);
     int uid = 100;
     String key = getMsgKey(uid);
 
@@ -218,7 +227,9 @@ public class CacheRedisTest {
     }.getType();
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
     List<Msg> msgs = new ArrayList<Msg>();
-    MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    MsgDao dao = mango.create(MsgDao.class);
     int uid = 100;
     String key = getMsgKey(uid);
 
@@ -252,7 +263,9 @@ public class CacheRedisTest {
   public void testUpdateWithInStatement() throws Exception {
     Type type = TypeToken.of(User.class).getType();
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     List<User> users = createRandomUsers(5);
     List<Integer> ids = new ArrayList<Integer>();
     for (User user : users) {
@@ -287,7 +300,9 @@ public class CacheRedisTest {
   public void testBatchUpdate() throws Exception {
     Type type = TypeToken.of(User.class).getType();
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     List<User> users = createRandomUsers(5);
     List<Integer> ids = new ArrayList<Integer>();
     for (User user : users) {
@@ -331,7 +346,9 @@ public class CacheRedisTest {
   @Test
   public void testBatchUpdateEmpetyList() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     List<User> users = Lists.newArrayList();
     assertThat(dao.batchUpdate(users).length, equalTo(0));
   }
@@ -342,7 +359,9 @@ public class CacheRedisTest {
     }.getType();
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
     List<Msg> msgs = new ArrayList<Msg>();
-    MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    MsgDao dao = mango.create(MsgDao.class);
     int uid = 100;
     String key = getMsgKey(uid);
 
@@ -386,7 +405,9 @@ public class CacheRedisTest {
     }.getType();
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
     List<Msg> msgs = new ArrayList<Msg>();
-    MsgDao dao = mango.create(MsgDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    MsgDao dao = mango.create(MsgDao.class);
     int uid = 100;
     String key = getMsgKey(uid);
 
@@ -427,7 +448,9 @@ public class CacheRedisTest {
   @Test
   public void testQueryEmpty() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     Config oldConfig = mango.getConfig();
     Config newConfig = new Config();
     newConfig.setCompatibleWithEmptyList(true);
@@ -439,7 +462,9 @@ public class CacheRedisTest {
   @Test
   public void testUpdateEmpty() throws Exception {
     MockRedisCacheHandler cacheHandler = new MockRedisCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     Config oldConfig = mango.getConfig();
     Config newConfig = new Config();
     newConfig.setCompatibleWithEmptyList(true);

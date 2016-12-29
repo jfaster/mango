@@ -47,7 +47,6 @@ import static org.hamcrest.Matchers.hasSize;
 public class CacheNullObjectTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
-  private final static Mango mango = Mango.newInstance(ds);
 
   @Before
   public void before() throws Exception {
@@ -59,7 +58,9 @@ public class CacheNullObjectTest {
   @Test
   public void testSingleKey() throws Exception {
     LocalCacheHandler cacheHandler = new LocalCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
     User user = createRandomUser();
     int id = dao.insert(user);
     String key = getUserKey(id);
@@ -86,7 +87,9 @@ public class CacheNullObjectTest {
   @Test
   public void testMultiKeysReturnList() throws Exception {
     LocalCacheHandler cacheHandler = new LocalCacheHandler();
-    UserDao dao = mango.create(UserDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    UserDao dao = mango.create(UserDao.class);
 
     int base = 10000;
 

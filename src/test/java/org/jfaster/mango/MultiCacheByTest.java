@@ -39,7 +39,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class MultiCacheByTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
-  private final static Mango mango = Mango.newInstance(ds);
 
   @Before
   public void before() throws Exception {
@@ -52,7 +51,9 @@ public class MultiCacheByTest {
   @Test
   public void test() throws Exception {
     LocalCacheHandler cacheHandler = new LocalCacheHandler();
-    PositionDao dao = mango.create(PositionDao.class, cacheHandler);
+    Mango mango = Mango.newInstance(ds);
+    mango.setCacheHandler(cacheHandler);
+    PositionDao dao = mango.create(PositionDao.class);
     Position p = createRandomPosition();
     dao.insert(p);
     String key = getKey(p);

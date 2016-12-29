@@ -60,14 +60,14 @@ public class Mango {
   private DataSourceFactory dataSourceFactory;
 
   /**
-   * 全局缓存处理器
+   * 缓存处理器
    */
-  private CacheHandler defaultCacheHandler;
+  private CacheHandler cacheHandler;
 
   /**
-   * 全局懒加载，默认为false
+   * 是否懒加载
    */
-  private boolean isDefaultLazyInit = false;
+  private boolean isLazyInit = false;
 
   /**
    * 拦截器链，默认为空
@@ -112,7 +112,7 @@ public class Mango {
   }
 
   public static Mango newInstance(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler) {
-    return newInstance().setDataSourceFactory(dataSourceFactory).setDefaultCacheHandler(cacheHandler);
+    return newInstance().setDataSourceFactory(dataSourceFactory).setCacheHandler(cacheHandler);
   }
 
   /**
@@ -144,27 +144,6 @@ public class Mango {
    * 创建代理DAO类
    */
   public <T> T create(Class<T> daoClass) {
-    return create(daoClass, defaultCacheHandler, isDefaultLazyInit);
-  }
-
-  /**
-   * 创建代理DAO类，使用特定的{@link CacheHandler}
-   */
-  public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler) {
-    return create(daoClass, cacheHandler, isDefaultLazyInit);
-  }
-
-  /**
-   * 创建代理DAO类，自定义是否懒加载
-   */
-  public <T> T create(Class<T> daoClass, boolean isLazyInit) {
-    return create(daoClass, defaultCacheHandler, isLazyInit);
-  }
-
-  /**
-   * 创建代理DAO类，使用特定的{@link CacheHandler}，自定义是否懒加载
-   */
-  public <T> T create(Class<T> daoClass, @Nullable CacheHandler cacheHandler, boolean isLazyInit) {
     if (daoClass == null) {
       throw new NullPointerException("dao interface can't be null");
     }
@@ -179,9 +158,6 @@ public class Mango {
           "annotation but not found");
     }
 
-    if (cacheHandler == null) {
-      cacheHandler = defaultCacheHandler;
-    }
     Cache cacheAnno = daoClass.getAnnotation(Cache.class);
     if (cacheAnno != null && cacheHandler == null) {
       throw new IllegalStateException("if @Cache annotation on dao interface, " +
@@ -240,24 +216,24 @@ public class Mango {
     return this;
   }
 
-  public CacheHandler getDefaultCacheHandler() {
-    return defaultCacheHandler;
+  public CacheHandler getCacheHandler() {
+    return cacheHandler;
   }
 
-  public Mango setDefaultCacheHandler(CacheHandler defaultCacheHandler) {
-    if (defaultCacheHandler == null) {
-      throw new NullPointerException("defaultCacheHandler can't be null");
+  public Mango setCacheHandler(CacheHandler cacheHandler) {
+    if (cacheHandler == null) {
+      throw new NullPointerException("cacheHandler can't be null");
     }
-    this.defaultCacheHandler = defaultCacheHandler;
+    this.cacheHandler = cacheHandler;
     return this;
   }
 
-  public boolean isDefaultLazyInit() {
-    return isDefaultLazyInit;
+  public boolean isLazyInit() {
+    return isLazyInit;
   }
 
-  public Mango setDefaultLazyInit(boolean isDefaultLazyInit) {
-    this.isDefaultLazyInit = isDefaultLazyInit;
+  public Mango setLazyInit(boolean isLazyInit) {
+    this.isLazyInit = isLazyInit;
     return this;
   }
 
