@@ -27,6 +27,7 @@ import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
+import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
@@ -50,11 +51,11 @@ public class OperatorFactory {
   private final DataSourceGeneratorFactory dataSourceGeneratorFactory;
 
   public OperatorFactory(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
-                         InterceptorChain interceptorChain, JdbcOperations jdbcOperations, ConfigHolder configHolder) {
+                         InterceptorChain interceptorChain, ConfigHolder configHolder) {
     this.cacheHandler = cacheHandler;
     this.interceptorChain = interceptorChain;
-    this.jdbcOperations = jdbcOperations;
     this.configHolder = configHolder;
+    this.jdbcOperations = new JdbcTemplate();
     this.tableGeneratorFactory = new TableGeneratorFactory();
     this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactory);
   }

@@ -97,7 +97,7 @@ public class CacheableBatchUpdateOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()), ch,
-        new InterceptorChain(), null, new ConfigHolder());
+        new InterceptorChain(), new ConfigHolder());
 
     Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;

@@ -25,8 +25,6 @@ import org.jfaster.mango.descriptor.Methods;
 import org.jfaster.mango.exception.InitializationException;
 import org.jfaster.mango.interceptor.Interceptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.jdbc.JdbcOperations;
-import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.operator.cache.CacheHandler;
 import org.jfaster.mango.stat.*;
 import org.jfaster.mango.util.ToStringHelper;
@@ -75,11 +73,6 @@ public class Mango {
    * 拦截器链，默认为空
    */
   private InterceptorChain interceptorChain = new InterceptorChain();
-
-  /**
-   * jdbc操作
-   */
-  private JdbcOperations jdbcOperations = new JdbcTemplate();
 
   /**
    * 统计收集器
@@ -276,18 +269,6 @@ public class Mango {
     return this;
   }
 
-  public JdbcOperations getJdbcOperations() {
-    return jdbcOperations;
-  }
-
-  public Mango setJdbcOperations(JdbcOperations jdbcOperations) {
-    if (jdbcOperations == null) {
-      throw new NullPointerException("jdbcOperations can't be null");
-    }
-    this.jdbcOperations = jdbcOperations;
-    return this;
-  }
-
   public Config getConfig() {
     return configHolder.get();
   }
@@ -332,7 +313,7 @@ public class Mango {
     private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
       statCollector = mango.statCollector;
       operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
-          mango.interceptorChain, mango.jdbcOperations, mango.configHolder);
+          mango.interceptorChain, mango.configHolder);
     }
 
     @Override

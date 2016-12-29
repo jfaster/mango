@@ -313,7 +313,7 @@ public class BatchUpdateOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-        null, new InterceptorChain(), null, new ConfigHolder());
+        null, new InterceptorChain(), new ConfigHolder());
 
     Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
@@ -337,7 +337,7 @@ public class BatchUpdateOperatorTest {
     map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
     map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
     DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
-    OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), null, new ConfigHolder());
+    OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), new ConfigHolder());
     Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
