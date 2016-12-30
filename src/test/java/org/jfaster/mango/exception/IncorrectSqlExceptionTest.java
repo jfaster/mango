@@ -42,7 +42,8 @@ public class IncorrectSqlExceptionTest {
   private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
 
   static {
-    mango.setLazyInit(true).setCacheHandler(new LocalCacheHandler());
+    mango.setLazyInit(true);
+    mango.setCacheHandler(new LocalCacheHandler());
   }
 
   @Rule

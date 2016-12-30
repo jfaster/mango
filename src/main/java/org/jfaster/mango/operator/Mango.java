@@ -98,15 +98,22 @@ public class Mango extends Config {
   }
 
   public static Mango newInstance(DataSource dataSource) {
-    return newInstance().setDataSource(dataSource);
+    Mango mango = newInstance();
+    mango.setDataSource(dataSource);
+    return mango;
   }
 
   public static Mango newInstance(DataSourceFactory dataSourceFactory) {
-    return newInstance().setDataSourceFactory(dataSourceFactory);
+    Mango mango = newInstance();
+    mango.setDataSourceFactory(dataSourceFactory);
+    return mango;
   }
 
   public static Mango newInstance(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler) {
-    return newInstance().setDataSourceFactory(dataSourceFactory).setCacheHandler(cacheHandler);
+    Mango mango = newInstance();
+    mango.setDataSourceFactory(dataSourceFactory);
+    mango.setCacheHandler(cacheHandler);
+    return mango;
   }
 
   /**
@@ -123,7 +130,7 @@ public class Mango extends Config {
   /**
    * 添加拦截器
    */
-  public Mango addInterceptor(Interceptor interceptor) {
+  public void addInterceptor(Interceptor interceptor) {
     if (interceptor == null) {
       throw new NullPointerException("interceptor can't be null");
     }
@@ -131,7 +138,6 @@ public class Mango extends Config {
       interceptorChain = new InterceptorChain();
     }
     interceptorChain.addInterceptor(interceptor);
-    return this;
   }
 
   /**
@@ -191,58 +197,52 @@ public class Mango extends Config {
     return dataSourceFactory.getMasterDataSource(database);
   }
 
-  public Mango setDataSource(DataSource dataSource) {
+  public void setDataSource(DataSource dataSource) {
     if (dataSource == null) {
       throw new NullPointerException("dataSource can't be null");
     }
     dataSourceFactory = new SimpleDataSourceFactory(dataSource);
-    return this;
   }
 
   public DataSourceFactory getDataSourceFactory() {
     return dataSourceFactory;
   }
 
-  public Mango setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+  public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
     if (dataSourceFactory == null) {
       throw new NullPointerException("dataSourceFactory can't be null");
     }
     this.dataSourceFactory = dataSourceFactory;
-    return this;
   }
 
   public CacheHandler getCacheHandler() {
     return cacheHandler;
   }
 
-  public Mango setCacheHandler(CacheHandler cacheHandler) {
+  public void setCacheHandler(CacheHandler cacheHandler) {
     if (cacheHandler == null) {
       throw new NullPointerException("cacheHandler can't be null");
     }
     this.cacheHandler = cacheHandler;
-    return this;
   }
 
   public boolean isLazyInit() {
     return isLazyInit;
   }
 
-  public Mango setLazyInit(boolean isLazyInit) {
+  public void setLazyInit(boolean isLazyInit) {
     this.isLazyInit = isLazyInit;
-    return this;
   }
 
-  public Mango setInterceptorChain(InterceptorChain interceptorChain) {
+  public void setInterceptorChain(InterceptorChain interceptorChain) {
     if (interceptorChain == null) {
       throw new NullPointerException("interceptorChain can't be null");
     }
     this.interceptorChain = interceptorChain;
-    return this;
   }
 
-  public Mango setStatMonitor(StatMonitor statMonitor) {
+  public void setStatMonitor(StatMonitor statMonitor) {
     statCollector.initStatMonitor(statMonitor);
-    return this;
   }
 
   public void shutDownStatMonitor() {
