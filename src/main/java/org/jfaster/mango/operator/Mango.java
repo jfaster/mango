@@ -253,6 +253,7 @@ public class Mango extends Config {
 
     private final StatCollector statCollector;
     private final OperatorFactory operatorFactory;
+    private final boolean isUseActualParamName;
 
     private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
         new CacheLoader<Method, Operator>() {
@@ -264,7 +265,7 @@ public class Mango extends Config {
             MetaStat metaStat = combinedStat.getMetaStat();
             InitStat initStat = combinedStat.getInitStat();
             long now = System.nanoTime();
-            MethodDescriptor md = Methods.getMethodDescriptor(method);
+            MethodDescriptor md = Methods.getMethodDescriptor(method, isUseActualParamName);
             Operator operator = operatorFactory.getOperator(md, metaStat);
             initStat.recordInit(System.nanoTime() - now);
             metaStat.setMethod(method);
@@ -279,6 +280,7 @@ public class Mango extends Config {
         StatCollector statCollector,
         Config config) {
       this.statCollector = statCollector;
+      this.isUseActualParamName = config.isUseActualParamName();
       operatorFactory = new OperatorFactory(dataSourceFactory, cacheHandler, interceptorChain, config);
     }
 

@@ -27,6 +27,8 @@ public class Config {
 
   private boolean isCheckColumn = false;
 
+  private boolean isUseActualParamName = false;
+
   public boolean isCompatibleWithEmptyList() {
     return isCompatibleWithEmptyList;
   }
@@ -41,5 +43,13 @@ public class Config {
 
   public void setCheckColumn(boolean checkColumn) {
     isCheckColumn = checkColumn;
+  }
+
+  public boolean isUseActualParamName() {
+    return isUseActualParamName;
+  }
+
+  public void setUseActualParamName(boolean useActualParamName) {
+    isUseActualParamName = useActualParamName;
   }
 }

@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class Methods {
 
-  public static MethodDescriptor getMethodDescriptor(Method method) {
+  public static MethodDescriptor getMethodDescriptor(Method method, boolean isUseActualParamName) {
     List<Annotation> mas = new LinkedList<Annotation>();
     for (Annotation a : method.getAnnotations()) {
       mas.add(a);
@@ -41,7 +41,7 @@ public class Methods {
     List<ParameterDescriptor> pds = new LinkedList<ParameterDescriptor>();
     Type[] genericParameterTypes = method.getGenericParameterTypes();
     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-    String[] names = getParameterNames(method);
+    String[] names = getParameterNames(method, isUseActualParamName);
     for (int i = 0; i < genericParameterTypes.length; i++) {
       Type type = genericParameterTypes[i];
       Annotation[] pas = parameterAnnotations[i];
@@ -52,10 +52,17 @@ public class Methods {
     return MethodDescriptor.create(method.getDeclaringClass(), rd, pds);
   }
 
-  private static String[] getParameterNames(Method method) {
+  private static String[] getParameterNames(Method method, boolean isUseActualParamName) {
     String[] names = new String[method.getGenericParameterTypes().length];
     for (int i = 0; i < names.length; i++) {
-      names[i] = String.valueOf(i + 1);
+      String name = null;
+      if (isUseActualParamName) {
+        name = ParamNameResolver.getActualParamName(method, i);
+      }
+      if (name == null) {
+        name = String.valueOf(i + 1);
+      }
+      names[i] = name;
     }
     return names;
   }

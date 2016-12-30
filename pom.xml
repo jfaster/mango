@@ -42,8 +42,10 @@
     <properties>
         <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
         <maven.compiler.testSource>1.8</maven.compiler.testSource>
+        <maven.compiler.testCompilerArgument>-parameters</maven.compiler.testCompilerArgument>
         <javadoc.version>2.9.1</javadoc.version>
     </properties>
+
 
     <dependencies>
         <!-- spring plugin -->
@@ -203,6 +205,7 @@
                     <source>${maven.compiler.testSource}</source>
                     <target>${maven.compiler.testTarget}</target>
                     <encoding>utf-8</encoding>
+                    <testCompilerArgument>${maven.compiler.testCompilerArgument}</testCompilerArgument>
                 </configuration>
             </plugin>
 
@@ -252,6 +255,7 @@
             <properties>
                 <maven.compiler.testTarget>1.6</maven.compiler.testTarget>
                 <maven.compiler.testSource>1.6</maven.compiler.testSource>
+                <maven.compiler.testCompilerArgument></maven.compiler.testCompilerArgument>
             </properties>
             <build>
                 <pluginManagement>
@@ -278,6 +282,7 @@
             <properties>
                 <maven.compiler.testTarget>1.7</maven.compiler.testTarget>
                 <maven.compiler.testSource>1.7</maven.compiler.testSource>
+                <maven.compiler.testCompilerArgument></maven.compiler.testCompilerArgument>
             </properties>
             <build>
                 <pluginManagement>
