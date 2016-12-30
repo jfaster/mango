@@ -22,7 +22,6 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.Rename;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.SQL;
-import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.parser.EmptyCollectionException;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -308,15 +307,13 @@ public class DbTest {
 
   @Test
   public void testQueryEmpty() throws Exception {
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(true);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(true);
     assertThat(dao.getUsersInList(new ArrayList<Integer>()).size(), equalTo(0));
     assertThat(dao.getUsersInArray(new int[]{}).length, equalTo(0));
     assertThat(dao.getUsersInArray2(new int[]{}), nullValue());
     assertThat(dao.getUsersInSet(new HashSet<Integer>()).size(), equalTo(0));
-    mango.setConfig(oldConfig);
+    mango.setCompatibleWithEmptyList(old);
   }
 
   @Test
@@ -339,14 +336,12 @@ public class DbTest {
   public void testQueryEmpty2() throws Exception {
     thrown.expect(EmptyCollectionException.class);
     thrown.expectMessage("value of :1 can't be empty");
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(false);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(false);
     try {
       dao.getUsersInList(new ArrayList<Integer>());
     } finally {
-      mango.setConfig(oldConfig);
+      mango.setCompatibleWithEmptyList(old);
     }
   }
 
@@ -427,26 +422,22 @@ public class DbTest {
 
   @Test
   public void testUpdateEmpty() {
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(true);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(true);
     assertThat(dao.updateUsers(new ArrayList<Integer>(), "ash"), equalTo(0));
-    mango.setConfig(oldConfig);
+    mango.setCompatibleWithEmptyList(old);
   }
 
   @Test
   public void testUpdateEmpty2() {
     thrown.expect(EmptyCollectionException.class);
     thrown.expectMessage("value of :ids can't be empty");
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(false);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(false);
     try {
       dao.updateUsers(new ArrayList<Integer>(), "ash");
     } finally {
-      mango.setConfig(oldConfig);
+      mango.setCompatibleWithEmptyList(old);
     }
   }
 

@@ -20,12 +20,11 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.mapper.MappingException;
-import org.jfaster.mango.operator.Config;
-import org.jfaster.mango.util.logging.MangoLogger;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
+import org.jfaster.mango.util.logging.MangoLogger;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -103,10 +102,8 @@ public class BeanPropertyRowMapperTest {
   @Test
   public void testException() {
     thrown.expect(MappingException.class);
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCheckColumn(true);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCheckColumn();
+    mango.setCheckColumn(true);
     Msg2Dao dao = mango.create(Msg2Dao.class);
     MullMsg msg = MullMsg.createRandomMsg();
     int id = dao.insert(msg.getUid(), msg.getYyCon());
@@ -114,7 +111,7 @@ public class BeanPropertyRowMapperTest {
     try {
       dao.getMsg(id);
     } finally {
-      mango.setConfig(oldConfig);
+      mango.setCheckColumn(old);
     }
   }
 

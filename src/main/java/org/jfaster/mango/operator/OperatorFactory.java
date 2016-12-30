@@ -46,15 +46,15 @@ public class OperatorFactory {
   private final CacheHandler cacheHandler;
   private final InterceptorChain interceptorChain;
   private final JdbcOperations jdbcOperations;
-  private final ConfigHolder configHolder;
+  private final Config config;
   private final TableGeneratorFactory tableGeneratorFactory;
   private final DataSourceGeneratorFactory dataSourceGeneratorFactory;
 
   public OperatorFactory(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
-                         InterceptorChain interceptorChain, ConfigHolder configHolder) {
+                         InterceptorChain interceptorChain, Config config) {
     this.cacheHandler = cacheHandler;
     this.interceptorChain = interceptorChain;
-    this.configHolder = configHolder;
+    this.config = config;
     this.jdbcOperations = new JdbcTemplate();
     this.tableGeneratorFactory = new TableGeneratorFactory();
     this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactory);
@@ -93,13 +93,13 @@ public class OperatorFactory {
       stat.setCacheNullObject(driver.isCacheNullObject());
       switch (operatorType) {
         case QUERY:
-          operator = new CacheableQueryOperator(rootNode, md, driver, configHolder);
+          operator = new CacheableQueryOperator(rootNode, md, driver, config);
           break;
         case UPDATE:
-          operator = new CacheableUpdateOperator(rootNode, md, driver, configHolder);
+          operator = new CacheableUpdateOperator(rootNode, md, driver, config);
           break;
         case BATCHUPDATE:
-          operator = new CacheableBatchUpdateOperator(rootNode, md, driver, configHolder);
+          operator = new CacheableBatchUpdateOperator(rootNode, md, driver, config);
           break;
         default:
           throw new IllegalStateException();
@@ -107,13 +107,13 @@ public class OperatorFactory {
     } else {
       switch (operatorType) {
         case QUERY:
-          operator = new QueryOperator(rootNode, md, configHolder);
+          operator = new QueryOperator(rootNode, md, config);
           break;
         case UPDATE:
-          operator = new UpdateOperator(rootNode, md, configHolder);
+          operator = new UpdateOperator(rootNode, md, config);
           break;
         case BATCHUPDATE:
-          operator = new BatchUpdateOperator(rootNode, md, configHolder);
+          operator = new BatchUpdateOperator(rootNode, md, config);
           break;
         default:
           throw new IllegalStateException();

@@ -440,12 +440,10 @@ public class CacheTest {
     Mango mango = Mango.newInstance(ds);
     mango.setCacheHandler(cacheHandler);
     UserDao dao = mango.create(UserDao.class);
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(true);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(true);
     assertThat(dao.getUserArray(new ArrayList<Integer>()).length, equalTo(0));
-    mango.setConfig(oldConfig);
+    mango.setCompatibleWithEmptyList(old);
   }
 
   @Test
@@ -454,12 +452,10 @@ public class CacheTest {
     Mango mango = Mango.newInstance(ds);
     mango.setCacheHandler(cacheHandler);
     UserDao dao = mango.create(UserDao.class);
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(true);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(true);
     assertThat(dao.updateWithInStatement(new ArrayList<Integer>(), "ash"), equalTo(0));
-    mango.setConfig(oldConfig);
+    mango.setCompatibleWithEmptyList(old);
   }
 
   private String getUserKey(int id) {

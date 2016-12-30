@@ -64,15 +64,15 @@ public abstract class AbstractOperator implements Operator {
   /**
    * mango全局配置信息
    */
-  protected final ConfigHolder configHolder;
+  protected final Config config;
 
   /**
    * 用于对db进行操作
    */
-  protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, ConfigHolder configHolder) {
+  protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, Config config) {
     this.rootNode = rootNode;
     this.daoClass = daoClass;
-    this.configHolder = configHolder;
+    this.config = config;
   }
 
   @Override

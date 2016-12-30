@@ -18,16 +18,15 @@ package org.jfaster.mango;
 
 import com.google.common.collect.Lists;
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.MockRedisCacheHandler;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
 import org.jfaster.mango.support.model4table.User;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -451,12 +450,10 @@ public class CacheRedisTest {
     Mango mango = Mango.newInstance(ds);
     mango.setCacheHandler(cacheHandler);
     UserDao dao = mango.create(UserDao.class);
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(true);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(true);
     assertThat(dao.getUserArray(new ArrayList<Integer>()).length, equalTo(0));
-    mango.setConfig(oldConfig);
+    mango.setCompatibleWithEmptyList(old);
   }
 
   @Test
@@ -465,12 +462,10 @@ public class CacheRedisTest {
     Mango mango = Mango.newInstance(ds);
     mango.setCacheHandler(cacheHandler);
     UserDao dao = mango.create(UserDao.class);
-    Config oldConfig = mango.getConfig();
-    Config newConfig = new Config();
-    newConfig.setCompatibleWithEmptyList(true);
-    mango.setConfig(newConfig);
+    boolean old = mango.isCompatibleWithEmptyList();
+    mango.setCompatibleWithEmptyList(true);
     assertThat(dao.updateWithInStatement(new ArrayList<Integer>(), "ash"), equalTo(0));
-    mango.setConfig(oldConfig);
+    mango.setCompatibleWithEmptyList(old);
   }
 
   private String getUserKey(int id) {

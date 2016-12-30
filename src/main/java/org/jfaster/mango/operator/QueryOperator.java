@@ -48,8 +48,8 @@ public class QueryOperator extends AbstractOperator {
   protected ListSupplier listSupplier;
   protected SetSupplier setSupplier;
 
-  public QueryOperator(ASTRootNode rootNode, MethodDescriptor md, ConfigHolder configHolder) {
-    super(rootNode, md.getDaoClass(), configHolder);
+  public QueryOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+    super(rootNode, md.getDaoClass(), config);
     init(md);
   }
 
@@ -79,7 +79,6 @@ public class QueryOperator extends AbstractOperator {
     try {
       rootNode.render(context);
     } catch (EmptyObjectException e) {
-      final Config config = configHolder.get();
       if (config.isCompatibleWithEmptyList()) {
         return EmptyObject();
       } else {
@@ -158,7 +157,6 @@ public class QueryOperator extends AbstractOperator {
         }
       }
     }
-    final Config config = configHolder.get();
     return new BeanPropertyRowMapper<T>(clazz, ptc, config.isCheckColumn());
   }
 

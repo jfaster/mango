@@ -22,7 +22,7 @@ import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.operator.ConfigHolder;
+import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Operator;
 import org.jfaster.mango.operator.OperatorFactory;
 import org.jfaster.mango.stat.MetaStat;
@@ -132,7 +132,7 @@ public class CacheableUpdateOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(
         new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-        ch, new InterceptorChain(), new ConfigHolder());
+        ch, new InterceptorChain(), new Config());
 
     Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;

@@ -36,7 +36,6 @@ import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.AbstractInvocationHandler;
 import org.jfaster.mango.util.reflect.Reflection;
 
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -50,7 +49,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author ash
  */
-public class Mango {
+public class Mango extends Config {
 
   private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
@@ -78,11 +77,6 @@ public class Mango {
    * 统计收集器
    */
   private final StatCollector statCollector = new StatCollector();
-
-  /**
-   * mango全局配置信息
-   */
-  private ConfigHolder configHolder = new ConfigHolder();
 
   /**
    * mango实例
@@ -168,7 +162,8 @@ public class Mango {
       throw new IllegalArgumentException("dataSourceFactory can't be null");
     }
 
-    MangoInvocationHandler handler = new MangoInvocationHandler(this, cacheHandler);
+    MangoInvocationHandler handler = new MangoInvocationHandler(
+        dataSourceFactory, cacheHandler, interceptorChain, statCollector, this);
     if (!isLazyInit) { // 不使用懒加载，则提前加载
       Method[] methods = daoClass.getMethods();
       for (Method method : methods) {
@@ -245,15 +240,6 @@ public class Mango {
     return this;
   }
 
-  public Config getConfig() {
-    return configHolder.get();
-  }
-
-  public Mango setConfig(Config config) {
-    configHolder.set(config);
-    return this;
-  }
-
   public Mango setStatMonitor(StatMonitor statMonitor) {
     statCollector.initStatMonitor(statMonitor);
     return this;
@@ -286,10 +272,14 @@ public class Mango {
           }
         });
 
-    private MangoInvocationHandler(Mango mango, @Nullable CacheHandler cacheHandler) {
-      statCollector = mango.statCollector;
-      operatorFactory = new OperatorFactory(mango.dataSourceFactory, cacheHandler,
-          mango.interceptorChain, mango.configHolder);
+    private MangoInvocationHandler(
+        DataSourceFactory dataSourceFactory,
+        CacheHandler cacheHandler,
+        InterceptorChain interceptorChain,
+        StatCollector statCollector,
+        Config config) {
+      this.statCollector = statCollector;
+      operatorFactory = new OperatorFactory(dataSourceFactory, cacheHandler, interceptorChain, config);
     }
 
     @Override
