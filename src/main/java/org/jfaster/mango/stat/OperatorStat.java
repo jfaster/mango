@@ -250,7 +250,7 @@ public class OperatorStat {
   /**
    * 返回平均每次db执行时间，单位为纳秒
    */
-  public long getDatabaseAverageExecutePenalty() {
+  public long getDatabaseExecuteAveragePenalty() {
     long totalDatabaseExecuteCount = getDatabaseExecuteCount();
     return (totalDatabaseExecuteCount == 0)
         ? 0
@@ -315,7 +315,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[get]执行时间，单位为纳秒
    */
-  public long getCacheAverageGetPenalty() {
+  public long getCacheGetAveragePenalty() {
     long totalCacheGetCount = getCacheGetCount();
     return (totalCacheGetCount == 0)
         ? 0
@@ -364,7 +364,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[getBulk]执行时间，单位为纳秒
    */
-  public long getCacheAverageGetBulkPenalty() {
+  public long getCacheGetBulkAveragePenalty() {
     long totalCacheGetBulkCount = getCacheGetBulkCount();
     return (totalCacheGetBulkCount == 0)
         ? 0
@@ -413,7 +413,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[set]执行时间，单位为纳秒
    */
-  public long getCacheAverageSetPenalty() {
+  public long getCacheSetAveragePenalty() {
     long totalCacheSetCount = getCacheSetCount();
     return (totalCacheSetCount == 0)
         ? 0
@@ -462,7 +462,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[add]执行时间，单位为纳秒
    */
-  public long getCacheAverageAddPenalty() {
+  public long getCacheAddAveragePenalty() {
     long totalCacheAddCount = getCacheAddCount();
     return (totalCacheAddCount == 0)
         ? 0
@@ -511,7 +511,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[delete]执行时间，单位为纳秒
    */
-  public long getCacheAverageDeletePenalty() {
+  public long getCacheDeleteAveragePenalty() {
     long totalCacheDeleteCount = getCacheDeleteCount();
     return (totalCacheDeleteCount == 0)
         ? 0
@@ -560,7 +560,7 @@ public class OperatorStat {
   /**
    * 返回平均每次cache[batchDelete]执行时间，单位为纳秒
    */
-  public long getCacheAverageBatchDeletePenalty() {
+  public long getCacheBatchDeleteAveragePenalty() {
     long totalCacheBatchDeleteCount = getCacheBatchDeleteCount();
     return (totalCacheBatchDeleteCount == 0)
         ? 0
