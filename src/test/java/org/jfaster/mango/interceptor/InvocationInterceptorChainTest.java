@@ -21,10 +21,6 @@ import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
-import org.jfaster.mango.interceptor.Interceptor;
-import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.interceptor.InvocationInterceptorChain;
-import org.jfaster.mango.interceptor.Parameter;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -47,8 +43,8 @@ public class InvocationInterceptorChainTest {
   public void testIntercept() throws Exception {
     final String sql = "select * from user where id=? and name=?";
     BoundSql boundSql = new BoundSql(sql);
-    boundSql.addNonNullArg(1);
-    boundSql.addNonNullArg("ash");
+    boundSql.addArg(1);
+    boundSql.addArg("ash");
     final User user = new User();
     user.setId(100);
     user.setName("lucy");

@@ -51,13 +51,19 @@ public class BoundSql {
     this.sql = sql;
   }
 
-  public void addNonNullArg(Object obj) {
+  public void addArg(Object obj) {
+    if (obj == null) {
+      throw new IllegalArgumentException("arg can't be null, if arg is null please use method addNullArg");
+    }
     TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(obj.getClass());
     args.add(obj);
     typeHandlers.add(typeHandler);
   }
 
-  public void addNonNullArg(int index, Object obj) {
+  public void addArg(int index, Object obj) {
+    if (obj == null) {
+      throw new IllegalArgumentException("arg can't be null, if arg is null please use method addNullArg");
+    }
     TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(obj.getClass());
     args.add(index, obj);
     typeHandlers.add(index, typeHandler);

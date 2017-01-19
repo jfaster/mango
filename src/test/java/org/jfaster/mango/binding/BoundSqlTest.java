@@ -56,7 +56,7 @@ public class BoundSqlTest {
       if (arg == null) {
         bs.addNullArg(Long.class);
       } else {
-        bs.addNonNullArg(arg);
+        bs.addArg(arg);
       }
     }
     assertThat(bs.getSql(), equalTo(sql));
@@ -68,7 +68,7 @@ public class BoundSqlTest {
     assertThat(newTypeHandlerClasses, equalTo(typeHandlerClasses));
 
     bs = new BoundSql(sql, Lists.newArrayList(args), Lists.newArrayList(typeHandlers));
-    bs.addNonNullArg(0, "lucy");
+    bs.addArg(0, "lucy");
     bs.addNullArg(1, String.class);
 
     args.add(0, "lucy");
