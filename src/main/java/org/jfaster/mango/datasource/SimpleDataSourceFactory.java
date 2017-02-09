@@ -23,7 +23,7 @@ import javax.sql.DataSource;
  *
  * @author ash
  */
-public class SimpleDataSourceFactory implements DataSourceFactory {
+public class SimpleDataSourceFactory extends AbstractDataSourceFactory {
 
   private DataSource dataSource;
 
@@ -34,13 +34,18 @@ public class SimpleDataSourceFactory implements DataSourceFactory {
     this.dataSource = dataSource;
   }
 
+  public SimpleDataSourceFactory(String name, DataSource dataSource) {
+    super(name);
+    this.dataSource = dataSource;
+  }
+
   @Override
-  public DataSource getMasterDataSource(String database) {
+  public DataSource getMasterDataSource() {
     return dataSource;
   }
 
   @Override
-  public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
+  public DataSource getSlaveDataSource(Class<?> daoClass) {
     return dataSource;
   }
 

@@ -19,6 +19,7 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.Methods;
@@ -40,6 +41,7 @@ import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -54,9 +56,9 @@ public class Mango extends Config {
   private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
   /**
-   * 数据源工厂
+   * 数据源工厂组
    */
-  private DataSourceFactory dataSourceFactory;
+  private DataSourceFactoryGroup dataSourceFactoryGroup;
 
   /**
    * 缓存处理器
@@ -109,9 +111,26 @@ public class Mango extends Config {
     return mango;
   }
 
+  public static Mango newInstance(DataSourceFactory... dataSourceFactories) {
+    return newInstance(Arrays.asList(dataSourceFactories));
+  }
+
+  public static Mango newInstance(List<DataSourceFactory> dataSourceFactories) {
+    Mango mango = newInstance();
+    mango.setDataSourceFactories(dataSourceFactories);
+    return mango;
+  }
+
   public static Mango newInstance(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler) {
     Mango mango = newInstance();
     mango.setDataSourceFactory(dataSourceFactory);
+    mango.setCacheHandler(cacheHandler);
+    return mango;
+  }
+
+  public static Mango newInstance(List<DataSourceFactory> dataSourceFactories, CacheHandler cacheHandler) {
+    Mango mango = newInstance();
+    mango.setDataSourceFactories(dataSourceFactories);
     mango.setCacheHandler(cacheHandler);
     return mango;
   }
@@ -164,12 +183,12 @@ public class Mango extends Config {
           "cacheHandler can't be null");
     }
 
-    if (dataSourceFactory == null) {
-      throw new IllegalArgumentException("dataSourceFactory can't be null");
+    if (dataSourceFactoryGroup == null) {
+      throw new IllegalArgumentException("please set dataSource or dataSourceFactory or dataSourceFactories");
     }
 
     MangoInvocationHandler handler = new MangoInvocationHandler(
-        dataSourceFactory, cacheHandler, interceptorChain, statCollector, this);
+        dataSourceFactoryGroup, cacheHandler, interceptorChain, statCollector, this);
     if (!isLazyInit) { // 不使用懒加载，则提前加载
       Method[] methods = daoClass.getMethods();
       for (Method method : methods) {
@@ -191,28 +210,41 @@ public class Mango extends Config {
   }
 
   /**
-   * 根据数据源名字获得主库数据源
+   * 根据数据源工厂名字获得主库数据源
    */
-  public DataSource getMasterDataSource(String database) {
-    return dataSourceFactory.getMasterDataSource(database);
+  public DataSource getMasterDataSource(String name) {
+    return dataSourceFactoryGroup.getMasterDataSource(name);
   }
 
   public void setDataSource(DataSource dataSource) {
     if (dataSource == null) {
       throw new NullPointerException("dataSource can't be null");
     }
-    dataSourceFactory = new SimpleDataSourceFactory(dataSource);
-  }
-
-  public DataSourceFactory getDataSourceFactory() {
-    return dataSourceFactory;
+    setDataSourceFactory(new SimpleDataSourceFactory(dataSource));
   }
 
   public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
     if (dataSourceFactory == null) {
       throw new NullPointerException("dataSourceFactory can't be null");
     }
-    this.dataSourceFactory = dataSourceFactory;
+    setDataSourceFactories(Arrays.asList(dataSourceFactory));
+  }
+
+  public void addDataSourceFactory(DataSourceFactory dataSourceFactory) {
+    if (dataSourceFactory == null) {
+      throw new NullPointerException("dataSourceFactory can't be null");
+    }
+    if (dataSourceFactoryGroup == null) {
+      dataSourceFactoryGroup = new DataSourceFactoryGroup();
+    }
+    dataSourceFactoryGroup.addDataSourceFactory(dataSourceFactory);
+  }
+
+  public void setDataSourceFactories(List<DataSourceFactory> dataSourceFactories) {
+    if (dataSourceFactories == null || dataSourceFactories.isEmpty()) {
+      throw new IllegalArgumentException("dataSourceFactories can't be null or empty");
+    }
+    dataSourceFactoryGroup = new DataSourceFactoryGroup(dataSourceFactories);
   }
 
   public CacheHandler getCacheHandler() {
@@ -274,14 +306,14 @@ public class Mango extends Config {
         });
 
     private MangoInvocationHandler(
-        DataSourceFactory dataSourceFactory,
+        DataSourceFactoryGroup dataSourceFactoryGroup,
         CacheHandler cacheHandler,
         InterceptorChain interceptorChain,
         StatCollector statCollector,
         Config config) {
       this.statCollector = statCollector;
       this.isUseActualParamName = config.isUseActualParamName();
-      operatorFactory = new OperatorFactory(dataSourceFactory, cacheHandler, interceptorChain, config);
+      operatorFactory = new OperatorFactory(dataSourceFactoryGroup, cacheHandler, interceptorChain, config);
     }
 
     @Override

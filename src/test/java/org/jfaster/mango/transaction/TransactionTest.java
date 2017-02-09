@@ -18,6 +18,7 @@ package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
+import org.jfaster.mango.datasource.AbstractDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
@@ -65,7 +66,7 @@ public class TransactionTest {
     x.add(num);
     y.sub(num);
     TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-    Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+    Transaction tx = TransactionFactory.newTransaction(mango, AbstractDataSourceFactory.DEFULT_NAME, level);
     ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
     assertThat(connHolder, notNullValue());
     assertThat(connHolder.getConnection(), notNullValue());
@@ -99,7 +100,7 @@ public class TransactionTest {
     x.add(num);
     y.sub(num);
     TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-    Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+    Transaction tx = TransactionFactory.newTransaction(mango, AbstractDataSourceFactory.DEFULT_NAME, level);
     ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
     assertThat(connHolder, notNullValue());
     assertThat(connHolder.getConnection(), notNullValue());
@@ -135,7 +136,7 @@ public class TransactionTest {
     x.add(num);
     y.sub(num);
     TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-    Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+    Transaction tx = TransactionFactory.newTransaction(mango, AbstractDataSourceFactory.DEFULT_NAME, level);
     ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
     assertThat(connHolder, notNullValue());
     assertThat(connHolder.getConnection(), notNullValue());
@@ -162,7 +163,7 @@ public class TransactionTest {
     int previousLevel = getPreviousLevel();
 
     TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-    Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+    Transaction tx = TransactionFactory.newTransaction(mango, AbstractDataSourceFactory.DEFULT_NAME, level);
     ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
     assertThat(connHolder, notNullValue());
     assertThat(connHolder.getConnection(), notNullValue());
@@ -182,7 +183,7 @@ public class TransactionTest {
     int previousLevel = getPreviousLevel();
 
     TransactionIsolationLevel level = TransactionIsolationLevel.SERIALIZABLE;
-    Transaction tx = TransactionFactory.newTransaction(mango, "", level);
+    Transaction tx = TransactionFactory.newTransaction(mango, AbstractDataSourceFactory.DEFULT_NAME, level);
     ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
     assertThat(connHolder, notNullValue());
     assertThat(connHolder.getConnection(), notNullValue());
@@ -208,7 +209,7 @@ public class TransactionTest {
     x.add(num);
     y.sub(num);
 
-    Transaction tx = TransactionFactory.newTransaction(mango, "");
+    Transaction tx = TransactionFactory.newTransaction(mango, AbstractDataSourceFactory.DEFULT_NAME);
     ConnectionHolder connHolder = TransactionSynchronizationManager.getConnectionHolder(ds);
 
     dao.update(x);

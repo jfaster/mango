@@ -18,7 +18,7 @@ package org.jfaster.mango.operator;
 
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.binding.ParameterContext;
-import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.DataSourceType;
 
 import javax.annotation.Nullable;
@@ -28,19 +28,20 @@ import javax.annotation.Nullable;
  */
 public class DataSourceGeneratorFactory {
 
-  private final DataSourceFactory dataSourceFactory;
+  private final DataSourceFactoryGroup dataSourceFactoryGroup;
   private final DatabaseGeneratorFactory databaseGeneratorFactory;
 
-  public DataSourceGeneratorFactory(DataSourceFactory dataSourceFactory) {
-    this.dataSourceFactory = dataSourceFactory;
+  public DataSourceGeneratorFactory(DataSourceFactoryGroup dataSourceFactoryGroup) {
+    this.dataSourceFactoryGroup = dataSourceFactoryGroup;
     this.databaseGeneratorFactory = new DatabaseGeneratorFactory();
   }
 
   public DataSourceGenerator getDataSourceGenerator(
-      DataSourceType dataSourceType, @Nullable Sharding shardingAnno, String database, ParameterContext context) {
+      DataSourceType dataSourceType, @Nullable Sharding shardingAnno,
+      String dataSourceFactoryName, ParameterContext context) {
 
-    DatabaseGenerator databaseGenerator = databaseGeneratorFactory.getDataSourceGenerator(shardingAnno, database, context);
-    return new DefaultDataSourceGenerator(databaseGenerator, dataSourceFactory, dataSourceType);
+    DatabaseGenerator databaseGenerator = databaseGeneratorFactory.getDataSourceGenerator(shardingAnno, dataSourceFactoryName, context);
+    return new DefaultDataSourceGenerator(databaseGenerator, dataSourceFactoryGroup, dataSourceType);
   }
 
 }

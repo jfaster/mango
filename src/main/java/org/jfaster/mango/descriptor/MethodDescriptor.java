@@ -75,13 +75,13 @@ public class MethodDescriptor {
     return table;
   }
 
-  public String getDatabase() {
+  public String getDataSourceFactoryName() {
     DB dbAnno = getAnnotation(DB.class);
     if (dbAnno == null) {
       throw new DescriptionException("dao interface expected one @DB " +
           "annotation but not found");
     }
-    return dbAnno.database();
+    return dbAnno.name();
   }
 
   @Nullable

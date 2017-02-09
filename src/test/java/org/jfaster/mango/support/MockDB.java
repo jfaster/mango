@@ -17,6 +17,7 @@
 package org.jfaster.mango.support;
 
 import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.datasource.AbstractDataSourceFactory;
 
 import java.lang.annotation.Annotation;
 
@@ -25,21 +26,21 @@ import java.lang.annotation.Annotation;
  */
 public class MockDB implements Annotation, DB {
 
-  private String database = "";
+  private String name = AbstractDataSourceFactory.DEFULT_NAME;
 
   private String table = "";
 
   public MockDB() {
   }
 
-  public MockDB(String database, String table) {
-    this.database = database;
+  public MockDB(String name, String table) {
+    this.name = name;
     this.table = table;
   }
 
   @Override
-  public String database() {
-    return database;
+  public String name() {
+    return name;
   }
 
   @Override

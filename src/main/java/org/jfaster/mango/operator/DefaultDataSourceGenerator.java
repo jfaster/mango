@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -33,13 +33,13 @@ public class DefaultDataSourceGenerator implements DataSourceGenerator {
   private final static InternalLogger logger = InternalLoggerFactory.getInstance(DefaultDataSourceGenerator.class);
 
   private final DatabaseGenerator databaseGenerator;
-  private final DataSourceFactory dataSourceFactory;
+  private final DataSourceFactoryGroup dataSourceFactoryGroup;
   private final DataSourceType dataSourceType;
 
   public DefaultDataSourceGenerator(
-      DatabaseGenerator databaseGenerator, DataSourceFactory dataSourceFactory, DataSourceType dataSourceType) {
+      DatabaseGenerator databaseGenerator, DataSourceFactoryGroup dataSourceFactoryGroup, DataSourceType dataSourceType) {
     this.databaseGenerator = databaseGenerator;
-    this.dataSourceFactory = dataSourceFactory;
+    this.dataSourceFactoryGroup = dataSourceFactoryGroup;
     this.dataSourceType = dataSourceType;
   }
 
@@ -50,8 +50,8 @@ public class DefaultDataSourceGenerator implements DataSourceGenerator {
       logger.debug("The name of database is [" + database + "]");
     }
     DataSource ds = dataSourceType == DataSourceType.MASTER ?
-        dataSourceFactory.getMasterDataSource(database) :
-        dataSourceFactory.getSlaveDataSource(database, daoClass);
+        dataSourceFactoryGroup.getMasterDataSource(database) :
+        dataSourceFactoryGroup.getSlaveDataSource(database, daoClass);
     if (ds == null) {
       throw new DescriptionException("can't find database for name [" + database + "]");
     }

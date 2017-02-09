@@ -17,6 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.binding.BoundSql;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
@@ -274,10 +275,10 @@ public class QueryOperatorTest {
     }
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
     MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+    DataSourceFactoryGroup group = new DataSourceFactoryGroup();
+    group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 
-    OperatorFactory factory = new OperatorFactory(
-        new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-        null, new InterceptorChain(), new Config());
+    OperatorFactory factory = new OperatorFactory(group, null, new InterceptorChain(), new Config());
 
     Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;

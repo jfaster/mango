@@ -19,8 +19,6 @@ package org.jfaster.mango.sharding;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -33,9 +31,7 @@ import org.junit.Test;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -52,16 +48,14 @@ public class DatabaseSharding2Test {
 
   @Before
   public void before() throws Exception {
-    Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
+    mango = Mango.newInstance();
     for (int i = 0; i < 3; i++) {
       DataSource ds = DataSourceConfig.getDataSource(i + 1);
       Connection conn = ds.getConnection();
       Table.MSG.load(conn);
       conn.close();
-      factories.put(dsns[i], new SimpleDataSourceFactory(ds));
+      mango.addDataSourceFactory(new SimpleDataSourceFactory(dsns[i], ds));
     }
-    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
-    mango = Mango.newInstance(dsf);
   }
 
   @Test

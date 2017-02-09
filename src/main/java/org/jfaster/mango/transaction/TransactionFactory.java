@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.transaction;
 
+import org.jfaster.mango.datasource.AbstractDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.transaction.exception.CannotCreateTransactionException;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -59,11 +60,11 @@ public abstract class TransactionFactory {
   }
 
   public static Transaction newTransaction(TransactionIsolationLevel level) {
-    return newTransaction("", level);
+    return newTransaction(AbstractDataSourceFactory.DEFULT_NAME, level);
   }
 
   public static Transaction newTransaction() {
-    return newTransaction("", TransactionIsolationLevel.DEFAULT);
+    return newTransaction(AbstractDataSourceFactory.DEFULT_NAME, TransactionIsolationLevel.DEFAULT);
   }
 
   private static Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level) {

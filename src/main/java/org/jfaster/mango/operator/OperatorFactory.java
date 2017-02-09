@@ -20,7 +20,7 @@ import org.jfaster.mango.annotation.UseMaster;
 import org.jfaster.mango.binding.DefaultParameterContext;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.binding.ParameterContext;
-import org.jfaster.mango.datasource.DataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
@@ -50,14 +50,14 @@ public class OperatorFactory {
   private final TableGeneratorFactory tableGeneratorFactory;
   private final DataSourceGeneratorFactory dataSourceGeneratorFactory;
 
-  public OperatorFactory(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler,
+  public OperatorFactory(DataSourceFactoryGroup dataSourceFactoryGroup, CacheHandler cacheHandler,
                          InterceptorChain interceptorChain, Config config) {
     this.cacheHandler = cacheHandler;
     this.interceptorChain = interceptorChain;
     this.config = config;
     this.jdbcOperations = new JdbcTemplate();
     this.tableGeneratorFactory = new TableGeneratorFactory();
-    this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactory);
+    this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactoryGroup);
   }
 
   public Operator getOperator(MethodDescriptor md, MetaStat stat) {
@@ -83,7 +83,7 @@ public class OperatorFactory {
     // 构造数据源生成器
     DataSourceType dataSourceType = getDataSourceType(operatorType, md);
     DataSourceGenerator dataSourceGenerator = dataSourceGeneratorFactory.
-        getDataSourceGenerator(dataSourceType, md.getShardingAnno(), md.getDatabase(), context);
+        getDataSourceGenerator(dataSourceType, md.getShardingAnno(), md.getDataSourceFactoryName(), context);
 
     Operator operator;
     if (md.isUseCache()) {

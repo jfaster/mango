@@ -17,8 +17,7 @@
 package org.jfaster.mango.operator;
 
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
@@ -39,7 +38,10 @@ import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -311,9 +313,9 @@ public class BatchUpdateOperatorTest {
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
     MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-    OperatorFactory factory = new OperatorFactory(
-        new SimpleDataSourceFactory(DataSourceConfig.getDataSource()),
-        null, new InterceptorChain(), new Config());
+    DataSourceFactoryGroup group = new DataSourceFactoryGroup();
+    group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
+    OperatorFactory factory = new OperatorFactory(group, null, new InterceptorChain(), new Config());
 
     Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
@@ -332,12 +334,10 @@ public class BatchUpdateOperatorTest {
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
     MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
 
-
-    Map<String, DataSourceFactory> map = new HashMap<String, DataSourceFactory>();
-    map.put("l50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(0)));
-    map.put("g50", new SimpleDataSourceFactory(DataSourceConfig.getDataSource(1)));
-    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(map);
-    OperatorFactory factory = new OperatorFactory(dsf, null, new InterceptorChain(), new Config());
+    DataSourceFactoryGroup group = new DataSourceFactoryGroup();
+    group.addDataSourceFactory(new SimpleDataSourceFactory("l50", DataSourceConfig.getDataSource(0)));
+    group.addDataSourceFactory(new SimpleDataSourceFactory("g50", DataSourceConfig.getDataSource(1)));
+    OperatorFactory factory = new OperatorFactory(group, null, new InterceptorChain(), new Config());
     Operator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }

@@ -43,7 +43,7 @@ import java.lang.reflect.Type;
 public class DatabaseGeneratorFactory {
 
   public DatabaseGenerator getDataSourceGenerator(
-      @Nullable Sharding shardingAnno, String database, ParameterContext context) {
+      @Nullable Sharding shardingAnno, String dataSourceFactoryName, ParameterContext context) {
 
     DatabaseShardingStrategy strategy = getDatabaseShardingStrategy(shardingAnno);
     TypeToken<?> strategyToken = null;
@@ -96,7 +96,7 @@ public class DatabaseGeneratorFactory {
             "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
       }
     } else {
-      dataSourceGenerator = new SimpleDatabaseGenerator(database);
+      dataSourceGenerator = new SimpleDatabaseGenerator(dataSourceFactoryName);
     }
     return dataSourceGenerator;
   }

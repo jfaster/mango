@@ -25,7 +25,7 @@ import java.util.Random;
  *
  * @author ash
  */
-public class MasterSlaveDataSourceFactory implements DataSourceFactory {
+public class MasterSlaveDataSourceFactory extends AbstractDataSourceFactory {
 
   private DataSource master;
   private List<DataSource> slaves;
@@ -39,13 +39,19 @@ public class MasterSlaveDataSourceFactory implements DataSourceFactory {
     this.slaves = slaves;
   }
 
+  public MasterSlaveDataSourceFactory(String name, DataSource master, List<DataSource> slaves) {
+    super(name);
+    this.master = master;
+    this.slaves = slaves;
+  }
+
   @Override
-  public DataSource getMasterDataSource(String database) {
+  public DataSource getMasterDataSource() {
     return master;
   }
 
   @Override
-  public DataSource getSlaveDataSource(String database, Class<?> daoClass) {
+  public DataSource getSlaveDataSource(Class<?> daoClass) {
     return slaves.get(random.nextInt(slaves.size()));
   }
 

@@ -25,8 +25,10 @@ import javax.sql.DataSource;
  */
 public interface DataSourceFactory {
 
-  public DataSource getMasterDataSource(String database);
+  public String getName();
 
-  public DataSource getSlaveDataSource(String database, Class<?> daoClass);
+  public DataSource getMasterDataSource();
+
+  public DataSource getSlaveDataSource(Class<?> daoClass);
 
 }

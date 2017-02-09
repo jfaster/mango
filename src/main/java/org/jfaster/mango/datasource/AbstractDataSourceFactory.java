@@ -14,34 +14,32 @@
  * under the License.
  */
 
-package org.jfaster.mango.annotation;
-
-import org.jfaster.mango.datasource.AbstractDataSourceFactory;
-
-import java.lang.annotation.*;
+package org.jfaster.mango.datasource;
 
 /**
- * 修饰DAO接口，只有使用此注解修饰的DAO接口，才能被mango识别
- *
  * @author ash
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface DB {
+public abstract class AbstractDataSourceFactory implements DataSourceFactory {
 
-  /**
-   * 数据源工厂名
-   *
-   * @return
-   */
-  String name() default AbstractDataSourceFactory.DEFULT_NAME;
+  public final static String DEFULT_NAME = "DEFAULT";
 
-  /**
-   * 全局表名，在{@link SQL}的字符串参数，可以通过#table的方式引用此全局表名。
-   *
-   * @return
-   */
-  String table() default "";
+  private String name;
+
+  protected AbstractDataSourceFactory() {
+    this(DEFULT_NAME);
+  }
+
+  protected AbstractDataSourceFactory(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
 }

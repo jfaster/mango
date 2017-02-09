@@ -17,8 +17,6 @@
 package org.jfaster.mango.transaction;
 
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
@@ -29,8 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -48,11 +44,7 @@ public class ParallelTransactionTest {
   private static Mango mango;
 
   static {
-    Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
-    factories.put("db1", new SimpleDataSourceFactory(ds1));
-    factories.put("db2", new SimpleDataSourceFactory(ds2));
-    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
-    mango = Mango.newInstance(dsf);
+    mango = Mango.newInstance(new SimpleDataSourceFactory("db1", ds1), new SimpleDataSourceFactory("db2", ds2));
   }
 
   private final static MsgDao dao = mango.create(MsgDao.class);

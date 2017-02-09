@@ -17,21 +17,17 @@
 package org.jfaster.mango.sharding;
 
 import org.jfaster.mango.annotation.*;
-import org.jfaster.mango.util.HashUtil;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Bill;
+import org.jfaster.mango.util.HashUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -51,16 +47,14 @@ public class BillShardingTest {
 
   @Before
   public void before() throws Exception {
-    Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
+    Mango mango = Mango.newInstance();
     for (int i = 0; i < 4; i++) {
       DataSource ds = DataSourceConfig.getDataSource(i + 1);
       Connection conn = ds.getConnection();
       Table.BILL_PARTITION.load(conn);
       conn.close();
-      factories.put(dsns[i], new SimpleDataSourceFactory(ds));
+      mango.addDataSourceFactory(new SimpleDataSourceFactory(dsns[i], ds));
     }
-    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
-    Mango mango = Mango.newInstance(dsf);
     bill1Dao = mango.create(Bill1Dao.class);
     bill2Dao = mango.create(Bill2Dao.class);
     bill3Dao = mango.create(Bill3Dao.class);
@@ -137,7 +131,7 @@ public class BillShardingTest {
     public Bill getBill(String table, int cid, String uid);
   }
 
-  @DB(database = "db1")
+  @DB(name = "db1")
   interface Bill1Dao extends IBillDao {
     @SQL("insert into #{:table}(cid, uid, price) values(:cid, :uid, :price)")
     int insert(@Rename("table") String table, Bill bill);
@@ -146,7 +140,7 @@ public class BillShardingTest {
     public Bill getBill(String table, int cid, String uid);
   }
 
-  @DB(database = "db2")
+  @DB(name = "db2")
   interface Bill2Dao extends IBillDao {
     @SQL("insert into #{:table}(cid, uid, price) values(:cid, :uid, :price)")
     int insert(@Rename("table") String table, Bill bill);
@@ -155,7 +149,7 @@ public class BillShardingTest {
     public Bill getBill(String table, int cid, String uid);
   }
 
-  @DB(database = "db3")
+  @DB(name = "db3")
   interface Bill3Dao extends IBillDao {
     @SQL("insert into #{:table}(cid, uid, price) values(:cid, :uid, :price)")
     int insert(@Rename("table") String table, Bill bill);
@@ -164,7 +158,7 @@ public class BillShardingTest {
     public Bill getBill(String table, int cid, String uid);
   }
 
-  @DB(database = "db4")
+  @DB(name = "db4")
   interface Bill4Dao extends IBillDao {
     @SQL("insert into #{:table}(cid, uid, price) values(:cid, :uid, :price)")
     int insert(@Rename("table") String table, Bill bill);

@@ -20,8 +20,6 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.annotation.ShardingBy;
-import org.jfaster.mango.datasource.DataSourceFactory;
-import org.jfaster.mango.datasource.MultipleDatabaseDataSourceFactory;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
@@ -32,9 +30,7 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,16 +46,14 @@ public class OrderShardingTest {
 
   @Before
   public void before() throws Exception {
-    Map<String, DataSourceFactory> factories = new HashMap<String, DataSourceFactory>();
+    Mango mango = Mango.newInstance();
     for (int i = 0; i < 4; i++) {
       DataSource ds = DataSourceConfig.getDataSource(i + 1);
       Connection conn = ds.getConnection();
       Table.ORDER_PARTITION.load(conn);
       conn.close();
-      factories.put(dsns[i], new SimpleDataSourceFactory(ds));
+      mango.addDataSourceFactory(new SimpleDataSourceFactory(dsns[i], ds));
     }
-    DataSourceFactory dsf = new MultipleDatabaseDataSourceFactory(factories);
-    Mango mango = Mango.newInstance(dsf);
     orderDao = mango.create(OrderDao.class);
   }
 
