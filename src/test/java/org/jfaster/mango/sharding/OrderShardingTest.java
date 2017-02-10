@@ -92,7 +92,7 @@ public class OrderShardingTest {
   static class OrderIdShardingStrategy implements ShardingStrategy<String, String> {
 
     @Override
-    public String getDatabase(String id) {
+    public String getDataSourceFactoryName(String id) {
       return "db" + id.substring(0, 1);
     }
 
@@ -106,7 +106,7 @@ public class OrderShardingTest {
   static class OrderUidShardingStrategy implements ShardingStrategy<Integer, Integer> {
 
     @Override
-    public String getDatabase(Integer uid) {
+    public String getDataSourceFactoryName(Integer uid) {
       return "db" + String.valueOf((uid / 10) % 4 + 1);
     }
 

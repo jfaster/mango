@@ -14,17 +14,29 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.generator;
 
 import org.jfaster.mango.binding.InvocationContext;
 
+import javax.annotation.Nullable;
+
 /**
- * database生成器
+ * 简单表名生成器，返回从{@link org.jfaster.mango.annotation.DB#table()}取得的表名
  *
  * @author ash
  */
-public interface DatabaseGenerator {
+public class SimpleTableGenerator implements TableGenerator {
 
-  public String getDatabase(InvocationContext context);
+  private final String table;
+
+  public SimpleTableGenerator(String table) {
+    this.table = table;
+  }
+
+  @Nullable
+  @Override
+  public String getTable(InvocationContext context) {
+    return table;
+  }
 
 }

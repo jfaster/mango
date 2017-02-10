@@ -81,7 +81,7 @@ public class ShardingExceptionTest {
   static class UserDatabaseShardingStrategy implements DatabaseShardingStrategy<String> {
 
     @Override
-    public String getDatabase(String uid) {
+    public String getDataSourceFactoryName(String uid) {
       return "xx";
 
     }

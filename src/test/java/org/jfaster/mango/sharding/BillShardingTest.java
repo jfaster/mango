@@ -185,7 +185,7 @@ public class BillShardingTest {
   static class BillDatabaseShardingStrategy implements DatabaseShardingStrategy<Integer> {
 
     @Override
-    public String getDatabase(Integer cid) {
+    public String getDataSourceFactoryName(Integer cid) {
       return getDatabaseByCid(cid);
     }
   }
@@ -214,7 +214,7 @@ public class BillShardingTest {
   static class BillShardingStrategy implements ShardingStrategy<Integer, String> {
 
     @Override
-    public String getDatabase(Integer cid) {
+    public String getDataSourceFactoryName(Integer cid) {
       return getDatabaseByCid(cid);
     }
 

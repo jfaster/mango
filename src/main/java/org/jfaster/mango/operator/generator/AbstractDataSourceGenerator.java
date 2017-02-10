@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.generator;
 
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactoryGroup;
@@ -28,34 +28,33 @@ import javax.sql.DataSource;
 /**
  * @author ash
  */
-public class DefaultDataSourceGenerator implements DataSourceGenerator {
+public abstract class AbstractDataSourceGenerator implements DataSourceGenerator {
 
-  private final static InternalLogger logger = InternalLoggerFactory.getInstance(DefaultDataSourceGenerator.class);
+  private final static InternalLogger logger = InternalLoggerFactory.getInstance(AbstractDataSourceGenerator.class);
 
-  private final DatabaseGenerator databaseGenerator;
   private final DataSourceFactoryGroup dataSourceFactoryGroup;
   private final DataSourceType dataSourceType;
 
-  public DefaultDataSourceGenerator(
-      DatabaseGenerator databaseGenerator, DataSourceFactoryGroup dataSourceFactoryGroup, DataSourceType dataSourceType) {
-    this.databaseGenerator = databaseGenerator;
+  protected AbstractDataSourceGenerator(DataSourceFactoryGroup dataSourceFactoryGroup, DataSourceType dataSourceType) {
     this.dataSourceFactoryGroup = dataSourceFactoryGroup;
     this.dataSourceType = dataSourceType;
   }
 
   @Override
   public DataSource getDataSource(InvocationContext context, Class<?> daoClass) {
-    String database = databaseGenerator.getDatabase(context);
+    String dataSourceFactoryName = getDataSourceFactoryName(context);
     if (logger.isDebugEnabled()) {
-      logger.debug("The name of database is [" + database + "]");
+      logger.debug("The name of datasource factory is [" + dataSourceFactoryName + "]");
     }
     DataSource ds = dataSourceType == DataSourceType.MASTER ?
-        dataSourceFactoryGroup.getMasterDataSource(database) :
-        dataSourceFactoryGroup.getSlaveDataSource(database, daoClass);
+        dataSourceFactoryGroup.getMasterDataSource(dataSourceFactoryName) :
+        dataSourceFactoryGroup.getSlaveDataSource(dataSourceFactoryName, daoClass);
     if (ds == null) {
-      throw new DescriptionException("can't find database for name [" + database + "]");
+      throw new DescriptionException("can't find datasource factory for name [" + dataSourceFactoryName + "]");
     }
     return ds;
   }
+
+  public abstract String getDataSourceFactoryName(InvocationContext context);
 
 }

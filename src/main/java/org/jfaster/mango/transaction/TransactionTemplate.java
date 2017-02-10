@@ -25,23 +25,23 @@ import org.jfaster.mango.transaction.exception.TransactionException;
 public class TransactionTemplate {
 
   public static void execute(
-      Mango mango, String database, TransactionIsolationLevel level,
+      Mango mango, String dataSourceFactoryName, TransactionIsolationLevel level,
       TransactionAction action) throws TransactionException {
-    execute(TransactionFactory.newTransaction(mango, database, level), action);
+    execute(TransactionFactory.newTransaction(mango, dataSourceFactoryName, level), action);
   }
 
-  public static void execute(Mango mango, String database, TransactionAction action)
+  public static void execute(Mango mango, String dataSourceFactoryName, TransactionAction action)
       throws TransactionException {
-    execute(TransactionFactory.newTransaction(mango, database), action);
+    execute(TransactionFactory.newTransaction(mango, dataSourceFactoryName), action);
   }
 
-  public static void execute(String database, TransactionIsolationLevel level, TransactionAction action)
+  public static void execute(String dataSourceFactoryName, TransactionIsolationLevel level, TransactionAction action)
       throws TransactionException {
-    execute(TransactionFactory.newTransaction(database, level), action);
+    execute(TransactionFactory.newTransaction(dataSourceFactoryName, level), action);
   }
 
-  public static void execute(String database, TransactionAction action) throws TransactionException {
-    execute(TransactionFactory.newTransaction(database), action);
+  public static void execute(String dataSourceFactoryName, TransactionAction action) throws TransactionException {
+    execute(TransactionFactory.newTransaction(dataSourceFactoryName), action);
   }
 
   public static void execute(TransactionIsolationLevel level, TransactionAction action) throws TransactionException {

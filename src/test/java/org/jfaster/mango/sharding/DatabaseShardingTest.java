@@ -135,7 +135,7 @@ public class DatabaseShardingTest {
   static class MyDatabaseShardingStrategy implements DatabaseShardingStrategy<Integer> {
 
     @Override
-    public String getDatabase(Integer uid) {
+    public String getDataSourceFactoryName(Integer uid) {
       int tail = uid % 10;
       if (tail >= 0 && tail <= 2) {
         return dsns[0];

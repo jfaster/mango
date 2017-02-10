@@ -345,7 +345,7 @@ public class BatchUpdateOperatorTest {
   public static class MyDatabaseShardingStrategy implements DatabaseShardingStrategy {
 
     @Override
-    public String getDatabase(Object shardParam) {
+    public String getDataSourceFactoryName(Object shardParam) {
       Integer i = (Integer) shardParam;
       if (i < 50) {
         return "l50";

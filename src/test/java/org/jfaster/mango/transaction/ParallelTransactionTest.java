@@ -105,7 +105,7 @@ public class ParallelTransactionTest {
   static class MsgDatabaseShardingStrategy implements DatabaseShardingStrategy<Integer> {
 
     @Override
-    public String getDatabase(Integer uid) {
+    public String getDataSourceFactoryName(Integer uid) {
       return "db" + (uid % 2 + 1);
     }
 

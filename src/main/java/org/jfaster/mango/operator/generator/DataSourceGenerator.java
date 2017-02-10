@@ -14,26 +14,17 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.generator;
 
 import org.jfaster.mango.binding.InvocationContext;
 
+import javax.sql.DataSource;
+
 /**
- * 简单database生成器，利用从{@link org.jfaster.mango.annotation.DB#database()}取得的database名称
- *
  * @author ash
  */
-public class SimpleDatabaseGenerator implements DatabaseGenerator {
+public interface DataSourceGenerator {
 
-  private final String database;
-
-  public SimpleDatabaseGenerator(String database) {
-    this.database = database;
-  }
-
-  @Override
-  public String getDatabase(InvocationContext context) {
-    return database;
-  }
+  public DataSource getDataSource(InvocationContext context, Class<?> daoClass);
 
 }

@@ -14,29 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.generator;
 
 import org.jfaster.mango.binding.InvocationContext;
 
 import javax.annotation.Nullable;
 
 /**
- * 简单表名生成器，返回从{@link org.jfaster.mango.annotation.DB#table()}取得的表名
+ * 表名生成器，生成的表名用于替换掉SQL中的#table
  *
  * @author ash
  */
-public class SimpleTableGenerator implements TableGenerator {
-
-  private final String table;
-
-  public SimpleTableGenerator(String table) {
-    this.table = table;
-  }
+public interface TableGenerator {
 
   @Nullable
-  @Override
-  public String getTable(InvocationContext context) {
-    return table;
-  }
+  public String getTable(InvocationContext context);
 
 }

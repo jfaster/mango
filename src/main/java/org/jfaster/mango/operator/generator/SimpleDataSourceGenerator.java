@@ -14,17 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.generator;
 
 import org.jfaster.mango.binding.InvocationContext;
-
-import javax.sql.DataSource;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
+import org.jfaster.mango.datasource.DataSourceType;
 
 /**
  * @author ash
  */
-public interface DataSourceGenerator {
+public class SimpleDataSourceGenerator extends AbstractDataSourceGenerator {
 
-  public DataSource getDataSource(InvocationContext context, Class<?> daoClass);
+  private final String dataSourceFactoryName;
+
+  protected SimpleDataSourceGenerator(
+      DataSourceFactoryGroup dataSourceFactoryGroup,
+      DataSourceType dataSourceType,
+      String dataSourceFactoryName) {
+    super(dataSourceFactoryGroup, dataSourceType);
+    this.dataSourceFactoryName = dataSourceFactoryName;
+  }
+
+  @Override
+  public String getDataSourceFactoryName(InvocationContext context) {
+    return dataSourceFactoryName;
+  }
 
 }

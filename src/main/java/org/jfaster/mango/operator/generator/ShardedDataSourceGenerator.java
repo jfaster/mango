@@ -14,37 +14,37 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.generator;
 
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
+import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 
 /**
- * 分库database生成器，
- * 使用{@link org.jfaster.mango.annotation.DatabaseShardingBy}或{@link org.jfaster.mango.annotation.ShardingBy}
- * 修饰的参数作为分库参数，
- * 使用{@link org.jfaster.mango.sharding.DatabaseShardingStrategy}作为分库策略，
- * 共同生成分库后数据源
- *
  * @author ash
  */
-public class ShardedDatabaseGenerator implements DatabaseGenerator {
+public class ShardedDataSourceGenerator extends AbstractDataSourceGenerator {
 
   private final BindingParameterInvoker bindingParameterInvoker;
   private final DatabaseShardingStrategy databaseShardingStrategy;
 
-  public ShardedDatabaseGenerator(
-      BindingParameterInvoker bindingParameterInvoker, DatabaseShardingStrategy databaseShardingStrategy) {
+  protected ShardedDataSourceGenerator(
+      DataSourceFactoryGroup dataSourceFactoryGroup,
+      DataSourceType dataSourceType,
+      BindingParameterInvoker bindingParameterInvoker,
+      DatabaseShardingStrategy databaseShardingStrategy) {
+    super(dataSourceFactoryGroup, dataSourceType);
     this.bindingParameterInvoker = bindingParameterInvoker;
     this.databaseShardingStrategy = databaseShardingStrategy;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public String getDatabase(InvocationContext context) {
+  public String getDataSourceFactoryName(InvocationContext context) {
     Object shardParam = context.getBindingValue(bindingParameterInvoker);
-    return databaseShardingStrategy.getDatabase(shardParam);
+    return databaseShardingStrategy.getDataSourceFactoryName(shardParam);
   }
 
 }

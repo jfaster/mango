@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.operator;
+package org.jfaster.mango.operator.generator;
 
 import org.jfaster.mango.annotation.DatabaseShardingBy;
 import org.jfaster.mango.annotation.Sharding;
@@ -22,6 +22,8 @@ import org.jfaster.mango.annotation.ShardingBy;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.ParameterContext;
+import org.jfaster.mango.datasource.DataSourceFactoryGroup;
+import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.exception.IncorrectParameterTypeException;
@@ -36,14 +38,19 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 
 /**
- * database生成器工厂
- *
  * @author ash
  */
-public class DatabaseGeneratorFactory {
+public class DataSourceGeneratorFactory {
 
-  public DatabaseGenerator getDataSourceGenerator(
-      @Nullable Sharding shardingAnno, String dataSourceFactoryName, ParameterContext context) {
+  private final DataSourceFactoryGroup dataSourceFactoryGroup;
+
+  public DataSourceGeneratorFactory(DataSourceFactoryGroup dataSourceFactoryGroup) {
+    this.dataSourceFactoryGroup = dataSourceFactoryGroup;
+  }
+
+  public DataSourceGenerator getDataSourceGenerator(
+      DataSourceType dataSourceType, @Nullable Sharding shardingAnno,
+      String dataSourceFactoryName, ParameterContext context) {
 
     DatabaseShardingStrategy strategy = getDatabaseShardingStrategy(shardingAnno);
     TypeToken<?> strategyToken = null;
@@ -69,7 +76,7 @@ public class DatabaseGeneratorFactory {
         shardingParameterNum++;
       }
     }
-    DatabaseGenerator dataSourceGenerator;
+    DataSourceGenerator dataSourceGenerator;
     if (strategy != null) {
       if (shardingParameterNum == 1) {
         BindingParameterInvoker shardingParameterInvoker
@@ -89,16 +96,17 @@ public class DatabaseGeneratorFactory {
               "the type of parameter Modified @DatabaseShardingBy [" + shardToken.getType() + "], " +
               "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
         }
-        dataSourceGenerator = new ShardedDatabaseGenerator(shardingParameterInvoker, strategy);
+        dataSourceGenerator = new ShardedDataSourceGenerator(dataSourceFactoryGroup, dataSourceType, shardingParameterInvoker, strategy);
       } else {
         throw new DescriptionException("if @Sharding.databaseShardingStrategy is defined, " +
             "need one and only one @DatabaseShardingBy on method's parameter but found " + shardingParameterNum + ", " +
             "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");
       }
     } else {
-      dataSourceGenerator = new SimpleDatabaseGenerator(dataSourceFactoryName);
+      dataSourceGenerator = new SimpleDataSourceGenerator(dataSourceFactoryGroup, dataSourceType, dataSourceFactoryName);
     }
     return dataSourceGenerator;
+
   }
 
   @Nullable
