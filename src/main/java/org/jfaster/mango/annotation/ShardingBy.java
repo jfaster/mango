@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 /**
  * 用此注解修饰的方法参数或参数中的某个属性将被作为参数传入
  * {@link org.jfaster.mango.sharding.TableShardingStrategy#getTargetTable(String, Object)}和
- * {@link org.jfaster.mango.sharding.DatabaseShardingStrategy#getDatabase(Object)}中
+ * {@link org.jfaster.mango.sharding.DatabaseShardingStrategy#getDataSourceFactoryName(Object)}中
  *
  * @author ash
  */

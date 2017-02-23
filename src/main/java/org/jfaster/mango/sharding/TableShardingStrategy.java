@@ -27,7 +27,7 @@ public interface TableShardingStrategy<T> {
    * 获得分表后的表名
    *
    * @param table             取{@link org.jfaster.mango.annotation.DB#table()}中的值
-   * @param shardingParameter 取{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
+   * @param shardingParameter 取{@link org.jfaster.mango.annotation.TableShardingBy}或{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
    * @return
    */
   public String getTargetTable(String table, T shardingParameter);

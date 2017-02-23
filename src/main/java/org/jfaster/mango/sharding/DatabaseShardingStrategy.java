@@ -17,7 +17,7 @@
 package org.jfaster.mango.sharding;
 
 /**
- * 数据源路由
+ * 数据库分片策略
  *
  * @author ash
  */
@@ -26,7 +26,7 @@ public interface DatabaseShardingStrategy<T> {
   /**
    * 获得数据源工厂名称
    *
-   * @param shardingParameter 取{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
+   * @param shardingParameter 取{@link org.jfaster.mango.annotation.DatabaseShardingBy}或{@link org.jfaster.mango.annotation.ShardingBy}修饰的参数
    * @return
    */
   public String getDataSourceFactoryName(T shardingParameter);
