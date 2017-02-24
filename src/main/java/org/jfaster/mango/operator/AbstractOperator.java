@@ -16,7 +16,9 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.annotation.UseTransactionForBatchUpdate;
 import org.jfaster.mango.binding.InvocationContextFactory;
+import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.generator.DataSourceGenerator;
@@ -71,10 +73,11 @@ public abstract class AbstractOperator implements Operator {
   /**
    * 用于对db进行操作
    */
-  protected AbstractOperator(ASTRootNode rootNode, Class<?> daoClass, Config config) {
+  protected AbstractOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
     this.rootNode = rootNode;
-    this.daoClass = daoClass;
-    this.config = config;
+    this.daoClass = md.getDaoClass();
+    this.config = config.copy();
+    mergeConfig(md);
   }
 
   @Override
@@ -100,6 +103,13 @@ public abstract class AbstractOperator implements Operator {
   @Override
   public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain) {
     this.invocationInterceptorChain = invocationInterceptorChain;
+  }
+
+  private void mergeConfig(MethodDescriptor md) {
+    UseTransactionForBatchUpdate anno = md.getAnnotation(UseTransactionForBatchUpdate.class);
+    if (anno != null) {
+      config.setUseTransactionForBatchUpdate(anno.value());
+    }
   }
 
 }

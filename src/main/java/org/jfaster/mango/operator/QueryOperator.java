@@ -49,7 +49,7 @@ public class QueryOperator extends AbstractOperator {
   protected SetSupplier setSupplier;
 
   public QueryOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
-    super(rootNode, md.getDaoClass(), config);
+    super(rootNode, md, config);
     init(md);
   }
 

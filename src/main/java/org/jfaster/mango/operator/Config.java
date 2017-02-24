@@ -29,6 +29,8 @@ public class Config {
 
   private boolean isUseActualParamName = false;
 
+  private boolean isUseTransactionForBatchUpdate = false;
+
   public boolean isCompatibleWithEmptyList() {
     return isCompatibleWithEmptyList;
   }
@@ -51,5 +53,22 @@ public class Config {
 
   public void setUseActualParamName(boolean useActualParamName) {
     isUseActualParamName = useActualParamName;
+  }
+
+  public boolean isUseTransactionForBatchUpdate() {
+    return isUseTransactionForBatchUpdate;
+  }
+
+  public void setUseTransactionForBatchUpdate(boolean useTransactionForBatchUpdate) {
+    isUseTransactionForBatchUpdate = useTransactionForBatchUpdate;
+  }
+
+  public Config copy() {
+    Config config = new Config();
+    config.setCompatibleWithEmptyList(isCompatibleWithEmptyList());
+    config.setCheckColumn(isCheckColumn());
+    config.setUseActualParamName(isUseActualParamName());
+    config.setUseTransactionForBatchUpdate(isUseTransactionForBatchUpdate());
+    return config;
   }
 }

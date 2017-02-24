@@ -46,7 +46,7 @@ public class UpdateOperator extends AbstractOperator {
   private TypeHandler<? extends Number> generatedKeyTypeHandler;
 
   public UpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
-    super(rootNode, md.getDaoClass(), config);
+    super(rootNode, md, config);
     init(md, rootNode.getSQLType());
   }
 

@@ -67,6 +67,10 @@ public abstract class TransactionFactory {
     return newTransaction(AbstractDataSourceFactory.DEFULT_NAME, TransactionIsolationLevel.DEFAULT);
   }
 
+  public static Transaction newTransaction(DataSource dataSource) {
+    return newTransaction(dataSource, TransactionIsolationLevel.DEFAULT);
+  }
+
   private static Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level) {
     if (dataSource == null) {
       throw new IllegalArgumentException("DataSource can't be null");

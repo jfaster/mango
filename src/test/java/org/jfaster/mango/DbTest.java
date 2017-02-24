@@ -338,8 +338,9 @@ public class DbTest {
     thrown.expectMessage("value of :1 can't be empty");
     boolean old = mango.isCompatibleWithEmptyList();
     mango.setCompatibleWithEmptyList(false);
+    UserDao dao2 = mango.create(UserDao.class);
     try {
-      dao.getUsersInList(new ArrayList<Integer>());
+      dao2.getUsersInList(new ArrayList<Integer>());
     } finally {
       mango.setCompatibleWithEmptyList(old);
     }
@@ -434,8 +435,9 @@ public class DbTest {
     thrown.expectMessage("value of :ids can't be empty");
     boolean old = mango.isCompatibleWithEmptyList();
     mango.setCompatibleWithEmptyList(false);
+    UserDao dao2 = mango.create(UserDao.class);
     try {
-      dao.updateUsers(new ArrayList<Integer>(), "ash");
+      dao2.updateUsers(new ArrayList<Integer>(), "ash");
     } finally {
       mango.setCompatibleWithEmptyList(old);
     }

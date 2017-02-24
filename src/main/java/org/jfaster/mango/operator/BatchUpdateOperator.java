@@ -22,6 +22,7 @@ import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.transaction.*;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.ToStringHelper;
 
@@ -36,7 +37,7 @@ public class BatchUpdateOperator extends AbstractOperator {
   protected Transformer transformer;
 
   public BatchUpdateOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
-    super(rootNode, md.getDaoClass(), config);
+    super(rootNode, md, config);
     transformer = TRANSFORMERS.get(md.getReturnRawType());
     if (transformer == null) {
       String expected = ToStringHelper.toString(TRANSFORMERS.keySet());
@@ -96,7 +97,9 @@ public class BatchUpdateOperator extends AbstractOperator {
         DataSource ds = entry.getKey();
         List<BoundSql> boundSqls = entry.getValue().getBoundSqls();
         List<Integer> positions = entry.getValue().getPositions();
-        int[] ints = jdbcOperations.batchUpdate(ds, boundSqls);
+        int[] ints = config.isUseTransactionForBatchUpdate() ?
+            useTransactionBatchUpdate(ds, boundSqls) :
+            jdbcOperations.batchUpdate(ds, boundSqls);
         for (int i = 0; i < ints.length; i++) {
           r[positions.get(i)] = ints[i];
         }
@@ -111,6 +114,19 @@ public class BatchUpdateOperator extends AbstractOperator {
       }
     }
     return r;
+  }
+
+  private int[]  useTransactionBatchUpdate(DataSource ds, List<BoundSql> boundSqls) {
+    int[] ints;
+    Transaction transaction = TransactionFactory.newTransaction(ds);
+    try {
+      ints = jdbcOperations.batchUpdate(ds, boundSqls);
+    } catch (RuntimeException e) {
+      transaction.rollback();
+      throw e;
+    }
+    transaction.commit();
+    return ints;
   }
 
   protected static class Group {
