@@ -17,7 +17,7 @@
 package org.jfaster.mango.sharding;
 
 /**
- * 长整模十分表
+ * 模十分表
  *
  * @author ash
  */

@@ -17,7 +17,7 @@
 package org.jfaster.mango.sharding;
 
 /**
- * {@link org.jfaster.mango.annotation.Sharding#databaseShardingStrategy()}的默认值，表示不使用数据源路由
+ * {@link org.jfaster.mango.annotation.Sharding#databaseShardingStrategy()}的默认值，表示不使用分库
  *
  * @author ash
  */

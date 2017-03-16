@@ -17,7 +17,7 @@
 package org.jfaster.mango.sharding;
 
 /**
- * 长整模百分表
+ * 模百分表
  *
  * @author ash
  */
