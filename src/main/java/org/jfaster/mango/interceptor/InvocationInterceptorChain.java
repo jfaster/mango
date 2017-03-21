@@ -21,6 +21,7 @@ import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.util.jdbc.SQLType;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class InvocationInterceptorChain {
     this.sqlType = sqlType;
   }
 
-  public void intercept(BoundSql boundSql, InvocationContext context) {
+  public void intercept(BoundSql boundSql, InvocationContext context, DataSource dataSource) {
     if (interceptorChain.getInterceptors() != null) {
       List<Object> parameterValues = context.getParameterValues();
       List<Parameter> parameters = new ArrayList<Parameter>(parameterValues.size());
@@ -51,7 +52,7 @@ public class InvocationInterceptorChain {
         ParameterDescriptor pd = parameterDescriptors.get(i);
         parameters.add(new Parameter(pd, parameterValues.get(i)));
       }
-      interceptorChain.intercept(boundSql, parameters, sqlType);
+      interceptorChain.intercept(boundSql, parameters, sqlType, dataSource);
     }
   }
 

@@ -16,17 +16,18 @@
 
 package org.jfaster.mango.interceptor;
 
-import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.util.jdbc.SQLType;
-
-import javax.sql.DataSource;
-import java.util.List;
+import org.jfaster.mango.jdbc.JdbcOperations;
+import org.jfaster.mango.jdbc.JdbcTemplate;
 
 /**
  * @author ash
  */
-public interface Interceptor {
+public abstract class OperableInterceptor implements Interceptor {
 
-  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource);
+  private JdbcOperations jdbcOperations = new JdbcTemplate();
+
+  public JdbcOperations getJdbcOperations() {
+    return jdbcOperations;
+  }
 
 }

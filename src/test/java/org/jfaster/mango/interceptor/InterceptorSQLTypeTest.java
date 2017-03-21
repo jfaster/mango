@@ -57,7 +57,7 @@ public class InterceptorSQLTypeTest {
     Mango mango = Mango.newInstance(ds);
     mango.addInterceptor(new UpdateInterceptor() {
       @Override
-      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
         t.incrementAndGet();
         assertThat(sqlType, equalTo(SQLType.INSERT));
       }
@@ -70,7 +70,7 @@ public class InterceptorSQLTypeTest {
     mango = Mango.newInstance(ds);
     mango.addInterceptor(new QueryInterceptor() {
       @Override
-      public void interceptQuery(BoundSql boundSql, List<Parameter> parameters) {
+      public void interceptQuery(BoundSql boundSql, List<Parameter> parameters, DataSource dataSource) {
         t.incrementAndGet();
       }
     });
@@ -81,7 +81,7 @@ public class InterceptorSQLTypeTest {
     mango = Mango.newInstance(ds);
     mango.addInterceptor(new UpdateInterceptor() {
       @Override
-      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
         t.incrementAndGet();
         assertThat(sqlType, equalTo(SQLType.UPDATE));
       }
@@ -95,7 +95,7 @@ public class InterceptorSQLTypeTest {
     mango = Mango.newInstance(ds);
     mango.addInterceptor(new UpdateInterceptor() {
       @Override
-      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
         t.incrementAndGet();
         assertThat(sqlType, equalTo(SQLType.DELETE));
       }
@@ -107,7 +107,7 @@ public class InterceptorSQLTypeTest {
     mango = Mango.newInstance(ds);
     mango.addInterceptor(new UpdateInterceptor() {
       @Override
-      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
         t.incrementAndGet();
         assertThat(sqlType, equalTo(SQLType.REPLACE));
       }
@@ -124,7 +124,7 @@ public class InterceptorSQLTypeTest {
     mango = Mango.newInstance(ds);
     mango.addInterceptor(new UpdateInterceptor() {
       @Override
-      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
         t.incrementAndGet();
         assertThat(sqlType, equalTo(SQLType.MERGE));
       }
@@ -141,7 +141,7 @@ public class InterceptorSQLTypeTest {
     mango = Mango.newInstance(ds);
     mango.addInterceptor(new UpdateInterceptor() {
       @Override
-      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+      public void interceptUpdate(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
         t.incrementAndGet();
         assertThat(sqlType, equalTo(SQLType.TRANCATE));
       }

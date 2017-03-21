@@ -26,6 +26,7 @@ import org.jfaster.mango.util.jdbc.SQLType;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
+import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,7 +53,7 @@ public class InvocationInterceptorChainTest {
     InterceptorChain ic = new InterceptorChain();
     ic.addInterceptor(new Interceptor() {
       @Override
-      public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+      public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
         assertThat(boundSql.getSql(), equalTo(sql));
         assertThat(boundSql.getArgs(), equalTo(boundSql.getArgs()));
         assertThat(boundSql.getTypeHandlers(), equalTo(boundSql.getTypeHandlers()));
@@ -69,7 +70,7 @@ public class InvocationInterceptorChainTest {
 
     InvocationContextFactory f = InvocationContextFactory.create(DefaultParameterContext.create(pds));
     InvocationContext ctx = f.newInvocationContext(new Object[]{user});
-    iic.intercept(boundSql, ctx);
+    iic.intercept(boundSql, ctx, null);
   }
 
 }

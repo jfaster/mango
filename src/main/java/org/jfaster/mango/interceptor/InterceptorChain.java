@@ -19,6 +19,7 @@ package org.jfaster.mango.interceptor;
 import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.util.jdbc.SQLType;
 
+import javax.sql.DataSource;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,10 +35,10 @@ public class InterceptorChain {
     interceptors.add(interceptor);
   }
 
-  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType) {
+  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
     if (getInterceptors() != null) {
       for (Interceptor interceptor : getInterceptors()) {
-        interceptor.intercept(boundSql, parameters, sqlType);
+        interceptor.intercept(boundSql, parameters, sqlType, dataSource);
       }
     }
   }

@@ -87,9 +87,8 @@ public class QueryOperator extends AbstractOperator {
     }
 
     BoundSql boundSql = context.getBoundSql();
-    invocationInterceptorChain.intercept(boundSql, context); // 拦截器
-
     DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
+    invocationInterceptorChain.intercept(boundSql, context, ds); // 拦截器
     return executeFromDb(ds, boundSql, stat);
   }
 
