@@ -89,4 +89,16 @@ public class BoundSql {
     return typeHandlers;
   }
 
+  public BoundSql copy() {
+    List<Object> args = new ArrayList<Object>();
+    for (Object arg : getArgs()) {
+      args.add(arg);
+    }
+    List<TypeHandler<?>> typeHandlers = new ArrayList<TypeHandler<?>>();
+    for (TypeHandler<?> typeHandler : getTypeHandlers()) {
+      typeHandlers.add(typeHandler);
+    }
+    return new BoundSql(getSql(), args, typeHandlers);
+  }
+
 }
