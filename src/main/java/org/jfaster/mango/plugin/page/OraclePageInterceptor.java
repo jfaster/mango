@@ -21,7 +21,7 @@ import org.jfaster.mango.binding.BoundSql;
 /**
  * @author ash
  */
-public class MySQLPageInterceptor extends AbstractPageInterceptor {
+public class OraclePageInterceptor extends AbstractPageInterceptor {
 
   @Override
   void handleTotal(BoundSql boundSql) {
@@ -33,11 +33,11 @@ public class MySQLPageInterceptor extends AbstractPageInterceptor {
   @Override
   void handlePage(int pageNum, int pageSize, BoundSql boundSql) {
     int startRow = (pageNum - 1) * pageSize;
+    int endRow = pageNum * pageSize;
     String sql = boundSql.getSql();
-    sql = sql + " limit ?, ?";
+    sql = "SELECT * FROM ( SELECT B.* , ROWNUM RN FROM (" + sql + ") B WHERE ROWNUM <= "
+        + endRow + " ) WHERE RN > " + startRow;
     boundSql.setSql(sql);
-    boundSql.addArg(startRow);
-    boundSql.addArg(pageSize);
   }
 
 }

@@ -39,9 +39,14 @@ public class SingleColumnRowMapper<T> implements RowMapper<T> {
   @SuppressWarnings("unchecked")
   public T mapRow(ResultSet rs, int rowNum) throws SQLException {
     ResultSetWrapper rsw = new ResultSetWrapper(rs);
-    if (rsw.getColumnCount() != 1) {
-      throw new MappingException("incorrect column count, expected 1 but " + rsw.getColumnCount());
-    }
+
+    /**
+     * 在对oralce进行单列分页查询时会引入行号变量，导致单列变成双列，所以去掉下面的检测
+     */
+    //if (rsw.getColumnCount() != 1) {
+    //  throw new MappingException("incorrect column count, expected 1 but " + rsw.getColumnCount());
+    //}
+
     int index = 1;
     TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(mappedClass, rsw.getJdbcType(index));
     Object value = typeHandler.getResult(rsw.getResultSet(), index);
