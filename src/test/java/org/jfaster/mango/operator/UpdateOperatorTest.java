@@ -316,7 +316,7 @@ public class UpdateOperatorTest {
     methodAnnos.add(new MockDB());
     methodAnnos.add(new MockSQL(srcSql));
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+    MethodDescriptor md = MethodDescriptor.create(null, null, rd, pds);
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 
@@ -336,7 +336,7 @@ public class UpdateOperatorTest {
     methodAnnos.add(new MockSQL(srcSql));
     methodAnnos.add(new MockReturnGeneratedId());
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+    MethodDescriptor md = MethodDescriptor.create(null, null, rd, pds);
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 

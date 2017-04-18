@@ -311,7 +311,7 @@ public class BatchUpdateOperatorTest {
     methodAnnos.add(new MockDB());
     methodAnnos.add(new MockSQL(srcSql));
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+    MethodDescriptor md = MethodDescriptor.create(null, null, rd, pds);
 
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
@@ -332,7 +332,7 @@ public class BatchUpdateOperatorTest {
     methodAnnos.add(new MockSharding(ModHundredTableShardingStrategy.class, MyDatabaseShardingStrategy.class, null));
     methodAnnos.add(new MockSQL(srcSql));
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+    MethodDescriptor md = MethodDescriptor.create(null, null, rd, pds);
 
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory("l50", DataSourceConfig.getDataSource(0)));

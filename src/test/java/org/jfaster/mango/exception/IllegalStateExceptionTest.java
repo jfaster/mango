@@ -49,7 +49,7 @@ public class IllegalStateExceptionTest {
   @Test
   public void test2() {
     thrown.expect(DescriptionException.class);
-    thrown.expectMessage("each method expected one @SQL annotation but not found");
+    thrown.expectMessage("each method expected one of @SQL or @UseSqlGenerator annotation but not found");
     Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
     mango.setLazyInit(true);
     mango.setCacheHandler(new LocalCacheHandler());

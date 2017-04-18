@@ -274,7 +274,7 @@ public class QueryOperatorTest {
       methodAnnos.add(anno);
     }
     ReturnDescriptor rd = ReturnDescriptor.create(rt.getType(), methodAnnos);
-    MethodDescriptor md = MethodDescriptor.create(null, rd, pds);
+    MethodDescriptor md = MethodDescriptor.create(null, null, rd, pds);
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 

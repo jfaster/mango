@@ -23,6 +23,7 @@ import org.jfaster.mango.binding.ParameterContext;
 import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.descriptor.MethodDescriptor;
+import static org.jfaster.mango.descriptor.MethodDescriptors.*;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
@@ -65,7 +66,7 @@ public class OperatorFactory {
   }
 
   public Operator getOperator(MethodDescriptor md, MetaStat stat) {
-    ASTRootNode rootNode = SqlParser.parse(md.getSQL()).init(); // 初始化抽象语法树
+    ASTRootNode rootNode = SqlParser.parse(getSQL(md)).init(); // 初始化抽象语法树
     List<ParameterDescriptor> pds = md.getParameterDescriptors(); // 方法参数描述
     OperatorType operatorType = getOperatorType(pds, rootNode);
     stat.setOperatorType(operatorType);
@@ -82,15 +83,15 @@ public class OperatorFactory {
     // 构造表生成器
     boolean isSqlUseGlobalTable = !rootNode.getASTGlobalTables().isEmpty();
     TableGenerator tableGenerator = tableGeneratorFactory.getTableGenerator(
-        md.getShardingAnno(), md.getGlobalTable(), isSqlUseGlobalTable, context);
+        getShardingAnno(md), getGlobalTable(md), isSqlUseGlobalTable, context);
 
     // 构造数据源生成器
     DataSourceType dataSourceType = getDataSourceType(operatorType, md);
     DataSourceGenerator dataSourceGenerator = dataSourceGeneratorFactory.
-        getDataSourceGenerator(dataSourceType, md.getShardingAnno(), md.getDataSourceFactoryName(), context);
+        getDataSourceGenerator(dataSourceType, getShardingAnno(md), getDataSourceFactoryName(md), context);
 
     Operator operator;
-    if (md.isUseCache()) {
+    if (isUseCache(md)) {
       CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context);
       stat.setCacheable(true);
       stat.setUseMultipleKeys(driver.isUseMultipleKeys());

@@ -49,7 +49,7 @@ public class Methods {
       pds.add(ParameterDescriptor.create(i, type, Arrays.asList(pas), name));
     }
 
-    return MethodDescriptor.create(method.getDeclaringClass(), rd, pds);
+    return MethodDescriptor.create(method.getName(), method.getDeclaringClass(), rd, pds);
   }
 
   private static String[] getParameterNames(Method method, boolean isUseActualParamName) {
