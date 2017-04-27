@@ -188,7 +188,7 @@ public class Mango extends Config {
     }
 
     MangoInvocationHandler handler = new MangoInvocationHandler(
-        dataSourceFactoryGroup, cacheHandler, interceptorChain, statCollector, this);
+        daoClass, dataSourceFactoryGroup, cacheHandler, interceptorChain, statCollector, this);
     if (!isLazyInit) { // 不使用懒加载，则提前加载
       Method[] methods = daoClass.getMethods();
       for (Method method : methods) {
@@ -283,6 +283,7 @@ public class Mango extends Config {
 
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
+    private final Class<?> daoClass;
     private final StatCollector statCollector;
     private final OperatorFactory operatorFactory;
     private final boolean isUseActualParamName;
@@ -297,7 +298,7 @@ public class Mango extends Config {
             MetaStat metaStat = combinedStat.getMetaStat();
             InitStat initStat = combinedStat.getInitStat();
             long now = System.nanoTime();
-            MethodDescriptor md = Methods.getMethodDescriptor(method, isUseActualParamName);
+            MethodDescriptor md = Methods.getMethodDescriptor(daoClass, method, isUseActualParamName);
             Operator operator = operatorFactory.getOperator(md, metaStat);
             initStat.recordInit(System.nanoTime() - now);
             metaStat.setMethod(method);
@@ -306,11 +307,13 @@ public class Mango extends Config {
         });
 
     private MangoInvocationHandler(
+        Class<?> daoClass,
         DataSourceFactoryGroup dataSourceFactoryGroup,
         CacheHandler cacheHandler,
         InterceptorChain interceptorChain,
         StatCollector statCollector,
         Config config) {
+      this.daoClass = daoClass;
       this.statCollector = statCollector;
       this.isUseActualParamName = config.isUseActualParamName();
       operatorFactory = new OperatorFactory(dataSourceFactoryGroup, cacheHandler, interceptorChain, config);

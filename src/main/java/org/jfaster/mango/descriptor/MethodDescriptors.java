@@ -18,7 +18,10 @@ package org.jfaster.mango.descriptor;
 
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.exception.DescriptionException;
+import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.Reflection;
 
 import javax.annotation.Nullable;
@@ -29,6 +32,8 @@ import javax.annotation.Nullable;
  * @author ash
  */
 public class MethodDescriptors {
+
+  private final static InternalLogger logger = InternalLoggerFactory.getInstance(Mango.class);
 
   public static String getSQL(MethodDescriptor md) {
     SQL sqlAnno = md.getAnnotation(SQL.class);
@@ -45,6 +50,10 @@ public class MethodDescriptors {
     }
     if (Strings.isEmpty(sql)) {
       throw new DescriptionException("sql is null or empty");
+    }
+    if (logger.isDebugEnabled()) {
+      // TODO 补全日志
+      logger.debug(sql);
     }
     return sql;
   }

@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.descriptor;
 
+import org.jfaster.mango.util.reflect.TypeToken;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -28,7 +30,9 @@ import java.util.List;
  */
 public class Methods {
 
-  public static MethodDescriptor getMethodDescriptor(Method method, boolean isUseActualParamName) {
+  private static final TypeToken<?> genericTypeToken = TypeToken.of(Generic.class);
+
+  public static MethodDescriptor getMethodDescriptor(Class<?> daoClass, Method method, boolean isUseActualParamName) {
     List<Annotation> mas = new LinkedList<Annotation>();
     for (Annotation a : method.getAnnotations()) {
       mas.add(a);
@@ -36,20 +40,29 @@ public class Methods {
     for (Annotation a : method.getDeclaringClass().getAnnotations()) {
       mas.add(a);
     }
-    ReturnDescriptor rd = ReturnDescriptor.create(method.getGenericReturnType(), mas);
+
+    TypeToken<?> daoTypeToken = TypeToken.of(daoClass);
+    Type returnType = resolveType(method.getGenericReturnType(), daoTypeToken);
+    ReturnDescriptor rd = ReturnDescriptor.create(returnType, mas);
 
     List<ParameterDescriptor> pds = new LinkedList<ParameterDescriptor>();
     Type[] genericParameterTypes = method.getGenericParameterTypes();
     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
     String[] names = getParameterNames(method, isUseActualParamName);
     for (int i = 0; i < genericParameterTypes.length; i++) {
-      Type type = genericParameterTypes[i];
+      Type type = resolveType(genericParameterTypes[i], daoTypeToken);
       Annotation[] pas = parameterAnnotations[i];
       String name = names[i];
       pds.add(ParameterDescriptor.create(i, type, Arrays.asList(pas), name));
     }
 
-    return MethodDescriptor.create(method.getName(), method.getDeclaringClass(), rd, pds);
+    return MethodDescriptor.create(method.getName(), daoClass, rd, pds);
+  }
+
+  static Type resolveType(Type type, TypeToken<?> daoTypeToken) {
+    return genericTypeToken.isAssignableFrom(daoTypeToken) ?
+        daoTypeToken.resolveType(type).getType() :
+        type;
   }
 
   private static String[] getParameterNames(Method method, boolean isUseActualParamName) {
