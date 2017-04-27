@@ -40,60 +40,51 @@ public class MethodsTest {
 
     Method m = SubDao.class.getMethod("add", Object.class);
     Type type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo(void.class));
+    assertThat(type, equalTo((Type) void.class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    assertThat(type, equalTo(String.class));
+    assertThat(type, equalTo((Type) String.class));
 
     m = SubDao.class.getMethod("add", Collection.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo(int[].class));
+    assertThat(type, equalTo((Type) int[].class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    ParameterizedType pt = (ParameterizedType) type;
-    assertThat(pt.getRawType(), equalTo(Collection.class));
-    assertThat(pt.getActualTypeArguments()[0], equalTo(String.class));
+    assertThat(type, equalTo((new TypeToken<Collection<String>>(){}.getType())));
 
     m = SubDao.class.getMethod("findOne", Object.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo(String.class));
+    assertThat(type, equalTo((Type) String.class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    assertThat(type, equalTo(Integer.class));
+    assertThat(type, equalTo((Type) Integer.class));
 
     m = SubDao.class.getMethod("findAll", List.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    pt = (ParameterizedType) type;
-    assertThat(pt.getRawType(), equalTo(List.class));
-    assertThat(pt.getActualTypeArguments()[0], equalTo(String.class));
+    assertThat(type, equalTo((new TypeToken<List<String>>(){}.getType())));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    pt = (ParameterizedType) type;
-    assertThat(pt.getRawType(), equalTo(List.class));
-    assertThat(pt.getActualTypeArguments()[0], equalTo(Integer.class));
+    assertThat(type, equalTo((new TypeToken<List<Integer>>(){}.getType())));
+
     m = SubDao.class.getMethod("update", Object.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo(int.class));
+    assertThat(type, equalTo((Type) int.class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    assertThat(type, equalTo(String.class));
+    assertThat(type, equalTo((Type) String.class));
 
     m = SubDao.class.getMethod("update", Collection.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo(int[].class));
+    assertThat(type, equalTo((Type) int[].class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    pt = (ParameterizedType) type;
-    assertThat(pt.getRawType(), equalTo(Collection.class));
-    assertThat(pt.getActualTypeArguments()[0], equalTo(String.class));
+    assertThat(type, equalTo((new TypeToken<Collection<String>>(){}.getType())));
 
     m = SubDao.class.getMethod("delete", Object.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo(int.class));
+    assertThat(type, equalTo((Type) int.class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    assertThat(type, equalTo(Integer.class));
+    assertThat(type, equalTo((Type) Integer.class));
 
     m = SubDao.class.getMethod("getDate", List.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo(Date.class));
+    assertThat(type, equalTo((Type) Date.class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
-    pt = (ParameterizedType) type;
-    assertThat(pt.getRawType(), equalTo(List.class));
-    assertThat(pt.getActualTypeArguments()[0], equalTo(String.class));
+    assertThat(type, equalTo((new TypeToken<List<String>>(){}.getType())));
 
   }
 

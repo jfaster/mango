@@ -49,21 +49,23 @@ public class CrudMeta {
     Boolean autoGenerateId = null;
     for (Field field : fields) {
       String prop = field.getName();
-      Column colAnno = field.getAnnotation(Column.class);
-      String col = colAnno != null ?
-          colAnno.value() :
-          Strings.underscoreName(prop);
-      props.add(prop);
-      cols.add(col);
+      if (!prop.startsWith("$")) { // 代码覆盖率工具Jacoco会为pojo对象织入$jacocoData字段
+        Column colAnno = field.getAnnotation(Column.class);
+        String col = colAnno != null ?
+            colAnno.value() :
+            Strings.underscoreName(prop);
+        props.add(prop);
+        cols.add(col);
 
-      ID idAnno = field.getAnnotation(ID.class);
-      if (idAnno != null) {
-        if (propId != null || colId != null) {
-          throw new IllegalStateException("duplicate ID annotation");
+        ID idAnno = field.getAnnotation(ID.class);
+        if (idAnno != null) {
+          if (propId != null || colId != null) {
+            throw new IllegalStateException("duplicate ID annotation");
+          }
+          propId = prop;
+          colId = col;
+          autoGenerateId = idAnno.autoGenerateId();
         }
-        propId = prop;
-        colId = col;
-        autoGenerateId = idAnno.autoGenerateId();
       }
     }
     if (autoGenerateId == null) {
@@ -96,4 +98,5 @@ public class CrudMeta {
   public boolean isAutoGenerateId() {
     return isAutoGenerateId;
   }
+
 }

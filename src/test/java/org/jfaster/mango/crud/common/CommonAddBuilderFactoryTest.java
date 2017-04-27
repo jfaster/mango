@@ -16,11 +16,13 @@
 
 package org.jfaster.mango.crud.common;
 
+import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -37,7 +39,8 @@ public class CommonAddBuilderFactoryTest {
     String name = "add";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    Builder b = factory.doTryGetBuilder(name, void.class, Arrays.asList(Order.class), entityClass, idClass);
+    List<Type> types = Lists.newArrayList((Type) Order.class);
+    Builder b = factory.doTryGetBuilder(name, void.class, types, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("insert into #table(userid, user_age) values(:userId, :userAge)"));
   }
