@@ -46,7 +46,7 @@ public class MethodsTest {
 
     m = SubDao.class.getMethod("add", Collection.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo((Type) int[].class));
+    assertThat(TypeToken.of(type).getRawType(), equalTo((Type) int[].class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
     assertThat(type, equalTo((new TypeToken<Collection<String>>(){}.getType())));
 
@@ -70,7 +70,7 @@ public class MethodsTest {
 
     m = SubDao.class.getMethod("update", Collection.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
-    assertThat(type, equalTo((Type) int[].class));
+    assertThat(TypeToken.of(type).getRawType(), equalTo((Type) int[].class));
     type = Methods.resolveType(m.getGenericParameterTypes()[0], daoTypeToken);
     assertThat(type, equalTo((new TypeToken<Collection<String>>(){}.getType())));
 
