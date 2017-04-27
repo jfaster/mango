@@ -67,21 +67,6 @@ public class MethodsTest {
     pt = (ParameterizedType) type;
     assertThat(pt.getRawType(), equalTo(List.class));
     assertThat(pt.getActualTypeArguments()[0], equalTo(Integer.class));
-
-
-    System.out.println(pt.getClass());
-
-    Type tt = new TypeToken<List<Integer>>() {
-    }.getType();
-
-    System.out.println(tt.getClass());
-
-    System.out.println(tt.equals(pt));
-    System.out.println(pt.equals(tt));
-
-
-
-
     m = SubDao.class.getMethod("update", Object.class);
     type = Methods.resolveType(m.getGenericReturnType(), daoTypeToken);
     assertThat(type, equalTo(int.class));
