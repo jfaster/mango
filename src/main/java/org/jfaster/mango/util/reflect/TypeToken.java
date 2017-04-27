@@ -21,10 +21,7 @@ import org.jfaster.mango.util.Primitives;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class TypeToken<T> extends TypeCapture<T> implements Serializable {
 
@@ -64,6 +61,15 @@ public abstract class TypeToken<T> extends TypeCapture<T> implements Serializabl
 
   public final Type getType() {
     return runtimeType;
+  }
+
+  public final <X> TypeToken<T> where(TypeParameter<X> typeParam, TypeToken<X> typeArg) {
+    Map<TypeResolver.TypeVariableKey, Type> mappings = new HashMap<TypeResolver.TypeVariableKey, Type>();
+    mappings.put(new TypeResolver.TypeVariableKey(typeParam.typeVariable), typeArg.runtimeType);
+    TypeResolver resolver = new TypeResolver()
+        .where(mappings);
+    // If there's any type error, we'd report now rather than later.
+    return new SimpleTypeToken<T>(resolver.resolveType(runtimeType));
   }
 
   public final TypeToken<?> resolveType(Type type) {
