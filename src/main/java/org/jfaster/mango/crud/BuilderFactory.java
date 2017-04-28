@@ -32,31 +32,8 @@ import java.util.List;
  */
 public abstract class BuilderFactory {
 
-  private static final List<BuilderFactory> commonBuilderFactories = new ArrayList<BuilderFactory>();
-  private static final List<BuilderFactory> lookupBuilderFactories = new ArrayList<BuilderFactory>();
-  static {
-
-  }
-
-  public static Builder getBuilder(MethodDescriptor md) {
-    for (BuilderFactory commonBuilderFactory : commonBuilderFactories) {
-      Builder builder = commonBuilderFactory.tryGetBuilder(md);
-      if (builder != null) {
-        return builder;
-      }
-    }
-    for (BuilderFactory lookupBuilderFactory : lookupBuilderFactories) {
-      Builder builder = lookupBuilderFactory.tryGetBuilder(md);
-      if (builder != null) {
-        return builder;
-      }
-    }
-    // TODO
-    throw new IllegalArgumentException();
-  }
-
   @Nullable
-  Builder tryGetBuilder(MethodDescriptor md) {
+  public Builder tryGetBuilder(MethodDescriptor md) {
     String name = md.getName();
     Class<?> daoClass = md.getDaoClass();
     if (TypeToken.of(Generic.class).isAssignableFrom(daoClass)) {

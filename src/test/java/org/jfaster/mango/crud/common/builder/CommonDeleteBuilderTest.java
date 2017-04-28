@@ -14,12 +14,23 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.builder;
 
-import org.jfaster.mango.crud.Builder;
+import org.jfaster.mango.crud.common.builder.CommonDeleteBuilder;
+import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author ash
  */
-public abstract class CommonBuilder implements Builder {
+public class CommonDeleteBuilderTest {
+
+  @Test
+  public void build() throws Exception {
+    CommonDeleteBuilder b = new CommonDeleteBuilder("id2");
+    assertThat(b.buildSql(), equalTo("delete from #table where id2 = :1"));
+  }
+
 }

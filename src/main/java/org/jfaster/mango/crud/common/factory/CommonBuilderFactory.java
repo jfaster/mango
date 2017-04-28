@@ -14,11 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.BuilderFactory;
 import org.jfaster.mango.crud.CrudMeta;
+import org.jfaster.mango.crud.common.builder.CommonBuilder;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

@@ -14,35 +14,37 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
+import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.CommonGetBuilder;
 
 import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public class CommonAddAndReturnGeneratedIdBuilderFactory extends CommonBuilderFactory {
+public class CommonGetOneBuilderFactory extends CommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "addAndReturnGeneratedId";
+    return "getOne";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return int.class;
-  }
-
-  @Override
-  Type expectedParameterType(Class<?> entityClass, Class<?> idClass) {
     return entityClass;
   }
 
   @Override
+  Type expectedParameterType(Class<?> entityClass, Class<?> idClass) {
+    return idClass;
+  }
+
+  @Override
   CommonBuilder createCommonBuilder(CrudMeta cm) {
-    return new CommonAddBuilder(cm.getPropertyId(), cm.getProperties(), cm.getColumns(), true);
+    return new CommonGetBuilder(cm.getColumnId(), cm.getColumns(), false);
   }
 
 }

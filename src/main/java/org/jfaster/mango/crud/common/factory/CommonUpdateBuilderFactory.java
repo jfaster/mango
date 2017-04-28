@@ -14,25 +14,27 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
+import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.CommonUpdateBuilder;
 
 import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public class CommonAddBuilderFactory extends CommonBuilderFactory {
+public class CommonUpdateBuilderFactory extends CommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "add";
+    return "update";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return void.class;
+    return int.class;
   }
 
   @Override
@@ -42,7 +44,7 @@ public class CommonAddBuilderFactory extends CommonBuilderFactory {
 
   @Override
   CommonBuilder createCommonBuilder(CrudMeta cm) {
-    return new CommonAddBuilder(cm.getPropertyId(), cm.getProperties(), cm.getColumns(), cm.isAutoGenerateId());
+    return new CommonUpdateBuilder(cm.getPropertyId(), cm.getProperties(), cm.getColumns());
   }
 
 }

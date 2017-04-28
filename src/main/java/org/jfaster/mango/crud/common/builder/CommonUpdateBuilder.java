@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.builder;
 
 import org.jfaster.mango.util.Joiner;
 
@@ -24,40 +24,41 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonAddBuilder extends CommonBuilder {
+public class CommonUpdateBuilder extends CommonBuilder {
 
-  private final static String SQL_TEMPLATE = "insert into #table(%s) values(%s)";
+  private final static String SQL_TEMPLATE = "update #table set %s where %s";
 
-  private final List<String> properties;
+  private final String propertyId;
 
-  private final List<String> columns;
+  private final String columnId;
 
-  public CommonAddBuilder(String propId, List<String> props,
-                          List<String> cols, boolean isAutoGenerateId) {
+  private final List<String> properties ;
+
+  private final List<String> columns ;
+
+  public CommonUpdateBuilder(String propId, List<String> props,
+                             List<String> cols) {
     int index = props.indexOf(propId);
     if (index < 0) {
       throw new IllegalArgumentException("error property id [" + propId + "]");
     }
+    propertyId = propId;
     properties = new ArrayList<String>(props);
     columns = new ArrayList<String>(cols);
-    if (isAutoGenerateId) {
-      properties.remove(index);
-      columns.remove(index);
-    }
+    columnId = columns.remove(index);
+    properties.remove(index);
   }
 
   @Override
   public String buildSql() {
-    String s1 = Joiner.on(", ").join(columns);
-    List<String> cps = new ArrayList<String>();
-    for (String prop : properties) {
-      cps.add(":" + prop);
+    List<String> exps = new ArrayList<String>();
+    for (int i = 0; i < properties.size(); i++) {
+      String exp = columns.get(i) + " = :" + properties.get(i);
+      exps.add(exp);
     }
-    String s2 = Joiner.on(", ").join(cps);
+    String s1 = Joiner.on(", ").join(exps);
+    String s2 = columnId + " = :" + propertyId;
     return String.format(SQL_TEMPLATE, s1, s2);
   }
 
-  public static void main(String[] args) {
-    System.out.println(Integer.MAX_VALUE);
-  }
 }

@@ -17,6 +17,7 @@
 package org.jfaster.mango.util.reflect;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author ash
@@ -25,6 +26,11 @@ public class DynamicTokens {
 
   public static <E> TypeToken<Collection<E>> collectionToken(TypeToken<E> entityToken) {
     return new TypeToken<Collection<E>>() {}
+        .where(new TypeParameter<E>() {}, entityToken);
+  }
+
+  public static <E> TypeToken<List<E>> listToken(TypeToken<E> entityToken) {
+    return new TypeToken<List<E>>() {}
         .where(new TypeParameter<E>() {}, entityToken);
   }
 

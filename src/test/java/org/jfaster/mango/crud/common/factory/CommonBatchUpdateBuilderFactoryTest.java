@@ -14,13 +14,16 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.factory;
 
 import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
+import org.jfaster.mango.util.reflect.DynamicTokens;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -31,18 +34,32 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
-public class CommonAddBuilderFactoryTest {
+public class CommonBatchUpdateBuilderFactoryTest {
 
   @Test
   public void test() throws Exception {
-    CommonAddBuilderFactory factory = new CommonAddBuilderFactory();
-    String name = "add";
+    CommonBatchUpdateBuilderFactory factory = new CommonBatchUpdateBuilderFactory();
+    String name = "update";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    List<Type> types = Lists.newArrayList((Type) Order.class);
-    Builder b = factory.doTryGetBuilder(name, void.class, types, entityClass, idClass);
+    Type returnType = getIntArrayType();
+    List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType());
+    Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());
-    assertThat(b.buildSql(), equalTo("insert into #table(userid, user_age) values(:userId, :userAge)"));
+    assertThat(b.buildSql(), equalTo("update #table set userid = :userId, user_age = :userAge where id = :id"));
+  }
+
+  private Type getIntArrayType() {
+    try {
+      Method m = CommonBatchUpdateBuilderFactoryTest.class.getMethod("func");
+      return m.getGenericReturnType();
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public int[] func() {
+    return null;
   }
 
 }

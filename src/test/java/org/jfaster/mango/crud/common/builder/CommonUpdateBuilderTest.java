@@ -14,9 +14,13 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.builder;
 
+import com.google.common.collect.Lists;
+import org.jfaster.mango.crud.common.builder.CommonUpdateBuilder;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -24,12 +28,14 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * @author ash
  */
-public class CommonDeleteBuilderTest {
+public class CommonUpdateBuilderTest {
 
   @Test
   public void build() throws Exception {
-    CommonDeleteBuilder b = new CommonDeleteBuilder("id2");
-    assertThat(b.buildSql(), equalTo("delete from #table where id2 = :1"));
+    List<String> properties = Lists.newArrayList("id", "userName", "userAge");
+    List<String> columns = Lists.newArrayList("id", "user_name", "user_age");
+    CommonUpdateBuilder b = new CommonUpdateBuilder("id", properties, columns);
+    assertThat(b.buildSql(), equalTo("update #table set user_name = :userName, user_age = :userAge where id = :id"));
   }
 
 }

@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,7 +37,18 @@ public class DynamicTokensTest {
     assertThat(token.getType(), equalTo(expectedType));
   }
 
+  @Test
+  public void testListToken() throws Exception {
+    TypeToken<List<String>> token = DynamicTokens.listToken(TypeToken.of(String.class));
+    Type expectedType = DynamicTokensTest.class.getMethod("func2").getGenericReturnType();
+    assertThat(token.getType(), equalTo(expectedType));
+  }
+
   public Collection<String> func() {
+    return null;
+  }
+
+  public List<String> func2() {
     return null;
   }
 

@@ -16,17 +16,51 @@
 
 package org.jfaster.mango.crud;
 
+import org.jfaster.mango.crud.common.factory.*;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.SqlGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
 public class CrudSqlGenerator implements SqlGenerator {
 
+  private static final List<BuilderFactory> commonBuilderFactories = new ArrayList<BuilderFactory>();
+  private static final List<BuilderFactory> lookupBuilderFactories = new ArrayList<BuilderFactory>();
+  static {
+    commonBuilderFactories.add(new CommonAddBuilderFactory());
+    commonBuilderFactories.add(new CommonAddAndReturnGeneratedIdBuilderFactory());
+    commonBuilderFactories.add(new CommonBatchAddBuilderFactory());
+    commonBuilderFactories.add(new CommonGetOneBuilderFactory());
+    commonBuilderFactories.add(new CommonGetMultiBuilderFactory());
+    commonBuilderFactories.add(new CommonUpdateBuilderFactory());
+    commonBuilderFactories.add(new CommonBatchUpdateBuilderFactory());
+    commonBuilderFactories.add(new CommonDeleteBuilderFactory());
+  }
+
   @Override
   public String generateSql(MethodDescriptor md) {
-    return BuilderFactory.getBuilder(md).buildSql();
+    return getBuilder(md).buildSql();
+  }
+
+  private Builder getBuilder(MethodDescriptor md) {
+    for (BuilderFactory commonBuilderFactory : commonBuilderFactories) {
+      Builder builder = commonBuilderFactory.tryGetBuilder(md);
+      if (builder != null) {
+        return builder;
+      }
+    }
+    for (BuilderFactory lookupBuilderFactory : lookupBuilderFactories) {
+      Builder builder = lookupBuilderFactory.tryGetBuilder(md);
+      if (builder != null) {
+        return builder;
+      }
+    }
+    // TODO
+    throw new IllegalArgumentException();
   }
 
 }

@@ -14,14 +14,14 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.builder;
 
-import org.jfaster.mango.crud.Builder;
+import org.jfaster.mango.crud.common.builder.CommonBuilder;
 
 /**
  * @author ash
  */
-public class CommonDeleteBuilder implements Builder {
+public class CommonDeleteBuilder extends CommonBuilder {
 
   private final static String SQL_TEMPLATE = "delete from #table where %s = :1";
 

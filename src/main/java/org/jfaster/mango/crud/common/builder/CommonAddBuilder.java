@@ -14,9 +14,8 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.builder;
 
-import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.util.Joiner;
 
 import java.util.ArrayList;
@@ -25,27 +24,40 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonGetBuilder implements Builder {
+public class CommonAddBuilder extends CommonBuilder {
 
-  private final static String SQL_TEMPLATE = "select %s from #table where %s = :1";
+  private final static String SQL_TEMPLATE = "insert into #table(%s) values(%s)";
 
-  private final String columnId;
+  private final List<String> properties;
 
   private final List<String> columns;
 
-  public CommonGetBuilder(String colId, List<String> cols) {
-    int index = cols.indexOf(colId);
+  public CommonAddBuilder(String propId, List<String> props,
+                          List<String> cols, boolean isAutoGenerateId) {
+    int index = props.indexOf(propId);
     if (index < 0) {
-      throw new IllegalArgumentException("error column id [" + colId + "]");
+      throw new IllegalArgumentException("error property id [" + propId + "]");
     }
-    columnId = colId;
+    properties = new ArrayList<String>(props);
     columns = new ArrayList<String>(cols);
+    if (isAutoGenerateId) {
+      properties.remove(index);
+      columns.remove(index);
+    }
   }
 
   @Override
   public String buildSql() {
     String s1 = Joiner.on(", ").join(columns);
-    return String.format(SQL_TEMPLATE, s1, columnId);
+    List<String> cps = new ArrayList<String>();
+    for (String prop : properties) {
+      cps.add(":" + prop);
+    }
+    String s2 = Joiner.on(", ").join(cps);
+    return String.format(SQL_TEMPLATE, s1, s2);
   }
 
+  public static void main(String[] args) {
+    System.out.println(Integer.MAX_VALUE);
+  }
 }

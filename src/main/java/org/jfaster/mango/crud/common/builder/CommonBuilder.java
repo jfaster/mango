@@ -14,26 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.builder;
 
-import com.google.common.collect.Lists;
-import org.junit.Test;
-
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import org.jfaster.mango.crud.Builder;
 
 /**
  * @author ash
  */
-public class CommonGetBuilderTest {
-
-  @Test
-  public void build() throws Exception {
-    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
-    CommonGetBuilder b = new CommonGetBuilder("id2", columns);
-    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table where id2 = :1"));
-  }
-
+public abstract class CommonBuilder implements Builder {
 }

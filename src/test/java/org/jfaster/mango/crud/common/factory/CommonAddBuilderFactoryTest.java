@@ -14,33 +14,36 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common;
+package org.jfaster.mango.crud.common.factory;
 
 import com.google.common.collect.Lists;
+import org.jfaster.mango.crud.Builder;
+import org.jfaster.mango.crud.Order;
+import org.jfaster.mango.crud.common.factory.CommonAddBuilderFactory;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * @author ash
  */
-public class CommonAddBuilderTest {
+public class CommonAddBuilderFactoryTest {
 
   @Test
-  public void build() throws Exception {
-    List<String> properties = Lists.newArrayList("id", "name", "age");
-    List<String> columns = Lists.newArrayList("id2", "name2", "age2");
-    CommonAddBuilder b = new CommonAddBuilder("id", properties, columns, true);
-    assertThat(b.buildSql(), equalTo("insert into #table(name2, age2) values(:name, :age)"));
-
-    properties = Lists.newArrayList("id", "name", "age");
-    columns = Lists.newArrayList("id2", "name2", "age2");
-    b = new CommonAddBuilder("id", properties, columns, false);
-    assertThat(b.buildSql(), equalTo("insert into #table(id2, name2, age2) values(:id, :name, :age)"));
+  public void test() throws Exception {
+    CommonAddBuilderFactory factory = new CommonAddBuilderFactory();
+    String name = "add";
+    Class<?> entityClass = Order.class;
+    Class<Integer> idClass = Integer.class;
+    List<Type> types = Lists.newArrayList((Type) Order.class);
+    Builder b = factory.doTryGetBuilder(name, void.class, types, entityClass, idClass);
+    assertThat(b, notNullValue());
+    assertThat(b.buildSql(), equalTo("insert into #table(userid, user_age) values(:userId, :userAge)"));
   }
 
 }
