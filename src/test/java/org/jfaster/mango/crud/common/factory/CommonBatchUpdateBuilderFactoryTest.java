@@ -23,7 +23,6 @@ import org.jfaster.mango.util.reflect.DynamicTokens;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -42,24 +41,11 @@ public class CommonBatchUpdateBuilderFactoryTest {
     String name = "update";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    Type returnType = getIntArrayType();
+    Type returnType = int[].class;
     List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType());
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("update #table set userid = :userId, user_age = :userAge where id = :id"));
-  }
-
-  private Type getIntArrayType() {
-    try {
-      Method m = CommonBatchUpdateBuilderFactoryTest.class.getMethod("func");
-      return m.getGenericReturnType();
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  public int[] func() {
-    return null;
   }
 
 }

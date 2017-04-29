@@ -30,8 +30,6 @@ import java.lang.reflect.Type;
  */
 public class CommonBatchUpdateBuilderFactory extends CommonBuilderFactory {
 
-  private final static Type intArrayType = getIntArrayType();
-
   @Override
   String expectedMethodName() {
     return "update";
@@ -39,7 +37,7 @@ public class CommonBatchUpdateBuilderFactory extends CommonBuilderFactory {
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return intArrayType;
+    return int[].class;
   }
 
   @Override
@@ -59,10 +57,6 @@ public class CommonBatchUpdateBuilderFactory extends CommonBuilderFactory {
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  public int[] func() {
-    return null;
   }
 
 }

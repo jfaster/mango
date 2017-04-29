@@ -20,6 +20,8 @@ import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -43,7 +45,7 @@ public class Methods {
     }
 
     TypeToken<?> daoTypeToken = TypeToken.of(daoClass);
-    Type returnType = resolveType(method.getGenericReturnType(), daoTypeToken);
+    Type returnType = fixAndResolveType(method.getGenericReturnType(), daoTypeToken);
     ReturnDescriptor rd = ReturnDescriptor.create(returnType, mas);
 
     List<ParameterDescriptor> pds = new LinkedList<ParameterDescriptor>();
@@ -51,13 +53,33 @@ public class Methods {
     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
     String[] names = getParameterNames(method, isUseActualParamName);
     for (int i = 0; i < genericParameterTypes.length; i++) {
-      Type type = resolveType(genericParameterTypes[i], daoTypeToken);
+      Type type = fixAndResolveType(genericParameterTypes[i], daoTypeToken);
       Annotation[] pas = parameterAnnotations[i];
       String name = names[i];
       pds.add(ParameterDescriptor.create(i, type, Arrays.asList(pas), name));
     }
 
     return MethodDescriptor.create(method.getName(), daoClass, rd, pds);
+  }
+
+  static Type fixAndResolveType(Type type, TypeToken<?> daoTypeToken) {
+    type = fixTypeInJava6(type);
+    return resolveType(type, daoTypeToken);
+  }
+
+  /**
+   * java6中，利用反射获得int[]，Integer[]等类型的genericType时，可能会得到泛型数组，
+   * 下面的方法会将泛型数组转为class
+   */
+  static Type fixTypeInJava6(Type type) {
+    if (type instanceof GenericArrayType) {
+      GenericArrayType gat = (GenericArrayType) type;
+      Type componentType = gat.getGenericComponentType();
+      if (componentType instanceof Class) {
+        return Array.newInstance((Class) componentType, 0).getClass();
+      }
+    }
+    return type;
   }
 
   static Type resolveType(Type type, TypeToken<?> daoTypeToken) {
