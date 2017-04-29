@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.descriptor;
 
+import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.annotation.Annotation;
@@ -37,7 +38,7 @@ public class Methods {
     for (Annotation a : method.getAnnotations()) {
       mas.add(a);
     }
-    for (Annotation a : method.getDeclaringClass().getAnnotations()) {
+    for (Annotation a : Reflection.getAnnotations(daoClass)) {
       mas.add(a);
     }
 

@@ -16,7 +16,15 @@
 
 package org.jfaster.mango.util.reflect;
 
+import org.jfaster.mango.annotation.DB;
 import org.junit.Test;
+
+import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author ash
@@ -30,6 +38,20 @@ public class ReflectionTest {
 
   private static class A {
 
+  }
+
+  @Test
+  public void testGetAnnotations() throws Exception {
+    Set<Annotation> annos = new HashSet<Annotation>();
+    Reflection.getAnnotations(SubDao.class, annos);
+    assertThat(annos.size(), equalTo(1));
+  }
+
+  @DB
+  interface SuperDao {
+  }
+
+  interface SubDao extends SuperDao {
   }
 
 }

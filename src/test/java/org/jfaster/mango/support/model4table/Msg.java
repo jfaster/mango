@@ -18,6 +18,7 @@ package org.jfaster.mango.support.model4table;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.jfaster.mango.annotation.ID;
 import org.jfaster.mango.support.Randoms;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.List;
  */
 public class Msg {
 
+  @ID
   private int id; // 自增id
   private int uid;
   private String content;

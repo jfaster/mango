@@ -17,7 +17,12 @@
 package org.jfaster.mango.util.reflect;
 
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author ash
@@ -84,6 +89,23 @@ public class Reflection {
         !ctor.isAccessible()) {
       ctor.setAccessible(true);
     }
+  }
+
+  public static Set<Annotation> getAnnotations(Class<?> clazz) {
+    Set<Annotation> annos = new HashSet<Annotation>();
+    getAnnotations(clazz, annos);
+    return annos;
+  }
+
+  static void getAnnotations(Class<?> clazz, Set<Annotation> annos) {
+    if (clazz == null) {
+      return;
+    }
+    annos.addAll(Arrays.asList(clazz.getDeclaredAnnotations()));
+    for (Class<?> parent : clazz.getInterfaces()) {
+      getAnnotations(parent, annos);
+    }
+    getAnnotations(clazz.getSuperclass(), annos);
   }
 
 }
