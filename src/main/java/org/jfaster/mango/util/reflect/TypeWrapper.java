@@ -63,8 +63,7 @@ public class TypeWrapper {
 
         @Override
         void visitGenericArrayType(GenericArrayType t) {
-          isArray = true;
-          mappedType = t.getGenericComponentType();
+          throw new IllegalStateException("Does not support the generic array type " + type);
         }
 
         @Override
@@ -94,12 +93,12 @@ public class TypeWrapper {
 
         @Override
         void visitTypeVariable(TypeVariable<?> t) {
-          throw new IllegalStateException("Does not support the type " + type);
+          throw new IllegalStateException("Does not support the type variable " + type);
         }
 
         @Override
         void visitWildcardType(WildcardType t) {
-          throw new IllegalStateException("Does not support the type " + type);
+          throw new IllegalStateException("Does not support the wildcard type " + type);
         }
       }.visit(type);
       mappedClass = TypeToken.of(mappedType).getRawType();

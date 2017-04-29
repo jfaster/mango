@@ -139,8 +139,7 @@ public class QueryOperatorTest {
   @Test
   public void testQueryArray() throws Exception {
     TypeToken<User> pt = TypeToken.of(User.class);
-    TypeToken<User[]> rt = new TypeToken<User[]>() {
-    };
+    TypeToken<User[]> rt = TypeToken.of(User[].class);
     String srcSql = "select * from user where id=:1.id and name=:1.name";
     Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
