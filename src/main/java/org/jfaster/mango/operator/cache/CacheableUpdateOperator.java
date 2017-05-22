@@ -23,7 +23,7 @@ import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.UpdateOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -52,7 +52,7 @@ public class CacheableUpdateOperator extends UpdateOperator {
   }
 
   @Override
-  public Object execute(Object[] values, OneExecuteStat stat) {
+  public Object execute(Object[] values, InvocationStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
     Object r = execute(context, stat);
     if (driver.isUseMultipleKeys()) { // 多个key，例如：update table set name='ash' where id in (1, 2, 3);

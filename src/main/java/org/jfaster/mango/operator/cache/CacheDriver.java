@@ -29,7 +29,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTJDBCParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.reflect.Reflection;
@@ -119,7 +119,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   }
 
   @Override
-  public void setToCache(String key, Object value, OneExecuteStat stat) {
+  public void setToCache(String key, Object value, InvocationStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -136,7 +136,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   }
 
   @Override
-  public void addToCache(String key, Object value, OneExecuteStat stat) {
+  public void addToCache(String key, Object value, InvocationStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -153,7 +153,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   }
 
   @Override
-  public void deleteFromCache(String key, OneExecuteStat stat) {
+  public void deleteFromCache(String key, InvocationStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -170,7 +170,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
   }
 
   @Override
-  public void batchDeleteFromCache(Set<String> keys, OneExecuteStat stat) {
+  public void batchDeleteFromCache(Set<String> keys, InvocationStat stat) {
     if (keys.size() > 0) {
       boolean success = false;
       long now = System.nanoTime();
@@ -190,7 +190,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
   @Nullable
   @Override
-  public Object getFromCache(String key, OneExecuteStat stat) {
+  public Object getFromCache(String key, InvocationStat stat) {
     boolean success = false;
     long now = System.nanoTime();
     try {
@@ -209,7 +209,7 @@ public class CacheDriver implements CacheBase, CacheSingleKey, CacheMultiKey {
 
   @Nullable
   @Override
-  public Map<String, Object> getBulkFromCache(Set<String> keys, OneExecuteStat stat) {
+  public Map<String, Object> getBulkFromCache(Set<String> keys, InvocationStat stat) {
     if (keys.size() > 0) {
       boolean success = false;
       long now = System.nanoTime();

@@ -26,7 +26,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.stat.MetaStat;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.type.IntegerTypeHandler;
@@ -75,7 +75,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
+    Object r = operator.execute(new Object[]{user}, InvocationStat.create());
     assertThat(r.getClass().equals(Integer.class), is(true));
   }
 
@@ -103,7 +103,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
+    Object r = operator.execute(new Object[]{user}, InvocationStat.create());
     assertThat(r, nullValue());
   }
 
@@ -131,7 +131,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    boolean r = (Boolean) operator.execute(new Object[]{user}, OneExecuteStat.create());
+    boolean r = (Boolean) operator.execute(new Object[]{user}, InvocationStat.create());
     assertThat(r, is(false));
   }
 
@@ -161,7 +161,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
+    Object r = operator.execute(new Object[]{user}, InvocationStat.create());
     assertThat(r.getClass().equals(Integer.class), is(true));
   }
 
@@ -192,7 +192,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    Object r = operator.execute(new Object[]{user}, OneExecuteStat.create());
+    Object r = operator.execute(new Object[]{user}, InvocationStat.create());
     assertThat(r.getClass().equals(Long.class), is(true));
   }
 
@@ -220,7 +220,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{user}, stat);
     assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));
     operator.execute(new Object[]{user}, stat);
@@ -270,7 +270,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, OneExecuteStat.create());
+    operator.execute(new Object[]{user}, InvocationStat.create());
   }
 
   @Test
@@ -303,7 +303,7 @@ public class UpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, OneExecuteStat.create());
+    operator.execute(new Object[]{user}, InvocationStat.create());
   }
 
 

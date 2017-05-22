@@ -86,7 +86,7 @@ public class ExecuteStat {
     return new ExecuteStat();
   }
 
-  public void accumulate(OneExecuteStat stat) {
+  public void accumulate(InvocationStat stat) {
     handleDatabaseExecute(stat);
     handleGetAndMiss(stat);
     handleCacheGet(stat);
@@ -97,7 +97,7 @@ public class ExecuteStat {
     handleCacheBatchDelete(stat);
   }
 
-  private void handleDatabaseExecute(OneExecuteStat stat) {
+  private void handleDatabaseExecute(InvocationStat stat) {
     if (stat.getDatabaseExecuteSuccessCount() > 0) {
       databaseExecuteSuccessCount.add(stat.getDatabaseExecuteSuccessCount());
     }
@@ -109,7 +109,7 @@ public class ExecuteStat {
     }
   }
 
-  private void handleGetAndMiss(OneExecuteStat stat) {
+  private void handleGetAndMiss(InvocationStat stat) {
     if (stat.getHitCount() > 0) {
       hitCount.add(stat.getHitCount());
     }
@@ -118,7 +118,7 @@ public class ExecuteStat {
     }
   }
 
-  private void handleCacheGet(OneExecuteStat stat) {
+  private void handleCacheGet(InvocationStat stat) {
     if (stat.getCacheGetSuccessCount() > 0) {
       cacheGetSuccessCount.add(stat.getCacheGetSuccessCount());
     }
@@ -130,7 +130,7 @@ public class ExecuteStat {
     }
   }
 
-  private void handleCacheGetBulk(OneExecuteStat stat) {
+  private void handleCacheGetBulk(InvocationStat stat) {
     if (stat.getCacheGetBulkSuccessCount() > 0) {
       cacheGetBulkSuccessCount.add(stat.getCacheGetBulkSuccessCount());
     }
@@ -142,7 +142,7 @@ public class ExecuteStat {
     }
   }
 
-  private void handleCacheSet(OneExecuteStat stat) {
+  private void handleCacheSet(InvocationStat stat) {
     if (stat.getCacheSetSuccessCount() > 0) {
       cacheSetSuccessCount.add(stat.getCacheSetSuccessCount());
     }
@@ -154,7 +154,7 @@ public class ExecuteStat {
     }
   }
 
-  private void handleCacheAdd(OneExecuteStat stat) {
+  private void handleCacheAdd(InvocationStat stat) {
     if (stat.getCacheAddSuccessCount() > 0) {
       cacheAddSuccessCount.add(stat.getCacheAddSuccessCount());
     }
@@ -166,7 +166,7 @@ public class ExecuteStat {
     }
   }
 
-  private void handleCacheDelete(OneExecuteStat stat) {
+  private void handleCacheDelete(InvocationStat stat) {
     if (stat.getCacheDeleteSuccessCount() > 0) {
       cacheDeleteSuccessCount.add(stat.getCacheDeleteSuccessCount());
     }
@@ -178,7 +178,7 @@ public class ExecuteStat {
     }
   }
 
-  private void handleCacheBatchDelete(OneExecuteStat stat) {
+  private void handleCacheBatchDelete(InvocationStat stat) {
     if (stat.getCacheBatchDeleteSuccessCount() > 0) {
       cacheBatchDeleteSuccessCount.add(stat.getCacheBatchDeleteSuccessCount());
     }

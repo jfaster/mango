@@ -30,7 +30,7 @@ import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Operator;
 import org.jfaster.mango.operator.OperatorFactory;
 import org.jfaster.mango.stat.MetaStat;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -67,7 +67,7 @@ public class CacheableQueryOperatorTest {
 
     operator.setJdbcOperations(new JdbcOperationsAdapter());
 
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{1}, stat);
     assertThat(stat.getHitCount(), Matchers.equalTo(1L));
   }
@@ -106,7 +106,7 @@ public class CacheableQueryOperatorTest {
       }
     });
 
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{1}, stat);
     assertThat(stat.getMissCount(), Matchers.equalTo(1L));
   }
@@ -133,7 +133,7 @@ public class CacheableQueryOperatorTest {
 
     operator.setJdbcOperations(new JdbcOperationsAdapter());
 
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{Arrays.asList(1, 2, 3)}, stat);
     assertThat(stat.getHitCount(), equalTo(3L));
     assertThat(((CacheableQueryOperator) operator).propertyOfMapperInvoker.getName(), equalTo("id"));
@@ -186,7 +186,7 @@ public class CacheableQueryOperatorTest {
       }
     });
 
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{Arrays.asList(1, 2, 3)}, stat);
     assertThat(stat.getMissCount(), Matchers.equalTo(3L));
     assertThat(keys, Matchers.equalTo(setKeys));
@@ -239,7 +239,7 @@ public class CacheableQueryOperatorTest {
       }
     });
 
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{Arrays.asList(1, 2, 3)}, stat);
     assertThat(stat.getHitCount(), Matchers.equalTo(1L));
     assertThat(stat.getMissCount(), Matchers.equalTo(2L));

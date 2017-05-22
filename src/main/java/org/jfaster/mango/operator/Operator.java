@@ -22,7 +22,7 @@ import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.generator.DataSourceGenerator;
 import org.jfaster.mango.operator.generator.TableGenerator;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 
 /**
  * db操作接口
@@ -31,7 +31,7 @@ import org.jfaster.mango.stat.OneExecuteStat;
  */
 public interface Operator {
 
-  public Object execute(Object[] values, OneExecuteStat stat);
+  public Object execute(Object[] values, InvocationStat stat);
 
   public void setJdbcOperations(JdbcOperations jdbcOperations);
 

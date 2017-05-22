@@ -19,7 +19,7 @@ package org.jfaster.mango.stat;
 /**
  * @author ash
  */
-public class OneExecuteStat {
+public class InvocationStat {
 
   /**
    * 数据库执行统计
@@ -76,11 +76,11 @@ public class OneExecuteStat {
   private long cacheBatchDeleteExceptionCount;
   private long totalCacheBatchDeleteTime;
   
-  private OneExecuteStat() {
+  private InvocationStat() {
   }
 
-  public static OneExecuteStat create() {
-    return new OneExecuteStat();
+  public static InvocationStat create() {
+    return new InvocationStat();
   }
 
   public void recordDatabaseExecuteSuccess(long executeTime) {

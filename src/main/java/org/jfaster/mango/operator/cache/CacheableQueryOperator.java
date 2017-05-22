@@ -26,7 +26,7 @@ import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.QueryOperator;
 import org.jfaster.mango.parser.ASTJDBCIterableParameter;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -73,7 +73,7 @@ public class CacheableQueryOperator extends QueryOperator {
   }
 
   @Override
-  public Object execute(Object[] values, OneExecuteStat stat) {
+  public Object execute(Object[] values, InvocationStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
     return driver.isUseMultipleKeys() ?
         multipleKeysCache(context, rowMapper.getMappedClass(), driver.getOnlyCacheByClass(), stat) :
@@ -81,7 +81,7 @@ public class CacheableQueryOperator extends QueryOperator {
   }
 
   private <T, U> Object multipleKeysCache(InvocationContext context, Class<T> mappedClass,
-                                          Class<U> cacheByActualClass, OneExecuteStat stat) {
+                                          Class<U> cacheByActualClass, InvocationStat stat) {
     boolean isDebugEnabled = logger.isDebugEnabled();
     boolean isCacheNullObj = driver.isCacheNullObject();
     Set<String> keys = driver.getCacheKeys(context);
@@ -179,7 +179,7 @@ public class CacheableQueryOperator extends QueryOperator {
     return addableObj.getReturn();
   }
 
-  private Object singleKeyCache(InvocationContext context, OneExecuteStat stat) {
+  private Object singleKeyCache(InvocationContext context, InvocationStat stat) {
     boolean isDebugEnabled = logger.isDebugEnabled();
     String key = driver.getCacheKey(context);
     Object value = driver.getFromCache(key, stat);

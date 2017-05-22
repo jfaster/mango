@@ -28,7 +28,7 @@ import org.jfaster.mango.jdbc.exception.DataAccessException;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
 import org.jfaster.mango.stat.MetaStat;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -76,7 +76,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    Object actual = operator.execute(new Object[]{users}, OneExecuteStat.create());
+    Object actual = operator.execute(new Object[]{users}, InvocationStat.create());
     assertThat(actual, nullValue());
   }
 
@@ -105,7 +105,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    int actual = (Integer) operator.execute(new Object[]{users}, OneExecuteStat.create());
+    int actual = (Integer) operator.execute(new Object[]{users}, InvocationStat.create());
     assertThat(actual, is(3));
   }
 
@@ -134,7 +134,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    int[] actualInts = (int[]) operator.execute(new Object[]{users}, OneExecuteStat.create());
+    int[] actualInts = (int[]) operator.execute(new Object[]{users}, InvocationStat.create());
     assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
   }
 
@@ -163,7 +163,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    Integer[] actualInts = (Integer[]) operator.execute(new Object[]{users}, OneExecuteStat.create());
+    Integer[] actualInts = (Integer[]) operator.execute(new Object[]{users}, InvocationStat.create());
     assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(expectedInts)));
   }
 
@@ -223,7 +223,7 @@ public class BatchUpdateOperatorTest {
     List<User> users = Arrays.asList(
         new User(30, "ash"), new User(60, "lucy"), new User(10, "lily"),
         new User(20, "gill"), new User(55, "liu"));
-    int[] actualInts = (int[]) operator.execute(new Object[]{users}, OneExecuteStat.create());
+    int[] actualInts = (int[]) operator.execute(new Object[]{users}, InvocationStat.create());
     assertThat(Arrays.toString(actualInts), equalTo(Arrays.toString(new int[]{3, 6, 1, 2, 5})));
   }
 
@@ -249,7 +249,7 @@ public class BatchUpdateOperatorTest {
       }
     });
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{users}, stat);
     assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));
     operator.execute(new Object[]{users}, stat);
@@ -299,7 +299,7 @@ public class BatchUpdateOperatorTest {
     });
 
     List<User> users = Arrays.asList(new User(100, "ash"), new User(200, "lucy"));
-    operator.execute(new Object[]{users}, OneExecuteStat.create());
+    operator.execute(new Object[]{users}, InvocationStat.create());
   }
 
   private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {

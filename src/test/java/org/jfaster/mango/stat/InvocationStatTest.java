@@ -24,11 +24,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author ash
  */
-public class OneExecuteStatTest {
+public class InvocationStatTest {
 
   @Test
   public void test() throws Exception {
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
 
     stat.recordDatabaseExecuteSuccess(2);
     assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));

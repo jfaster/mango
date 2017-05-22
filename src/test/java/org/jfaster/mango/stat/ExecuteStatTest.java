@@ -29,7 +29,7 @@ public class ExecuteStatTest {
   @Test
   public void testCreate() throws Exception {
     ExecuteStat stat = ExecuteStat.create();
-    OneExecuteStat os = OneExecuteStat.create();
+    InvocationStat os = InvocationStat.create();
 
     os.recordDatabaseExecuteSuccess(2);
     os.recordDatabaseExecuteException(3);

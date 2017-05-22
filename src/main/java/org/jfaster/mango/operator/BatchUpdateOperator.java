@@ -21,7 +21,7 @@ import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.transaction.*;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.ToStringHelper;
@@ -47,7 +47,7 @@ public class BatchUpdateOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values, OneExecuteStat stat) {
+  public Object execute(Object[] values, InvocationStat stat) {
     Iterables iterables = getIterables(values);
     if (iterables.isEmpty()) {
       return transformer.transform(new int[]{});
@@ -88,7 +88,7 @@ public class BatchUpdateOperator extends AbstractOperator {
     return iterables;
   }
 
-  protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum, OneExecuteStat stat) {
+  protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum, InvocationStat stat) {
     int[] r = new int[batchNum];
     long now = System.nanoTime();
     int t = 0;

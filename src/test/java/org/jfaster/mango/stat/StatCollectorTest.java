@@ -61,12 +61,12 @@ public class StatCollectorTest {
         return 1;
       }
     });
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     stat.recordDatabaseExecuteSuccess(100);
     stat.recordDatabaseExecuteSuccess(200);
     sc.getCombinedStat(m).getExecuteStat().accumulate(stat);
     cdl1.await();
-    stat = OneExecuteStat.create();
+    stat = InvocationStat.create();
     stat.recordDatabaseExecuteSuccess(100);
     sc.getCombinedStat(m).getExecuteStat().accumulate(stat);
     cdl2.await();

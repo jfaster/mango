@@ -48,7 +48,7 @@ public class CombinedStatTest {
     initStat.recordInit(1000);
 
     ExecuteStat executeStat = stat.getExecuteStat();
-    OneExecuteStat oneExecuteStat = OneExecuteStat.create();
+    InvocationStat oneExecuteStat = InvocationStat.create();
     oneExecuteStat.recordDatabaseExecuteSuccess(2);
     oneExecuteStat.recordDatabaseExecuteException(3);
     oneExecuteStat.recordHits(4);

@@ -29,7 +29,7 @@ import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.reflect.Reflection;
 
@@ -68,12 +68,12 @@ public class QueryOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values, OneExecuteStat stat) {
+  public Object execute(Object[] values, InvocationStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
     return execute(context, stat);
   }
 
-  protected Object execute(InvocationContext context, OneExecuteStat stat) {
+  protected Object execute(InvocationContext context, InvocationStat stat) {
     context.setGlobalTable(tableGenerator.getTable(context));
 
     try {
@@ -92,7 +92,7 @@ public class QueryOperator extends AbstractOperator {
     return executeFromDb(ds, boundSql, stat);
   }
 
-  private Object executeFromDb(final DataSource ds, final BoundSql boundSql, OneExecuteStat stat) {
+  private Object executeFromDb(final DataSource ds, final BoundSql boundSql, InvocationStat stat) {
     Object r;
     boolean success = false;
     long now = System.nanoTime();

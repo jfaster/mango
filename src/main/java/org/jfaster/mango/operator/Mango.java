@@ -325,7 +325,7 @@ public class Mango extends Config {
         logger.debug("Invoking {}", ToStringHelper.toString(method));
       }
       Operator operator = getOperator(method);
-      OneExecuteStat stat = OneExecuteStat.create();
+      InvocationStat stat = InvocationStat.create();
       try {
         Object r = operator.execute(args, stat);
         return r;

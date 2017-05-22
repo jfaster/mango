@@ -27,7 +27,7 @@ import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Operator;
 import org.jfaster.mango.operator.OperatorFactory;
 import org.jfaster.mango.stat.MetaStat;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.util.reflect.TypeToken;
@@ -75,7 +75,7 @@ public class CacheableUpdateOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{user}, stat);
     assertThat(stat.getCacheDeleteSuccessCount(), equalTo(1L));
   }
@@ -112,7 +112,7 @@ public class CacheableUpdateOperatorTest {
     });
 
     List<Integer> ids = Arrays.asList(100, 200);
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{ids}, stat);
     assertThat(stat.getCacheBatchDeleteSuccessCount(), equalTo(1L));
   }

@@ -24,7 +24,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.type.TypeHandler;
 import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.ToStringHelper;
@@ -76,12 +76,12 @@ public class UpdateOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values, OneExecuteStat stat) {
+  public Object execute(Object[] values, InvocationStat stat) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
     return execute(context, stat);
   }
 
-  public Object execute(InvocationContext context, OneExecuteStat stat) {
+  public Object execute(InvocationContext context, InvocationStat stat) {
     context.setGlobalTable(tableGenerator.getTable(context));
 
     try {
@@ -101,7 +101,7 @@ public class UpdateOperator extends AbstractOperator {
     return transformer.transform(r);
   }
 
-  private Number executeDb(DataSource ds, BoundSql boundSql, OneExecuteStat stat) {
+  private Number executeDb(DataSource ds, BoundSql boundSql, InvocationStat stat) {
     Number r = null;
     long now = System.nanoTime();
     try {

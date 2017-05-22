@@ -27,7 +27,7 @@ import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.SetSupplier;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.stat.MetaStat;
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;
@@ -73,7 +73,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, OneExecuteStat.create());
+    operator.execute(new Object[]{user}, InvocationStat.create());
   }
 
   @Test
@@ -103,7 +103,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, OneExecuteStat.create());
+    operator.execute(new Object[]{user}, InvocationStat.create());
   }
 
   @Test
@@ -133,7 +133,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, OneExecuteStat.create());
+    operator.execute(new Object[]{user}, InvocationStat.create());
   }
 
   @Test
@@ -161,7 +161,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, OneExecuteStat.create());
+    operator.execute(new Object[]{user}, InvocationStat.create());
   }
 
   @Test
@@ -191,7 +191,7 @@ public class QueryOperatorTest {
     });
 
     List<Integer> ids = Arrays.asList(100, 200, 300);
-    operator.execute(new Object[]{ids}, OneExecuteStat.create());
+    operator.execute(new Object[]{ids}, InvocationStat.create());
   }
 
   @Test
@@ -221,7 +221,7 @@ public class QueryOperatorTest {
     });
 
     List<Integer> ids = Arrays.asList(100, 200, 300);
-    Integer r = (Integer) operator.execute(new Object[]{ids}, OneExecuteStat.create());
+    Integer r = (Integer) operator.execute(new Object[]{ids}, InvocationStat.create());
     assertThat(r, is(3));
   }
 
@@ -241,7 +241,7 @@ public class QueryOperatorTest {
         return null;
       }
     });
-    OneExecuteStat stat = OneExecuteStat.create();
+    InvocationStat stat = InvocationStat.create();
     operator.execute(new Object[]{user}, stat);
     assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));
     operator.execute(new Object[]{user}, stat);

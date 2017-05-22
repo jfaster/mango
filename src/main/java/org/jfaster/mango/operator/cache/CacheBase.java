@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.operator.cache;
 
-import org.jfaster.mango.stat.OneExecuteStat;
+import org.jfaster.mango.stat.InvocationStat;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -45,33 +45,33 @@ public interface CacheBase {
   /**
    * 存入缓存
    */
-  public void setToCache(String key, Object value, OneExecuteStat stat);
+  public void setToCache(String key, Object value, InvocationStat stat);
 
   /**
    * 存入缓存
    */
-  public void addToCache(String key, Object value, OneExecuteStat stat);
+  public void addToCache(String key, Object value, InvocationStat stat);
 
   /**
    * 从缓存删除单个key
    */
-  public void deleteFromCache(String key, OneExecuteStat stat);
+  public void deleteFromCache(String key, InvocationStat stat);
 
   /**
    * 从缓存删除多个key
    */
-  public void batchDeleteFromCache(Set<String> keys, OneExecuteStat stat);
+  public void batchDeleteFromCache(Set<String> keys, InvocationStat stat);
 
   /**
    * 从缓存读取单个key
    */
-  public Object getFromCache(String key, OneExecuteStat stat);
+  public Object getFromCache(String key, InvocationStat stat);
 
   /**
    * 从缓存读取多个key
    */
   @Nullable
-  public Map<String, Object> getBulkFromCache(Set<String> keys, OneExecuteStat stat);
+  public Map<String, Object> getBulkFromCache(Set<String> keys, InvocationStat stat);
 
   /**
    * 获得缓存过期时间，单位为秒
