@@ -53,7 +53,7 @@ public class QueryOperatorTest {
   public void testQueryObject() throws Exception {
     TypeToken<User> t = TypeToken.of(User.class);
     String srcSql = "select * from user where id=:1.id and name=:1.name";
-    Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
+    AbstractOperator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
@@ -82,7 +82,7 @@ public class QueryOperatorTest {
     TypeToken<List<User>> rt = new TypeToken<List<User>>() {
     };
     String srcSql = "select * from user where id=:1.id and name=:1.name";
-    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
@@ -112,7 +112,7 @@ public class QueryOperatorTest {
     TypeToken<Set<User>> rt = new TypeToken<Set<User>>() {
     };
     String srcSql = "select * from user where id=:1.id and name=:1.name";
-    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
@@ -141,7 +141,7 @@ public class QueryOperatorTest {
     TypeToken<User> pt = TypeToken.of(User.class);
     TypeToken<User[]> rt = TypeToken.of(User[].class);
     String srcSql = "select * from user where id=:1.id and name=:1.name";
-    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
@@ -171,7 +171,7 @@ public class QueryOperatorTest {
     TypeToken<List<User>> rt = new TypeToken<List<User>>() {
     };
     String srcSql = "select * from user where id in (:1)";
-    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
@@ -201,7 +201,7 @@ public class QueryOperatorTest {
     TypeToken<Integer> rt = new TypeToken<Integer>() {
     };
     String srcSql = "select count(1) from user where id in (:1)";
-    Operator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new ArrayList<Annotation>());
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @SuppressWarnings("unchecked")
@@ -229,7 +229,7 @@ public class QueryOperatorTest {
   public void testStatsCounter() throws Exception {
     TypeToken<User> t = TypeToken.of(User.class);
     String srcSql = "select * from user where id=:1.id and name=:1.name";
-    Operator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
+    AbstractOperator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
 
     User user = new User();
     user.setId(100);
@@ -260,7 +260,7 @@ public class QueryOperatorTest {
     assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(2L));
   }
 
-  private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
+  private AbstractOperator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
       throws Exception {
     List<Annotation> empty = Collections.emptyList();
     ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), empty, "1");
@@ -279,7 +279,7 @@ public class QueryOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(group, null, new InterceptorChain(), new Config());
 
-    Operator operator = factory.getOperator(md, MetaStat.create());
+    AbstractOperator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 

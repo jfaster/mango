@@ -24,6 +24,7 @@ import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.exception.DataAccessException;
+import org.jfaster.mango.operator.AbstractOperator;
 import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Operator;
 import org.jfaster.mango.operator.OperatorFactory;
@@ -52,7 +53,7 @@ public class CacheableBatchUpdateOperatorTest {
     };
     TypeToken<int[]> rt = TypeToken.of(int[].class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
       @Override
       public void batchDelete(Set<String> keys, Class<?> daoClass) {
         Set<String> set = new HashSet<String>();
@@ -82,8 +83,8 @@ public class CacheableBatchUpdateOperatorTest {
     assertThat(stat.getCacheBatchDeleteSuccessCount(), equalTo(1L));
   }
 
-  private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
-                               CacheHandler ch, MockCacheBy cacheBy) throws Exception {
+  private AbstractOperator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
+                                       CacheHandler ch, MockCacheBy cacheBy) throws Exception {
     List<Annotation> pAnnos = new ArrayList<Annotation>();
     pAnnos.add(cacheBy);
     ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), pAnnos, "1");
@@ -100,7 +101,7 @@ public class CacheableBatchUpdateOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(group, ch, new InterceptorChain(), new Config());
 
-    Operator operator = factory.getOperator(md, MetaStat.create());
+    AbstractOperator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 

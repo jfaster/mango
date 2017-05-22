@@ -57,7 +57,7 @@ public class BatchUpdateOperatorTest {
     };
     TypeToken<Void> rt = TypeToken.of(void.class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    Operator operator = getOperator(pt, rt, srcSql);
+    AbstractOperator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
@@ -86,7 +86,7 @@ public class BatchUpdateOperatorTest {
     };
     TypeToken<Integer> rt = TypeToken.of(int.class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    Operator operator = getOperator(pt, rt, srcSql);
+    AbstractOperator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
@@ -115,7 +115,7 @@ public class BatchUpdateOperatorTest {
     };
     TypeToken<int[]> rt = TypeToken.of(int[].class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    Operator operator = getOperator(pt, rt, srcSql);
+    AbstractOperator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
@@ -144,7 +144,7 @@ public class BatchUpdateOperatorTest {
     };
     TypeToken<Integer[]> rt = TypeToken.of(Integer[].class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    Operator operator = getOperator(pt, rt, srcSql);
+    AbstractOperator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
@@ -174,7 +174,7 @@ public class BatchUpdateOperatorTest {
     };
     TypeToken<int[]> rt = TypeToken.of(int[].class);
     String srcSql = "update #table set name=:1.name where id=:1.id";
-    Operator operator = getOperator2(pt, rt, srcSql);
+    AbstractOperator operator = getOperator2(pt, rt, srcSql);
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
 
@@ -233,7 +233,7 @@ public class BatchUpdateOperatorTest {
     };
     TypeToken<int[]> rt = TypeToken.of(int[].class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    Operator operator = getOperator(pt, rt, srcSql);
+    AbstractOperator operator = getOperator(pt, rt, srcSql);
 
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
       @Override
@@ -281,7 +281,7 @@ public class BatchUpdateOperatorTest {
     };
     TypeToken<String> rt = TypeToken.of(String.class);
     String srcSql = "update user set name=:1.name where id=:1.id";
-    Operator operator = getOperator(pt, rt, srcSql);
+    AbstractOperator operator = getOperator(pt, rt, srcSql);
 
     final int[] expectedInts = new int[]{1, 2};
     operator.setJdbcOperations(new JdbcOperationsAdapter() {
@@ -302,7 +302,7 @@ public class BatchUpdateOperatorTest {
     operator.execute(new Object[]{users}, InvocationStat.create());
   }
 
-  private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
+  private AbstractOperator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
     List<Annotation> empty = Collections.emptyList();
     ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), empty, "1");
     List<ParameterDescriptor> pds = Arrays.asList(p);
@@ -317,11 +317,11 @@ public class BatchUpdateOperatorTest {
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
     OperatorFactory factory = new OperatorFactory(group, null, new InterceptorChain(), new Config());
 
-    Operator operator = factory.getOperator(md, MetaStat.create());
+    AbstractOperator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 
-  private Operator getOperator2(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
+  private AbstractOperator getOperator2(TypeToken<?> pt, TypeToken<?> rt, String srcSql) throws Exception {
     List<Annotation> pAnnos = new ArrayList<Annotation>();
     pAnnos.add(new MockShardingBy("id"));
     ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), pAnnos, "1");
@@ -338,7 +338,7 @@ public class BatchUpdateOperatorTest {
     group.addDataSourceFactory(new SimpleDataSourceFactory("l50", DataSourceConfig.getDataSource(0)));
     group.addDataSourceFactory(new SimpleDataSourceFactory("g50", DataSourceConfig.getDataSource(1)));
     OperatorFactory factory = new OperatorFactory(group, null, new InterceptorChain(), new Config());
-    Operator operator = factory.getOperator(md, MetaStat.create());
+    AbstractOperator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 

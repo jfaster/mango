@@ -65,7 +65,7 @@ public class OperatorFactory {
     this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactoryGroup);
   }
 
-  public Operator getOperator(MethodDescriptor md, MetaStat stat) {
+  public AbstractOperator getOperator(MethodDescriptor md, MetaStat stat) {
     ASTRootNode rootNode = SqlParser.parse(getSQL(md)).init(); // 初始化抽象语法树
     List<ParameterDescriptor> pds = md.getParameterDescriptors(); // 方法参数描述
     OperatorType operatorType = getOperatorType(pds, rootNode);
@@ -90,7 +90,7 @@ public class OperatorFactory {
     DataSourceGenerator dataSourceGenerator = dataSourceGeneratorFactory.
         getDataSourceGenerator(dataSourceType, getShardingAnno(md), getDataSourceFactoryName(md), context);
 
-    Operator operator;
+    AbstractOperator operator;
     if (isUseCache(md)) {
       CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context);
       stat.setCacheable(true);

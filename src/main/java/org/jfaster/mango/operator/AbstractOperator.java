@@ -80,27 +80,22 @@ public abstract class AbstractOperator implements Operator {
     mergeConfig(md);
   }
 
-  @Override
   public void setJdbcOperations(JdbcOperations jdbcOperations) {
     this.jdbcOperations = jdbcOperations;
   }
 
-  @Override
   public void setInvocationContextFactory(InvocationContextFactory invocationContextFactory) {
     this.invocationContextFactory = invocationContextFactory;
   }
 
-  @Override
   public void setTableGenerator(TableGenerator tableGenerator) {
     this.tableGenerator = tableGenerator;
   }
 
-  @Override
   public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator) {
     this.dataSourceGenerator = dataSourceGenerator;
   }
 
-  @Override
   public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain) {
     this.invocationInterceptorChain = invocationInterceptorChain;
   }

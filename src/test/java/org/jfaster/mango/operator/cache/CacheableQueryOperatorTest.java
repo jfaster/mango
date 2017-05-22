@@ -26,6 +26,7 @@ import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.operator.AbstractOperator;
 import org.jfaster.mango.operator.Config;
 import org.jfaster.mango.operator.Operator;
 import org.jfaster.mango.operator.OperatorFactory;
@@ -57,7 +58,7 @@ public class CacheableQueryOperatorTest {
     TypeToken<User> rt = TypeToken.of(User.class);
     String srcSql = "select * from user where id=:1";
 
-    Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
       @Override
       public Object get(String key, Type type, Class<?> daoClass) {
         assertThat(key, Matchers.equalTo("user_1"));
@@ -78,7 +79,7 @@ public class CacheableQueryOperatorTest {
     TypeToken<User> rt = TypeToken.of(User.class);
     String srcSql = "select * from user where id=:1";
 
-    Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
       @Override
       public Object get(String key, Type type, Class<?> daoClass) {
         assertThat(key, Matchers.equalTo("user_1"));
@@ -119,7 +120,7 @@ public class CacheableQueryOperatorTest {
     };
     String srcSql = "select * from user where id in (:1)";
 
-    Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
       @Override
       public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -152,7 +153,7 @@ public class CacheableQueryOperatorTest {
     keys.add("user_2");
     keys.add("user_3");
 
-    Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
       @Override
       public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
         assertThat(keys, Matchers.equalTo(keys));
@@ -205,7 +206,7 @@ public class CacheableQueryOperatorTest {
     keys.add("user_2");
     keys.add("user_3");
 
-    Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
       @Override
       public Map<String, Object> getBulk(Set<String> keys, Type type, Class<?> daoClass) {
         assertThat(keys, Matchers.equalTo(keys));
@@ -254,7 +255,7 @@ public class CacheableQueryOperatorTest {
     TypeToken<List<X>> rt = new TypeToken<List<X>>() {
     };
     String srcSql = "select * from user where msg_id in (:1)";
-    Operator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
+    AbstractOperator operator = getOperator(pt, rt, srcSql, new CacheHandlerAdapter() {
     }, new MockCacheBy(""));
     assertThat(((CacheableQueryOperator) operator).propertyOfMapperInvoker.getName(), equalTo("msgId"));
   }
@@ -282,8 +283,8 @@ public class CacheableQueryOperatorTest {
   }
 
 
-  private Operator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
-                               CacheHandler ch, MockCacheBy cacheBy) throws Exception {
+  private AbstractOperator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql,
+                                       CacheHandler ch, MockCacheBy cacheBy) throws Exception {
     List<Annotation> pAnnos = new ArrayList<Annotation>();
     pAnnos.add(cacheBy);
     ParameterDescriptor p = ParameterDescriptor.create(0, pt.getType(), pAnnos, "1");
@@ -300,7 +301,7 @@ public class CacheableQueryOperatorTest {
 
     OperatorFactory factory = new OperatorFactory(group, ch, new InterceptorChain(), new Config());
 
-    Operator operator = factory.getOperator(md, MetaStat.create());
+    AbstractOperator operator = factory.getOperator(md, MetaStat.create());
     return operator;
   }
 
