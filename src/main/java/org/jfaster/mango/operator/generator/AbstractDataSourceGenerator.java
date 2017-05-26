@@ -19,7 +19,6 @@ package org.jfaster.mango.operator.generator;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.DataSourceType;
-import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 
@@ -49,9 +48,6 @@ public abstract class AbstractDataSourceGenerator implements DataSourceGenerator
     DataSource ds = dataSourceType == DataSourceType.MASTER ?
         dataSourceFactoryGroup.getMasterDataSource(dataSourceFactoryName) :
         dataSourceFactoryGroup.getSlaveDataSource(dataSourceFactoryName, daoClass);
-    if (ds == null) {
-      throw new DescriptionException("can't find datasource factory for name [" + dataSourceFactoryName + "]");
-    }
     return ds;
   }
 

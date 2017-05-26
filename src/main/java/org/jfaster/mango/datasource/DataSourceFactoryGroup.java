@@ -49,12 +49,16 @@ public class DataSourceFactoryGroup {
 
   public DataSource getMasterDataSource(String name) {
     DataSourceFactory factory = getDataSourceFactory(name);
-    return factory.getMasterDataSource();
+    DataSource ds = factory.getMasterDataSource();
+    checkDataSourceNotNull(ds, name);
+    return ds;
   }
 
   public DataSource getSlaveDataSource(String name, Class<?> daoClass) {
     DataSourceFactory factory = getDataSourceFactory(name);
-    return factory.getSlaveDataSource(daoClass);
+    DataSource ds = factory.getSlaveDataSource(daoClass);
+    checkDataSourceNotNull(ds, name);
+    return ds;
   }
 
   private DataSourceFactory getDataSourceFactory(String name) {
@@ -64,6 +68,13 @@ public class DataSourceFactoryGroup {
           "available names is " + factoryMap.keySet());
     }
     return factory;
+  }
+
+  private void checkDataSourceNotNull(DataSource dataSource, String name) {
+    if (dataSource == null) {
+      throw new IllegalArgumentException("the datasource fetched by datasource factory is null, " +
+          "datasource factory name is [" + name + "]");
+    }
   }
 
 }
