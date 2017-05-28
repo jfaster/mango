@@ -190,7 +190,7 @@ public class Mango extends Config {
     MangoInvocationHandler handler = new MangoInvocationHandler(
         daoClass, dataSourceFactoryGroup, cacheHandler, interceptorChain, statCollector, this);
     if (!isLazyInit) { // 不使用懒加载，则提前加载
-      Method[] methods = daoClass.getMethods();
+      List<Method> methods = Methods.listMethods(daoClass);
       for (Method method : methods) {
         try {
           handler.getOperator(method);

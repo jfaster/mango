@@ -18,7 +18,9 @@ package org.jfaster.mango.crud;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.bytebuddy.asm.Advice;
 import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
@@ -27,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +44,6 @@ public class CrudDaoTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private final static Mango mango = Mango.newInstance(ds);
-  private final static MsgDao dao = mango.create(MsgDao.class);
 
   @Before
   public void before() throws Exception {
@@ -50,6 +52,7 @@ public class CrudDaoTest {
 
   @Test
   public void test() throws Exception {
+    MsgDao dao = mango.create(MsgDao.class);
     Msg msg = Msg.createRandomMsg();
     int id = dao.addAndReturnGeneratedId(msg);
     msg.setId(id);
@@ -91,8 +94,81 @@ public class CrudDaoTest {
     dao.add(msgs);
   }
 
+  @Test
+  public void test2() throws Exception {
+    MsgDao2 dao = mango.create(MsgDao2.class);
+    Msg msg = Msg.createRandomMsg();
+    int id = dao.addAndReturnGeneratedId(msg);
+    msg.setId(id);
+    assertThat(dao.getOne(id), equalTo(msg));
+    Msg msg2 = Msg.createRandomMsg();
+    dao.add(msg2);
+    Msg msg3 = Msg.createRandomMsg();
+    int id3 = dao.addAndReturnGeneratedId(msg3);
+    msg3.setId(id3);
+    assertThat(dao.getOne(id3), equalTo(msg3));
+    List<Integer> ids = Lists.newArrayList(id, id3);
+    List<Msg> msgs = dao.getMulti(ids);
+    assertThat(msgs.size(), equalTo(2));
+    Map<Integer, Msg> mapping = Maps.newHashMap();
+    mapping.put(id, msg);
+    mapping.put(id3, msg3);
+    for (Msg actualMsg : msgs) {
+      assertThat(actualMsg, equalTo(mapping.get(actualMsg.getId())));
+    }
+
+    msg.setContent("ash");
+    int r = dao.update(msg);
+    assertThat(r, equalTo(1));
+    assertThat(dao.getOne(id), equalTo(msg));
+    msgs = Lists.newArrayList(msg, msg3);
+    int[] rr = dao.update(msgs);
+    assertThat(rr, equalTo(new int[] {1, 1}));
+
+    msg.setId(-1);
+    msg3.setId(-3);
+    r = dao.update(msg);
+    assertThat(r, equalTo(0));
+    rr = dao.update(msgs);
+    assertThat(rr, equalTo(new int[] {0, 0}));
+
+    dao.delete(id);
+    assertThat(dao.getOne(id), nullValue());
+    msgs = Msg.createRandomMsgs(5);
+    dao.add(msgs);
+  }
+
+
   @DB(table = "msg")
   interface MsgDao extends CrudDao<Msg, Integer> {
+  }
+
+  @DB(table = "msg")
+  interface MsgDao2 extends CrudDao<Msg, Integer> {
+
+    @Override
+    void add(Msg entity);
+
+    @Override
+    int addAndReturnGeneratedId(Msg entity);
+
+    @Override
+    void add(Collection<Msg> entities);
+
+    @Override
+    Msg getOne(Integer integer);
+
+    @Override
+    List<Msg> getMulti(List<Integer> integers);
+
+    @Override
+    int update(Msg entity);
+
+    @Override
+    int[] update(Collection<Msg> entities);
+
+    @Override
+    int delete(Integer integer);
   }
 
 }

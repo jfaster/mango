@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.MethodDescriptor;
@@ -51,8 +50,7 @@ public class UpdateOperator extends AbstractOperator {
   }
 
   private void init(MethodDescriptor md, SQLType sqlType) {
-    ReturnGeneratedId returnGeneratedIdAnno = md.getAnnotation(ReturnGeneratedId.class);
-    returnGeneratedId = returnGeneratedIdAnno != null // 要求返回自增id
+    returnGeneratedId = md.isReturnGeneratedId() // 要求返回自增id
         && sqlType == SQLType.INSERT; // 是插入语句
 
     Class<?> returnRawType = md.getReturnRawType();

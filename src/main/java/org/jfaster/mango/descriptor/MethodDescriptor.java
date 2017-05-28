@@ -16,6 +16,13 @@
 
 package org.jfaster.mango.descriptor;
 
+import org.jfaster.mango.annotation.*;
+import org.jfaster.mango.exception.DescriptionException;
+import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.logging.InternalLogger;
+import org.jfaster.mango.util.logging.InternalLoggerFactory;
+import org.jfaster.mango.util.reflect.Reflection;
+
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -28,6 +35,8 @@ import java.util.List;
  * @author ash
  */
 public class MethodDescriptor {
+
+  private final static InternalLogger logger = InternalLoggerFactory.getInstance(MethodDescriptor.class);
 
   private final String name;
   private final Class<?> daoClass;
@@ -84,6 +93,68 @@ public class MethodDescriptor {
 
   public List<ParameterDescriptor> getParameterDescriptors() {
     return parameterDescriptors;
+  }
+
+  public String getSQL() {
+    SQL sqlAnno = getAnnotation(SQL.class);
+    String sql;
+    if (sqlAnno != null) {
+      sql = sqlAnno.value();
+    } else {
+      UseSqlGenerator useSqlGeneratorAnno = getAnnotation(UseSqlGenerator.class);
+      if (useSqlGeneratorAnno == null) {
+        throw new DescriptionException("each method expected one of @SQL or @UseSqlGenerator annotation but not found");
+      }
+      SqlGenerator sqlGenerator = Reflection.instantiateClass(useSqlGeneratorAnno.value());
+      sql = sqlGenerator.generateSql(this);
+    }
+    if (Strings.isEmpty(sql)) {
+      throw new DescriptionException("sql is null or empty");
+    }
+    if (logger.isDebugEnabled()) {
+      // TODO 补全日志
+      logger.debug(sql);
+    }
+    return sql;
+  }
+
+  @Nullable
+  public String getGlobalTable() {
+    DB dbAnno = getAnnotation(DB.class);
+    if (dbAnno == null) {
+      throw new DescriptionException("dao interface expected one @DB " +
+          "annotation but not found");
+    }
+    String table = null;
+    if (Strings.isNotEmpty(dbAnno.table())) {
+      table = dbAnno.table();
+    }
+    return table;
+  }
+
+  public String getDataSourceFactoryName() {
+    DB dbAnno = getAnnotation(DB.class);
+    if (dbAnno == null) {
+      throw new DescriptionException("dao interface expected one @DB " +
+          "annotation but not found");
+    }
+    return dbAnno.name();
+  }
+
+  @Nullable
+  public Sharding getShardingAnno() {
+    return getAnnotation(Sharding.class);
+  }
+
+  public boolean isUseCache() {
+    CacheIgnored cacheIgnoredAnno = getAnnotation(CacheIgnored.class);
+    Cache cacheAnno = getAnnotation(Cache.class);
+    return cacheAnno != null && cacheIgnoredAnno == null;
+  }
+
+  public boolean isReturnGeneratedId() {
+    return isAnnotationPresent(ReturnGeneratedId.class) ||
+        (name != null && name.contains("ReturnGeneratedId"));
   }
 
 }

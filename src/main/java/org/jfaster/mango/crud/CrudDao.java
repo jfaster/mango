@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.crud;
 
-import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.annotation.UseSqlGenerator;
 import org.jfaster.mango.descriptor.Generic;
 
@@ -31,7 +30,6 @@ public interface CrudDao<T, ID> extends Generic<T, ID> {
 
   void add(T entity);
 
-  @ReturnGeneratedId
   int addAndReturnGeneratedId(T entity);
 
   void add(Collection<T> entities);

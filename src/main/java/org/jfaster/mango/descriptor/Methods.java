@@ -20,10 +20,8 @@ import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +58,17 @@ public class Methods {
     }
 
     return MethodDescriptor.create(method.getName(), daoClass, rd, pds);
+  }
+
+  public static List<Method> listMethods(Class<?> clazz) {
+    Method[] allMethods = clazz.getMethods();
+    List<Method> methods = new ArrayList<Method>();
+    for (Method method : allMethods) {
+      if (!isDefault(method)) {
+        methods.add(method);
+      }
+    }
+    return methods;
   }
 
   static Type fixAndResolveType(Type type, TypeToken<?> daoTypeToken) {
@@ -101,6 +110,13 @@ public class Methods {
       names[i] = name;
     }
     return names;
+  }
+
+  private static boolean isDefault(Method m) {
+    // Default methods are public non-abstract instance methods
+    // declared in an interface.
+    return ((m.getModifiers() & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) ==
+        Modifier.PUBLIC) && m.getDeclaringClass().isInterface();
   }
 
 }
