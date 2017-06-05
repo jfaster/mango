@@ -33,7 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 测试{@link org.jfaster.mango.operator.IncorrectSqlException}
+ * 测试{@link org.jfaster.mango.exception.DescriptionException}
+ * 测试{@link org.jfaster.mango.parser.SqlParserException}
  *
  * @author ash
  */
@@ -81,6 +82,13 @@ public class IncorrectSqlExceptionTest {
     dao.gets(new ArrayList<Integer>(), new ArrayList<Integer>());
   }
 
+  @Test
+  public void test6() {
+    thrown.expect(DescriptionException.class);
+    Dao dao = mango.create(Dao.class);
+    dao.add4();
+  }
+
   @DB
   @Cache(prefix = "dao_", expire = Day.class)
   static interface Dao {
@@ -92,6 +100,9 @@ public class IncorrectSqlExceptionTest {
 
     @SQL("test")
     public int add3();
+
+    @SQL({})
+    public int add4();
 
     @SQL("select ... where a in (:1) and b in (:2)")
     public List<Integer> gets(@CacheBy List<Integer> a, List<Integer> b);

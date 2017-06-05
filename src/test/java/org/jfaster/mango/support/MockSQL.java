@@ -25,14 +25,18 @@ import java.lang.annotation.Annotation;
  */
 public class MockSQL implements Annotation, SQL {
 
-  private String value;
+  private String[] value;
 
-  public MockSQL(String value) {
+  public MockSQL(String[] value) {
     this.value = value;
   }
 
+  public MockSQL(String value) {
+    this.value = new String[]{value};
+  }
+
   @Override
-  public String value() {
+  public String[] value() {
     return value;
   }
 

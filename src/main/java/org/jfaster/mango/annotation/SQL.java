@@ -33,6 +33,6 @@ public @interface SQL {
    *
    * @return
    */
-  String value();
+  String[] value();
 
 }
