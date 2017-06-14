@@ -21,11 +21,13 @@ import org.jfaster.mango.crud.common.builder.CommonBuilder;
 import org.jfaster.mango.crud.common.builder.CommonUpdateBuilder;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class CommonUpdateBuilderFactory extends CommonBuilderFactory {
+public class CommonUpdateBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
@@ -38,8 +40,10 @@ public class CommonUpdateBuilderFactory extends CommonBuilderFactory {
   }
 
   @Override
-  Type expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    return entityClass;
+  List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
+    List<Type> types = new ArrayList<Type>();
+    types.add(entityClass);
+    return types;
   }
 
   @Override

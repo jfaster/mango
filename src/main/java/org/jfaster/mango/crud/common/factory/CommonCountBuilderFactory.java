@@ -18,7 +18,7 @@ package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.common.builder.CommonBuilder;
-import org.jfaster.mango.crud.common.builder.CommonDeleteBuilder;
+import org.jfaster.mango.crud.common.builder.CommonCountBuilder;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,28 +27,26 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonDeleteBuilderFactory extends AbstractCommonBuilderFactory {
+public class CommonCountBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "delete";
+    return "count";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return int.class;
+    return long.class;
   }
 
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    List<Type> types = new ArrayList<Type>();
-    types.add(idClass);
-    return types;
+    return new ArrayList<Type>();
   }
 
   @Override
   CommonBuilder createCommonBuilder(CrudMeta cm) {
-    return new CommonDeleteBuilder(cm.getColumnId());
+    return new CommonCountBuilder();
   }
 
 }

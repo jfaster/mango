@@ -57,7 +57,4 @@ public class CommonAddBuilder extends CommonBuilder {
     return String.format(SQL_TEMPLATE, s1, s2);
   }
 
-  public static void main(String[] args) {
-    System.out.println(Integer.MAX_VALUE);
-  }
 }

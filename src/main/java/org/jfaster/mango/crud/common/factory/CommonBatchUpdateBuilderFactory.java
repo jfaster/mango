@@ -22,13 +22,14 @@ import org.jfaster.mango.crud.common.builder.CommonUpdateBuilder;
 import org.jfaster.mango.util.reflect.DynamicTokens;
 import org.jfaster.mango.util.reflect.TypeToken;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class CommonBatchUpdateBuilderFactory extends CommonBuilderFactory {
+public class CommonBatchUpdateBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
@@ -41,22 +42,15 @@ public class CommonBatchUpdateBuilderFactory extends CommonBuilderFactory {
   }
 
   @Override
-  Type expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    return DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType();
+  List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
+    List<Type> types = new ArrayList<Type>();
+    types.add(DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType());
+    return types;
   }
 
   @Override
   CommonBuilder createCommonBuilder(CrudMeta cm) {
     return new CommonUpdateBuilder(cm.getPropertyId(), cm.getProperties(), cm.getColumns());
-  }
-
-  private static Type getIntArrayType() {
-    try {
-      Method m = CommonBatchUpdateBuilderFactory.class.getMethod("func");
-      return m.getGenericReturnType();
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
   }
 
 }

@@ -61,6 +61,7 @@ public class CrudDaoTest {
     dao.add(msg2);
     Msg msg3 = Msg.createRandomMsg();
     int id3 = dao.addAndReturnGeneratedId(msg3);
+    assertThat(dao.count(), equalTo(3L));
     msg3.setId(id3);
     assertThat(dao.getOne(id3), equalTo(msg3));
     List<Integer> ids = Lists.newArrayList(id, id3);
@@ -105,6 +106,7 @@ public class CrudDaoTest {
     dao.add(msg2);
     Msg msg3 = Msg.createRandomMsg();
     int id3 = dao.addAndReturnGeneratedId(msg3);
+    assertThat(dao.count(), equalTo(3L));
     msg3.setId(id3);
     assertThat(dao.getOne(id3), equalTo(msg3));
     List<Integer> ids = Lists.newArrayList(id, id3);
@@ -160,6 +162,9 @@ public class CrudDaoTest {
 
     @Override
     List<Msg> getMulti(List<Integer> integers);
+
+    @Override
+    long count();
 
     @Override
     int update(Msg entity);

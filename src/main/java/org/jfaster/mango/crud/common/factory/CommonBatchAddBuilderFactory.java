@@ -23,11 +23,13 @@ import org.jfaster.mango.util.reflect.DynamicTokens;
 import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class CommonBatchAddBuilderFactory extends CommonBuilderFactory {
+public class CommonBatchAddBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
@@ -40,8 +42,10 @@ public class CommonBatchAddBuilderFactory extends CommonBuilderFactory {
   }
 
   @Override
-  Type expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    return DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType();
+  List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
+    List<Type> types = new ArrayList<Type>();
+    types.add(DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType());
+    return types;
   }
 
   @Override
