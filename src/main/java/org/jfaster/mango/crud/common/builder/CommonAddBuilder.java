@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonAddBuilder extends CommonBuilder {
+public class CommonAddBuilder extends AbstractCommonBuilder {
 
   private final static String SQL_TEMPLATE = "insert into #table(%s) values(%s)";
 

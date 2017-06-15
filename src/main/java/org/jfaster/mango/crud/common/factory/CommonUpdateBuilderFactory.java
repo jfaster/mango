@@ -17,7 +17,7 @@
 package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
-import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 import org.jfaster.mango.crud.common.builder.CommonUpdateBuilder;
 
 import java.lang.reflect.Type;
@@ -47,7 +47,7 @@ public class CommonUpdateBuilderFactory extends AbstractCommonBuilderFactory {
   }
 
   @Override
-  CommonBuilder createCommonBuilder(CrudMeta cm) {
+  AbstractCommonBuilder createCommonBuilder(CrudMeta cm) {
     return new CommonUpdateBuilder(cm.getPropertyId(), cm.getProperties(), cm.getColumns());
   }
 

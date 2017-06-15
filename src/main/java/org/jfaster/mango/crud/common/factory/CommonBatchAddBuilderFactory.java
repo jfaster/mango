@@ -18,7 +18,7 @@ package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.common.builder.CommonAddBuilder;
-import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 import org.jfaster.mango.util.reflect.DynamicTokens;
 import org.jfaster.mango.util.reflect.TypeToken;
 
@@ -49,7 +49,7 @@ public class CommonBatchAddBuilderFactory extends AbstractCommonBuilderFactory {
   }
 
   @Override
-  CommonBuilder createCommonBuilder(CrudMeta cm) {
+  AbstractCommonBuilder createCommonBuilder(CrudMeta cm) {
     return new CommonAddBuilder(cm.getPropertyId(), cm.getProperties(), cm.getColumns(), cm.isAutoGenerateId());
   }
 

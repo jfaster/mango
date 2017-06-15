@@ -19,7 +19,7 @@ package org.jfaster.mango.crud.common.builder;
 /**
  * @author ash
  */
-public class CommonCountBuilder extends CommonBuilder {
+public class CommonCountBuilder extends AbstractCommonBuilder {
 
   private final static String SQL = "select count(1) from #table";
 

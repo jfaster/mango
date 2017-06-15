@@ -19,7 +19,7 @@ package org.jfaster.mango.crud.common.factory;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.BuilderFactory;
 import org.jfaster.mango.crud.CrudMeta;
-import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -56,6 +56,6 @@ public abstract class AbstractCommonBuilderFactory extends BuilderFactory {
 
   abstract List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass);
 
-  abstract CommonBuilder createCommonBuilder(CrudMeta cm);
+  abstract AbstractCommonBuilder createCommonBuilder(CrudMeta cm);
 
 }

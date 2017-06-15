@@ -21,5 +21,5 @@ import org.jfaster.mango.crud.Builder;
 /**
  * @author ash
  */
-public abstract class CommonBuilder implements Builder {
+public abstract class AbstractCommonBuilder implements Builder {
 }

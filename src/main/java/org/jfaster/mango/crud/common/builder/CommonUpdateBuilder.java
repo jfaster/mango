@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonUpdateBuilder extends CommonBuilder {
+public class CommonUpdateBuilder extends AbstractCommonBuilder {
 
   private final static String SQL_TEMPLATE = "update #table set %s where %s";
 

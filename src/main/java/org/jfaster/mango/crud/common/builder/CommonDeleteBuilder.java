@@ -16,12 +16,10 @@
 
 package org.jfaster.mango.crud.common.builder;
 
-import org.jfaster.mango.crud.common.builder.CommonBuilder;
-
 /**
  * @author ash
  */
-public class CommonDeleteBuilder extends CommonBuilder {
+public class CommonDeleteBuilder extends AbstractCommonBuilder {
 
   private final static String SQL_TEMPLATE = "delete from #table where %s = :1";
 
