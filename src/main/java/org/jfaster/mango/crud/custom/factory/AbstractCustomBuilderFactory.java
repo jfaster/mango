@@ -14,50 +14,52 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common.factory;
+package org.jfaster.mango.crud.custom.factory;
 
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.BuilderFactory;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
+import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author ash
  */
-public abstract class AbstractCommonBuilderFactory extends BuilderFactory {
+public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
 
   @Nullable
   @Override
   public Builder doTryGetBuilder(String name, Type returnType, List<Type> parameterTypes, Class<?> entityClass, Class<?> idClass) {
-    return (nameMatched(name) &&
-        returnTypeMatched(returnType, entityClass) &&
-        parameterTypesMatched(parameterTypes, entityClass, idClass)) ?
-        createCommonBuilder(new CrudMeta(entityClass)) :
-        null;
+    int matchSize = metchSize(name);
+    if (matchSize == 0) {
+      return null;
+    }
+    String str = name.substring(matchSize);
+    return null;
   }
 
-  private boolean nameMatched(String actualName) {
-    return expectedMethodName().equals(actualName);
+  public abstract List<String> prefixs();
+
+  abstract AbstractCommonBuilder createCustomBuilder(CrudMeta cm);
+
+  private int metchSize(String name) {
+    for (String prefix : prefixs()) {
+      if (Strings.isEmpty(prefix)) {
+        throw new IllegalStateException("prefix can't be empty");
+      }
+      Pattern p = Pattern.compile(prefix + "[A-Z]");
+      Matcher m = p.matcher(name);
+      if (m.find() && m.start() == 0) {
+        return prefix.length();
+      }
+    }
+    return 0;
   }
-
-  private boolean returnTypeMatched(Type returnType, Class<?> entityClass) {
-    return expectedReturnType(entityClass).equals(returnType);
-  }
-
-  private boolean parameterTypesMatched(List<Type> parameterTypes, Class<?> entityClass, Class<?> idClass) {
-    return expectedParameterType(entityClass, idClass).equals(parameterTypes);
-  }
-
-  abstract String expectedMethodName();
-
-  abstract Type expectedReturnType(Class<?> entityClass);
-
-  abstract List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass);
-
-  abstract AbstractCommonBuilder createCommonBuilder(CrudMeta cm);
 
 }

@@ -14,12 +14,24 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.lookup;
+package org.jfaster.mango.crud.custom.parser.op;
 
-import org.jfaster.mango.crud.Builder;
+import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author ash
  */
-public abstract class LookupBuilder implements Builder {
+public class BetweenOpTest {
+
+  @Test
+  public void test() throws Exception {
+    Op op = new BetweenOp();
+    assertThat(op.keyword(), equalTo("Between"));
+    assertThat(op.paramCount(), equalTo(2));
+    assertThat(op.render("id", new String[] {":1", ":2"}), equalTo("id between :1 and :2"));
+  }
+
 }
