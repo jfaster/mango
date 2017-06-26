@@ -19,11 +19,12 @@ package org.jfaster.mango.crud;
 import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.ID;
 import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.bean.BeanUtil;
+import org.jfaster.mango.util.bean.PropertyMeta;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import javax.annotation.Nullable;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * @author ash
@@ -34,6 +35,10 @@ public class CrudMeta {
 
   private final List<String> columns;
 
+  private final Map<String, String> propertyToColumnMap;
+
+  private final Map<String, Type> propertyToTypeMap;
+
   private final String propertyId;
 
   private final String columnId;
@@ -43,29 +48,30 @@ public class CrudMeta {
   public CrudMeta(Class<?> clazz) {
     List<String> props = new ArrayList<String>();
     List<String> cols = new ArrayList<String>();
+    Map<String, String> propToColMap = new HashMap<String, String>();
+    HashMap<String, Type> propToTypeMap = new HashMap<String, Type>();
     String propId = null;
     String colId = null;
-    Field[] fields = clazz.getDeclaredFields();
     Boolean autoGenerateId = null;
-    for (Field field : fields) {
-      String prop = field.getName();
-      if (!prop.startsWith("$")) { // 代码覆盖率工具Jacoco会为pojo对象织入$jacocoData字段
-        Column colAnno = field.getAnnotation(Column.class);
-        String col = colAnno != null ?
-            colAnno.value() :
-            Strings.underscoreName(prop);
-        props.add(prop);
-        cols.add(col);
+    for (PropertyMeta propertyMeta : BeanUtil.fetchPropertyMetas(clazz)) {
+      String prop = propertyMeta.getName();
+      Column colAnno = propertyMeta.getPropertyAnno(Column.class);
+      String col = colAnno != null ?
+          colAnno.value() :
+          Strings.underscoreName(prop);
+      props.add(prop);
+      cols.add(col);
+      propToColMap.put(prop, col);
+      propToTypeMap.put(prop, propertyMeta.getType());
 
-        ID idAnno = field.getAnnotation(ID.class);
-        if (idAnno != null) {
-          if (propId != null || colId != null) {
-            throw new IllegalStateException("duplicate ID annotation");
-          }
-          propId = prop;
-          colId = col;
-          autoGenerateId = idAnno.autoGenerateId();
+      ID idAnno = propertyMeta.getPropertyAnno(ID.class);
+      if (idAnno != null) {
+        if (propId != null || colId != null) {
+          throw new IllegalStateException("duplicate ID annotation");
         }
+        propId = prop;
+        colId = col;
+        autoGenerateId = idAnno.autoGenerateId();
       }
     }
     if (autoGenerateId == null) {
@@ -74,6 +80,8 @@ public class CrudMeta {
 
     properties = Collections.unmodifiableList(props);
     columns = Collections.unmodifiableList(cols);
+    propertyToColumnMap = Collections.unmodifiableMap(propToColMap);
+    propertyToTypeMap = Collections.unmodifiableMap(propToTypeMap);
     propertyId = propId;
     columnId = colId;
     isAutoGenerateId = autoGenerateId;
@@ -85,6 +93,16 @@ public class CrudMeta {
 
   public List<String> getColumns() {
     return columns;
+  }
+
+  @Nullable
+  public String getColumnByProperty(String property) {
+    return propertyToColumnMap.get(property);
+  }
+
+  @Nullable
+  public Type getTypeByProperty(String property) {
+    return propertyToTypeMap.get(property);
   }
 
   public String getPropertyId() {

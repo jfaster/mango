@@ -14,28 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.util;
+package org.jfaster.mango.crud.custom.builder;
 
+import com.google.common.collect.Lists;
+import org.jfaster.mango.crud.common.builder.CommonGetBuilder;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.*;
 
 /**
  * @author ash
  */
-public class PropertyTokenizerTest {
+public class CustomQueryBuilderTest {
 
   @Test
-  public void test() throws Exception {
-    PropertyTokenizer prop = new PropertyTokenizer("a.b.c");
-    assertThat(prop.getName(), equalTo("a"));
-    assertThat(prop.getChildren(), equalTo("b.c"));
-
-    PropertyTokenizer prop2 = new PropertyTokenizer("a");
-    assertThat(prop2.getName(), equalTo("a"));
-    assertThat(prop2.getChildren(), nullValue());
+  public void buildSql() throws Exception {
+    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
+    CustomQueryBuilder b = new CustomQueryBuilder(columns, "where id = :1");
+    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table where id = :1"));
   }
 
 }

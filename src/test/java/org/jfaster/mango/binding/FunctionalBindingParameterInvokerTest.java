@@ -102,7 +102,7 @@ public class FunctionalBindingParameterInvokerTest {
   public void testBindingException4() throws Exception {
     thrown.expect(BindingException.class);
     thrown.expectMessage("Parameter ':user.userBag.ite' can't be readable; " +
-        "caused by: There is no getter for property named 'ite' in 'class org.jfaster.mango.binding.FunctionalBindingParameterInvokerTest$UserBag'");
+        "caused by: There is no getter/setter for property named 'ite' in 'class org.jfaster.mango.binding.FunctionalBindingParameterInvokerTest$UserBag'");
     FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("user", "userBag.ite", null));
   }
 

@@ -14,28 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.util;
+package org.jfaster.mango.crud;
 
-import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.jfaster.mango.exception.MangoException;
 
 /**
  * @author ash
  */
-public class PropertyTokenizerTest {
+public class CrudException extends MangoException {
 
-  @Test
-  public void test() throws Exception {
-    PropertyTokenizer prop = new PropertyTokenizer("a.b.c");
-    assertThat(prop.getName(), equalTo("a"));
-    assertThat(prop.getChildren(), equalTo("b.c"));
+  public CrudException(String msg) {
+    super(msg);
+  }
 
-    PropertyTokenizer prop2 = new PropertyTokenizer("a");
-    assertThat(prop2.getName(), equalTo("a"));
-    assertThat(prop2.getChildren(), nullValue());
+  public CrudException(String msg, Throwable cause) {
+    super(msg, cause);
   }
 
 }

@@ -18,8 +18,11 @@ package org.jfaster.mango.crud.custom.factory;
 
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.BuilderFactory;
+import org.jfaster.mango.crud.CrudException;
 import org.jfaster.mango.crud.CrudMeta;
-import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
+import org.jfaster.mango.crud.custom.builder.AbstractCustomBuilder;
+import org.jfaster.mango.crud.custom.parser.*;
+import org.jfaster.mango.crud.custom.parser.op.Op;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
@@ -41,12 +44,17 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
       return null;
     }
     String str = name.substring(matchSize);
-    return null;
+    CrudMeta cm = new CrudMeta(entityClass);
+    MethodNameInfo info = MethodNameParser.parse(str);
+    StringBuilder tailOfSql = new StringBuilder();
+    buildWhereClause(tailOfSql, info.getOpUnits(), info.getLogics(), cm, parameterTypes, name, entityClass);
+    buildOrderByClause(tailOfSql, info.getOrderUnit(), cm, name, entityClass);
+    return createCustomBuilder(cm, tailOfSql.toString());
   }
 
   public abstract List<String> prefixs();
 
-  abstract AbstractCommonBuilder createCustomBuilder(CrudMeta cm);
+  abstract AbstractCustomBuilder createCustomBuilder(CrudMeta cm, String tailOfSql);
 
   private int metchSize(String name) {
     for (String prefix : prefixs()) {
@@ -60,6 +68,71 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
       }
     }
     return 0;
+  }
+
+  private void buildWhereClause(
+      StringBuilder tailOfSql, List<OpUnit> opUnits, List<String> logics,
+      CrudMeta cm, List<Type> parameterTypes, String methodName, Class<?> clazz) {
+    if (opUnits.size() == 0) {
+      throw new IllegalStateException(); // TODO msg
+    }
+    if (opUnits.size() != (logics.size() + 1)) {
+      throw new IllegalStateException(); // TODO msg
+    }
+    int count = 0;
+    for (OpUnit opUnit : opUnits) {
+      count = count + opUnit.getOp().paramCount();
+    }
+    if (count != parameterTypes.size()) {
+      throw new CrudException("the name of method [" + methodName + "] is error, " +
+          "the number of parameters expected " + count + ", but " + parameterTypes.size());
+    }
+    tailOfSql.append("where ");
+    int paramIndex = 1;
+    for (int i = 0; i < opUnits.size(); i++) {
+      OpUnit opUnit = opUnits.get(i);
+      String property = opUnit.getProperty();
+      String column = cm.getColumnByProperty(property);
+      Type propertyType = cm.getTypeByProperty(property);
+      if (column == null || propertyType == null) {
+        throw new CrudException("the name of method [" + methodName + "] is error, " +
+            "property " + property + " can't be found in '" + clazz + "'");
+      }
+      Op op = opUnit.getOp();
+      String[] params = new String[op.paramCount()];
+      for (int j = 0; j < params.length; j++) {
+        // TODO
+//        Type type = parameterTypes.get(paramIndex - 1);
+//        if (!propertyType.equals(type)) {
+//          throw new CrudException("the type of " + paramIndex + "th parameters of method [" + methodName + "] " +
+//              "expected '" + propertyType + "', but '" + type + "'");
+//        }
+        params[j] = ":" + paramIndex;
+        paramIndex++;
+      }
+      tailOfSql.append(op.render(column, params));
+      if (i != (opUnits.size() - 1)) {
+        tailOfSql.append(" ").append(logics.get(i)).append(" ");
+      }
+    }
+  }
+
+  private void buildOrderByClause(
+      StringBuilder tailOfSql, @Nullable  OrderUnit orderUnit,
+      CrudMeta cm, String methodName, Class<?> clazz) {
+    if (orderUnit != null) {
+      String property = orderUnit.getProperty();
+      String column = cm.getColumnByProperty(property);
+      if (column == null) {
+        throw new CrudException("the name of method [" + methodName + "] is error, " +
+            "property " + property + " can't be found in '" + clazz + "'");
+      }
+      tailOfSql.append(" order by " + column);
+      OrderType orderType = orderUnit.getOrderType();
+      if (orderType != OrderType.NONE) {
+        tailOfSql.append(" " + orderType.toString().toLowerCase());
+      }
+    }
   }
 
 }

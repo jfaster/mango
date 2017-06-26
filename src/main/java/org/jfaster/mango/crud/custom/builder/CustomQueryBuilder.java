@@ -14,28 +14,32 @@
  * under the License.
  */
 
-package org.jfaster.mango.util;
+package org.jfaster.mango.crud.custom.builder;
 
-import org.junit.Test;
+import org.jfaster.mango.util.Joiner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class PropertyTokenizerTest {
+public class CustomQueryBuilder extends AbstractCustomBuilder {
 
-  @Test
-  public void test() throws Exception {
-    PropertyTokenizer prop = new PropertyTokenizer("a.b.c");
-    assertThat(prop.getName(), equalTo("a"));
-    assertThat(prop.getChildren(), equalTo("b.c"));
+  private final static String SQL_TEMPLATE = "select %s from #table %s";
 
-    PropertyTokenizer prop2 = new PropertyTokenizer("a");
-    assertThat(prop2.getName(), equalTo("a"));
-    assertThat(prop2.getChildren(), nullValue());
+  private final List<String> columns;
+
+  private final String tailOfSql;
+
+  public CustomQueryBuilder(List<String> columns, String tailOfSql) {
+    this.columns = columns;
+    this.tailOfSql = tailOfSql;
+  }
+
+  @Override
+  public String buildSql() {
+    String s1 = Joiner.on(", ").join(columns);
+    return String.format(SQL_TEMPLATE, s1, tailOfSql);
   }
 
 }

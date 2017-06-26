@@ -33,7 +33,7 @@ public class UnreadableParameterExceptionTest {
   @Test
   public void test2() {
     thrown.expect(BindingException.class);
-    thrown.expectMessage("Parameter ':1.c.d' can't be readable; caused by: There is no getter for property named 'c' in 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A'");
+    thrown.expectMessage("Parameter ':1.c.d' can't be readable; caused by: There is no getter/setter for property named 'c' in 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A'");
     Dao dao = mango.create(Dao.class);
     dao.add2(new A());
   }
