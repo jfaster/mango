@@ -18,7 +18,7 @@ package org.jfaster.mango.crud.custom.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.custom.builder.AbstractCustomBuilder;
-import org.jfaster.mango.crud.custom.builder.CustomQueryBuilder;
+import org.jfaster.mango.crud.custom.builder.CustomDeleteBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +26,12 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CustomQueryBuilderFactory extends AbstractCustomBuilderFactory {
+public class CustomDeleteBuilderFactory extends AbstractCustomBuilderFactory {
 
   private final static List<String> PREFIXS = new ArrayList<String>();
   static {
-    PREFIXS.add("getBy");
-    PREFIXS.add("findBy");
-    PREFIXS.add("queryBy");
-    PREFIXS.add("selectBy");
+    PREFIXS.add("deleteBy");
+    PREFIXS.add("removeBy");
   }
 
   @Override
@@ -43,7 +41,7 @@ public class CustomQueryBuilderFactory extends AbstractCustomBuilderFactory {
 
   @Override
   AbstractCustomBuilder createCustomBuilder(CrudMeta cm, String tailOfSql) {
-    return new CustomQueryBuilder(cm.getColumns(), tailOfSql);
+    return new CustomDeleteBuilder(tailOfSql);
   }
 
 }

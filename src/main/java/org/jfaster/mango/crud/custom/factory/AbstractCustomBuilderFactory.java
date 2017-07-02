@@ -22,8 +22,12 @@ import org.jfaster.mango.crud.CrudException;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.custom.builder.AbstractCustomBuilder;
 import org.jfaster.mango.crud.custom.parser.*;
+import org.jfaster.mango.crud.custom.parser.op.Param1ForCollectionOp;
 import org.jfaster.mango.crud.custom.parser.op.Op;
 import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.util.reflect.TypeWrapper;
+import org.jfaster.mango.util.reflect.Types;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -101,18 +105,34 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
       Op op = opUnit.getOp();
       String[] params = new String[op.paramCount()];
       for (int j = 0; j < params.length; j++) {
-        // TODO
-//        Type type = parameterTypes.get(paramIndex - 1);
-//        if (!propertyType.equals(type)) {
-//          throw new CrudException("the type of " + paramIndex + "th parameters of method [" + methodName + "] " +
-//              "expected '" + propertyType + "', but '" + type + "'");
-//        }
+        Type parameterType = parameterTypes.get(paramIndex - 1);
+        checkType(parameterType, propertyType, paramIndex, methodName, op);
         params[j] = ":" + paramIndex;
         paramIndex++;
       }
       tailOfSql.append(op.render(column, params));
       if (i != (opUnits.size() - 1)) {
         tailOfSql.append(" ").append(logics.get(i)).append(" ");
+      }
+    }
+  }
+
+  private void checkType(Type paramType, Type propType, int paramIndex, String methodName, Op op) {
+    Class<?> rawPropType = TypeToken.of(propType).getRawType();
+    if (!(op instanceof Param1ForCollectionOp)) {
+      Class<?> rawParamType = TypeToken.of(paramType).getRawType();
+      if (!Types.equals(rawPropType, rawParamType)) {
+        throw new CrudException("the type of " + paramIndex + "th parameters of method [" + methodName + "] " +
+            "expected '" + propType + "', but '" + paramType + "'");
+      }
+    } else { // in (:1) 类型需特殊处理
+      // TODO msg
+      TypeWrapper tw = new TypeWrapper(paramType);
+      if (!tw.isIterable()) {
+        throw new CrudException("1");
+      }
+      if (!Types.equals(rawPropType, tw.getMappedClass())) {
+        throw new CrudException("2");
       }
     }
   }

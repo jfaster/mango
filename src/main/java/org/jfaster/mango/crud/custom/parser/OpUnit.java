@@ -30,8 +30,17 @@ public class OpUnit {
   private final static List<Op> OPS = new ArrayList<Op>();
   static {
     OPS.add(new IsNullOp());
+    OPS.add(new NotNullOp());
+    OPS.add(new TrueOp());
+    OPS.add(new FalseOp());
 
     OPS.add(new LessThanOp());
+    OPS.add(new LessThanEqualOp());
+    OPS.add(new GreaterThanOp());
+    OPS.add(new GreaterThanEqualOp());
+    OPS.add(new NotOp());
+    OPS.add(new InOp());
+    OPS.add(new NotInOp());
 
     OPS.add(new BetweenOp());
   }

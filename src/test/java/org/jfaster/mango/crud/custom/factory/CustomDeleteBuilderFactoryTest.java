@@ -31,32 +31,19 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
-public class CustomQueryBuilderFactoryTest {
+public class CustomDeleteBuilderFactoryTest {
 
   @Test
   public void test() throws Exception {
-    CustomQueryBuilderFactory factory = new CustomQueryBuilderFactory();
-    String name = "getByIdIsNullAndIdLessThanAndUserIdOrUserAgeBetween";
-    Class<?> entityClass = Order.class;
-    Class<Integer> intClass = Integer.class;
-    Type intType = intClass;
-    List<Type> types = Lists.newArrayList(intType, intType, intType, intType);
-    Builder b = factory.doTryGetBuilder(name, entityClass, types, entityClass, intClass);
-    assertThat(b, notNullValue());
-    assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table where id is null and id < :1 and userid = :2 or user_age between :3 and :4"));
-  }
-
-  @Test
-  public void test2() throws Exception {
-    CustomQueryBuilderFactory factory = new CustomQueryBuilderFactory();
-    String name = "getByIdBetweenAndUserId";
+    CustomDeleteBuilderFactory factory = new CustomDeleteBuilderFactory();
+    String name = "deleteByIdBetweenAndUserId";
     Class<?> entityClass = Order.class;
     Class<Integer> intClass = Integer.class;
     Type intType = intClass;
     List<Type> types = Lists.newArrayList(intType, intType, intType);
     Builder b = factory.doTryGetBuilder(name, entityClass, types, entityClass, intClass);
     assertThat(b, notNullValue());
-    assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table where id between :1 and :2 and userid = :3"));
+    assertThat(b.buildSql(), equalTo("delete from #table where id between :1 and :2 and userid = :3"));
   }
 
 }

@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.operator;
 
+import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.Mapper;
 import org.jfaster.mango.annotation.Result;
 import org.jfaster.mango.annotation.Results;
@@ -31,6 +32,8 @@ import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
 import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.type.TypeHandlerRegistry;
+import org.jfaster.mango.util.bean.BeanUtil;
+import org.jfaster.mango.util.bean.PropertyMeta;
 import org.jfaster.mango.util.reflect.Reflection;
 
 import javax.sql.DataSource;
@@ -146,7 +149,7 @@ public class QueryOperator extends AbstractOperator {
 
     // 类属性mapper
     Results resultsAnoo = rd.getAnnotation(Results.class);
-    Map<String, String> ptc = new HashMap<String, String>();
+    Map<String, String> ptc = getPropToColMap(clazz);
     if (resultsAnoo != null) {
       Result[] resultAnnos = resultsAnoo.value();
       if (resultAnnos != null) {
@@ -157,6 +160,19 @@ public class QueryOperator extends AbstractOperator {
       }
     }
     return new BeanPropertyRowMapper<T>(clazz, ptc, config.isCheckColumn());
+  }
+
+  private Map<String, String> getPropToColMap(Class<?> clazz) {
+    Map<String, String> propToColMap = new HashMap<String, String>();
+    for (PropertyMeta propertyMeta : BeanUtil.fetchPropertyMetas(clazz)) {
+      Column colAnno = propertyMeta.getPropertyAnno(Column.class);
+      if (colAnno != null) {
+        String prop = propertyMeta.getName();
+        String col = colAnno.value();
+        propToColMap.put(prop, col);
+      }
+    }
+    return propToColMap;
   }
 
   protected Object EmptyObject() {

@@ -17,6 +17,9 @@
 package org.jfaster.mango.crud;
 
 import org.jfaster.mango.crud.common.factory.*;
+import org.jfaster.mango.crud.custom.factory.CustomCountBuilderFactory;
+import org.jfaster.mango.crud.custom.factory.CustomDeleteBuilderFactory;
+import org.jfaster.mango.crud.custom.factory.CustomQueryBuilderFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.SqlGenerator;
 
@@ -29,7 +32,7 @@ import java.util.List;
 public class CrudSqlGenerator implements SqlGenerator {
 
   private static final List<BuilderFactory> commonBuilderFactories = new ArrayList<BuilderFactory>();
-  private static final List<BuilderFactory> lookupBuilderFactories = new ArrayList<BuilderFactory>();
+  private static final List<BuilderFactory> customBuilderFactories = new ArrayList<BuilderFactory>();
   static {
     commonBuilderFactories.add(new CommonAddBuilderFactory());
     commonBuilderFactories.add(new CommonAddAndReturnGeneratedIdBuilderFactory());
@@ -40,6 +43,10 @@ public class CrudSqlGenerator implements SqlGenerator {
     commonBuilderFactories.add(new CommonUpdateBuilderFactory());
     commonBuilderFactories.add(new CommonBatchUpdateBuilderFactory());
     commonBuilderFactories.add(new CommonDeleteBuilderFactory());
+
+    customBuilderFactories.add(new CustomQueryBuilderFactory());
+    customBuilderFactories.add(new CustomCountBuilderFactory());
+    customBuilderFactories.add(new CustomDeleteBuilderFactory());
   }
 
   @Override
@@ -54,7 +61,7 @@ public class CrudSqlGenerator implements SqlGenerator {
         return builder;
       }
     }
-    for (BuilderFactory lookupBuilderFactory : lookupBuilderFactories) {
+    for (BuilderFactory lookupBuilderFactory : customBuilderFactories) {
       Builder builder = lookupBuilderFactory.tryGetBuilder(md);
       if (builder != null) {
         return builder;

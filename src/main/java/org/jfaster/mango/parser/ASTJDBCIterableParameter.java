@@ -155,16 +155,4 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     this.propertyOfMapper = propertyOfMapper;
   }
 
-  public static void main(String[] args) {
-    String str = "in (:1)";
-    Pattern p = Pattern.compile("in\\s*\\(\\s*:(\\w+)((\\.\\w+)*)(\\@\\w+)?\\s*\\)", Pattern.CASE_INSENSITIVE);
-    Matcher m = p.matcher(str);
-    if (m.matches()) {
-      System.out.println(m.group(1));
-      System.out.println(m.group(2));
-      System.out.println(m.group(3));
-      System.out.println(m.group(4));
-    }
-  }
-
 }

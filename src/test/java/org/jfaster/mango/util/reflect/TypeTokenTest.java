@@ -87,6 +87,13 @@ public class TypeTokenTest {
     types.contains(TypeToken.of(Object.class));
   }
 
+  public void test() throws Exception {
+    TypeToken<Integer> t = TypeToken.of(Integer.class);
+    assertThat(t.isAssignableFrom(int.class), equalTo(true));
+    t = TypeToken.of(int.class);
+    assertThat(t.isAssignableFrom(Integer.class), equalTo(true));
+  }
+
 }
 
 
