@@ -19,7 +19,7 @@ package org.jfaster.mango.crud.custom.parser.op;
 /**
  * @author ash
  */
-public class NotInOp extends Param1Op {
+public class NotInOp extends Param1ForCollectionOp {
 
   @Override
   public String keyword() {

@@ -16,20 +16,16 @@
 
 package org.jfaster.mango.crud.custom.parser;
 
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.custom.parser.op.EqualsOp;
 import org.jfaster.mango.crud.custom.parser.op.LessThanOp;
+import org.jfaster.mango.crud.custom.parser.op.Op;
 import org.junit.Test;
-import org.mockito.internal.matchers.LessThan;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
 
 /**
  * @author ash
@@ -46,11 +42,11 @@ public class MethodNameParserTest {
     assertThat(ou.getOrderStrSize(), equalTo(17));
     List<OpUnit> ous = info.getOpUnits();
     assertThat(ous.size(), equalTo(3));
-    assertThat(ous.get(0).getOp(), equalTo(new EqualsOp()));
+    assertThat(ous.get(0).getOp(), equalTo((Op) new EqualsOp()));
     assertThat(ous.get(0).getProperty(), equalTo("emailAddress"));
-    assertThat(ous.get(1).getOp(), equalTo(new LessThanOp()));
+    assertThat(ous.get(1).getOp(), equalTo((Op) new LessThanOp()));
     assertThat(ous.get(1).getProperty(), equalTo("lastname"));
-    assertThat(ous.get(2).getOp(), equalTo(new EqualsOp()));
+    assertThat(ous.get(2).getOp(), equalTo((Op) new EqualsOp()));
     assertThat(ous.get(2).getProperty(), equalTo("id"));
   }
 
