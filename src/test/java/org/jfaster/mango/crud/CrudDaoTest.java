@@ -23,12 +23,13 @@ import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -70,6 +71,56 @@ public class CrudDaoTest {
     assertThat(dao.countByUserId(userId), equalTo(0));
   }
 
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void test2() throws Throwable {
+    thrown.expect(CrudException.class);
+    thrown.expectMessage("the type of 1th parameters of method [getById] expected 'class java.lang.String', but 'int'");
+    try {
+      mango.create(CrudOrder2Dao.class);
+    } catch (Exception e) {
+      throw e.getCause();
+    }
+  }
+
+  @Test
+  public void test3() throws Throwable {
+    thrown.expect(CrudException.class);
+    thrown.expectMessage("can't convert method [abc] to SQL");
+    try {
+      mango.create(CrudOrder3Dao.class);
+    } catch (Exception e) {
+      throw e.getCause();
+    }
+
+  }
+
+  @Test
+  public void test4() throws Throwable {
+    thrown.expect(CrudException.class);
+    thrown.expectMessage("the type of 1th parameters of method [getByIdIn] expected iterable, but 'int'");
+    try {
+      mango.create(CrudOrder4Dao.class);
+    } catch (Exception e) {
+      throw e.getCause();
+    }
+
+  }
+
+  @Test
+  public void test5() throws Throwable {
+    thrown.expect(CrudException.class);
+    thrown.expectMessage("the type of 1th parameters of method [getByIdIn] error");
+    try {
+      mango.create(CrudOrder5Dao.class);
+    } catch (Exception e) {
+      throw e.getCause();
+    }
+
+  }
+
   @DB(table = "t_order")
   interface CrudOrderDao extends CrudDao<CrudOrder, String> {
 
@@ -82,6 +133,34 @@ public class CrudDaoTest {
     int countByUserId(int userId);
 
     int deleteByUserId(int userId);
+
+  }
+
+  @DB(table = "t_order")
+  interface CrudOrder2Dao extends CrudDao<CrudOrder, String> {
+
+    CrudOrder getById(int id);
+
+  }
+
+  @DB(table = "t_order")
+  interface CrudOrder3Dao extends CrudDao<CrudOrder, String> {
+
+    CrudOrder abc(int id);
+
+  }
+
+  @DB(table = "t_order")
+  interface CrudOrder4Dao extends CrudDao<CrudOrder, String> {
+
+    CrudOrder getByIdIn(int id);
+
+  }
+
+  @DB(table = "t_order")
+  interface CrudOrder5Dao extends CrudDao<CrudOrder, String> {
+
+    CrudOrder getByIdIn(List<Integer> ids);
 
   }
 

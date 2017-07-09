@@ -67,8 +67,7 @@ public class CrudSqlGenerator implements SqlGenerator {
         return builder;
       }
     }
-    // TODO
-    throw new IllegalArgumentException();
+    throw new CrudException("can't convert method [" + md.getName() + "] to SQL");
   }
 
 }

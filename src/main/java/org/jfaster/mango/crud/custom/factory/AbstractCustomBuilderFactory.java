@@ -129,10 +129,11 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
       // TODO msg
       TypeWrapper tw = new TypeWrapper(paramType);
       if (!tw.isIterable()) {
-        throw new CrudException("1");
+        throw new CrudException("the type of " + paramIndex + "th parameters of method [" + methodName + "] " +
+                "expected iterable, but '" + paramType + "'");
       }
       if (!Types.equals(rawPropType, tw.getMappedClass())) {
-        throw new CrudException("2");
+        throw new CrudException("the type of " + paramIndex + "th parameters of method [" + methodName + "] error");
       }
     }
   }
