@@ -55,6 +55,7 @@ public class MangoStatServlet extends HttpServlet {
       out.println(StatsRender.getHtml(Boolean.valueOf(req.getParameter("all"))));
       out.flush();
     } catch (Exception e) {
+      e.printStackTrace();
       out.println(e.getMessage());
       out.flush();
     }
