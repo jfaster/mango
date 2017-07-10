@@ -14,38 +14,26 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud;
+package org.jfaster.mango.crud.common.builder;
 
-import org.jfaster.mango.annotation.UseSqlGenerator;
-import org.jfaster.mango.descriptor.Generic;
+import com.google.common.collect.Lists;
+import org.junit.Test;
 
-import java.util.Collection;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author ash
  */
-@UseSqlGenerator(CrudSqlGenerator.class)
-public interface CrudDao<T, ID> extends Generic<T, ID> {
+public class CommonGetAllBuilderTest {
 
-  void add(T entity);
-
-  int addAndReturnGeneratedId(T entity);
-
-  void add(Collection<T> entities);
-
-  T getOne(ID id);
-
-  List<T> getMulti(List<ID> ids);
-
-  List<T> getAll();
-
-  long count();
-
-  int update(T entity);
-
-  int[] update(Collection<T> entities);
-
-  int delete(ID id);
+  @Test
+  public void build() throws Exception {
+    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
+    CommonGetAllBuilder b = new CommonGetAllBuilder(columns);
+    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table"));
+  }
 
 }

@@ -62,6 +62,7 @@ public class CommonCrudDaoTest {
     assertThat(dao.count(), equalTo(3L));
     msg3.setId(id3);
     assertThat(dao.getOne(id3), equalTo(msg3));
+    assertThat(dao.getAll().size(), equalTo(3));
     List<Integer> ids = Lists.newArrayList(id, id3);
     List<Msg> msgs = dao.getMulti(ids);
     assertThat(msgs.size(), equalTo(2));
@@ -71,7 +72,6 @@ public class CommonCrudDaoTest {
     for (Msg actualMsg : msgs) {
       assertThat(actualMsg, equalTo(mapping.get(actualMsg.getId())));
     }
-
     msg.setContent("ash");
     int r = dao.update(msg);
     assertThat(r, equalTo(1));
@@ -104,6 +104,7 @@ public class CommonCrudDaoTest {
     dao.add(msg2);
     Msg msg3 = Msg.createRandomMsg();
     int id3 = dao.addAndReturnGeneratedId(msg3);
+    assertThat(dao.getAll().size(), equalTo(3));
     assertThat(dao.count(), equalTo(3L));
     msg3.setId(id3);
     assertThat(dao.getOne(id3), equalTo(msg3));
@@ -160,6 +161,9 @@ public class CommonCrudDaoTest {
 
     @Override
     List<Msg> getMulti(List<Integer> integers);
+
+    @Override
+    List<Msg> getAll();
 
     @Override
     long count();

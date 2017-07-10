@@ -18,6 +18,7 @@ package org.jfaster.mango.crud;
 
 import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.ID;
+import org.jfaster.mango.annotation.Ignore;
 
 /**
  * @author ash
@@ -31,6 +32,9 @@ public class Order {
   private int userId;
 
   private int userAge;
+
+  @Ignore
+  private String stats;
 
   public int getId() {
     return id;
@@ -56,4 +60,11 @@ public class Order {
     this.userAge = userAge;
   }
 
+  public String getStats() {
+    return stats;
+  }
+
+  public void setStats(String stats) {
+    this.stats = stats;
+  }
 }

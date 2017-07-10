@@ -21,6 +21,7 @@ import com.google.common.base.Objects;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.ID;
+import org.jfaster.mango.annotation.Ignore;
 
 /**
  * @author ash
@@ -34,6 +35,9 @@ public class CrudOrder {
   private int userId;
 
   private int price;
+
+  @Ignore
+  private String stat;
 
   public String getId() {
     return id;
@@ -57,6 +61,14 @@ public class CrudOrder {
 
   public void setPrice(int price) {
     this.price = price;
+  }
+
+  public String getStat() {
+    return stat;
+  }
+
+  public void setStat(String stat) {
+    this.stat = stat;
   }
 
   public static CrudOrder createRandomCrudOrder(int userId) {

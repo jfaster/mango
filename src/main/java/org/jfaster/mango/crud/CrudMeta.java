@@ -18,6 +18,7 @@ package org.jfaster.mango.crud;
 
 import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.ID;
+import org.jfaster.mango.annotation.Ignore;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.bean.BeanUtil;
 import org.jfaster.mango.util.bean.PropertyMeta;
@@ -54,6 +55,10 @@ public class CrudMeta {
     String colId = null;
     Boolean autoGenerateId = null;
     for (PropertyMeta propertyMeta : BeanUtil.fetchPropertyMetas(clazz)) {
+      Ignore igAnno = propertyMeta.getPropertyAnno(Ignore.class);
+      if (igAnno != null) {
+        continue;
+      }
       String prop = propertyMeta.getName();
       Column colAnno = propertyMeta.getPropertyAnno(Column.class);
       String col = colAnno != null ?

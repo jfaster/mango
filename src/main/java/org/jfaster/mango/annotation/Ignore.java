@@ -14,38 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud;
+package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.annotation.UseSqlGenerator;
-import org.jfaster.mango.descriptor.Generic;
-
-import java.util.Collection;
-import java.util.List;
+import java.lang.annotation.*;
 
 /**
+ * 忽略属性
+ *
  * @author ash
  */
-@UseSqlGenerator(CrudSqlGenerator.class)
-public interface CrudDao<T, ID> extends Generic<T, ID> {
-
-  void add(T entity);
-
-  int addAndReturnGeneratedId(T entity);
-
-  void add(Collection<T> entities);
-
-  T getOne(ID id);
-
-  List<T> getMulti(List<ID> ids);
-
-  List<T> getAll();
-
-  long count();
-
-  int update(T entity);
-
-  int[] update(Collection<T> entities);
-
-  int delete(ID id);
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Ignore {
 
 }

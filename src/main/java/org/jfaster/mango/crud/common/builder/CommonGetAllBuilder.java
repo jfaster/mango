@@ -14,38 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud;
+package org.jfaster.mango.crud.common.builder;
 
-import org.jfaster.mango.annotation.UseSqlGenerator;
-import org.jfaster.mango.descriptor.Generic;
+import org.jfaster.mango.util.Joiner;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author ash
  */
-@UseSqlGenerator(CrudSqlGenerator.class)
-public interface CrudDao<T, ID> extends Generic<T, ID> {
+public class CommonGetAllBuilder extends AbstractCommonBuilder {
 
-  void add(T entity);
+  private final static String SQL = "select %s from #table";
 
-  int addAndReturnGeneratedId(T entity);
+  private final List<String> columns;
 
-  void add(Collection<T> entities);
+  public CommonGetAllBuilder(List<String> cols) {
+    columns = new ArrayList<String>(cols);
+  }
 
-  T getOne(ID id);
-
-  List<T> getMulti(List<ID> ids);
-
-  List<T> getAll();
-
-  long count();
-
-  int update(T entity);
-
-  int[] update(Collection<T> entities);
-
-  int delete(ID id);
+  @Override
+  public String buildSql() {
+    String s1 = Joiner.on(", ").join(columns);
+    return String.format(SQL, s1, s1);
+  }
 
 }
