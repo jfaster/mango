@@ -258,6 +258,19 @@ public class ParserTest {
   }
 
   @Test
+  public void testTrim() throws Exception {
+    String sql = "update user set a=1, b=2, #trim_comma ok";
+    ASTRootNode n = new Parser(sql).parse().init();
+    List<Type> types = Lists.newArrayList();
+    ParameterContext ctx = getParameterContext(types);
+    n.checkAndBind(ctx);
+    InvocationContext context = DefaultInvocationContext.create();
+    n.render(context);
+    BoundSql boundSql = context.getBoundSql();
+    assertThat(boundSql.getSql(), Matchers.equalTo("update user set a=1, b=2 ok"));
+  }
+
+  @Test
   public void testReplace() throws Exception {
     String sql = "replace xxx into replace xxx";
     ASTRootNode n = new Parser(sql).parse().init();

@@ -16,6 +16,7 @@ public interface ParserVisitor
   public Object visit(ASTJDBCParameter node, Object data);
   public Object visit(ASTJDBCIterableParameter node, Object data);
   public Object visit(ASTGlobalTable node, Object data);
+  public Object visit(ASTTrimComma node, Object data);
   public Object visit(ASTJoinParameter node, Object data);
   public Object visit(ASTQuoteText node, Object data);
   public Object visit(ASTText node, Object data);
@@ -40,4 +41,4 @@ public interface ParserVisitor
   public Object visit(ASTFalse node, Object data);
   public Object visit(ASTNull node, Object data);
 }
-/* JavaCC - OriginalChecksum=b1b913ab5be61b4b0408f2c2299322de (do not edit this line) */
+/* JavaCC - OriginalChecksum=1216500e47a7b320e8a092e223272f1a (do not edit this line) */

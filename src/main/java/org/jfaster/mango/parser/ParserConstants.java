@@ -33,65 +33,67 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int GLOBAL_TABLE = 11;
   /** RegularExpression Id. */
-  int JOIN_PARAMETER = 12;
+  int TRIM_COMMA = 12;
   /** RegularExpression Id. */
-  int IF_DIRECTIVE = 13;
+  int JOIN_PARAMETER = 13;
   /** RegularExpression Id. */
-  int ELSEIF_DIRECTIVE = 14;
+  int IF_DIRECTIVE = 14;
   /** RegularExpression Id. */
-  int ELSE_DIRECTIVE = 15;
+  int ELSEIF_DIRECTIVE = 15;
   /** RegularExpression Id. */
-  int END = 16;
+  int ELSE_DIRECTIVE = 16;
   /** RegularExpression Id. */
-  int INSERT = 17;
+  int END = 17;
   /** RegularExpression Id. */
-  int DELETE = 18;
+  int INSERT = 18;
   /** RegularExpression Id. */
-  int UPDATE = 19;
+  int DELETE = 19;
   /** RegularExpression Id. */
-  int SELECT = 20;
+  int UPDATE = 20;
   /** RegularExpression Id. */
-  int REPLACE = 21;
+  int SELECT = 21;
   /** RegularExpression Id. */
-  int MERGE = 22;
+  int REPLACE = 22;
   /** RegularExpression Id. */
-  int TRUNCATE = 23;
+  int MERGE = 23;
   /** RegularExpression Id. */
-  int TEXT = 24;
+  int TRUNCATE = 24;
   /** RegularExpression Id. */
-  int LOGICAL_AND = 26;
+  int TEXT = 25;
   /** RegularExpression Id. */
-  int LOGICAL_OR = 27;
+  int LOGICAL_AND = 27;
   /** RegularExpression Id. */
-  int LOGICAL_LT = 28;
+  int LOGICAL_OR = 28;
   /** RegularExpression Id. */
-  int LOGICAL_LE = 29;
+  int LOGICAL_LT = 29;
   /** RegularExpression Id. */
-  int LOGICAL_GT = 30;
+  int LOGICAL_LE = 30;
   /** RegularExpression Id. */
-  int LOGICAL_GE = 31;
+  int LOGICAL_GT = 31;
   /** RegularExpression Id. */
-  int LOGICAL_EQ = 32;
+  int LOGICAL_GE = 32;
   /** RegularExpression Id. */
-  int LOGICAL_NE = 33;
+  int LOGICAL_EQ = 33;
   /** RegularExpression Id. */
-  int LOGICAL_NOT = 34;
+  int LOGICAL_NE = 34;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 35;
+  int LOGICAL_NOT = 35;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 36;
+  int INTEGER_LITERAL = 36;
   /** RegularExpression Id. */
-  int TRUE = 37;
+  int STRING_LITERAL = 37;
   /** RegularExpression Id. */
-  int FALSE = 38;
+  int TRUE = 38;
   /** RegularExpression Id. */
-  int NULL = 39;
+  int FALSE = 39;
   /** RegularExpression Id. */
-  int LPAREN = 40;
+  int NULL = 40;
   /** RegularExpression Id. */
-  int RPAREN = 41;
+  int LPAREN = 41;
   /** RegularExpression Id. */
-  int PARAMETER = 42;
+  int RPAREN = 42;
+  /** RegularExpression Id. */
+  int PARAMETER = 43;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -112,6 +114,7 @@ public interface ParserConstants {
     "<JDBC_ITERABLE_PARAMETER>",
     "<JDBC_PARAMETER>",
     "\"#table\"",
+    "\"#trim_comma\"",
     "<JOIN_PARAMETER>",
     "\"#if\"",
     "\"#elseif\"",

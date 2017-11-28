@@ -17,6 +17,7 @@
 package org.jfaster.mango.binding;
 
 import org.jfaster.mango.type.TypeHandler;
+import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -91,6 +92,28 @@ public class DefaultInvocationContext implements InvocationContext {
   @Override
   public void setGlobalTable(String globalTable) {
     this.globalTable = globalTable;
+  }
+
+  @Override
+  public void trim(String str) {
+    if (Strings.isEmpty(str)) {
+      return;
+    }
+    int start = sql.lastIndexOf(str);
+    if (start == -1) {
+      return;
+    }
+    int end = sql.length();
+    boolean needTrim = true;
+    for (int i = start + str.length(); i < end; i++) {
+      if (sql.charAt(i) != ' ') {
+        needTrim = false;
+        break;
+      }
+    }
+    if (needTrim) {
+      sql.delete(start, end);
+    }
   }
 
   @Override
