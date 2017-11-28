@@ -3,9 +3,9 @@ sudo: false
 
 jdk:
   - oraclejdk8
-  - oraclejdk7
+  #- oraclejdk7
   - openjdk7
-  - openjdk6
+  #- openjdk6
 
 install:
   # Compile sources with Java 1.8

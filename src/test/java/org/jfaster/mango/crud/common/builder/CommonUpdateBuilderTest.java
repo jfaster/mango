@@ -17,7 +17,6 @@
 package org.jfaster.mango.crud.common.builder;
 
 import com.google.common.collect.Lists;
-import org.jfaster.mango.crud.common.builder.CommonUpdateBuilder;
 import org.junit.Test;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class CommonUpdateBuilderTest {
     List<String> properties = Lists.newArrayList("id", "userName", "userAge");
     List<String> columns = Lists.newArrayList("id", "user_name", "user_age");
     CommonUpdateBuilder b = new CommonUpdateBuilder("id", properties, columns);
-    assertThat(b.buildSql(), equalTo("update #table set user_name = :userName, user_age = :userAge where id = :id"));
+    assertThat(b.buildSql(), equalTo("update #table set #if (:userName != null) user_name = :userName,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where id = :id"));
   }
 
 }

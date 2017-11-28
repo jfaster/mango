@@ -139,6 +139,22 @@ public class CommonCrudDaoTest {
     dao.add(msgs);
   }
 
+  @Test
+  public void testNull() throws Exception {
+    MsgDao dao = mango.create(MsgDao.class);
+    Msg msg = Msg.createRandomMsg();
+    int id = dao.addAndReturnGeneratedId(msg);
+    msg.setId(id);
+    assertThat(dao.getOne(id), equalTo(msg));
+
+    String oldContent = msg.getContent();
+    msg.setUid(100);
+    msg.setContent(null);
+    dao.update(msg);
+    msg.setContent(oldContent);
+
+    assertThat(dao.getOne(id), equalTo(msg));
+  }
 
   @DB(table = "msg")
   interface MsgDao extends CrudDao<Msg, Integer> {
