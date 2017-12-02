@@ -17,17 +17,24 @@
 package org.jfaster.mango.util.bean;
 
 import com.google.common.collect.Sets;
+import org.jfaster.mango.annotation.ID;
+import org.jfaster.mango.support.model4table.OrderB;
 import org.jfaster.mango.util.Strings;
 import org.junit.Test;
 
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import java.beans.Introspector;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -43,6 +50,20 @@ public class BeanUtilTest {
     set.add(getPropertyMeta(A.class, "uid", int.class));
     set.add(getPropertyMeta(A.class, "name", String.class));
     assertThat(pms, equalTo(set));
+  }
+
+  @Test
+  public void fetchPropertyMetas2() throws Exception {
+    List<PropertyMeta> pms = BeanUtil.fetchPropertyMetas(SubClass.class);
+    assertThat(pms.get(0).getName(), equalTo("id"));
+    assertThat(pms.get(1).getName(), equalTo("uid"));
+    assertThat(pms.get(2).getName(), equalTo("price"));
+    assertThat(pms.get(3).getName(), equalTo("tree"));
+    assertThat(pms.get(4).getName(), equalTo("age"));
+    assertThat(pms.get(5).getName(), equalTo("key"));
+
+    assertThat(pms.get(0).getPropertyAnno(ID.class), notNullValue());
+    assertThat(pms.get(3).getPropertyAnno(Resource.class), notNullValue());
   }
 
   private PropertyMeta getPropertyMeta(Class<?> clazz, String property, Class<?> type) throws NoSuchMethodException {

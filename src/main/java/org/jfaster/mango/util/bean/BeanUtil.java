@@ -37,57 +37,82 @@ import java.util.*;
  */
 public class BeanUtil {
 
+  private static final int MISS_FLAG = -1;
+
   private final static LoadingCache<Class<?>, List<PropertyMeta>> cache =
       new DoubleCheckCache<Class<?>, List<PropertyMeta>>(
-      new CacheLoader<Class<?>, List<PropertyMeta>>() {
-        public List<PropertyMeta> load(Class<?> clazz) {
-          try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
-            Field[] fields = clazz.getDeclaredFields();
-            TreeMap<Integer, PropertyMeta> metaMap = new TreeMap<Integer, PropertyMeta>();
-            for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-              Method readMethod = pd.getReadMethod();
-              Method writeMethod = pd.getWriteMethod();
-              if (readMethod != null && writeMethod != null) {
-                String name = pd.getName();
-                Type type = readMethod.getGenericReturnType(); // 和writeMethod的type相同
-                Field field = tryGetField(clazz, name);
-                if (isBoolean(pd.getPropertyType()) && field == null) {
-                  String bname = "is" + Strings.firstLetterToUpperCase(name);
-                  field = tryGetField(clazz, bname);
-                  if (field != null) {
-                    name = bname;  // 使用isXxYy替换xxYy
+        new CacheLoader<Class<?>, List<PropertyMeta>>() {
+          public List<PropertyMeta> load(Class<?> clazz) {
+            try {
+              BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+              List<Field> fields = fetchField(clazz);
+              TreeMap<Integer, PropertyMeta> metaMap = new TreeMap<Integer, PropertyMeta>();
+              PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+              int missIndex = fields.size();
+              for (PropertyDescriptor pd : pds) {
+                Method readMethod = pd.getReadMethod();
+                Method writeMethod = pd.getWriteMethod();
+                if (readMethod != null && writeMethod != null) {
+                  String name = pd.getName();
+                  Type type = readMethod.getGenericReturnType(); // 和writeMethod的type相同
+                  Field field = tryGetField(readMethod.getDeclaringClass(), name);
+                  if (isBoolean(pd.getPropertyType()) && field == null) {
+                    String bname = "is" + Strings.firstLetterToUpperCase(name);
+                    field = tryGetField(clazz, bname);
+                    if (field != null) {
+                      name = bname;  // 使用isXxYy替换xxYy
+                    }
                   }
+                  PropertyMeta meta = new PropertyMeta(name, type, readMethod, writeMethod,
+                      methodAnnos(readMethod), methodAnnos(writeMethod), fieldAnnos(field));
+                  int index = indexOfFields(field, fields);
+                  if (index == MISS_FLAG) {
+                    index = missIndex;
+                    missIndex++;
+                  }
+                  metaMap.put(index, meta);
                 }
-                PropertyMeta meta = new PropertyMeta(name, type, readMethod, writeMethod,
-                    methodAnnos(readMethod), methodAnnos(writeMethod), fieldAnnos(field));
-                metaMap.put(indexOfFields(field, fields), meta);
               }
+              return transToList(metaMap);
+            } catch (Exception e) {
+              throw new UncheckedException(e.getMessage(), e);
             }
-            return transToList(metaMap);
-          } catch (Exception e) {
-            throw new UncheckedException(e.getMessage(), e);
           }
-        }
       });
 
   public static List<PropertyMeta> fetchPropertyMetas(Class<?> clazz) {
     return cache.get(clazz);
   }
 
+  static List<Field> fetchField(Class<?> clazz) {
+    List<Field> fields = new LinkedList<Field>();
+    fillFields(clazz, fields);
+    return fields;
+  }
+
+  private static void fillFields(Class<?> clazz, List<Field> fields) {
+    if (Object.class.equals(clazz)) {
+      return;
+    }
+    fillFields(clazz.getSuperclass(), fields);
+    for (Field field : clazz.getDeclaredFields()) {
+      fields.add(field);
+    }
+  }
+
   private static boolean isBoolean(Class<?> clazz) {
     return boolean.class.equals(clazz) || Boolean.class.equals(clazz);
   }
 
-  private static int indexOfFields(@Nullable Field field, Field[] fields) {
+  private static int indexOfFields(@Nullable Field field, List<Field> fields) {
     if (field != null) {
-      for (int i = 0; i < fields.length; i++) {
-        if (field.equals(fields[i])) {
+      for (int i = 0; i < fields.size(); i++) {
+        if (field.equals(fields.get(i))) {
           return i;
         }
       }
     }
-    return Integer.MAX_VALUE;
+    return MISS_FLAG;
   }
 
   @Nullable
@@ -108,7 +133,7 @@ public class BeanUtil {
     return annos;
   }
 
-  private static Set<Annotation> fieldAnnos(Field f) {
+  private static Set<Annotation> fieldAnnos(@Nullable Field f) {
     Set<Annotation> annos = new HashSet<Annotation>();
     if (f != null) {
       for (Annotation anno : f.getAnnotations()) {

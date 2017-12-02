@@ -54,12 +54,32 @@ public class CrudDaoTest {
     assertThat(dao.count(), equalTo(0L));
   }
 
+  @Test
+  public void test2() throws Exception {
+    int userId = 1;
+    CrudOrderBDao dao = mango.create(CrudOrderBDao.class);
+    CrudOrderB co = CrudOrderB.createRandomCrudOrder(userId);
+    dao.add(co);
+    System.out.println(dao.getById(co.getId()));
+    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
+    assertThat(dao.delete(co.getId()), equalTo(1));
+    assertThat(dao.getAll().size(), equalTo(0));
+    assertThat(dao.count(), equalTo(0L));
+  }
 
 
   @DB(table = "t_order")
   interface CrudOrderDao extends CrudDao<CrudOrder, String> {
 
     CrudOrder getById(String id);
+
+  }
+
+  @DB(table = "t_order")
+  interface CrudOrderBDao extends CrudDao<CrudOrderB, String> {
+
+    CrudOrderB getById(String id);
 
   }
 
