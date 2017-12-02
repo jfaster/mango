@@ -18,18 +18,15 @@ package org.jfaster.mango.util.bean;
 
 import com.google.common.collect.Sets;
 import org.jfaster.mango.annotation.ID;
-import org.jfaster.mango.support.model4table.OrderB;
 import org.jfaster.mango.util.Strings;
 import org.junit.Test;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import java.beans.Introspector;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
