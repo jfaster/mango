@@ -19,7 +19,9 @@ package org.jfaster.mango.crud.custom.factory;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.custom.builder.AbstractCustomBuilder;
 import org.jfaster.mango.crud.custom.builder.CustomQueryBuilder;
+import org.jfaster.mango.crud.custom.parser.MethodNameInfo;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +44,14 @@ public class CustomQueryBuilderFactory extends AbstractCustomBuilderFactory {
   }
 
   @Override
-  AbstractCustomBuilder createCustomBuilder(CrudMeta cm, String tailOfSql) {
-    return new CustomQueryBuilder(cm.getColumns(), tailOfSql);
+  AbstractCustomBuilder createCustomBuilder(
+          String methodName, List<Type> parameterTypes,
+          Class<?> entityClass, MethodNameInfo info) {
+    CrudMeta cm = new CrudMeta(entityClass);
+    StringBuilder tailOfSql = new StringBuilder();
+    buildWhereClause(tailOfSql, info.getOpUnits(), info.getLogics(), cm, parameterTypes, methodName, entityClass);
+    buildOrderByClause(tailOfSql, info.getOrderUnit(), cm, methodName, entityClass);
+    return new CustomQueryBuilder(cm.getColumns(), tailOfSql.toString());
   }
 
 }

@@ -22,8 +22,8 @@ import org.jfaster.mango.crud.CrudException;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.custom.builder.AbstractCustomBuilder;
 import org.jfaster.mango.crud.custom.parser.*;
-import org.jfaster.mango.crud.custom.parser.op.Param1ForCollectionOp;
 import org.jfaster.mango.crud.custom.parser.op.Op;
+import org.jfaster.mango.crud.custom.parser.op.Param1ForCollectionOp;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.jfaster.mango.util.reflect.TypeWrapper;
@@ -48,17 +48,15 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
       return null;
     }
     String str = name.substring(matchSize);
-    CrudMeta cm = new CrudMeta(entityClass);
     MethodNameInfo info = MethodNameParser.parse(str);
-    StringBuilder tailOfSql = new StringBuilder();
-    buildWhereClause(tailOfSql, info.getOpUnits(), info.getLogics(), cm, parameterTypes, name, entityClass);
-    buildOrderByClause(tailOfSql, info.getOrderUnit(), cm, name, entityClass);
-    return createCustomBuilder(cm, tailOfSql.toString());
+    return createCustomBuilder(name, parameterTypes, entityClass, info);
   }
 
   public abstract List<String> prefixs();
 
-  abstract AbstractCustomBuilder createCustomBuilder(CrudMeta cm, String tailOfSql);
+  abstract AbstractCustomBuilder createCustomBuilder(
+          String methodName, List<Type> parameterTypes,
+          Class<?> entityClass, MethodNameInfo info);
 
   private int metchSize(String name) {
     for (String prefix : prefixs()) {
@@ -74,7 +72,7 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
     return 0;
   }
 
-  private void buildWhereClause(
+  protected void buildWhereClause(
       StringBuilder tailOfSql, List<OpUnit> opUnits, List<String> logics,
       CrudMeta cm, List<Type> parameterTypes, String methodName, Class<?> clazz) {
     if (opUnits.size() == 0) {
@@ -117,7 +115,7 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
     }
   }
 
-  private void checkType(Type paramType, Type propType, int paramIndex, String methodName, Op op) {
+  protected void checkType(Type paramType, Type propType, int paramIndex, String methodName, Op op) {
     Class<?> rawPropType = TypeToken.of(propType).getRawType();
     if (!(op instanceof Param1ForCollectionOp)) {
       Class<?> rawParamType = TypeToken.of(paramType).getRawType();
@@ -138,7 +136,7 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
     }
   }
 
-  private void buildOrderByClause(
+  protected void buildOrderByClause(
       StringBuilder tailOfSql, @Nullable  OrderUnit orderUnit,
       CrudMeta cm, String methodName, Class<?> clazz) {
     if (orderUnit != null) {

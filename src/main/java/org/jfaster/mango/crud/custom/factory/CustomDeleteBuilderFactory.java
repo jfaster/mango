@@ -16,10 +16,13 @@
 
 package org.jfaster.mango.crud.custom.factory;
 
+import org.jfaster.mango.crud.CrudException;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.custom.builder.AbstractCustomBuilder;
 import org.jfaster.mango.crud.custom.builder.CustomDeleteBuilder;
+import org.jfaster.mango.crud.custom.parser.MethodNameInfo;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +43,16 @@ public class CustomDeleteBuilderFactory extends AbstractCustomBuilderFactory {
   }
 
   @Override
-  AbstractCustomBuilder createCustomBuilder(CrudMeta cm, String tailOfSql) {
-    return new CustomDeleteBuilder(tailOfSql);
+  AbstractCustomBuilder createCustomBuilder(
+          String methodName, List<Type> parameterTypes,
+          Class<?> entityClass, MethodNameInfo info) {
+    CrudMeta cm = new CrudMeta(entityClass);
+    StringBuilder tailOfSql = new StringBuilder();
+    buildWhereClause(tailOfSql, info.getOpUnits(), info.getLogics(), cm, parameterTypes, methodName, entityClass);
+    if (info.getOrderUnit() != null) {
+      throw new CrudException(""); // TODO
+    }
+    return new CustomDeleteBuilder(tailOfSql.toString());
   }
 
 }
