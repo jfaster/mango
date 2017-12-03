@@ -18,7 +18,7 @@ Requires JDK 1.6 or higher.
 Latest release
 --------------
 
-The most recent release is Mango 1.6.0, released March 22, 2017.
+The most recent release is Mango 1.6.0, released December 2, 2017.
 
 To add a dependency on Mango using Maven, use the following:
 
