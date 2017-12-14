@@ -90,7 +90,7 @@ public class JdbcTemplate implements JdbcOperations {
     try {
       boolean needGenerateKey = holder != null;
       ps = needGenerateKey ?
-          conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : // 生成自增key
+          conn.prepareStatement(sql, new int[]{Statement.RETURN_GENERATED_KEYS}) : // 生成自增key
           conn.prepareStatement(sql); // 不生成自增key
       setValues(ps, boundSql);
 
