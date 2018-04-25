@@ -73,25 +73,25 @@ public class MySQLPageInterceptorTest {
 
       List<Msg> actual = new ArrayList<Msg>();
 
-      Page page = Page.create(1, 3);
+      Page page = Page.create(1, 3, true);
       List<Msg> msgs = dao.getMsgs(uid, page);
       actual.addAll(msgs);
       assertThat(page.getTotal(), is(10));
       assertThat(msgs.size(), is(3));
 
-      page = Page.create(2, 3);
+      page = Page.create(2, 3, true);
       msgs = dao.getMsgs(uid, page);
       actual.addAll(msgs);
       assertThat(page.getTotal(), is(10));
       assertThat(msgs.size(), is(3));
 
-      page = Page.create(3, 3);
+      page = Page.create(3, 3, true);
       msgs = dao.getMsgs(uid, page);
       actual.addAll(msgs);
       assertThat(page.getTotal(), is(10));
       assertThat(msgs.size(), is(3));
 
-      page = Page.create(4, 3);
+      page = Page.create(4, 3, true);
       msgs = dao.getMsgs(uid, page);
       actual.addAll(msgs);
       assertThat(page.getTotal(), is(10));
