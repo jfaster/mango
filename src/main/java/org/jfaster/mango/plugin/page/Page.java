@@ -70,6 +70,9 @@ public class Page {
   }
 
   public int getTotal() {
+    if (!isFetchTotal) {
+      throw new PageException("can't fetch total, please set isFetchTotal to true");
+    }
     return total;
   }
 
