@@ -19,12 +19,15 @@ package org.jfaster.mango.plugin.page;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.operator.cache.Day;
+import org.jfaster.mango.operator.cache.IncorrectCacheByException;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -73,8 +76,14 @@ public class MySQLPageInterceptorTest {
 
       List<Msg> actual = new ArrayList<Msg>();
 
-      Page page = Page.create(1, 3, true);
+      Page page = Page.create(0, 3, true);
       List<Msg> msgs = dao.getMsgs(uid, page);
+      actual.addAll(msgs);
+      assertThat(page.getTotal(), is(10));
+      assertThat(msgs.size(), is(3));
+
+      page = Page.create(1, 3, true);
+      msgs = dao.getMsgs(uid, page);
       actual.addAll(msgs);
       assertThat(page.getTotal(), is(10));
       assertThat(msgs.size(), is(3));
@@ -89,15 +98,21 @@ public class MySQLPageInterceptorTest {
       msgs = dao.getMsgs(uid, page);
       actual.addAll(msgs);
       assertThat(page.getTotal(), is(10));
-      assertThat(msgs.size(), is(3));
-
-      page = Page.create(4, 3, true);
-      msgs = dao.getMsgs(uid, page);
-      actual.addAll(msgs);
-      assertThat(page.getTotal(), is(10));
       assertThat(msgs.size(), is(1));
 
       assertThat(actual, equalTo(expected));
+    }
+  }
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void interceptQuery2() throws Exception {
+    if (DataSourceConfig.isUseMySQL()) {
+      thrown.expect(PageException.class);
+      thrown.expectMessage("Parameter page is null");
+      dao.getMsgs(100, null);
     }
   }
 
