@@ -52,6 +52,7 @@ TOKEN:
     |   <JDBC_ITERABLE_PARAMETER: "in" <WHITESPACE> "(" <WHITESPACE> <PARAMETER> ("@" <JDBC_TYPE>)? <WHITESPACE> ")"  >
     |   <JDBC_PARAMETER: <PARAMETER> ("@" <JDBC_TYPE>)? >
     |   <GLOBAL_TABLE: "#table" >
+    |   <TRIM_COMMA: "#trim_comma" >
     |   <JOIN_PARAMETER: "#{" <WHITESPACE> <PARAMETER> <WHITESPACE> "}" >
     |   <IF_DIRECTIVE: "#if" > {SwitchTo(EXPRESSION);}
     |   <ELSEIF_DIRECTIVE: "#elseif" > {SwitchTo(EXPRESSION);}
@@ -197,6 +198,7 @@ void Statement() #void : {}
         JDBCParameter()
     |   JDBCIterableParameter()
     |   GlobalTable()
+    |   TrimComma()
     |   JoinParameter()
     |   IfStatement()
     |   QuoteText()
@@ -230,6 +232,12 @@ void GlobalTable() :
 {}
 {
     <GLOBAL_TABLE>
+}
+
+void TrimComma() :
+{}
+{
+    <TRIM_COMMA>
 }
 
 void JoinParameter() :

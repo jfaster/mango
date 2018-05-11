@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonAddBuilder extends CommonBuilder {
+public class CommonAddBuilder extends AbstractCommonBuilder {
 
   private final static String SQL_TEMPLATE = "insert into #table(%s) values(%s)";
 
@@ -57,7 +57,4 @@ public class CommonAddBuilder extends CommonBuilder {
     return String.format(SQL_TEMPLATE, s1, s2);
   }
 
-  public static void main(String[] args) {
-    System.out.println(Integer.MAX_VALUE);
-  }
 }

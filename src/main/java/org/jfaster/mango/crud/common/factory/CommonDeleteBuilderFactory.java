@@ -17,15 +17,17 @@
 package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
-import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 import org.jfaster.mango.crud.common.builder.CommonDeleteBuilder;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class CommonDeleteBuilderFactory extends CommonBuilderFactory {
+public class CommonDeleteBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
@@ -38,12 +40,14 @@ public class CommonDeleteBuilderFactory extends CommonBuilderFactory {
   }
 
   @Override
-  Type expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    return idClass;
+  List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
+    List<Type> types = new ArrayList<Type>();
+    types.add(idClass);
+    return types;
   }
 
   @Override
-  CommonBuilder createCommonBuilder(CrudMeta cm) {
+  AbstractCommonBuilder createCommonBuilder(CrudMeta cm) {
     return new CommonDeleteBuilder(cm.getColumnId());
   }
 

@@ -40,6 +40,8 @@ public interface InvocationContext {
 
   public void setGlobalTable(String globalTable);
 
+  public void trim(String str);
+
   public void writeToSqlBuffer(String str);
 
   public void appendToArgs(Object obj, TypeHandler<?> typeHandler);

@@ -58,4 +58,12 @@ public class Strings {
     return result.toString();
   }
 
+  public static String firstLetterToLowerCase(String str) {
+    return str.substring(0, 1).toLowerCase() + str.substring(1);
+  }
+
+  public static String firstLetterToUpperCase(String str) {
+    return str.substring(0, 1).toUpperCase() + str.substring(1);
+  }
+
 }

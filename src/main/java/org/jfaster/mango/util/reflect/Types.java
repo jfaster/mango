@@ -701,4 +701,9 @@ final public class Types {
         lhsType.equals(Primitives.unwrap(rhsType)) :
         lhsType.isAssignableFrom(Primitives.wrap(rhsType));
   }
+
+  public static boolean equals(Class<?> lhsType, Class<?> rhsType) {
+    return Primitives.wrap(lhsType).equals(Primitives.wrap(rhsType));
+  }
+
 }

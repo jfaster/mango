@@ -75,6 +75,29 @@ public class DefaultInvocationContextTest {
   }
 
   @Test
+  public void testTrim() throws Exception {
+    DefaultInvocationContext ctx = DefaultInvocationContext.create();
+    ctx.writeToSqlBuffer("set a=1, b=2,,  ");
+    ctx.trim(",,");
+    assertThat(ctx.getBoundSql().getSql(), equalTo("set a=1, b=2"));
+
+    ctx = DefaultInvocationContext.create();
+    ctx.writeToSqlBuffer("set a=1, b=2,,");
+    ctx.trim(",,");
+    assertThat(ctx.getBoundSql().getSql(), equalTo("set a=1, b=2"));
+
+    ctx = DefaultInvocationContext.create();
+    ctx.writeToSqlBuffer("set a=1, b=2,");
+    ctx.trim(",");
+    assertThat(ctx.getBoundSql().getSql(), equalTo("set a=1, b=2"));
+
+    ctx = DefaultInvocationContext.create();
+    ctx.writeToSqlBuffer("set a=1, b=2,       ");
+    ctx.trim(",");
+    assertThat(ctx.getBoundSql().getSql(), equalTo("set a=1, b=2"));
+  }
+
+  @Test
   public void testOtherMethod() throws Exception {
     DefaultInvocationContext ctx = DefaultInvocationContext.create();
     String table = "t_user";

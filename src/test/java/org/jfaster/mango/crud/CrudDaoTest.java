@@ -16,26 +16,17 @@
 
 package org.jfaster.mango.crud;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import net.bytebuddy.asm.Advice;
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.annotation.ReturnGeneratedId;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
-import org.jfaster.mango.support.model4table.Msg;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 
 /**
  * @author ash
@@ -47,128 +38,49 @@ public class CrudDaoTest {
 
   @Before
   public void before() throws Exception {
-    Table.MSG.load(ds);
+    Table.ORDER.load(ds);
   }
 
   @Test
   public void test() throws Exception {
-    MsgDao dao = mango.create(MsgDao.class);
-    Msg msg = Msg.createRandomMsg();
-    int id = dao.addAndReturnGeneratedId(msg);
-    msg.setId(id);
-    assertThat(dao.getOne(id), equalTo(msg));
-    Msg msg2 = Msg.createRandomMsg();
-    dao.add(msg2);
-    Msg msg3 = Msg.createRandomMsg();
-    int id3 = dao.addAndReturnGeneratedId(msg3);
-    msg3.setId(id3);
-    assertThat(dao.getOne(id3), equalTo(msg3));
-    List<Integer> ids = Lists.newArrayList(id, id3);
-    List<Msg> msgs = dao.getMulti(ids);
-    assertThat(msgs.size(), equalTo(2));
-    Map<Integer, Msg> mapping = Maps.newHashMap();
-    mapping.put(id, msg);
-    mapping.put(id3, msg3);
-    for (Msg actualMsg : msgs) {
-      assertThat(actualMsg, equalTo(mapping.get(actualMsg.getId())));
-    }
-
-    msg.setContent("ash");
-    int r = dao.update(msg);
-    assertThat(r, equalTo(1));
-    assertThat(dao.getOne(id), equalTo(msg));
-    msgs = Lists.newArrayList(msg, msg3);
-    int[] rr = dao.update(msgs);
-    assertThat(rr, equalTo(new int[] {1, 1}));
-
-    msg.setId(-1);
-    msg3.setId(-3);
-    r = dao.update(msg);
-    assertThat(r, equalTo(0));
-    rr = dao.update(msgs);
-    assertThat(rr, equalTo(new int[] {0, 0}));
-
-    dao.delete(id);
-    assertThat(dao.getOne(id), nullValue());
-    msgs = Msg.createRandomMsgs(5);
-    dao.add(msgs);
+    int userId = 1;
+    CrudOrderDao dao = mango.create(CrudOrderDao.class);
+    CrudOrder co = CrudOrder.createRandomCrudOrder(userId);
+    dao.add(co);
+    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
+    assertThat(dao.delete(co.getId()), equalTo(1));
+    assertThat(dao.getAll().size(), equalTo(0));
+    assertThat(dao.count(), equalTo(0L));
   }
 
   @Test
   public void test2() throws Exception {
-    MsgDao2 dao = mango.create(MsgDao2.class);
-    Msg msg = Msg.createRandomMsg();
-    int id = dao.addAndReturnGeneratedId(msg);
-    msg.setId(id);
-    assertThat(dao.getOne(id), equalTo(msg));
-    Msg msg2 = Msg.createRandomMsg();
-    dao.add(msg2);
-    Msg msg3 = Msg.createRandomMsg();
-    int id3 = dao.addAndReturnGeneratedId(msg3);
-    msg3.setId(id3);
-    assertThat(dao.getOne(id3), equalTo(msg3));
-    List<Integer> ids = Lists.newArrayList(id, id3);
-    List<Msg> msgs = dao.getMulti(ids);
-    assertThat(msgs.size(), equalTo(2));
-    Map<Integer, Msg> mapping = Maps.newHashMap();
-    mapping.put(id, msg);
-    mapping.put(id3, msg3);
-    for (Msg actualMsg : msgs) {
-      assertThat(actualMsg, equalTo(mapping.get(actualMsg.getId())));
-    }
-
-    msg.setContent("ash");
-    int r = dao.update(msg);
-    assertThat(r, equalTo(1));
-    assertThat(dao.getOne(id), equalTo(msg));
-    msgs = Lists.newArrayList(msg, msg3);
-    int[] rr = dao.update(msgs);
-    assertThat(rr, equalTo(new int[] {1, 1}));
-
-    msg.setId(-1);
-    msg3.setId(-3);
-    r = dao.update(msg);
-    assertThat(r, equalTo(0));
-    rr = dao.update(msgs);
-    assertThat(rr, equalTo(new int[] {0, 0}));
-
-    dao.delete(id);
-    assertThat(dao.getOne(id), nullValue());
-    msgs = Msg.createRandomMsgs(5);
-    dao.add(msgs);
+    int userId = 1;
+    CrudOrderBDao dao = mango.create(CrudOrderBDao.class);
+    CrudOrderB co = CrudOrderB.createRandomCrudOrder(userId);
+    dao.add(co);
+    System.out.println(dao.getById(co.getId()));
+    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
+    assertThat(dao.delete(co.getId()), equalTo(1));
+    assertThat(dao.getAll().size(), equalTo(0));
+    assertThat(dao.count(), equalTo(0L));
   }
 
 
-  @DB(table = "msg")
-  interface MsgDao extends CrudDao<Msg, Integer> {
+  @DB(table = "t_order")
+  interface CrudOrderDao extends CrudDao<CrudOrder, String> {
+
+    CrudOrder getById(String id);
+
   }
 
-  @DB(table = "msg")
-  interface MsgDao2 extends CrudDao<Msg, Integer> {
+  @DB(table = "t_order")
+  interface CrudOrderBDao extends CrudDao<CrudOrderB, String> {
 
-    @Override
-    void add(Msg entity);
+    CrudOrderB getById(String id);
 
-    @Override
-    int addAndReturnGeneratedId(Msg entity);
-
-    @Override
-    void add(Collection<Msg> entities);
-
-    @Override
-    Msg getOne(Integer integer);
-
-    @Override
-    List<Msg> getMulti(List<Integer> integers);
-
-    @Override
-    int update(Msg entity);
-
-    @Override
-    int[] update(Collection<Msg> entities);
-
-    @Override
-    int delete(Integer integer);
   }
 
 }

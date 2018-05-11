@@ -16,15 +16,13 @@
 
 package org.jfaster.mango.crud.common.builder;
 
-import org.jfaster.mango.util.Joiner;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author ash
  */
-public class CommonUpdateBuilder extends CommonBuilder {
+public class CommonUpdateBuilder extends AbstractCommonBuilder {
 
   private final static String SQL_TEMPLATE = "update #table set %s where %s";
 
@@ -51,14 +49,15 @@ public class CommonUpdateBuilder extends CommonBuilder {
 
   @Override
   public String buildSql() {
-    List<String> exps = new ArrayList<String>();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < properties.size(); i++) {
-      String exp = columns.get(i) + " = :" + properties.get(i);
-      exps.add(exp);
+      String prop = ":" + properties.get(i);
+      String col = columns.get(i);
+      sb.append(String.format("#if (%s != null) %s = %s,#end ", prop, col, prop));
     }
-    String s1 = Joiner.on(", ").join(exps);
-    String s2 = columnId + " = :" + propertyId;
-    return String.format(SQL_TEMPLATE, s1, s2);
+    sb.append("#trim_comma");
+    String str = columnId + " = :" + propertyId;
+    return String.format(SQL_TEMPLATE, sb.toString(), str);
   }
 
 }

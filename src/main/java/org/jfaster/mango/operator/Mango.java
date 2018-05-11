@@ -301,7 +301,9 @@ public class Mango extends Config {
             MethodDescriptor md = Methods.getMethodDescriptor(daoClass, method, isUseActualParamName);
             Operator operator = operatorFactory.getOperator(md, metaStat);
             initStat.recordInit(System.nanoTime() - now);
+            metaStat.setDaoClass(daoClass);
             metaStat.setMethod(method);
+            metaStat.setSql(md.getSQL());
             return operator;
           }
         });

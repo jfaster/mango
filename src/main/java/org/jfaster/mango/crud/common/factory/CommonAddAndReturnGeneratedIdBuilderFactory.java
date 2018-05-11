@@ -18,14 +18,16 @@ package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.common.builder.CommonAddBuilder;
-import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class CommonAddAndReturnGeneratedIdBuilderFactory extends CommonBuilderFactory {
+public class CommonAddAndReturnGeneratedIdBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
@@ -38,12 +40,14 @@ public class CommonAddAndReturnGeneratedIdBuilderFactory extends CommonBuilderFa
   }
 
   @Override
-  Type expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    return entityClass;
+  List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
+    List<Type> types = new ArrayList<Type>();
+    types.add(entityClass);
+    return types;
   }
 
   @Override
-  CommonBuilder createCommonBuilder(CrudMeta cm) {
+  AbstractCommonBuilder createCommonBuilder(CrudMeta cm) {
     return new CommonAddBuilder(cm.getPropertyId(), cm.getProperties(), cm.getColumns(), true);
   }
 

@@ -99,6 +99,11 @@ public enum NodeCollectVisitor implements ParserVisitor {
   }
 
   @Override
+  public Object visit(ASTTrimComma node, Object data) {
+    return node.childrenAccept(this, data);
+  }
+
+  @Override
   public Object visit(ASTJoinParameter node, Object data) {
     return node.childrenAccept(this, data);
   }

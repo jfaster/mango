@@ -31,6 +31,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case JDBC_ITERABLE_PARAMETER:
           case JDBC_PARAMETER:
           case GLOBAL_TABLE:
+          case TRIM_COMMA:
           case JOIN_PARAMETER:
           case IF_DIRECTIVE:
           case INSERT:
@@ -277,6 +278,9 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
     case GLOBAL_TABLE:
       GlobalTable();
       break;
+    case TRIM_COMMA:
+      TrimComma();
+      break;
     case JOIN_PARAMETER:
       JoinParameter();
       break;
@@ -354,6 +358,22 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
   jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(GLOBAL_TABLE);
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+  }
+
+  final public void TrimComma() throws ParseException {
+ /*@bgen(jjtree) TrimComma */
+  ASTTrimComma jjtn000 = new ASTTrimComma(JJTTRIMCOMMA);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtn000.jjtSetFirstToken(getToken(1));
+    try {
+      jj_consume_token(TRIM_COMMA);
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
@@ -495,6 +515,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case JDBC_ITERABLE_PARAMETER:
           case JDBC_PARAMETER:
           case GLOBAL_TABLE:
+          case TRIM_COMMA:
           case JOIN_PARAMETER:
           case IF_DIRECTIVE:
           case INSERT:
@@ -604,6 +625,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case JDBC_ITERABLE_PARAMETER:
           case JDBC_PARAMETER:
           case GLOBAL_TABLE:
+          case TRIM_COMMA:
           case JOIN_PARAMETER:
           case IF_DIRECTIVE:
           case INSERT:
@@ -688,6 +710,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
           case JDBC_ITERABLE_PARAMETER:
           case JDBC_PARAMETER:
           case GLOBAL_TABLE:
+          case TRIM_COMMA:
           case JOIN_PARAMETER:
           case IF_DIRECTIVE:
           case INSERT:
@@ -1260,10 +1283,10 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1fe3f80,0xfe0000,0x1fe3f80,0x1fe0000,0x1fe3f80,0x4000,0x4000,0x8000,0x1fe3f80,0x1fe3f80,0x8000000,0x4000000,0xf0000000,0xf0000000,0x0,0x0,};
+      jj_la1_0 = new int[] {0x3fc7f80,0x1fc0000,0x3fc7f80,0x3fc0000,0x3fc7f80,0x8000,0x8000,0x10000,0x3fc7f80,0x3fc7f80,0x10000000,0x8000000,0xe0000000,0xe0000000,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x3,0x4fc,0x4f8,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7,0x7,0x9f8,0x9f0,};
    }
 
   /** Constructor with InputStream. */
@@ -1383,7 +1406,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[43];
+    boolean[] la1tokens = new boolean[44];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -1400,7 +1423,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
         }
       }
     }
-    for (int i = 0; i < 43; i++) {
+    for (int i = 0; i < 44; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

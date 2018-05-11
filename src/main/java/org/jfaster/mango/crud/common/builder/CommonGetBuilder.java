@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonGetBuilder extends CommonBuilder {
+public class CommonGetBuilder extends AbstractCommonBuilder {
 
   private final static String SQL_TEMPLATE = "select %s from #table where %s = :1";
   private final static String BATCH_SQL_TEMPLATE = "select %s from #table where %s in (:1)";

@@ -50,6 +50,7 @@ public abstract class BuilderFactory {
     return null;
   }
 
+  @Nullable
   public abstract Builder doTryGetBuilder(
       String name, Type returnType, List<Type> parameterTypes, Class<?> entityClass, Class<?> idClass);
 

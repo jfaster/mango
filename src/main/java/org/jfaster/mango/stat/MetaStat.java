@@ -26,9 +26,19 @@ import java.lang.reflect.Method;
 public class MetaStat {
 
   /**
+   * DAO接口所在的类
+   */
+  private Class<?> daoClass;
+
+  /**
    * DAO接口所在方法
    */
   private Method method;
+
+  /**
+   * SQL，自定义或自动生成
+   */
+  private String sql;
 
   /**
    * query or update or batchupdate
@@ -57,12 +67,28 @@ public class MetaStat {
     return new MetaStat();
   }
 
+  public Class<?> getDaoClass() {
+    return daoClass;
+  }
+
+  public void setDaoClass(Class<?> daoClass) {
+    this.daoClass = daoClass;
+  }
+
   public Method getMethod() {
     return method;
   }
 
   public void setMethod(Method method) {
     this.method = method;
+  }
+
+  public String getSql() {
+    return sql;
+  }
+
+  public void setSql(String sql) {
+    this.sql = sql;
   }
 
   public OperatorType getOperatorType() {

@@ -38,6 +38,10 @@ public interface CrudDao<T, ID> extends Generic<T, ID> {
 
   List<T> getMulti(List<ID> ids);
 
+  List<T> getAll();
+
+  long count();
+
   int update(T entity);
 
   int[] update(Collection<T> entities);

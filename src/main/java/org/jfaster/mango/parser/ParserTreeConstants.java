@@ -16,29 +16,30 @@ public interface ParserTreeConstants
   public int JJTJDBCPARAMETER = 10;
   public int JJTJDBCITERABLEPARAMETER = 11;
   public int JJTGLOBALTABLE = 12;
-  public int JJTJOINPARAMETER = 13;
-  public int JJTQUOTETEXT = 14;
-  public int JJTTEXT = 15;
-  public int JJTBLANK = 16;
-  public int JJTIFSTATEMENT = 17;
-  public int JJTELSESTATEMENT = 18;
-  public int JJTELSEIFSTATEMENT = 19;
-  public int JJTEXPRESSION = 20;
-  public int JJTORNODE = 21;
-  public int JJTANDNODE = 22;
-  public int JJTLTNODE = 23;
-  public int JJTGTNODE = 24;
-  public int JJTLENODE = 25;
-  public int JJTGENODE = 26;
-  public int JJTEQNODE = 27;
-  public int JJTNENODE = 28;
-  public int JJTNOTNODE = 29;
-  public int JJTEXPRESSIONPARAMETER = 30;
-  public int JJTINTEGERLITERAL = 31;
-  public int JJTSTRINGLITERAL = 32;
-  public int JJTTRUE = 33;
-  public int JJTFALSE = 34;
-  public int JJTNULL = 35;
+  public int JJTTRIMCOMMA = 13;
+  public int JJTJOINPARAMETER = 14;
+  public int JJTQUOTETEXT = 15;
+  public int JJTTEXT = 16;
+  public int JJTBLANK = 17;
+  public int JJTIFSTATEMENT = 18;
+  public int JJTELSESTATEMENT = 19;
+  public int JJTELSEIFSTATEMENT = 20;
+  public int JJTEXPRESSION = 21;
+  public int JJTORNODE = 22;
+  public int JJTANDNODE = 23;
+  public int JJTLTNODE = 24;
+  public int JJTGTNODE = 25;
+  public int JJTLENODE = 26;
+  public int JJTGENODE = 27;
+  public int JJTEQNODE = 28;
+  public int JJTNENODE = 29;
+  public int JJTNOTNODE = 30;
+  public int JJTEXPRESSIONPARAMETER = 31;
+  public int JJTINTEGERLITERAL = 32;
+  public int JJTSTRINGLITERAL = 33;
+  public int JJTTRUE = 34;
+  public int JJTFALSE = 35;
+  public int JJTNULL = 36;
 
 
   public String[] jjtNodeName = {
@@ -55,6 +56,7 @@ public interface ParserTreeConstants
     "JDBCParameter",
     "JDBCIterableParameter",
     "GlobalTable",
+    "TrimComma",
     "JoinParameter",
     "QuoteText",
     "Text",
@@ -80,4 +82,4 @@ public interface ParserTreeConstants
     "Null",
   };
 }
-/* JavaCC - OriginalChecksum=ba6d950d59bcd10414b00dd05310a3bf (do not edit this line) */
+/* JavaCC - OriginalChecksum=00f3535f4233a92ab67c78c446246904 (do not edit this line) */

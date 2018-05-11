@@ -44,7 +44,9 @@ public class CombinedStat {
   public OperatorStat toOperatorStat() {
     final ExecuteStat es = executeStat;
     return new OperatorStat(
+        metaStat.getDaoClass(),
         metaStat.getMethod(),
+        metaStat.getSql(),
         metaStat.getOperatorType(),
         metaStat.isCacheable(),
         metaStat.isUseMultipleKeys(),

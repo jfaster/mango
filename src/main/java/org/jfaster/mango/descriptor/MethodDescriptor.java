@@ -45,6 +45,8 @@ public class MethodDescriptor {
   private final ReturnDescriptor returnDescriptor;
   private final List<ParameterDescriptor> parameterDescriptors;
 
+  private String cachedSQL;
+
   private MethodDescriptor(
       String name, Class<?> daoClass, ReturnDescriptor returnDescriptor,
       List<ParameterDescriptor> parameterDescriptors) {
@@ -98,6 +100,9 @@ public class MethodDescriptor {
   }
 
   public String getSQL() {
+    if (cachedSQL != null) {
+      return cachedSQL;
+    }
     SQL sqlAnno = getAnnotation(SQL.class);
     String sql;
     if (sqlAnno != null) {
@@ -121,7 +126,8 @@ public class MethodDescriptor {
       // TODO 补全日志
       logger.debug(sql);
     }
-    return sql;
+    cachedSQL = sql;
+    return cachedSQL;
   }
 
   @Nullable

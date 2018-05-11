@@ -25,7 +25,10 @@ import java.lang.reflect.Method;
  */
 public class OperatorStat {
 
+  private final Class<?> daoClass;
   private final Method method;
+
+  private final String sql;
 
   /**
    * query or update or batchupdate
@@ -109,7 +112,9 @@ public class OperatorStat {
   private final long totalCacheBatchDeleteTime;
 
   public OperatorStat(
+      Class<?> daoClass,
       Method method,
+      String sql,
       OperatorType operatorType,
       boolean isCacheable,
       boolean isUseMultipleKeys,
@@ -139,7 +144,9 @@ public class OperatorStat {
       long cacheBatchDeleteSuccessCount,
       long cacheBatchDeleteExceptionCount,
       long totalCacheBatchDeleteTime) {
+    this.daoClass = daoClass;
     this.method = method;
+    this.sql = sql;
     this.operatorType = operatorType;
     this.isCacheable = isCacheable;
     this.isUseMultipleKeys = isUseMultipleKeys;
@@ -171,8 +178,16 @@ public class OperatorStat {
     this.totalCacheBatchDeleteTime = totalCacheBatchDeleteTime;
   }
 
+  public Class<?> getDaoClass() {
+    return daoClass;
+  }
+
   public Method getMethod() {
     return method;
+  }
+
+  public String getSql() {
+    return sql;
   }
 
   public OperatorType getOperatorType() {

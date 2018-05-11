@@ -19,8 +19,6 @@ package org.jfaster.mango.crud.common.factory;
 import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
-import org.jfaster.mango.util.reflect.DynamicTokens;
-import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -45,7 +43,7 @@ public class CommonUpdateBuilderFactoryTest {
     List<Type> parameterTypes = Lists.newArrayList((Type) entityClass);
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());
-    assertThat(b.buildSql(), equalTo("update #table set userid = :userId, user_age = :userAge where id = :id"));
+    assertThat(b.buildSql(), equalTo("update #table set #if (:userId != null) userid = :userId,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where id = :id"));
   }
 
 }

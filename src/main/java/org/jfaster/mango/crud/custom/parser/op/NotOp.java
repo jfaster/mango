@@ -14,12 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.common.builder;
-
-import org.jfaster.mango.crud.Builder;
+package org.jfaster.mango.crud.custom.parser.op;
 
 /**
  * @author ash
  */
-public abstract class CommonBuilder implements Builder {
+public class NotOp extends Param1Op {
+
+  @Override
+  public String keyword() {
+    return "Not";
+  }
+
+  @Override
+  public String operator() {
+    return "<>";
+  }
+
 }

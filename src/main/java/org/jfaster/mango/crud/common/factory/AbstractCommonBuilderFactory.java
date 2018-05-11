@@ -19,17 +19,18 @@ package org.jfaster.mango.crud.common.factory;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.BuilderFactory;
 import org.jfaster.mango.crud.CrudMeta;
-import org.jfaster.mango.crud.common.builder.CommonBuilder;
+import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author ash
  */
-public abstract class CommonBuilderFactory extends BuilderFactory {
+public abstract class AbstractCommonBuilderFactory extends BuilderFactory {
 
+  @Nullable
   @Override
   public Builder doTryGetBuilder(String name, Type returnType, List<Type> parameterTypes, Class<?> entityClass, Class<?> idClass) {
     return (nameMatched(name) &&
@@ -48,17 +49,15 @@ public abstract class CommonBuilderFactory extends BuilderFactory {
   }
 
   private boolean parameterTypesMatched(List<Type> parameterTypes, Class<?> entityClass, Class<?> idClass) {
-    List<Type> types = new ArrayList<Type>();
-    types.add(expectedParameterType(entityClass, idClass));
-    return types.equals(parameterTypes);
+    return expectedParameterType(entityClass, idClass).equals(parameterTypes);
   }
 
   abstract String expectedMethodName();
 
   abstract Type expectedReturnType(Class<?> entityClass);
 
-  abstract Type expectedParameterType(Class<?> entityClass, Class<?> idClass);
+  abstract List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass);
 
-  abstract CommonBuilder createCommonBuilder(CrudMeta cm);
+  abstract AbstractCommonBuilder createCommonBuilder(CrudMeta cm);
 
 }

@@ -46,7 +46,7 @@ public class ExtendStat {
   }
 
   public String getSimpleClassName() {
-    return method.getDeclaringClass().getSimpleName();
+    return operatorStat.getDaoClass().getSimpleName();
   }
 
   public String getSimpleMethodName() {
@@ -60,7 +60,7 @@ public class ExtendStat {
     if (Strings.isNotEmpty(table)) {
       Sharding shardingAnno = method.getAnnotation(Sharding.class);
       if (shardingAnno == null) {
-        shardingAnno = method.getDeclaringClass().getAnnotation(Sharding.class);
+        shardingAnno = operatorStat.getDaoClass().getAnnotation(Sharding.class);
       }
       if (shardingAnno != null &&
           !NotUseTableShardingStrategy.class.equals(shardingAnno.tableShardingStrategy())) {
