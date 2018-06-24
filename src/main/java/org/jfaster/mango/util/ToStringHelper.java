@@ -16,6 +16,9 @@
 
 package org.jfaster.mango.util;
 
+import org.jfaster.mango.descriptor.MethodDescriptor;
+import org.jfaster.mango.descriptor.ParameterDescriptor;
+
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,18 @@ public class ToStringHelper {
     StringBuffer sb = new StringBuffer();
     sb.append(m.getDeclaringClass().getSimpleName()).append(".").append(m.getName()).append("(");
     printTypes(sb, m.getGenericParameterTypes(), "", ", ", "");
+    return sb.append(")").toString();
+  }
+
+  public static String toString(MethodDescriptor md) {
+    StringBuffer sb = new StringBuffer();
+    sb.append(md.getDaoClass().getSimpleName()).append(".").append(md.getName()).append("(");
+    List<ParameterDescriptor> pds = md.getParameterDescriptors();
+    Type[] types = new Type[pds.size()];
+    for (int i = 0; i < types.length; i++) {
+      types[i] = pds.get(i).getType();
+    }
+    printTypes(sb, types, "", ", ", "");
     return sb.append(")").toString();
   }
 

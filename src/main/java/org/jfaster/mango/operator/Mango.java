@@ -291,14 +291,14 @@ public class Mango extends Config {
     private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
         new CacheLoader<Method, Operator>() {
           public Operator load(Method method) {
-            if (logger.isInfoEnabled()) {
-              logger.info("Initializing operator for {}", ToStringHelper.toString(method));
-            }
             CombinedStat combinedStat = statCollector.getCombinedStat(method);
             MetaStat metaStat = combinedStat.getMetaStat();
             InitStat initStat = combinedStat.getInitStat();
             long now = System.nanoTime();
             MethodDescriptor md = Methods.getMethodDescriptor(daoClass, method, isUseActualParamName);
+            if (logger.isInfoEnabled()) {
+              logger.info("Initializing operator for {}", ToStringHelper.toString(md));
+            }
             Operator operator = operatorFactory.getOperator(md, metaStat);
             initStat.recordInit(System.nanoTime() - now);
             metaStat.setDaoClass(daoClass);
@@ -323,9 +323,6 @@ public class Mango extends Config {
 
     @Override
     protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Invoking {}", ToStringHelper.toString(method));
-      }
       Operator operator = getOperator(method);
       InvocationStat stat = InvocationStat.create();
       try {
