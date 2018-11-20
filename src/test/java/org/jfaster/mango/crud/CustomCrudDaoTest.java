@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.operator.Mango;
+import org.jfaster.mango.plugin.page.MySQLPageInterceptor;
+import org.jfaster.mango.plugin.page.Page;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.junit.Before;
@@ -41,6 +43,9 @@ public class CustomCrudDaoTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private final static Mango mango = Mango.newInstance(ds);
+  static {
+    mango.addInterceptor(new MySQLPageInterceptor());
+  }
 
   @Before
   public void before() throws Exception {
@@ -69,6 +74,31 @@ public class CustomCrudDaoTest {
     assertThat(dao.countByUserId(userId), equalTo(2));
     assertThat(dao.deleteByUserId(userId), equalTo(2));
     assertThat(dao.countByUserId(userId), equalTo(0));
+  }
+
+  @Test
+  public void testPage() throws Exception {
+    CrudOrderDao dao = mango.create(CrudOrderDao.class);
+    int userId = 2;
+    for (int i = 0; i < 10; i++) {
+      CrudOrder order = CrudOrder.createRandomCrudOrder(userId);
+      dao.add(order);
+    }
+    Page page = Page.create(0, 3, true);
+    assertThat(dao.getByUserId(userId, page).size(), equalTo(3));
+    assertThat(page.getTotal(), equalTo(10));
+
+    page = Page.create(1, 3, true);
+    assertThat(dao.getByUserId(userId, page).size(), equalTo(3));
+    assertThat(page.getTotal(), equalTo(10));
+
+    page = Page.create(2, 3, true);
+    assertThat(dao.getByUserId(userId, page).size(), equalTo(3));
+    assertThat(page.getTotal(), equalTo(10));
+
+    page = Page.create(3, 3, true);
+    assertThat(dao.getByUserId(userId, page).size(), equalTo(1));
+    assertThat(page.getTotal(), equalTo(10));
   }
 
   @Rule
@@ -121,6 +151,18 @@ public class CustomCrudDaoTest {
 
   }
 
+  @Test
+  public void test6() throws Throwable {
+    thrown.expect(CrudException.class);
+    thrown.expectMessage("the name of method [getByIdAndUid] is error, the number of parameters expected greater or equal than 2, but 1");
+    try {
+      mango.create(CrudOrder6Dao.class);
+    } catch (Exception e) {
+      throw e.getCause();
+    }
+
+  }
+
   @DB(table = "t_order")
   interface CrudOrderDao extends CrudDao<CrudOrder, String> {
 
@@ -133,6 +175,10 @@ public class CustomCrudDaoTest {
     int countByUserId(int userId);
 
     int deleteByUserId(int userId);
+
+    List<CrudOrder> getByUserId(int userId, Page page);
+
+    int countByUserId(int userId, Page page);
 
   }
 
@@ -161,6 +207,13 @@ public class CustomCrudDaoTest {
   interface CrudOrder5Dao extends CrudDao<CrudOrder, String> {
 
     CrudOrder getByIdIn(List<Integer> ids);
+
+  }
+
+  @DB(table = "t_order")
+  interface CrudOrder6Dao extends CrudDao<CrudOrder, String> {
+
+    CrudOrder getByIdAndUid(String id);
 
   }
 

@@ -32,15 +32,18 @@ public abstract class AbstractPageInterceptor extends QueryInterceptor {
   @Override
   public void interceptQuery(BoundSql boundSql, List<Parameter> parameters, DataSource dataSource) {
     for (Parameter parameter : parameters) {
-      Object val = parameter.getValue();
-      if (val instanceof Page) {
+      if (Page.class.equals(parameter.getRawType())) {
+        Object val = parameter.getValue();
+        if (val == null) {
+          throw new PageException("Parameter page is null");
+        }
         Page page = (Page) val;
 
         // 参数检测
         int pageNum = page.getPageNum();
         int pageSize = page.getPageSize();
-        if (pageNum <= 0) {
-          throw new PageException("pageNum need > 0, but pageNum is " + pageNum);
+        if (pageNum < 0) {
+          throw new PageException("pageNum need >= 0, but pageNum is " + pageNum);
         }
         if (pageSize <= 0) {
           throw new PageException("pageSize need > 0, but pageSize is " + pageSize);
@@ -54,7 +57,6 @@ public abstract class AbstractPageInterceptor extends QueryInterceptor {
           int total = getJdbcOperations().queryForObject(dataSource, totalBoundSql, mapper);
           page.setTotal(total);
         }
-
         // 分页处理
         handlePage(pageNum, pageSize, boundSql);
       }

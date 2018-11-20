@@ -85,9 +85,9 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
     for (OpUnit opUnit : opUnits) {
       count = count + opUnit.getOp().paramCount();
     }
-    if (count != parameterTypes.size()) {
+    if (parameterTypes.size() < count) {
       throw new CrudException("the name of method [" + methodName + "] is error, " +
-          "the number of parameters expected " + count + ", but " + parameterTypes.size());
+          "the number of parameters expected greater or equal than " + count + ", but " + parameterTypes.size());
     }
     tailOfSql.append("where ");
     int paramIndex = 1;

@@ -32,8 +32,8 @@ public class OraclePageInterceptor extends AbstractPageInterceptor {
 
   @Override
   void handlePage(int pageNum, int pageSize, BoundSql boundSql) {
-    int startRow = (pageNum - 1) * pageSize;
-    int endRow = pageNum * pageSize;
+    int startRow = pageNum * pageSize;
+    int endRow = (pageNum + 1) * pageSize;
     String sql = boundSql.getSql();
     sql = "SELECT * FROM ( SELECT B.* , ROWNUM RN FROM (" + sql + ") B WHERE ROWNUM <= "
         + endRow + " ) WHERE RN > " + startRow;

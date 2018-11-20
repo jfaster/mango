@@ -19,6 +19,7 @@ package org.jfaster.mango.descriptor;
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.util.Strings;
+import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.Reflection;
@@ -117,8 +118,7 @@ public class MethodDescriptor {
       throw new DescriptionException("sql is null or empty");
     }
     if (logger.isDebugEnabled()) {
-      // TODO 补全日志
-      logger.debug(sql);
+      logger.info("SQL of {} is '{}'", ToStringHelper.toString(this), sql);
     }
     cachedSQL = sql;
     return cachedSQL;

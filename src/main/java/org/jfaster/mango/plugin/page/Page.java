@@ -21,51 +21,58 @@ package org.jfaster.mango.plugin.page;
  */
 public class Page {
 
-  private boolean isFetchTotal = true;
+  private static final int DEFAULT_PAGE_NUM = 0; // 默认查询第1页
 
-  private int pageNum;
+  private static final int DEFAULT_PAGE_SIZE = 20; // 默认数据数量20
 
-  private int pageSize;
+  private static final boolean DEFAULT_IS_FETCH_TOTAL = false; // 默认不取总数
+
+  private final int pageNum;
+
+  private final int pageSize;
+
+  private final boolean isFetchTotal;
 
   private int total;
 
-  public Page() {
-  }
-
-  public Page(int pageNum, int pageSize) {
+  private Page(int pageNum, int pageSize, boolean isFetchTotal) {
     this.pageNum = pageNum;
     this.pageSize = pageSize;
+    this.isFetchTotal = isFetchTotal;
+  }
+
+  public static Page create(int pageNum, int pageSize, boolean isFetchTotal) {
+    return new Page(pageNum, pageSize, isFetchTotal);
   }
 
   public static Page create(int pageNum, int pageSize) {
-    return new Page(pageNum, pageSize);
+    return create(pageNum, pageSize, DEFAULT_IS_FETCH_TOTAL);
+  }
+
+  public static Page create() {
+    return create(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE);
+  }
+
+  public static Page create(boolean isFetchTotal) {
+    return new Page(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, isFetchTotal);
   }
 
   public boolean isFetchTotal() {
     return isFetchTotal;
   }
 
-  public void setFetchTotal(boolean fetchTotal) {
-    isFetchTotal = fetchTotal;
-  }
-
   public int getPageNum() {
     return pageNum;
-  }
-
-  public void setPageNum(int pageNum) {
-    this.pageNum = pageNum;
   }
 
   public int getPageSize() {
     return pageSize;
   }
 
-  public void setPageSize(int pageSize) {
-    this.pageSize = pageSize;
-  }
-
   public int getTotal() {
+    if (!isFetchTotal) {
+      throw new PageException("can't fetch total, please set isFetchTotal to true");
+    }
     return total;
   }
 
