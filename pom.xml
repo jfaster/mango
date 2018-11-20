@@ -11,11 +11,24 @@
     <groupId>org.jfaster</groupId>
     <artifactId>mango</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.2.xdja</version>
 
     <name>mango</name>
     <url>http://mango.jfaster.org/</url>
     <description>Distributed ORM Framework for Java</description>
+
+    <distributionManagement>
+        <repository>
+            <id>xdja-deploy</id>
+            <name>Internal Releases</name>
+            <url>http://120.194.4.152:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>xdja-deploy</id>
+            <name>Internal Releases</name>
+            <url>http://120.194.4.152:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <licenses>
         <license>
