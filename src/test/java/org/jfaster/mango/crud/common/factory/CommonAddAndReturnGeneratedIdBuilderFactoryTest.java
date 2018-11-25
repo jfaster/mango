@@ -41,7 +41,7 @@ public class CommonAddAndReturnGeneratedIdBuilderFactoryTest {
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
     List<Type> types = Lists.newArrayList((Type) Order.class);
-    Builder b = factory.doTryGetBuilder(name, int.class, types, entityClass, idClass);
+    Builder b = factory.doTryGetBuilder(name, long.class, types, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("insert into #table(userid, user_age) values(:userId, :userAge)"));
   }

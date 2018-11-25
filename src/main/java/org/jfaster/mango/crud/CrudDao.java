@@ -30,7 +30,7 @@ public interface CrudDao<T, ID> extends Generic<T, ID> {
 
   void add(T entity);
 
-  int addAndReturnGeneratedId(T entity);
+  long addAndReturnGeneratedId(T entity);
 
   void add(Collection<T> entities);
 

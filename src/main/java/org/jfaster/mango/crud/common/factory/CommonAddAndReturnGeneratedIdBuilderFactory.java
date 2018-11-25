@@ -36,7 +36,7 @@ public class CommonAddAndReturnGeneratedIdBuilderFactory extends AbstractCommonB
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return int.class;
+    return long.class;
   }
 
   @Override

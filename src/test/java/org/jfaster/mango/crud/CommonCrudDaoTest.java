@@ -52,30 +52,30 @@ public class CommonCrudDaoTest {
   public void test() throws Exception {
     MsgDao dao = mango.create(MsgDao.class);
     Msg msg = Msg.createRandomMsg();
-    int id = dao.addAndReturnGeneratedId(msg);
-    msg.setId(id);
-    assertThat(dao.getOne(id), equalTo(msg));
+    long id = dao.addAndReturnGeneratedId(msg);
+    msg.setId((int) id);
+    assertThat(dao.getOne((int) id), equalTo(msg));
     Msg msg2 = Msg.createRandomMsg();
     dao.add(msg2);
     Msg msg3 = Msg.createRandomMsg();
-    int id3 = dao.addAndReturnGeneratedId(msg3);
+    long id3 = dao.addAndReturnGeneratedId(msg3);
     assertThat(dao.count(), equalTo(3L));
-    msg3.setId(id3);
-    assertThat(dao.getOne(id3), equalTo(msg3));
+    msg3.setId((int) id3);
+    assertThat(dao.getOne((int) id3), equalTo(msg3));
     assertThat(dao.getAll().size(), equalTo(3));
-    List<Integer> ids = Lists.newArrayList(id, id3);
+    List<Integer> ids = Lists.newArrayList((int) id, (int) id3);
     List<Msg> msgs = dao.getMulti(ids);
     assertThat(msgs.size(), equalTo(2));
     Map<Integer, Msg> mapping = Maps.newHashMap();
-    mapping.put(id, msg);
-    mapping.put(id3, msg3);
+    mapping.put((int) id, msg);
+    mapping.put((int) id3, msg3);
     for (Msg actualMsg : msgs) {
       assertThat(actualMsg, equalTo(mapping.get(actualMsg.getId())));
     }
     msg.setContent("ash");
     int r = dao.update(msg);
     assertThat(r, equalTo(1));
-    assertThat(dao.getOne(id), equalTo(msg));
+    assertThat(dao.getOne((int) id), equalTo(msg));
     msgs = Lists.newArrayList(msg, msg3);
     int[] rr = dao.update(msgs);
     assertThat(rr, equalTo(new int[] {1, 1}));
@@ -87,8 +87,8 @@ public class CommonCrudDaoTest {
     rr = dao.update(msgs);
     assertThat(rr, equalTo(new int[] {0, 0}));
 
-    dao.delete(id);
-    assertThat(dao.getOne(id), nullValue());
+    dao.delete((int) id);
+    assertThat(dao.getOne((int) id), nullValue());
     msgs = Msg.createRandomMsgs(5);
     dao.add(msgs);
   }
@@ -97,23 +97,23 @@ public class CommonCrudDaoTest {
   public void test2() throws Exception {
     MsgDao2 dao = mango.create(MsgDao2.class);
     Msg msg = Msg.createRandomMsg();
-    int id = dao.addAndReturnGeneratedId(msg);
-    msg.setId(id);
-    assertThat(dao.getOne(id), equalTo(msg));
+    long id = dao.addAndReturnGeneratedId(msg);
+    msg.setId((int) id);
+    assertThat(dao.getOne((int) id), equalTo(msg));
     Msg msg2 = Msg.createRandomMsg();
     dao.add(msg2);
     Msg msg3 = Msg.createRandomMsg();
-    int id3 = dao.addAndReturnGeneratedId(msg3);
+    long id3 = dao.addAndReturnGeneratedId(msg3);
     assertThat(dao.getAll().size(), equalTo(3));
     assertThat(dao.count(), equalTo(3L));
-    msg3.setId(id3);
-    assertThat(dao.getOne(id3), equalTo(msg3));
-    List<Integer> ids = Lists.newArrayList(id, id3);
+    msg3.setId((int) id3);
+    assertThat(dao.getOne((int) id3), equalTo(msg3));
+    List<Integer> ids = Lists.newArrayList((int) id, (int) id3);
     List<Msg> msgs = dao.getMulti(ids);
     assertThat(msgs.size(), equalTo(2));
     Map<Integer, Msg> mapping = Maps.newHashMap();
-    mapping.put(id, msg);
-    mapping.put(id3, msg3);
+    mapping.put((int) id, msg);
+    mapping.put((int) id3, msg3);
     for (Msg actualMsg : msgs) {
       assertThat(actualMsg, equalTo(mapping.get(actualMsg.getId())));
     }
@@ -121,7 +121,7 @@ public class CommonCrudDaoTest {
     msg.setContent("ash");
     int r = dao.update(msg);
     assertThat(r, equalTo(1));
-    assertThat(dao.getOne(id), equalTo(msg));
+    assertThat(dao.getOne((int) id), equalTo(msg));
     msgs = Lists.newArrayList(msg, msg3);
     int[] rr = dao.update(msgs);
     assertThat(rr, equalTo(new int[] {1, 1}));
@@ -133,8 +133,8 @@ public class CommonCrudDaoTest {
     rr = dao.update(msgs);
     assertThat(rr, equalTo(new int[] {0, 0}));
 
-    dao.delete(id);
-    assertThat(dao.getOne(id), nullValue());
+    dao.delete((int) id);
+    assertThat(dao.getOne((int) id), nullValue());
     msgs = Msg.createRandomMsgs(5);
     dao.add(msgs);
   }
@@ -143,9 +143,9 @@ public class CommonCrudDaoTest {
   public void testNull() throws Exception {
     MsgDao dao = mango.create(MsgDao.class);
     Msg msg = Msg.createRandomMsg();
-    int id = dao.addAndReturnGeneratedId(msg);
-    msg.setId(id);
-    assertThat(dao.getOne(id), equalTo(msg));
+    long id = dao.addAndReturnGeneratedId(msg);
+    msg.setId((int) id);
+    assertThat(dao.getOne((int) id), equalTo(msg));
 
     String oldContent = msg.getContent();
     msg.setUid(100);
@@ -153,7 +153,7 @@ public class CommonCrudDaoTest {
     dao.update(msg);
     msg.setContent(oldContent);
 
-    assertThat(dao.getOne(id), equalTo(msg));
+    assertThat(dao.getOne((int) id), equalTo(msg));
   }
 
   @DB(table = "msg")
@@ -167,7 +167,7 @@ public class CommonCrudDaoTest {
     void add(Msg entity);
 
     @Override
-    int addAndReturnGeneratedId(Msg entity);
+    long addAndReturnGeneratedId(Msg entity);
 
     @Override
     void add(Collection<Msg> entities);
