@@ -18,6 +18,7 @@ package org.jfaster.mango.descriptor;
 
 import org.jfaster.mango.annotation.*;
 import org.jfaster.mango.exception.DescriptionException;
+import org.jfaster.mango.util.Joiner;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.logging.InternalLogger;
@@ -27,6 +28,7 @@ import org.jfaster.mango.util.reflect.Reflection;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -105,7 +107,11 @@ public class MethodDescriptor {
     SQL sqlAnno = getAnnotation(SQL.class);
     String sql;
     if (sqlAnno != null) {
-      sql = sqlAnno.value();
+      String[] fragments = sqlAnno.value();
+      if (fragments.length == 0) {
+        throw new DescriptionException("sql is null or empty");
+      }
+      sql = Joiner.on(' ').join(Arrays.asList(fragments)).trim();
     } else {
       UseSqlGenerator useSqlGeneratorAnno = getAnnotation(UseSqlGenerator.class);
       if (useSqlGeneratorAnno == null) {
