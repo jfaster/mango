@@ -36,9 +36,9 @@ public abstract class AbstractOperator implements Operator {
   protected final ASTRootNode rootNode;
 
   /**
-   * dao操作所在类
+   * 方法描述
    */
-  protected final Class<?> daoClass;
+  protected final MethodDescriptor methodDescriptor;
 
   /**
    * 拦截器链
@@ -75,9 +75,14 @@ public abstract class AbstractOperator implements Operator {
    */
   protected AbstractOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
     this.rootNode = rootNode;
-    this.daoClass = md.getDaoClass();
+    this.methodDescriptor = md;
     this.config = config.copy();
     mergeConfig(md);
+  }
+
+  @Override
+  public MethodDescriptor getMethodDescriptor() {
+    return methodDescriptor;
   }
 
   public void setJdbcOperations(JdbcOperations jdbcOperations) {

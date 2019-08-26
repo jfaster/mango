@@ -152,12 +152,6 @@ public class MethodDescriptor {
     return getAnnotation(Sharding.class);
   }
 
-  public boolean isUseCache() {
-    CacheIgnored cacheIgnoredAnno = getAnnotation(CacheIgnored.class);
-    Cache cacheAnno = getAnnotation(Cache.class);
-    return cacheAnno != null && cacheIgnoredAnno == null;
-  }
-
   public boolean isReturnGeneratedId() {
     return isAnnotationPresent(ReturnGeneratedId.class) ||
         (name != null && name.contains("ReturnGeneratedId"));

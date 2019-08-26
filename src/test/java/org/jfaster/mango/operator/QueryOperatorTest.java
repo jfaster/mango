@@ -26,8 +26,6 @@ import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.SetSupplier;
 import org.jfaster.mango.mapper.RowMapper;
-import org.jfaster.mango.stat.MetaStat;
-import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;
@@ -73,7 +71,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, InvocationStat.create());
+    operator.execute(new Object[]{user});
   }
 
   @Test
@@ -103,7 +101,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, InvocationStat.create());
+    operator.execute(new Object[]{user});
   }
 
   @Test
@@ -133,7 +131,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, InvocationStat.create());
+    operator.execute(new Object[]{user});
   }
 
   @Test
@@ -161,7 +159,7 @@ public class QueryOperatorTest {
     User user = new User();
     user.setId(100);
     user.setName("ash");
-    operator.execute(new Object[]{user}, InvocationStat.create());
+    operator.execute(new Object[]{user});
   }
 
   @Test
@@ -191,7 +189,7 @@ public class QueryOperatorTest {
     });
 
     List<Integer> ids = Arrays.asList(100, 200, 300);
-    operator.execute(new Object[]{ids}, InvocationStat.create());
+    operator.execute(new Object[]{ids});
   }
 
   @Test
@@ -221,43 +219,8 @@ public class QueryOperatorTest {
     });
 
     List<Integer> ids = Arrays.asList(100, 200, 300);
-    Integer r = (Integer) operator.execute(new Object[]{ids}, InvocationStat.create());
+    Integer r = (Integer) operator.execute(new Object[]{ids});
     assertThat(r, is(3));
-  }
-
-  @Test
-  public void testStatsCounter() throws Exception {
-    TypeToken<User> t = TypeToken.of(User.class);
-    String srcSql = "select * from user where id=:1.id and name=:1.name";
-    AbstractOperator operator = getOperator(t, t, srcSql, new ArrayList<Annotation>());
-
-    User user = new User();
-    user.setId(100);
-    user.setName("ash");
-
-    operator.setJdbcOperations(new JdbcOperationsAdapter() {
-      @Override
-      public <T> T queryForObject(DataSource ds, BoundSql boundSql, RowMapper<T> rowMapper) {
-        return null;
-      }
-    });
-    InvocationStat stat = InvocationStat.create();
-    operator.execute(new Object[]{user}, stat);
-    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(1L));
-    operator.execute(new Object[]{user}, stat);
-    assertThat(stat.getDatabaseExecuteSuccessCount(), equalTo(2L));
-
-    operator.setJdbcOperations(new JdbcOperationsAdapter());
-    try {
-      operator.execute(new Object[]{user}, stat);
-    } catch (UnsupportedOperationException e) {
-    }
-    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(1L));
-    try {
-      operator.execute(new Object[]{user}, stat);
-    } catch (UnsupportedOperationException e) {
-    }
-    assertThat(stat.getDatabaseExecuteExceptionCount(), equalTo(2L));
   }
 
   private AbstractOperator getOperator(TypeToken<?> pt, TypeToken<?> rt, String srcSql, List<Annotation> annos)
@@ -277,9 +240,9 @@ public class QueryOperatorTest {
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 
-    OperatorFactory factory = new OperatorFactory(group, null, new InterceptorChain(), new Config());
+    OperatorFactory factory = new OperatorFactory(group, new InterceptorChain(), new Config());
 
-    AbstractOperator operator = factory.getOperator(md, MetaStat.create());
+    AbstractOperator operator = factory.getOperator(md);
     return operator;
   }
 

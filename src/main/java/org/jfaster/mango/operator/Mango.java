@@ -16,7 +16,6 @@
 
 package org.jfaster.mango.operator;
 
-import org.jfaster.mango.annotation.Cache;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.datasource.DataSourceFactory;
 import org.jfaster.mango.datasource.DataSourceFactoryGroup;
@@ -26,8 +25,6 @@ import org.jfaster.mango.descriptor.Methods;
 import org.jfaster.mango.exception.InitializationException;
 import org.jfaster.mango.interceptor.Interceptor;
 import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.operator.cache.CacheHandler;
-import org.jfaster.mango.stat.*;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.local.CacheLoader;
 import org.jfaster.mango.util.local.DoubleCheckCache;
@@ -61,11 +58,6 @@ public class Mango extends Config {
   private DataSourceFactoryGroup dataSourceFactoryGroup;
 
   /**
-   * 缓存处理器
-   */
-  private CacheHandler cacheHandler;
-
-  /**
    * 是否懒加载
    */
   private boolean isLazyInit = false;
@@ -74,11 +66,6 @@ public class Mango extends Config {
    * 拦截器链，默认为空
    */
   private InterceptorChain interceptorChain = new InterceptorChain();
-
-  /**
-   * 统计收集器
-   */
-  private final StatCollector statCollector = new StatCollector();
 
   /**
    * mango实例
@@ -118,20 +105,6 @@ public class Mango extends Config {
   public static Mango newInstance(List<DataSourceFactory> dataSourceFactories) {
     Mango mango = newInstance();
     mango.setDataSourceFactories(dataSourceFactories);
-    return mango;
-  }
-
-  public static Mango newInstance(DataSourceFactory dataSourceFactory, CacheHandler cacheHandler) {
-    Mango mango = newInstance();
-    mango.setDataSourceFactory(dataSourceFactory);
-    mango.setCacheHandler(cacheHandler);
-    return mango;
-  }
-
-  public static Mango newInstance(List<DataSourceFactory> dataSourceFactories, CacheHandler cacheHandler) {
-    Mango mango = newInstance();
-    mango.setDataSourceFactories(dataSourceFactories);
-    mango.setCacheHandler(cacheHandler);
     return mango;
   }
 
@@ -177,18 +150,12 @@ public class Mango extends Config {
           "annotation but not found");
     }
 
-    Cache cacheAnno = daoClass.getAnnotation(Cache.class);
-    if (cacheAnno != null && cacheHandler == null) {
-      throw new IllegalStateException("if @Cache annotation on dao interface, " +
-          "cacheHandler can't be null");
-    }
-
     if (dataSourceFactoryGroup == null) {
       throw new IllegalArgumentException("please set dataSource or dataSourceFactory or dataSourceFactories");
     }
 
     MangoInvocationHandler handler = new MangoInvocationHandler(
-        daoClass, dataSourceFactoryGroup, cacheHandler, interceptorChain, statCollector, this);
+        daoClass, dataSourceFactoryGroup, interceptorChain, this);
     if (!isLazyInit) { // 不使用懒加载，则提前加载
       List<Method> methods = Methods.listMethods(daoClass);
       for (Method method : methods) {
@@ -200,13 +167,6 @@ public class Mango extends Config {
       }
     }
     return Reflection.newProxy(daoClass, handler);
-  }
-
-  /**
-   * 返回状态信息
-   */
-  public StatInfo getStatInfo() {
-    return statCollector.getStatInfo();
   }
 
   /**
@@ -247,17 +207,6 @@ public class Mango extends Config {
     dataSourceFactoryGroup = new DataSourceFactoryGroup(dataSourceFactories);
   }
 
-  public CacheHandler getCacheHandler() {
-    return cacheHandler;
-  }
-
-  public void setCacheHandler(CacheHandler cacheHandler) {
-    if (cacheHandler == null) {
-      throw new NullPointerException("cacheHandler can't be null");
-    }
-    this.cacheHandler = cacheHandler;
-  }
-
   public boolean isLazyInit() {
     return isLazyInit;
   }
@@ -273,37 +222,20 @@ public class Mango extends Config {
     this.interceptorChain = interceptorChain;
   }
 
-  public void setStatMonitor(StatMonitor statMonitor) {
-    statCollector.initStatMonitor(statMonitor);
-  }
-
-  public void shutDownStatMonitor() {
-    statCollector.shutDown();
-  }
-
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
 
     private final Class<?> daoClass;
-    private final StatCollector statCollector;
     private final OperatorFactory operatorFactory;
     private final boolean isUseActualParamName;
 
     private final LoadingCache<Method, Operator> cache = new DoubleCheckCache<Method, Operator>(
         new CacheLoader<Method, Operator>() {
           public Operator load(Method method) {
-            CombinedStat combinedStat = statCollector.getCombinedStat(method);
-            MetaStat metaStat = combinedStat.getMetaStat();
-            InitStat initStat = combinedStat.getInitStat();
-            long now = System.nanoTime();
             MethodDescriptor md = Methods.getMethodDescriptor(daoClass, method, isUseActualParamName);
             if (logger.isInfoEnabled()) {
               logger.info("Initializing operator for {}", ToStringHelper.toString(md));
             }
-            Operator operator = operatorFactory.getOperator(md, metaStat);
-            initStat.recordInit(System.nanoTime() - now);
-            metaStat.setDaoClass(daoClass);
-            metaStat.setMethod(method);
-            metaStat.setSql(md.getSQL());
+            Operator operator = operatorFactory.getOperator(md);
             return operator;
           }
         });
@@ -311,26 +243,17 @@ public class Mango extends Config {
     private MangoInvocationHandler(
         Class<?> daoClass,
         DataSourceFactoryGroup dataSourceFactoryGroup,
-        CacheHandler cacheHandler,
         InterceptorChain interceptorChain,
-        StatCollector statCollector,
         Config config) {
       this.daoClass = daoClass;
-      this.statCollector = statCollector;
       this.isUseActualParamName = config.isUseActualParamName();
-      operatorFactory = new OperatorFactory(dataSourceFactoryGroup, cacheHandler, interceptorChain, config);
+      operatorFactory = new OperatorFactory(dataSourceFactoryGroup, interceptorChain, config);
     }
 
     @Override
     protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
       Operator operator = getOperator(method);
-      InvocationStat stat = InvocationStat.create();
-      try {
-        Object r = operator.execute(args, stat);
-        return r;
-      } finally {
-        statCollector.getCombinedStat(method).getExecuteStat().accumulate(stat);
-      }
+      return operator.execute(args);
     }
 
     Operator getOperator(Method method) {

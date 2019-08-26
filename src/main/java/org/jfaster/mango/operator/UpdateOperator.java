@@ -23,7 +23,6 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
-import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.type.TypeHandler;
 import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.ToStringHelper;
@@ -74,12 +73,12 @@ public class UpdateOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values, InvocationStat stat) {
+  public Object execute(Object[] values) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
-    return execute(context, stat);
+    return execute(context);
   }
 
-  public Object execute(InvocationContext context, InvocationStat stat) {
+  public Object execute(InvocationContext context) {
     context.setGlobalTable(tableGenerator.getTable(context));
 
     try {
@@ -93,30 +92,20 @@ public class UpdateOperator extends AbstractOperator {
     }
 
     BoundSql boundSql = context.getBoundSql();
-    DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
+    DataSource ds = dataSourceGenerator.getDataSource(context, methodDescriptor.getDaoClass());
     invocationInterceptorChain.intercept(boundSql, context, ds);  // 拦截器
-    Number r = executeDb(ds, boundSql, stat);
+    Number r = executeDb(ds, boundSql);
     return transformer.transform(r);
   }
 
-  private Number executeDb(DataSource ds, BoundSql boundSql, InvocationStat stat) {
-    Number r = null;
-    long now = System.nanoTime();
-    try {
-      if (returnGeneratedId) {
-        GeneratedKeyHolder holder = new GeneratedKeyHolder(generatedKeyTypeHandler);
-        jdbcOperations.update(ds, boundSql, holder);
-        r = holder.getKey();
-      } else {
-        r = jdbcOperations.update(ds, boundSql);
-      }
-    } finally {
-      long cost = System.nanoTime() - now;
-      if (r != null) {
-        stat.recordDatabaseExecuteSuccess(cost);
-      } else {
-        stat.recordDatabaseExecuteException(cost);
-      }
+  private Number executeDb(DataSource ds, BoundSql boundSql) {
+    Number r;
+    if (returnGeneratedId) {
+      GeneratedKeyHolder holder = new GeneratedKeyHolder(generatedKeyTypeHandler);
+      jdbcOperations.update(ds, boundSql, holder);
+      r = holder.getKey();
+    } else {
+      r = jdbcOperations.update(ds, boundSql);
     }
     return r;
   }

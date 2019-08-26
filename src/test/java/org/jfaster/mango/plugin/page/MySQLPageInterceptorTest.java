@@ -16,12 +16,11 @@
 
 package org.jfaster.mango.plugin.page;
 
-import org.jfaster.mango.annotation.*;
+import org.jfaster.mango.annotation.DB;
+import org.jfaster.mango.annotation.ReturnGeneratedId;
+import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.operator.cache.Day;
-import org.jfaster.mango.operator.cache.IncorrectCacheByException;
 import org.jfaster.mango.support.DataSourceConfig;
-import org.jfaster.mango.support.Randoms;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
 import org.junit.Before;
@@ -30,15 +29,12 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * @author ash

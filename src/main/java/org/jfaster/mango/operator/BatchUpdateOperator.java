@@ -21,8 +21,8 @@ import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
-import org.jfaster.mango.stat.InvocationStat;
-import org.jfaster.mango.transaction.*;
+import org.jfaster.mango.transaction.Transaction;
+import org.jfaster.mango.transaction.TransactionFactory;
 import org.jfaster.mango.util.Iterables;
 import org.jfaster.mango.util.ToStringHelper;
 
@@ -47,7 +47,7 @@ public class BatchUpdateOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values, InvocationStat stat) {
+  public Object execute(Object[] values) {
     Iterables iterables = getIterables(values);
     if (iterables.isEmpty()) {
       return transformer.transform(new int[]{});
@@ -59,13 +59,13 @@ public class BatchUpdateOperator extends AbstractOperator {
       InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
       group(context, gorupMap, t++);
     }
-    int[] ints = executeDb(gorupMap, t, stat);
+    int[] ints = executeDb(gorupMap, t);
     return transformer.transform(ints);
   }
 
   protected void group(InvocationContext context, Map<DataSource, Group> groupMap, int position) {
     context.setGlobalTable(tableGenerator.getTable(context));
-    DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
+    DataSource ds = dataSourceGenerator.getDataSource(context, methodDescriptor.getDaoClass());
     Group group = groupMap.get(ds);
     if (group == null) {
       group = new Group();
@@ -88,29 +88,17 @@ public class BatchUpdateOperator extends AbstractOperator {
     return iterables;
   }
 
-  protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum, InvocationStat stat) {
+  protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum) {
     int[] r = new int[batchNum];
-    long now = System.nanoTime();
-    int t = 0;
-    try {
-      for (Map.Entry<DataSource, Group> entry : groupMap.entrySet()) {
-        DataSource ds = entry.getKey();
-        List<BoundSql> boundSqls = entry.getValue().getBoundSqls();
-        List<Integer> positions = entry.getValue().getPositions();
-        int[] ints = config.isUseTransactionForBatchUpdate() ?
-            useTransactionBatchUpdate(ds, boundSqls) :
-            jdbcOperations.batchUpdate(ds, boundSqls);
-        for (int i = 0; i < ints.length; i++) {
-          r[positions.get(i)] = ints[i];
-        }
-        t++;
-      }
-    } finally {
-      long cost = System.nanoTime() - now;
-      if (t == groupMap.entrySet().size()) {
-        stat.recordDatabaseExecuteSuccess(cost);
-      } else {
-        stat.recordDatabaseExecuteException(cost);
+    for (Map.Entry<DataSource, Group> entry : groupMap.entrySet()) {
+      DataSource ds = entry.getKey();
+      List<BoundSql> boundSqls = entry.getValue().getBoundSqls();
+      List<Integer> positions = entry.getValue().getPositions();
+      int[] ints = config.isUseTransactionForBatchUpdate() ?
+          useTransactionBatchUpdate(ds, boundSqls) :
+          jdbcOperations.batchUpdate(ds, boundSqls);
+      for (int i = 0; i < ints.length; i++) {
+        r[positions.get(i)] = ints[i];
       }
     }
     return r;

@@ -30,7 +30,6 @@ import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
-import org.jfaster.mango.stat.InvocationStat;
 import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.bean.BeanUtil;
 import org.jfaster.mango.util.bean.PropertyMeta;
@@ -71,12 +70,12 @@ public class QueryOperator extends AbstractOperator {
   }
 
   @Override
-  public Object execute(Object[] values, InvocationStat stat) {
+  public Object execute(Object[] values) {
     InvocationContext context = invocationContextFactory.newInvocationContext(values);
-    return execute(context, stat);
+    return execute(context);
   }
 
-  protected Object execute(InvocationContext context, InvocationStat stat) {
+  protected Object execute(InvocationContext context) {
     context.setGlobalTable(tableGenerator.getTable(context));
 
     try {
@@ -90,50 +89,36 @@ public class QueryOperator extends AbstractOperator {
     }
 
     BoundSql boundSql = context.getBoundSql();
-    DataSource ds = dataSourceGenerator.getDataSource(context, daoClass);
+    DataSource ds = dataSourceGenerator.getDataSource(context, methodDescriptor.getDaoClass());
     invocationInterceptorChain.intercept(boundSql, context, ds); // 拦截器
-    return executeFromDb(ds, boundSql, stat);
+    return executeFromDb(ds, boundSql);
   }
 
-  private Object executeFromDb(final DataSource ds, final BoundSql boundSql, InvocationStat stat) {
+  private Object executeFromDb(final DataSource ds, final BoundSql boundSql) {
     Object r;
-    boolean success = false;
-    long now = System.nanoTime();
-    try {
+    r = new QueryVisitor() {
 
-      r = new QueryVisitor() {
-
-        @Override
-        Object visitForList() {
-          return jdbcOperations.queryForList(ds, boundSql, listSupplier, rowMapper);
-        }
-
-        @Override
-        Object visitForSet() {
-          return jdbcOperations.queryForSet(ds, boundSql, setSupplier, rowMapper);
-        }
-
-        @Override
-        Object visitForArray() {
-          return jdbcOperations.queryForArray(ds, boundSql, rowMapper);
-
-        }
-
-        @Override
-        Object visitForObject() {
-          return jdbcOperations.queryForObject(ds, boundSql, rowMapper);
-        }
-      }.visit();
-
-      success = true;
-    } finally {
-      long cost = System.nanoTime() - now;
-      if (success) {
-        stat.recordDatabaseExecuteSuccess(cost);
-      } else {
-        stat.recordDatabaseExecuteException(cost);
+      @Override
+      Object visitForList() {
+        return jdbcOperations.queryForList(ds, boundSql, listSupplier, rowMapper);
       }
-    }
+
+      @Override
+      Object visitForSet() {
+        return jdbcOperations.queryForSet(ds, boundSql, setSupplier, rowMapper);
+      }
+
+      @Override
+      Object visitForArray() {
+        return jdbcOperations.queryForArray(ds, boundSql, rowMapper);
+
+      }
+
+      @Override
+      Object visitForObject() {
+        return jdbcOperations.queryForObject(ds, boundSql, rowMapper);
+      }
+    }.visit();
     return r;
   }
 

@@ -28,14 +28,12 @@ import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
-import org.jfaster.mango.operator.cache.*;
 import org.jfaster.mango.operator.generator.DataSourceGenerator;
 import org.jfaster.mango.operator.generator.DataSourceGeneratorFactory;
 import org.jfaster.mango.operator.generator.TableGenerator;
 import org.jfaster.mango.operator.generator.TableGeneratorFactory;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
-import org.jfaster.mango.stat.MetaStat;
 import org.jfaster.mango.util.jdbc.OperatorType;
 import org.jfaster.mango.util.jdbc.SQLType;
 
@@ -47,16 +45,14 @@ import java.util.List;
  */
 public class OperatorFactory {
 
-  private final CacheHandler cacheHandler;
   private final InterceptorChain interceptorChain;
   private final JdbcOperations jdbcOperations;
   private final Config config;
   private final TableGeneratorFactory tableGeneratorFactory;
   private final DataSourceGeneratorFactory dataSourceGeneratorFactory;
 
-  public OperatorFactory(DataSourceFactoryGroup dataSourceFactoryGroup, CacheHandler cacheHandler,
+  public OperatorFactory(DataSourceFactoryGroup dataSourceFactoryGroup,
                          InterceptorChain interceptorChain, Config config) {
-    this.cacheHandler = cacheHandler;
     this.interceptorChain = interceptorChain;
     this.config = config;
     this.jdbcOperations = new JdbcTemplate();
@@ -64,11 +60,10 @@ public class OperatorFactory {
     this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactoryGroup);
   }
 
-  public AbstractOperator getOperator(MethodDescriptor md, MetaStat stat) {
+  public AbstractOperator getOperator(MethodDescriptor md) {
     ASTRootNode rootNode = SqlParser.parse(md.getSQL()).init(); // 初始化抽象语法树
     List<ParameterDescriptor> pds = md.getParameterDescriptors(); // 方法参数描述
     OperatorType operatorType = getOperatorType(pds, rootNode);
-    stat.setOperatorType(operatorType);
     if (operatorType == OperatorType.BATCHUPDATE) { // 批量更新重新组装ParameterDescriptorList
       ParameterDescriptor pd = pds.get(0);
       pds = new ArrayList<ParameterDescriptor>(1);
@@ -90,40 +85,19 @@ public class OperatorFactory {
         getDataSourceGenerator(dataSourceType, md.getShardingAnno(), md.getDataSourceFactoryName(), context);
 
     AbstractOperator operator;
-    if (md.isUseCache()) {
-      CacheDriver driver = new CacheDriver(md, rootNode, cacheHandler, context);
-      stat.setCacheable(true);
-      stat.setUseMultipleKeys(driver.isUseMultipleKeys());
-      stat.setCacheNullObject(driver.isCacheNullObject());
-      switch (operatorType) {
-        case QUERY:
-          operator = new CacheableQueryOperator(rootNode, md, driver, config);
-          break;
-        case UPDATE:
-          operator = new CacheableUpdateOperator(rootNode, md, driver, config);
-          break;
-        case BATCHUPDATE:
-          operator = new CacheableBatchUpdateOperator(rootNode, md, driver, config);
-          break;
-        default:
-          throw new IllegalStateException();
-      }
-    } else {
-      switch (operatorType) {
-        case QUERY:
-          operator = new QueryOperator(rootNode, md, config);
-          break;
-        case UPDATE:
-          operator = new UpdateOperator(rootNode, md, config);
-          break;
-        case BATCHUPDATE:
-          operator = new BatchUpdateOperator(rootNode, md, config);
-          break;
-        default:
-          throw new IllegalStateException();
-      }
+    switch (operatorType) {
+      case QUERY:
+        operator = new QueryOperator(rootNode, md, config);
+        break;
+      case UPDATE:
+        operator = new UpdateOperator(rootNode, md, config);
+        break;
+      case BATCHUPDATE:
+        operator = new BatchUpdateOperator(rootNode, md, config);
+        break;
+      default:
+        throw new IllegalStateException();
     }
-
     InvocationInterceptorChain chain =
         new InvocationInterceptorChain(interceptorChain, pds, rootNode.getSQLType());
     operator.setTableGenerator(tableGenerator);

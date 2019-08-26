@@ -17,7 +17,7 @@
 package org.jfaster.mango.operator;
 
 
-import org.jfaster.mango.stat.InvocationStat;
+import org.jfaster.mango.descriptor.MethodDescriptor;
 
 /**
  * db操作接口
@@ -26,6 +26,8 @@ import org.jfaster.mango.stat.InvocationStat;
  */
 public interface Operator {
 
-  public Object execute(Object[] values, InvocationStat stat);
+  Object execute(Object[] values);
+
+  MethodDescriptor getMethodDescriptor();
 
 }
