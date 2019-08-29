@@ -39,6 +39,7 @@ import javax.sql.DataSource;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author ash
@@ -118,6 +119,11 @@ public class QueryOperator extends AbstractOperator {
       Object visitForObject() {
         return jdbcOperations.queryForObject(ds, boundSql, rowMapper);
       }
+
+      @Override
+      Object visitForOptional() {
+        return Optional.ofNullable(jdbcOperations.queryForObject(ds, boundSql, rowMapper));
+      }
     }.visit();
     return r;
   }
@@ -181,6 +187,11 @@ public class QueryOperator extends AbstractOperator {
       Object visitForObject() {
         return null;
       }
+
+      @Override
+      Object visitForOptional() {
+        return Optional.empty();
+      }
     }.visit();
   }
 
@@ -195,6 +206,8 @@ public class QueryOperator extends AbstractOperator {
         r = visitForSet();
       } else if (returnDescriptor.isArray()) {
         r = visitForArray();
+      } else if (returnDescriptor.isOptinal()) {
+        r = visitForOptional();
       } else {
         r = visitForObject();
       }
@@ -208,6 +221,8 @@ public class QueryOperator extends AbstractOperator {
     abstract Object visitForArray();
 
     abstract Object visitForObject();
+
+    abstract Object visitForOptional();
 
   }
 

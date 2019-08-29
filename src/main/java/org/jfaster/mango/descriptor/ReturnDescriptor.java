@@ -37,6 +37,10 @@ public class ReturnDescriptor extends TypeWithAnnotationDescriptor {
     return new ReturnDescriptor(type, annotations);
   }
 
+  public boolean isOptinal() {
+    return typeWrapper.isOptinal();
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj == null)

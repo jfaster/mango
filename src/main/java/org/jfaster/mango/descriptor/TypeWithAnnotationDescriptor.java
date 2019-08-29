@@ -32,7 +32,7 @@ public abstract class TypeWithAnnotationDescriptor {
   private final Type type;
   private final Class<?> rawType;
   private final List<Annotation> annotations;
-  private final TypeWrapper typeWrapper;
+  final TypeWrapper typeWrapper;
 
   public TypeWithAnnotationDescriptor(Type type, List<Annotation> annotations) {
     this.type = type;

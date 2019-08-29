@@ -66,6 +66,15 @@ public class DbTest {
   /**
    * ******************************测试查询开始************************************
    */
+  @Test
+  public void testGetUserById() throws Exception {
+    User user = createRandomUser();
+    int id = dao.insertUser(user);
+    user.setId(id);
+    assertThat(dao.getUserById(id).get(), equalTo(user));
+    assertThat(dao.getUserById(id + 1).isPresent(), equalTo(false));
+  }
+
 
   @Test
   public void testQueryInteger() throws Exception {
@@ -536,7 +545,10 @@ public class DbTest {
   }
 
   @DB()
-  static interface UserDao {
+  interface UserDao {
+
+    @SQL("select id, name, age, gender, money, update_time from user where id = :1")
+    public Optional<User> getUserById(int id);
 
     @SQL("select id from user where id = :1")
     public Integer getIntegerId(int id);

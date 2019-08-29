@@ -46,6 +46,7 @@ public class TypeWrapper {
   private boolean isSet;
   private boolean isHashSet;
   private boolean isCollectionAssignable;
+  private boolean isOptinal;
 
   public TypeWrapper(final Type type) {
     if (byte[].class.equals(type) || Byte[].class.equals(type)) { // byte[]和Byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
@@ -83,9 +84,11 @@ public class TypeWrapper {
             isSet = true;
           } else if (HashSet.class.equals(rawType)) {
             isHashSet = true;
+          } else if (Optional.class.equals(rawType)) {
+            isOptinal = true;
           } else {
             throw new IllegalStateException("parameterized type must be one of" +
-                "[Collection,List,ArrayList,LinkedList,Set,HashSet] but " + type);
+                "[Collection,List,ArrayList,LinkedList,Set,HashSet,Optional] but " + type);
           }
           isCollectionAssignable = true;
           mappedType = t.getActualTypeArguments()[0];
@@ -143,6 +146,10 @@ public class TypeWrapper {
 
   public Type getMappedType() {
     return mappedType;
+  }
+
+  public boolean isOptinal() {
+    return isOptinal;
   }
 
 }
