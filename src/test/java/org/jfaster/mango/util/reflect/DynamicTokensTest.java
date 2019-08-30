@@ -21,6 +21,7 @@ import org.junit.Test;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,24 +32,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DynamicTokensTest {
 
   @Test
-  public void testCollectionToken() throws Exception {
-    TypeToken<Collection<String>> token = DynamicTokens.collectionToken(TypeToken.of(String.class));
+  public void testIterableToken() throws Exception {
+    TypeToken<Iterable<String>> token = DynamicTokens.iterableToken(TypeToken.of(String.class));
     Type expectedType = DynamicTokensTest.class.getMethod("func").getGenericReturnType();
     assertThat(token.getType(), equalTo(expectedType));
   }
 
   @Test
-  public void testListToken() throws Exception {
-    TypeToken<List<String>> token = DynamicTokens.listToken(TypeToken.of(String.class));
+  public void testOptionalToken() throws Exception {
+    TypeToken<Optional<String>> token = DynamicTokens.optionalToken(TypeToken.of(String.class));
     Type expectedType = DynamicTokensTest.class.getMethod("func2").getGenericReturnType();
     assertThat(token.getType(), equalTo(expectedType));
   }
 
-  public Collection<String> func() {
+  public Iterable<String> func() {
     return null;
   }
 
-  public List<String> func2() {
+  public Optional<String> func2() {
     return null;
   }
 

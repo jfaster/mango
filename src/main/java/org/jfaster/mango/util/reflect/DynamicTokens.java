@@ -16,21 +16,20 @@
 
 package org.jfaster.mango.util.reflect;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 
 /**
  * @author ash
  */
 public class DynamicTokens {
 
-  public static <E> TypeToken<Collection<E>> collectionToken(TypeToken<E> entityToken) {
-    return new TypeToken<Collection<E>>() {}
+  public static <E> TypeToken<Iterable<E>> iterableToken(TypeToken<E> entityToken) {
+    return new TypeToken<Iterable<E>>() {}
         .where(new TypeParameter<E>() {}, entityToken);
   }
 
-  public static <E> TypeToken<List<E>> listToken(TypeToken<E> entityToken) {
-    return new TypeToken<List<E>>() {}
+  public static <E> TypeToken<Optional<E>> optionalToken(TypeToken<E> entityToken) {
+    return new TypeToken<Optional<E>>() {}
         .where(new TypeParameter<E>() {}, entityToken);
   }
 

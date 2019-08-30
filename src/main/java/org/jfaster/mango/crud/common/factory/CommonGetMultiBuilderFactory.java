@@ -33,18 +33,18 @@ public class CommonGetMultiBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "getMulti";
+    return "findByIds";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
+    return DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType();
   }
 
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
     List<Type> types = new ArrayList<Type>();
-    types.add(DynamicTokens.listToken(TypeToken.of(idClass)).getType());
+    types.add(DynamicTokens.iterableToken(TypeToken.of(idClass)).getType());
     return types;
   }
 

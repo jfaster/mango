@@ -23,14 +23,16 @@ import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.jfaster.mango.support.model4table.Msg;
+import org.jfaster.mango.util.Iterables;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -54,18 +56,18 @@ public class CommonCrudDaoTest {
     Msg msg = Msg.createRandomMsg();
     long id = dao.addAndReturnGeneratedId(msg);
     msg.setId((int) id);
-    assertThat(dao.getOne((int) id), equalTo(msg));
+    assertThat(dao.findById((int) id).get(), equalTo(msg));
     Msg msg2 = Msg.createRandomMsg();
     dao.add(msg2);
     Msg msg3 = Msg.createRandomMsg();
     long id3 = dao.addAndReturnGeneratedId(msg3);
     assertThat(dao.count(), equalTo(3L));
     msg3.setId((int) id3);
-    assertThat(dao.getOne((int) id3), equalTo(msg3));
-    assertThat(dao.getAll().size(), equalTo(3));
+    assertThat(dao.findById((int) id3).get(), equalTo(msg3));
+    assertThat(Iterables.size(dao.findAll()), equalTo(3));
     List<Integer> ids = Lists.newArrayList((int) id, (int) id3);
-    List<Msg> msgs = dao.getMulti(ids);
-    assertThat(msgs.size(), equalTo(2));
+    Iterable<Msg> msgs = dao.findByIds(ids);
+    assertThat(Iterables.size(msgs), equalTo(2));
     Map<Integer, Msg> mapping = Maps.newHashMap();
     mapping.put((int) id, msg);
     mapping.put((int) id3, msg3);
@@ -75,7 +77,7 @@ public class CommonCrudDaoTest {
     msg.setContent("ash");
     int r = dao.update(msg);
     assertThat(r, equalTo(1));
-    assertThat(dao.getOne((int) id), equalTo(msg));
+    assertThat(dao.findById((int) id).get(), equalTo(msg));
     msgs = Lists.newArrayList(msg, msg3);
     int[] rr = dao.update(msgs);
     assertThat(rr, equalTo(new int[] {1, 1}));
@@ -88,7 +90,7 @@ public class CommonCrudDaoTest {
     assertThat(rr, equalTo(new int[] {0, 0}));
 
     dao.delete((int) id);
-    assertThat(dao.getOne((int) id), nullValue());
+    assertThat(dao.findById((int) id).isPresent(), equalTo(false));
     msgs = Msg.createRandomMsgs(5);
     dao.add(msgs);
   }
@@ -99,18 +101,18 @@ public class CommonCrudDaoTest {
     Msg msg = Msg.createRandomMsg();
     long id = dao.addAndReturnGeneratedId(msg);
     msg.setId((int) id);
-    assertThat(dao.getOne((int) id), equalTo(msg));
+    assertThat(dao.findById((int) id).get(), equalTo(msg));
     Msg msg2 = Msg.createRandomMsg();
     dao.add(msg2);
     Msg msg3 = Msg.createRandomMsg();
     long id3 = dao.addAndReturnGeneratedId(msg3);
-    assertThat(dao.getAll().size(), equalTo(3));
+    assertThat(Iterables.size(dao.findAll()), equalTo(3));
     assertThat(dao.count(), equalTo(3L));
     msg3.setId((int) id3);
-    assertThat(dao.getOne((int) id3), equalTo(msg3));
+    assertThat(dao.findById((int) id3).get(), equalTo(msg3));
     List<Integer> ids = Lists.newArrayList((int) id, (int) id3);
-    List<Msg> msgs = dao.getMulti(ids);
-    assertThat(msgs.size(), equalTo(2));
+    Iterable<Msg> msgs = dao.findByIds(ids);
+    assertThat(Iterables.size(msgs), equalTo(2));
     Map<Integer, Msg> mapping = Maps.newHashMap();
     mapping.put((int) id, msg);
     mapping.put((int) id3, msg3);
@@ -121,7 +123,7 @@ public class CommonCrudDaoTest {
     msg.setContent("ash");
     int r = dao.update(msg);
     assertThat(r, equalTo(1));
-    assertThat(dao.getOne((int) id), equalTo(msg));
+    assertThat(dao.findById((int) id).get(), equalTo(msg));
     msgs = Lists.newArrayList(msg, msg3);
     int[] rr = dao.update(msgs);
     assertThat(rr, equalTo(new int[] {1, 1}));
@@ -134,7 +136,7 @@ public class CommonCrudDaoTest {
     assertThat(rr, equalTo(new int[] {0, 0}));
 
     dao.delete((int) id);
-    assertThat(dao.getOne((int) id), nullValue());
+    assertThat(dao.findById((int) id).isPresent(), equalTo(false));
     msgs = Msg.createRandomMsgs(5);
     dao.add(msgs);
   }
@@ -145,7 +147,7 @@ public class CommonCrudDaoTest {
     Msg msg = Msg.createRandomMsg();
     long id = dao.addAndReturnGeneratedId(msg);
     msg.setId((int) id);
-    assertThat(dao.getOne((int) id), equalTo(msg));
+    assertThat(dao.findById((int) id).get(), equalTo(msg));
 
     String oldContent = msg.getContent();
     msg.setUid(100);
@@ -153,7 +155,7 @@ public class CommonCrudDaoTest {
     dao.update(msg);
     msg.setContent(oldContent);
 
-    assertThat(dao.getOne((int) id), equalTo(msg));
+    assertThat(dao.findById((int) id).get(), equalTo(msg));
   }
 
   @DB(table = "msg")
@@ -170,16 +172,16 @@ public class CommonCrudDaoTest {
     long addAndReturnGeneratedId(Msg entity);
 
     @Override
-    void add(Collection<Msg> entities);
+    void add(Iterable<Msg> entities);
 
     @Override
-    Msg getOne(Integer integer);
+    Optional<Msg> findById(Integer integer);
 
     @Override
-    List<Msg> getMulti(List<Integer> integers);
+    Iterable<Msg> findByIds(Iterable<Integer> integers);
 
     @Override
-    List<Msg> getAll();
+    Iterable<Msg> findAll();
 
     @Override
     long count();
@@ -188,7 +190,7 @@ public class CommonCrudDaoTest {
     int update(Msg entity);
 
     @Override
-    int[] update(Collection<Msg> entities);
+    int[] update(Iterable<Msg> entities);
 
     @Override
     int delete(Integer integer);

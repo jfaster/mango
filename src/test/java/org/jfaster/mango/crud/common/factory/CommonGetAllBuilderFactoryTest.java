@@ -38,10 +38,10 @@ public class CommonGetAllBuilderFactoryTest {
   @Test
   public void test() throws Exception {
     CommonGetAllBuilderFactory factory = new CommonGetAllBuilderFactory();
-    String name = "getAll";
+    String name = "findAll";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    Type returnType = DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
+    Type returnType = DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType();
     List<Type> parameterTypes = Lists.newArrayList();
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());

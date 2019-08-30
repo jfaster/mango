@@ -19,8 +19,7 @@ package org.jfaster.mango.crud;
 import org.jfaster.mango.annotation.UseSqlGenerator;
 import org.jfaster.mango.descriptor.Generic;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 
 /**
  * @author ash
@@ -32,20 +31,20 @@ public interface CrudDao<T, ID> extends Generic<T, ID> {
 
   long addAndReturnGeneratedId(T entity);
 
-  void add(Collection<T> entities);
+  void add(Iterable<T> entities);
 
-  T getOne(ID id);
+  Optional<T> findById(ID primaryKey);
 
-  List<T> getMulti(List<ID> ids);
+  Iterable<T> findByIds(Iterable<ID> primaryKeys);
 
-  List<T> getAll();
+  Iterable<T> findAll();
 
   long count();
 
   int update(T entity);
 
-  int[] update(Collection<T> entities);
+  int[] update(Iterable<T> entities); //*
 
-  int delete(ID id);
+  int delete(ID primaryKey);
 
 }

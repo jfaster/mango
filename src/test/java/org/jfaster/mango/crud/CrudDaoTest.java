@@ -20,6 +20,7 @@ import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
+import org.jfaster.mango.util.Iterables;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,9 +49,9 @@ public class CrudDaoTest {
     CrudOrder co = CrudOrder.createRandomCrudOrder(userId);
     dao.add(co);
     assertThat(dao.getById(co.getId()), equalTo(co));
-    assertThat(dao.getOne(co.getId()), equalTo(co));
+    assertThat(dao.findById(co.getId()).get(), equalTo(co));
     assertThat(dao.delete(co.getId()), equalTo(1));
-    assertThat(dao.getAll().size(), equalTo(0));
+    assertThat(Iterables.size(dao.findAll()), equalTo(0));
     assertThat(dao.count(), equalTo(0L));
   }
 
@@ -62,9 +63,9 @@ public class CrudDaoTest {
     dao.add(co);
     System.out.println(dao.getById(co.getId()));
     assertThat(dao.getById(co.getId()), equalTo(co));
-    assertThat(dao.getOne(co.getId()), equalTo(co));
+    assertThat(dao.findById(co.getId()).get(), equalTo(co));
     assertThat(dao.delete(co.getId()), equalTo(1));
-    assertThat(dao.getAll().size(), equalTo(0));
+    assertThat(Iterables.size(dao.findAll()), equalTo(0));
     assertThat(dao.count(), equalTo(0L));
   }
 

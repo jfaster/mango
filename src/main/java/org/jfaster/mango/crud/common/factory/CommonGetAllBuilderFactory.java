@@ -33,12 +33,12 @@ public class CommonGetAllBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "getAll";
+    return "findAll";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
+    return DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType();
   }
 
   @Override

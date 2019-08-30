@@ -23,7 +23,6 @@ import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,7 +40,7 @@ public class CommonBatchAddBuilderFactoryTest {
     String name = "add";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    List<Type> types = Lists.newArrayList(new TypeToken<Collection<Order>>() {}.getType());
+    List<Type> types = Lists.newArrayList(new TypeToken<Iterable<Order>>() {}.getType());
     Builder b = factory.doTryGetBuilder(name, void.class, types, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("insert into #table(userid, user_age) values(:userId, :userAge)"));

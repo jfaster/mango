@@ -42,7 +42,7 @@ public class CommonBatchUpdateBuilderFactoryTest {
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
     Type returnType = int[].class;
-    List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType());
+    List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType());
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("update #table set #if (:userId != null) userid = :userId,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where id = :id"));

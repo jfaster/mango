@@ -44,7 +44,7 @@ public class CommonBatchAddBuilderFactory extends AbstractCommonBuilderFactory {
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
     List<Type> types = new ArrayList<Type>();
-    types.add(DynamicTokens.collectionToken(TypeToken.of(entityClass)).getType());
+    types.add(DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType());
     return types;
   }
 

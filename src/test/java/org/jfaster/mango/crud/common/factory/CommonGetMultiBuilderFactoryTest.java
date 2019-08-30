@@ -38,11 +38,11 @@ public class CommonGetMultiBuilderFactoryTest {
   @Test
   public void test() throws Exception {
     CommonGetMultiBuilderFactory factory = new CommonGetMultiBuilderFactory();
-    String name = "getMulti";
+    String name = "findByIds";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    Type returnType = DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
-    List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.listToken(TypeToken.of(idClass)).getType());
+    Type returnType = DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType();
+    List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.iterableToken(TypeToken.of(idClass)).getType());
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table where id in (:1)"));

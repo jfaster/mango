@@ -19,6 +19,8 @@ package org.jfaster.mango.crud.common.factory;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 import org.jfaster.mango.crud.common.builder.CommonGetBuilder;
+import org.jfaster.mango.util.reflect.DynamicTokens;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -31,12 +33,12 @@ public class CommonGetOneBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "getOne";
+    return "findById";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return entityClass;
+    return DynamicTokens.optionalToken(TypeToken.of(entityClass)).getType();
   }
 
   @Override

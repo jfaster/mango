@@ -19,6 +19,8 @@ package org.jfaster.mango.crud.common.factory;
 import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
+import org.jfaster.mango.util.reflect.DynamicTokens;
+import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -36,11 +38,12 @@ public class CommonGetOneBuilderFactoryTest {
   @Test
   public void test() throws Exception {
     CommonGetOneBuilderFactory factory = new CommonGetOneBuilderFactory();
-    String name = "getOne";
+    String name = "findById";
     Class<?> entityClass = Order.class;
+    Type returnType = DynamicTokens.optionalToken(TypeToken.of(entityClass)).getType();
     Class<Integer> idClass = Integer.class;
     List<Type> types = Lists.newArrayList((Type) idClass);
-    Builder b = factory.doTryGetBuilder(name, entityClass, types, entityClass, idClass);
+    Builder b = factory.doTryGetBuilder(name, returnType, types, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table where id = :1"));
   }
