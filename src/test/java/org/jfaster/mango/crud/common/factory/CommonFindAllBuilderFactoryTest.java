@@ -33,11 +33,11 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
-public class CommonGetAllBuilderFactoryTest {
+public class CommonFindAllBuilderFactoryTest {
 
   @Test
   public void test() throws Exception {
-    CommonGetAllBuilderFactory factory = new CommonGetAllBuilderFactory();
+    CommonFindAllBuilderFactory factory = new CommonFindAllBuilderFactory();
     String name = "findAll";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;

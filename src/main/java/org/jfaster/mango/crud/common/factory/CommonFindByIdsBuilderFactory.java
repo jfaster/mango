@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonGetMultiBuilderFactory extends AbstractCommonBuilderFactory {
+public class CommonFindByIdsBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {

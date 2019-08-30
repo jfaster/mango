@@ -33,11 +33,11 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
-public class CommonGetOneBuilderFactoryTest {
+public class CommonFindByIdBuilderFactoryTest {
 
   @Test
   public void test() throws Exception {
-    CommonGetOneBuilderFactory factory = new CommonGetOneBuilderFactory();
+    CommonFindByIdBuilderFactory factory = new CommonFindByIdBuilderFactory();
     String name = "findById";
     Class<?> entityClass = Order.class;
     Type returnType = DynamicTokens.optionalToken(TypeToken.of(entityClass)).getType();
