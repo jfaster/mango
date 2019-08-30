@@ -201,6 +201,20 @@ public class DbTest {
   }
 
   @Test
+  public void testQeuryInIterable() throws Exception {
+    Collection<User> users = createRandomUsers(10);
+    Collection<Integer> ids = new ArrayList<Integer>();
+    for (User user : users) {
+      int id = dao.insertUser(user);
+      ids.add(id);
+      user.setId(id);
+    }
+    Iterable<User> actual = dao.getUsersInIterable(ids);
+    assertThat(Lists.newArrayList(actual), hasSize(users.size()));
+    assertThat(actual, containsInAnyOrder(users.toArray()));
+  }
+
+  @Test
   public void testQeuryInCollection() throws Exception {
     Collection<User> users = createRandomUsers(10);
     Collection<Integer> ids = new ArrayList<Integer>();
@@ -591,6 +605,10 @@ public class DbTest {
 
     @SQL("select id from user order by id")
     public int[] getIntArray();
+
+
+    @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
+    public Iterable<User> getUsersInIterable(Iterable<Integer> ids);
 
     @SQL("select id, name, age, gender, money, update_time from user where id in (:1)")
     public Collection<User> getUsersInCollection(Collection<Integer> ids);

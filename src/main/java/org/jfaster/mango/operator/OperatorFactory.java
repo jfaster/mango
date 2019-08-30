@@ -116,7 +116,7 @@ public class OperatorFactory {
       operatorType = OperatorType.UPDATE;
       if (pds.size() == 1) { // 只有一个参数
         ParameterDescriptor pd = pds.get(0);
-        if (pd.isIterable() && rootNode.getJDBCIterableParameters().isEmpty()) {
+        if (pd.canIterable() && rootNode.getJDBCIterableParameters().isEmpty()) {
           // 参数可迭代，同时sql中没有in语句
           operatorType = OperatorType.BATCHUPDATE;
         }

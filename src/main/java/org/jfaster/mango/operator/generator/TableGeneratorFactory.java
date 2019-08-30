@@ -93,7 +93,7 @@ public class TableGeneratorFactory {
         Type targetType = invoker.getTargetType();
         TypeWrapper tw = new TypeWrapper(targetType);
         Class<?> mappedClass = tw.getMappedClass();
-        if (mappedClass == null || tw.isIterable()) {
+        if (mappedClass == null || tw.canIterable()) {
           throw new IncorrectParameterTypeException("the type of parameter Modified @TableShardingBy is error, " +
               "type is " + targetType + ", " +
               "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");

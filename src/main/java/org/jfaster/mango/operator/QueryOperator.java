@@ -59,7 +59,8 @@ public class QueryOperator extends AbstractOperator {
   private void init(MethodDescriptor md) {
     returnDescriptor = md.getReturnDescriptor();
     rowMapper = getRowMapper(returnDescriptor.getMappedClass(), returnDescriptor);
-    if (returnDescriptor.isCollection()
+    if (returnDescriptor.isIterable()
+        || returnDescriptor.isCollection()
         || returnDescriptor.isList()
         || returnDescriptor.isLinkedList()) {
       listSupplier = new LinkedListSuppliter();
@@ -199,7 +200,8 @@ public class QueryOperator extends AbstractOperator {
 
     public Object visit() {
       Object r;
-      if (returnDescriptor.isCollection()
+      if (returnDescriptor.isIterable()
+          || returnDescriptor.isCollection()
           || returnDescriptor.isListAssignable()) {
         r = visitForList();
       } else if (returnDescriptor.isSetAssignable()) {

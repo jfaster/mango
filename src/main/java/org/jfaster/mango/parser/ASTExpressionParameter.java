@@ -19,7 +19,7 @@ package org.jfaster.mango.parser;
 import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
-import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.IterObj;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,10 +85,10 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
     }
 
     if (obj != null) {
-      Iterables itr = new Iterables(obj);
+      IterObj itrObj = new IterObj(obj);
       // 列表
-      if (itr.isIterable()) {
-        return !itr.isEmpty();
+      if (itrObj.canIterable()) {
+        return !itrObj.isEmpty();
       }
     }
 

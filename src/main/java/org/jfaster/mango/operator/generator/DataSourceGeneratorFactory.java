@@ -84,7 +84,7 @@ public class DataSourceGeneratorFactory {
         Type shardingParameterType = shardingParameterInvoker.getTargetType();
         TypeWrapper tw = new TypeWrapper(shardingParameterType);
         Class<?> mappedClass = tw.getMappedClass();
-        if (mappedClass == null || tw.isIterable()) {
+        if (mappedClass == null || tw.canIterable()) {
           throw new IncorrectParameterTypeException("the type of parameter Modified @DatabaseShardingBy is error, " +
               "type is " + shardingParameterType + ", " +
               "please note that @ShardingBy = @TableShardingBy + @DatabaseShardingBy");

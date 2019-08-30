@@ -126,7 +126,7 @@ public abstract class AbstractCustomBuilderFactory extends BuilderFactory {
     } else { // in (:1) 类型需特殊处理
       // TODO msg
       TypeWrapper tw = new TypeWrapper(paramType);
-      if (!tw.isIterable()) {
+      if (!tw.canIterable()) {
         throw new CrudException("the type of " + paramIndex + "th parameters of method [" + methodName + "] " +
                 "expected iterable, but '" + paramType + "'");
       }

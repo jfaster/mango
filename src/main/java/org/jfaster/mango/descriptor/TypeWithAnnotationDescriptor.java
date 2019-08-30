@@ -120,8 +120,8 @@ public abstract class TypeWithAnnotationDescriptor {
     return typeWrapper.isHashSet();
   }
 
-  public boolean isIterable() {
-    return typeWrapper.isIterable();
+  public boolean canIterable() {
+    return typeWrapper.canIterable();
   }
 
   public boolean isListAssignable() {
@@ -138,6 +138,10 @@ public abstract class TypeWithAnnotationDescriptor {
 
   public Type getMappedType() {
     return typeWrapper.getMappedType();
+  }
+
+  public boolean isIterable() {
+    return typeWrapper.isIterable();
   }
 
 }

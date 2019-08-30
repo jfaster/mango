@@ -16,18 +16,20 @@
 
 package org.jfaster.mango.util;
 
-import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author ash
  */
-public class Iterables {
+public class Iterators {
 
-  public static int size(Iterable<?> iterable) {
-    return (iterable instanceof Collection)
-        ? ((Collection<?>) iterable).size()
-        : Iterators.size(iterable.iterator());
+  public static int size(Iterator<?> iterator) {
+    int count = 0;
+    while (iterator.hasNext()) {
+      iterator.next();
+      count++;
+    }
+    return count;
   }
-
 
 }

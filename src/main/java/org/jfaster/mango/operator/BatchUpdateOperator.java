@@ -23,7 +23,7 @@ import org.jfaster.mango.exception.DescriptionException;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.transaction.Transaction;
 import org.jfaster.mango.transaction.TransactionFactory;
-import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.IterObj;
 import org.jfaster.mango.util.ToStringHelper;
 
 import javax.sql.DataSource;
@@ -48,14 +48,14 @@ public class BatchUpdateOperator extends AbstractOperator {
 
   @Override
   public Object execute(Object[] values) {
-    Iterables iterables = getIterables(values);
-    if (iterables.isEmpty()) {
+    IterObj iterObj = getIterObj(values);
+    if (iterObj.isEmpty()) {
       return transformer.transform(new int[]{});
     }
 
     Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
     int t = 0;
-    for (Object obj : iterables) {
+    for (Object obj : iterObj) {
       InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
       group(context, gorupMap, t++);
     }
@@ -79,13 +79,13 @@ public class BatchUpdateOperator extends AbstractOperator {
     group.add(boundSql, position);
   }
 
-  protected Iterables getIterables(Object[] values) {
+  protected IterObj getIterObj(Object[] values) {
     Object firstValue = values[0];
     if (firstValue == null) {
       throw new NullPointerException("batchUpdate's parameter can't be null");
     }
-    Iterables iterables = new Iterables(firstValue);
-    return iterables;
+    IterObj iterObj = new IterObj(firstValue);
+    return iterObj;
   }
 
   protected int[] executeDb(Map<DataSource, Group> groupMap, int batchNum) {

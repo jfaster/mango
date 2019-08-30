@@ -20,7 +20,7 @@ import org.jfaster.mango.binding.BindingParameter;
 import org.jfaster.mango.binding.BindingParameterInvoker;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.type.TypeHandler;
-import org.jfaster.mango.util.Iterables;
+import org.jfaster.mango.util.IterObj;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.jdbc.JdbcType;
 
@@ -94,9 +94,9 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
       throw new NullPointerException("value of " +
           bindingParameter.getFullName() + " can't be null");
     }
-    Iterables iterables = new Iterables(objs);
-    if (iterables.isEmpty()) {
-      if (iterables.isCollection()) {
+    IterObj iterObj = new IterObj(objs);
+    if (iterObj.isEmpty()) {
+      if (iterObj.isCollection()) {
         throw new EmptyCollectionException("value of " +
             bindingParameter.getFullName() + " can't be empty");
       } else {
@@ -106,7 +106,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     }
     context.writeToSqlBuffer("in (");
     int t = 0;
-    for (Object obj : iterables) {
+    for (Object obj : iterObj) {
       context.appendToArgs(obj, typeHandler);
       if (t == 0) {
         context.writeToSqlBuffer("?");

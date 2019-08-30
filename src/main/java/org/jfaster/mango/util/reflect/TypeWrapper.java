@@ -38,6 +38,7 @@ public class TypeWrapper {
    */
   private Type mappedType;
 
+  private boolean isOptinal;
   private boolean isArray;
   private boolean isCollection;
   private boolean isList;
@@ -45,8 +46,8 @@ public class TypeWrapper {
   private boolean isLinkedList;
   private boolean isSet;
   private boolean isHashSet;
-  private boolean isCollectionAssignable;
-  private boolean isOptinal;
+  private boolean isIterable;
+  private boolean isIterableAssignable;
 
   public TypeWrapper(final Type type) {
     if (byte[].class.equals(type) || Byte[].class.equals(type)) { // byte[]和Byte[]是jdbc中的一个基础类型,所以不把它作为数组处理
@@ -70,27 +71,30 @@ public class TypeWrapper {
         @Override
         void visitParameterizedType(ParameterizedType t) {
           Type rawType = t.getRawType();
-
-          // 支持Collection,List,ArrayList,LinkedList,Set,HashSet
-          if (Collection.class.equals(rawType)) {
-            isCollection = true;
-          } else if (List.class.equals(rawType)) {
-            isList = true;
-          } else if (ArrayList.class.equals(rawType)) {
-            isArrayList = true;
-          } else if (LinkedList.class.equals(rawType)) {
-            isLinkedList = true;
-          } else if (Set.class.equals(rawType)) {
-            isSet = true;
-          } else if (HashSet.class.equals(rawType)) {
-            isHashSet = true;
-          } else if (Optional.class.equals(rawType)) {
+          if (Optional.class.equals(rawType)) {
             isOptinal = true;
           } else {
-            throw new IllegalStateException("parameterized type must be one of" +
-                "[Collection,List,ArrayList,LinkedList,Set,HashSet,Optional] but " + type);
+            // 支持Collection,List,ArrayList,LinkedList,Set,HashSet,Iterable
+            if (Collection.class.equals(rawType)) {
+              isCollection = true;
+            } else if (List.class.equals(rawType)) {
+              isList = true;
+            } else if (ArrayList.class.equals(rawType)) {
+              isArrayList = true;
+            } else if (LinkedList.class.equals(rawType)) {
+              isLinkedList = true;
+            } else if (Set.class.equals(rawType)) {
+              isSet = true;
+            } else if (HashSet.class.equals(rawType)) {
+              isHashSet = true;
+            } else if (Iterable.class.equals(rawType)) {
+              isIterable = true;
+            } else {
+              throw new IllegalStateException("parameterized type must be one of" +
+                  "[Collection,List,ArrayList,LinkedList,Set,HashSet,Iterable,Optional] but " + type);
+            }
+            isIterableAssignable = true;
           }
-          isCollectionAssignable = true;
           mappedType = t.getActualTypeArguments()[0];
         }
 
@@ -136,8 +140,8 @@ public class TypeWrapper {
     return isHashSet;
   }
 
-  public boolean isIterable() {
-    return isCollectionAssignable || isArray;
+  public boolean canIterable() {
+    return isIterableAssignable || isArray;
   }
 
   public Class<?> getMappedClass() {
@@ -150,6 +154,10 @@ public class TypeWrapper {
 
   public boolean isOptinal() {
     return isOptinal;
+  }
+
+  public boolean isIterable() {
+    return isIterable;
   }
 
 }
