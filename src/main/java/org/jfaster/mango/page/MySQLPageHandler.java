@@ -14,20 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.interceptor;
+package org.jfaster.mango.page;
 
-import org.jfaster.mango.jdbc.JdbcOperations;
-import org.jfaster.mango.jdbc.JdbcTemplate;
+import org.jfaster.mango.binding.BoundSql;
 
 /**
  * @author ash
  */
-public abstract class OperableInterceptor implements Interceptor {
+public class MySQLPageHandler extends AbstractPageHandler {
 
-  private JdbcOperations jdbcOperations = new JdbcTemplate();
+  @Override
+  void handleTotal(BoundSql boundSql) {
+    String sql = boundSql.getSql();
+    sql = "SELECT COUNT(1) FROM (" + sql + ") aliasForPage";
+    boundSql.setSql(sql);
+  }
 
-  public JdbcOperations getJdbcOperations() {
-    return jdbcOperations;
+  @Override
+  void handlePage(int pageNum, int pageSize, BoundSql boundSql) {
+    int startRow = pageNum * pageSize;
+    String sql = boundSql.getSql();
+    sql = sql + " limit ?, ?";
+    boundSql.setSql(sql);
+    boundSql.addArg(startRow);
+    boundSql.addArg(pageSize);
   }
 
 }

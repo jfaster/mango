@@ -14,10 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.interceptor;
+package org.jfaster.mango.page;
 
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.util.jdbc.SQLType;
+import org.jfaster.mango.jdbc.JdbcOperations;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -25,15 +25,8 @@ import java.util.List;
 /**
  * @author ash
  */
-public abstract class QueryInterceptor extends OperableInterceptor {
+public interface PageHandler {
 
-  @Override
-  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource) {
-    if (!sqlType.needChangeData()) {
-      interceptQuery(boundSql, parameters, dataSource);
-    }
-  }
-
-  public abstract void interceptQuery(BoundSql boundSql, List<Parameter> parameters, DataSource dataSource);
+  void process(BoundSql boundSql, List<Parameter> parameters, JdbcOperations jdbcOperations, DataSource dataSource);
 
 }

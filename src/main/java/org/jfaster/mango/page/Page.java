@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.plugin.page;
+package org.jfaster.mango.page;
 
 /**
  * @author ash

@@ -23,8 +23,8 @@ import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
-import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.exception.DataAccessException;
+import org.jfaster.mango.page.MySQLPageHandler;
 import org.jfaster.mango.sharding.DatabaseShardingStrategy;
 import org.jfaster.mango.sharding.ModHundredTableShardingStrategy;
 import org.jfaster.mango.support.*;
@@ -272,7 +272,7 @@ public class BatchUpdateOperatorTest {
 
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
-    OperatorFactory factory = new OperatorFactory(group, new InterceptorChain(), new Config());
+    OperatorFactory factory = new OperatorFactory(group, new MySQLPageHandler(), new Config());
 
     AbstractOperator operator = factory.getOperator(md);
     return operator;
@@ -294,7 +294,7 @@ public class BatchUpdateOperatorTest {
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory("l50", DataSourceConfig.getDataSource(0)));
     group.addDataSourceFactory(new SimpleDataSourceFactory("g50", DataSourceConfig.getDataSource(1)));
-    OperatorFactory factory = new OperatorFactory(group, new InterceptorChain(), new Config());
+    OperatorFactory factory = new OperatorFactory(group, new MySQLPageHandler(), new Config());
     AbstractOperator operator = factory.getOperator(md);
     return operator;
   }

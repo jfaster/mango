@@ -24,14 +24,14 @@ import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.DataSourceType;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
-import org.jfaster.mango.interceptor.InterceptorChain;
-import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.jdbc.JdbcTemplate;
 import org.jfaster.mango.operator.generator.DataSourceGenerator;
 import org.jfaster.mango.operator.generator.DataSourceGeneratorFactory;
 import org.jfaster.mango.operator.generator.TableGenerator;
 import org.jfaster.mango.operator.generator.TableGeneratorFactory;
+import org.jfaster.mango.page.InvocationPageHandler;
+import org.jfaster.mango.page.PageHandler;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.SqlParser;
 import org.jfaster.mango.util.jdbc.OperatorType;
@@ -43,24 +43,24 @@ import java.util.List;
 /**
  * @author ash
  */
-public class OperatorFactory {
+class OperatorFactory {
 
-  private final InterceptorChain interceptorChain;
+  private final PageHandler pageHandler;
   private final JdbcOperations jdbcOperations;
   private final Config config;
   private final TableGeneratorFactory tableGeneratorFactory;
   private final DataSourceGeneratorFactory dataSourceGeneratorFactory;
 
-  public OperatorFactory(DataSourceFactoryGroup dataSourceFactoryGroup,
-                         InterceptorChain interceptorChain, Config config) {
-    this.interceptorChain = interceptorChain;
+  OperatorFactory(DataSourceFactoryGroup dataSourceFactoryGroup,
+                         PageHandler pageHandler, Config config) {
+    this.pageHandler = pageHandler;
     this.config = config;
     this.jdbcOperations = new JdbcTemplate();
     this.tableGeneratorFactory = new TableGeneratorFactory();
     this.dataSourceGeneratorFactory = new DataSourceGeneratorFactory(dataSourceFactoryGroup);
   }
 
-  public AbstractOperator getOperator(MethodDescriptor md) {
+  AbstractOperator getOperator(MethodDescriptor md) {
     ASTRootNode rootNode = SqlParser.parse(md.getSQL()).init(); // 初始化抽象语法树
     List<ParameterDescriptor> pds = md.getParameterDescriptors(); // 方法参数描述
     OperatorType operatorType = getOperatorType(pds, rootNode);
@@ -87,7 +87,8 @@ public class OperatorFactory {
     AbstractOperator operator;
     switch (operatorType) {
       case QUERY:
-        operator = new QueryOperator(rootNode, md, config);
+        InvocationPageHandler invocationPageHandler = new InvocationPageHandler(pageHandler, pds);
+        operator = new QueryOperator(rootNode, md, invocationPageHandler, config);
         break;
       case UPDATE:
         operator = new UpdateOperator(rootNode, md, config);
@@ -98,12 +99,10 @@ public class OperatorFactory {
       default:
         throw new IllegalStateException();
     }
-    InvocationInterceptorChain chain =
-        new InvocationInterceptorChain(interceptorChain, pds, rootNode.getSQLType());
+
     operator.setTableGenerator(tableGenerator);
     operator.setDataSourceGenerator(dataSourceGenerator);
     operator.setInvocationContextFactory(InvocationContextFactory.create(context));
-    operator.setInvocationInterceptorChain(chain);
     operator.setJdbcOperations(jdbcOperations);
     return operator;
   }

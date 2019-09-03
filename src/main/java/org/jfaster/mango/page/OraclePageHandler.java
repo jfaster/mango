@@ -14,19 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.interceptor;
+package org.jfaster.mango.page;
 
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.util.jdbc.SQLType;
-
-import javax.sql.DataSource;
-import java.util.List;
 
 /**
  * @author ash
  */
-public interface Interceptor {
+public class OraclePageHandler extends AbstractPageHandler {
 
-  public void intercept(BoundSql boundSql, List<Parameter> parameters, SQLType sqlType, DataSource dataSource);
+  @Override
+  void handleTotal(BoundSql boundSql) {
+    String sql = boundSql.getSql();
+    sql = "SELECT COUNT(1) FROM (" + sql + ") aliasForPage";
+    boundSql.setSql(sql);
+  }
+
+  @Override
+  void handlePage(int pageNum, int pageSize, BoundSql boundSql) {
+    int startRow = pageNum * pageSize;
+    int endRow = (pageNum + 1) * pageSize;
+    String sql = boundSql.getSql();
+    sql = "SELECT * FROM ( SELECT B.* , ROWNUM RN FROM (" + sql + ") B WHERE ROWNUM <= "
+        + endRow + " ) WHERE RN > " + startRow;
+    boundSql.setSql(sql);
+  }
 
 }

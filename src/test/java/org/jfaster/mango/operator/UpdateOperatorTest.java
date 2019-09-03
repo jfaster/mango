@@ -23,8 +23,8 @@ import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
 import org.jfaster.mango.exception.DescriptionException;
-import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.GeneratedKeyHolder;
+import org.jfaster.mango.page.MySQLPageHandler;
 import org.jfaster.mango.support.*;
 import org.jfaster.mango.support.model4table.User;
 import org.jfaster.mango.type.IntegerTypeHandler;
@@ -275,7 +275,7 @@ public class UpdateOperatorTest {
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 
-    OperatorFactory factory = new OperatorFactory(group, new InterceptorChain(), new Config());
+    OperatorFactory factory = new OperatorFactory(group, new MySQLPageHandler(), new Config());
 
     AbstractOperator operator = factory.getOperator(md);
     return operator;
@@ -295,7 +295,7 @@ public class UpdateOperatorTest {
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 
-    OperatorFactory factory = new OperatorFactory(group, new InterceptorChain(), new Config());
+    OperatorFactory factory = new OperatorFactory(group, new MySQLPageHandler(), new Config());
 
     AbstractOperator operator = factory.getOperator(md);
     return operator;

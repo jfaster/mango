@@ -74,7 +74,6 @@ public class BatchUpdateOperator extends AbstractOperator {
 
     rootNode.render(context);
     BoundSql boundSql = context.getBoundSql();
-    invocationInterceptorChain.intercept(boundSql, context, ds); // 拦截器
 
     group.add(boundSql, position);
   }

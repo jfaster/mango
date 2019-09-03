@@ -28,6 +28,7 @@ import org.jfaster.mango.jdbc.*;
 import org.jfaster.mango.mapper.BeanPropertyRowMapper;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
+import org.jfaster.mango.page.InvocationPageHandler;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
 import org.jfaster.mango.type.TypeHandlerRegistry;
@@ -46,14 +47,17 @@ import java.util.Optional;
  */
 public class QueryOperator extends AbstractOperator {
 
-  protected RowMapper<?> rowMapper;
-  protected ReturnDescriptor returnDescriptor;
-  protected ListSupplier listSupplier;
-  protected SetSupplier setSupplier;
+  private RowMapper<?> rowMapper;
+  private ReturnDescriptor returnDescriptor;
+  private ListSupplier listSupplier;
+  private SetSupplier setSupplier;
+  private InvocationPageHandler invocationPageHandler;
 
-  public QueryOperator(ASTRootNode rootNode, MethodDescriptor md, Config config) {
+  QueryOperator(ASTRootNode rootNode, MethodDescriptor md,
+                       InvocationPageHandler invocationPageHandler, Config config) {
     super(rootNode, md, config);
     init(md);
+    this.invocationPageHandler = invocationPageHandler;
   }
 
   private void init(MethodDescriptor md) {
@@ -92,7 +96,7 @@ public class QueryOperator extends AbstractOperator {
 
     BoundSql boundSql = context.getBoundSql();
     DataSource ds = dataSourceGenerator.getDataSource(context, methodDescriptor.getDaoClass());
-    invocationInterceptorChain.intercept(boundSql, context, ds); // 拦截器
+    invocationPageHandler.process(boundSql, context, jdbcOperations, ds); // 分页处理
     return executeFromDb(ds, boundSql);
   }
 

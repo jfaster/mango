@@ -14,30 +14,13 @@
  * under the License.
  */
 
-package org.jfaster.mango.plugin.page;
-
-import org.jfaster.mango.binding.BoundSql;
-
 /**
- * @author ash
+ * 拦截器
+ *
+ * 依赖包:
+ *  binding
+ *  descriptor
+ *  util
+ *  jdbc
  */
-public class MySQLPageInterceptor extends AbstractPageInterceptor {
-
-  @Override
-  void handleTotal(BoundSql boundSql) {
-    String sql = boundSql.getSql();
-    sql = "SELECT COUNT(1) FROM (" + sql + ") aliasForPage";
-    boundSql.setSql(sql);
-  }
-
-  @Override
-  void handlePage(int pageNum, int pageSize, BoundSql boundSql) {
-    int startRow = pageNum * pageSize;
-    String sql = boundSql.getSql();
-    sql = sql + " limit ?, ?";
-    boundSql.setSql(sql);
-    boundSql.addArg(startRow);
-    boundSql.addArg(pageSize);
-  }
-
-}
+package org.jfaster.mango.page;

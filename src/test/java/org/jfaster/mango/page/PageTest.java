@@ -14,13 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.plugin.page;
+package org.jfaster.mango.page;
 
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
 
 /**
  * @author ash

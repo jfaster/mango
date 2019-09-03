@@ -23,8 +23,8 @@ import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.Methods;
 import org.jfaster.mango.exception.InitializationException;
-import org.jfaster.mango.interceptor.Interceptor;
-import org.jfaster.mango.interceptor.InterceptorChain;
+import org.jfaster.mango.page.MySQLPageHandler;
+import org.jfaster.mango.page.PageHandler;
 import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.local.CacheLoader;
 import org.jfaster.mango.util.local.DoubleCheckCache;
@@ -63,9 +63,9 @@ public class Mango extends Config {
   private boolean isLazyInit = false;
 
   /**
-   * 拦截器链，默认为空
+   * 默认使用MySQL分页处理器
    */
-  private InterceptorChain interceptorChain = new InterceptorChain();
+  private PageHandler pageHandler = new MySQLPageHandler();
 
   /**
    * mango实例
@@ -120,19 +120,6 @@ public class Mango extends Config {
   }
 
   /**
-   * 添加拦截器
-   */
-  public void addInterceptor(Interceptor interceptor) {
-    if (interceptor == null) {
-      throw new NullPointerException("interceptor can't be null");
-    }
-    if (interceptorChain == null) {
-      interceptorChain = new InterceptorChain();
-    }
-    interceptorChain.addInterceptor(interceptor);
-  }
-
-  /**
    * 创建代理DAO类
    */
   public <T> T create(Class<T> daoClass) {
@@ -155,7 +142,7 @@ public class Mango extends Config {
     }
 
     MangoInvocationHandler handler = new MangoInvocationHandler(
-        daoClass, dataSourceFactoryGroup, interceptorChain, this);
+        daoClass, dataSourceFactoryGroup, pageHandler, this);
     if (!isLazyInit) { // 不使用懒加载，则提前加载
       List<Method> methods = Methods.listMethods(daoClass);
       for (Method method : methods) {
@@ -215,11 +202,11 @@ public class Mango extends Config {
     this.isLazyInit = isLazyInit;
   }
 
-  public void setInterceptorChain(InterceptorChain interceptorChain) {
-    if (interceptorChain == null) {
-      throw new NullPointerException("interceptorChain can't be null");
+  public void setPageHandler(PageHandler pageHandler) {
+    if (pageHandler == null) {
+      throw new NullPointerException("pageHandler can't be null");
     }
-    this.interceptorChain = interceptorChain;
+    this.pageHandler = pageHandler;
   }
 
   private static class MangoInvocationHandler extends AbstractInvocationHandler implements InvocationHandler {
@@ -243,11 +230,11 @@ public class Mango extends Config {
     private MangoInvocationHandler(
         Class<?> daoClass,
         DataSourceFactoryGroup dataSourceFactoryGroup,
-        InterceptorChain interceptorChain,
+        PageHandler pageHandler,
         Config config) {
       this.daoClass = daoClass;
       this.isUseActualParamName = config.isUseActualParamName();
-      operatorFactory = new OperatorFactory(dataSourceFactoryGroup, interceptorChain, config);
+      operatorFactory = new OperatorFactory(dataSourceFactoryGroup, pageHandler, config);
     }
 
     @Override

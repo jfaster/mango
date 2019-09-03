@@ -14,11 +14,10 @@
  * under the License.
  */
 
-package org.jfaster.mango.plugin.page;
+package org.jfaster.mango.page;
 
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.interceptor.Parameter;
-import org.jfaster.mango.interceptor.QueryInterceptor;
+import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
 
 import javax.sql.DataSource;
@@ -27,10 +26,11 @@ import java.util.List;
 /**
  * @author ash
  */
-public abstract class AbstractPageInterceptor extends QueryInterceptor {
+public abstract  class AbstractPageHandler implements PageHandler {
 
   @Override
-  public void interceptQuery(BoundSql boundSql, List<Parameter> parameters, DataSource dataSource) {
+  public void process(BoundSql boundSql, List<Parameter> parameters,
+                      JdbcOperations jdbcOperations, DataSource dataSource) {
     for (Parameter parameter : parameters) {
       if (Page.class.equals(parameter.getRawType())) {
         Object val = parameter.getValue();
@@ -54,7 +54,7 @@ public abstract class AbstractPageInterceptor extends QueryInterceptor {
           BoundSql totalBoundSql = boundSql.copy();
           handleTotal(totalBoundSql);
           SingleColumnRowMapper<Integer> mapper = new SingleColumnRowMapper<Integer>(int.class);
-          int total = getJdbcOperations().queryForObject(dataSource, totalBoundSql, mapper);
+          int total = jdbcOperations.queryForObject(dataSource, totalBoundSql, mapper);
           page.setTotal(total);
         }
         // 分页处理
@@ -62,7 +62,6 @@ public abstract class AbstractPageInterceptor extends QueryInterceptor {
       }
     }
   }
-
   abstract void handleTotal(BoundSql boundSql);
 
   abstract void handlePage(int pageNum, int pageSize, BoundSql boundSql);

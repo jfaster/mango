@@ -20,8 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.plugin.page.MySQLPageInterceptor;
-import org.jfaster.mango.plugin.page.Page;
+import org.jfaster.mango.page.Page;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.junit.Before;
@@ -43,9 +42,6 @@ public class CustomCrudDaoTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private final static Mango mango = Mango.newInstance(ds);
-  static {
-    mango.addInterceptor(new MySQLPageInterceptor());
-  }
 
   @Before
   public void before() throws Exception {

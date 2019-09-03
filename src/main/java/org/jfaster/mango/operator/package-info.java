@@ -23,7 +23,7 @@
  *  datasource
  *  descriptor
  *  exception
- *  interceptor
+ *  page
  *  invoker
  *  jdbc
  *  mapper

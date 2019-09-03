@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.plugin.page;
+package org.jfaster.mango.page;
 
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.annotation.ReturnGeneratedId;
@@ -39,13 +39,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author ash
  */
-public class MySQLPageInterceptorTest {
+public class MySQLPageHandlerTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private static MsgDao dao;
   {
     Mango mango = Mango.newInstance(ds);
-    mango.addInterceptor(new MySQLPageInterceptor());
     dao = mango.create(MsgDao.class);
   }
 

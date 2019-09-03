@@ -22,10 +22,10 @@ import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 import org.jfaster.mango.descriptor.ReturnDescriptor;
-import org.jfaster.mango.interceptor.InterceptorChain;
 import org.jfaster.mango.jdbc.ListSupplier;
 import org.jfaster.mango.jdbc.SetSupplier;
 import org.jfaster.mango.mapper.RowMapper;
+import org.jfaster.mango.page.MySQLPageHandler;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.JdbcOperationsAdapter;
 import org.jfaster.mango.support.MockDB;
@@ -240,7 +240,7 @@ public class QueryOperatorTest {
     DataSourceFactoryGroup group = new DataSourceFactoryGroup();
     group.addDataSourceFactory(new SimpleDataSourceFactory(DataSourceConfig.getDataSource()));
 
-    OperatorFactory factory = new OperatorFactory(group, new InterceptorChain(), new Config());
+    OperatorFactory factory = new OperatorFactory(group, new MySQLPageHandler(), new Config());
 
     AbstractOperator operator = factory.getOperator(md);
     return operator;

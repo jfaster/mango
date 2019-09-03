@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.interceptor;
+package org.jfaster.mango.page;
 
 import org.jfaster.mango.descriptor.ParameterDescriptor;
 

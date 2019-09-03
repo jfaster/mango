@@ -19,10 +19,10 @@ package org.jfaster.mango.operator;
 import org.jfaster.mango.annotation.UseTransactionForBatchUpdate;
 import org.jfaster.mango.binding.InvocationContextFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
-import org.jfaster.mango.interceptor.InvocationInterceptorChain;
 import org.jfaster.mango.jdbc.JdbcOperations;
 import org.jfaster.mango.operator.generator.DataSourceGenerator;
 import org.jfaster.mango.operator.generator.TableGenerator;
+import org.jfaster.mango.page.InvocationPageHandler;
 import org.jfaster.mango.parser.ASTRootNode;
 
 /**
@@ -39,11 +39,6 @@ public abstract class AbstractOperator implements Operator {
    * 方法描述
    */
   protected final MethodDescriptor methodDescriptor;
-
-  /**
-   * 拦截器链
-   */
-  protected InvocationInterceptorChain invocationInterceptorChain;
 
   /**
    * 全局表
@@ -99,10 +94,6 @@ public abstract class AbstractOperator implements Operator {
 
   public void setDataSourceGenerator(DataSourceGenerator dataSourceGenerator) {
     this.dataSourceGenerator = dataSourceGenerator;
-  }
-
-  public void setInvocationInterceptorChain(InvocationInterceptorChain invocationInterceptorChain) {
-    this.invocationInterceptorChain = invocationInterceptorChain;
   }
 
   private void mergeConfig(MethodDescriptor md) {

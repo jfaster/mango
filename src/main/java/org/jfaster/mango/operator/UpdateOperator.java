@@ -93,7 +93,6 @@ public class UpdateOperator extends AbstractOperator {
 
     BoundSql boundSql = context.getBoundSql();
     DataSource ds = dataSourceGenerator.getDataSource(context, methodDescriptor.getDaoClass());
-    invocationInterceptorChain.intercept(boundSql, context, ds);  // 拦截器
     Number r = executeDb(ds, boundSql);
     return transformer.transform(r);
   }
