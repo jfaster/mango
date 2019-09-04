@@ -14,37 +14,13 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud;
-
-import org.jfaster.mango.annotation.UseSqlGenerator;
-import org.jfaster.mango.descriptor.Generic;
-
-import java.util.Optional;
+package org.jfaster.mango.page;
 
 /**
  * @author ash
  */
-@UseSqlGenerator(CrudSqlGenerator.class)
-public interface CrudDao<T, ID> extends Generic<T, ID> {
+public enum Direction {
 
-  void add(T entity);
-
-  long addAndReturnGeneratedId(T entity);
-
-  void add(Iterable<T> entities);
-
-  Optional<T> findById(ID primaryKey);
-
-  Iterable<T> findByIds(Iterable<ID> primaryKeys);
-
-  Iterable<T> findAll();
-
-  long count();
-
-  int update(T entity);
-
-  int[] update(Iterable<T> entities);
-
-  int delete(ID primaryKey);
+  ASC, DESC;
 
 }
