@@ -29,6 +29,7 @@ import org.jfaster.mango.mapper.BeanPropertyRowMapper;
 import org.jfaster.mango.mapper.RowMapper;
 import org.jfaster.mango.mapper.SingleColumnRowMapper;
 import org.jfaster.mango.page.InvocationPageHandler;
+import org.jfaster.mango.page.PageResult;
 import org.jfaster.mango.parser.ASTRootNode;
 import org.jfaster.mango.parser.EmptyObjectException;
 import org.jfaster.mango.type.TypeHandlerRegistry;
@@ -39,6 +40,7 @@ import org.jfaster.mango.util.reflect.Reflection;
 import javax.sql.DataSource;
 import java.lang.reflect.Array;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -66,7 +68,8 @@ public class QueryOperator extends AbstractOperator {
     if (returnDescriptor.isIterable()
         || returnDescriptor.isCollection()
         || returnDescriptor.isList()
-        || returnDescriptor.isLinkedList()) {
+        || returnDescriptor.isLinkedList()
+        || returnDescriptor.isPageResult()) {
       listSupplier = new LinkedListSuppliter();
     } else if (returnDescriptor.isArrayList()) {
       listSupplier = new ArrayListSuppliter();
@@ -96,38 +99,55 @@ public class QueryOperator extends AbstractOperator {
 
     BoundSql boundSql = context.getBoundSql();
     DataSource ds = dataSourceGenerator.getDataSource(context, methodDescriptor.getDaoClass());
-    invocationPageHandler.process(boundSql, context, jdbcOperations, ds); // 分页处理
-    return executeFromDb(ds, boundSql);
+    return executeFromDb(ds, boundSql, context);
   }
 
-  private Object executeFromDb(final DataSource ds, final BoundSql boundSql) {
+  private Object executeFromDb(final DataSource ds, final BoundSql boundSql, final InvocationContext context) {
     Object r;
     r = new QueryVisitor() {
 
       @Override
       Object visitForList() {
+        invocationPageHandler.handlePageAndSort(boundSql, context); // 分页与排序
         return jdbcOperations.queryForList(ds, boundSql, listSupplier, rowMapper);
       }
 
       @Override
       Object visitForSet() {
+        invocationPageHandler.handlePageAndSort(boundSql, context); // 分页与排序
         return jdbcOperations.queryForSet(ds, boundSql, setSupplier, rowMapper);
       }
 
       @Override
       Object visitForArray() {
+        invocationPageHandler.handlePageAndSort(boundSql, context); // 分页与排序
         return jdbcOperations.queryForArray(ds, boundSql, rowMapper);
-
       }
 
       @Override
       Object visitForObject() {
+        invocationPageHandler.handlePageAndSort(boundSql, context); // 分页与排序
         return jdbcOperations.queryForObject(ds, boundSql, rowMapper);
       }
 
       @Override
       Object visitForOptional() {
+        invocationPageHandler.handlePageAndSort(boundSql, context); // 分页与排序
         return Optional.ofNullable(jdbcOperations.queryForObject(ds, boundSql, rowMapper));
+      }
+
+      @Override
+      Object visitForPageResult() {
+
+        BoundSql totalBoundSql = boundSql.copy();
+        invocationPageHandler.handleCount(totalBoundSql);
+        SingleColumnRowMapper<Long> mapper = new SingleColumnRowMapper<>(long.class);
+        long total = jdbcOperations.queryForObject(ds, totalBoundSql, mapper);
+
+        invocationPageHandler.handlePageAndSort(boundSql, context); // 分页与排序
+        List<?> data = jdbcOperations.queryForList(ds, boundSql, listSupplier, rowMapper);
+
+        return new PageResult<>(data, total);
       }
     }.visit();
     return r;
@@ -197,6 +217,11 @@ public class QueryOperator extends AbstractOperator {
       Object visitForOptional() {
         return Optional.empty();
       }
+
+      @Override
+      Object visitForPageResult() {
+        return PageResult.empty(rowMapper.getMappedClass());
+      }
     }.visit();
   }
 
@@ -214,6 +239,8 @@ public class QueryOperator extends AbstractOperator {
         r = visitForArray();
       } else if (returnDescriptor.isOptinal()) {
         r = visitForOptional();
+      } else if (returnDescriptor.isPageResult()) {
+        r = visitForPageResult();
       } else {
         r = visitForObject();
       }
@@ -229,6 +256,8 @@ public class QueryOperator extends AbstractOperator {
     abstract Object visitForObject();
 
     abstract Object visitForOptional();
+
+    abstract Object visitForPageResult();
 
   }
 

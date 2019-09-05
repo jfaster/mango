@@ -41,6 +41,10 @@ public class ReturnDescriptor extends TypeWithAnnotationDescriptor {
     return typeWrapper.isOptinal();
   }
 
+  public boolean isPageResult() {
+    return typeWrapper.isPageResult();
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj == null)

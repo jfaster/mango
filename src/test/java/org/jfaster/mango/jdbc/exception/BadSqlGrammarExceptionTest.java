@@ -49,7 +49,7 @@ public class BadSqlGrammarExceptionTest {
   public void test() {
     thrown.expect(BadSqlGrammarException.class);
     JdbcTemplate t = new JdbcTemplate();
-    BoundSql boundSql = new BoundSql("insert intoo ..");
+    BoundSql boundSql = new BoundSql(new StringBuilder("insert intoo .."));
     t.update(ds, boundSql);
   }
 

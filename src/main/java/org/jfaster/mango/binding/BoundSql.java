@@ -27,58 +27,53 @@ import java.util.List;
  */
 public class BoundSql {
 
-  private String sql;
+  private final StringBuilder sql;
   private final List<Object> args;
   private final List<TypeHandler<?>> typeHandlers;
 
-  public BoundSql(String sql) {
+  public BoundSql(StringBuilder sql) {
     this.sql = sql;
-    this.args = new ArrayList<Object>();
-    this.typeHandlers = new ArrayList<TypeHandler<?>>();
+    this.args = new ArrayList<>();
+    this.typeHandlers = new ArrayList<>();
   }
 
-  public BoundSql(String sql, List<Object> args, List<TypeHandler<?>> typeHandlers) {
+  public BoundSql(StringBuilder sql, List<Object> args, List<TypeHandler<?>> typeHandlers) {
     this.sql = sql;
     this.args = args;
     this.typeHandlers = typeHandlers;
   }
 
   public String getSql() {
-    return sql;
+    return sql.toString();
   }
 
-  public void setSql(String sql) {
-    this.sql = sql;
+  public BoundSql append(String str) {
+    sql.append(str);
+    return this;
+  }
+
+  public BoundSql prepend(String str) {
+    sql.insert(0, str);
+    return this;
+  }
+
+  public BoundSql append(Object obj) {
+    sql.append(String.valueOf(obj));
+    return this;
+  }
+
+  public BoundSql prepend(Object obj) {
+    sql.insert(0, String.valueOf(obj));
+    return this;
   }
 
   public void addArg(Object obj) {
     if (obj == null) {
-      throw new IllegalArgumentException("arg can't be null, if arg is null please use method addNullArg");
+      throw new IllegalArgumentException("arg can't be null");
     }
     TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(obj.getClass());
     args.add(obj);
     typeHandlers.add(typeHandler);
-  }
-
-  public void addArg(int index, Object obj) {
-    if (obj == null) {
-      throw new IllegalArgumentException("arg can't be null, if arg is null please use method addNullArg");
-    }
-    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(obj.getClass());
-    args.add(index, obj);
-    typeHandlers.add(index, typeHandler);
-  }
-
-  public void addNullArg(Class<?> type) {
-    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(type);
-    args.add(null);
-    typeHandlers.add(typeHandler);
-  }
-
-  public void addNullArg(int index, Class<?> type) {
-    TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(type);
-    args.add(index, null);
-    typeHandlers.add(index, typeHandler);
   }
 
   public List<Object> getArgs() {
@@ -90,15 +85,15 @@ public class BoundSql {
   }
 
   public BoundSql copy() {
-    List<Object> args = new ArrayList<Object>();
+    List<Object> args = new ArrayList<>();
     for (Object arg : getArgs()) {
       args.add(arg);
     }
-    List<TypeHandler<?>> typeHandlers = new ArrayList<TypeHandler<?>>();
+    List<TypeHandler<?>> typeHandlers = new ArrayList<>();
     for (TypeHandler<?> typeHandler : getTypeHandlers()) {
       typeHandlers.add(typeHandler);
     }
-    return new BoundSql(getSql(), args, typeHandlers);
+    return new BoundSql(new StringBuilder(sql.toString()), args, typeHandlers);
   }
 
 }

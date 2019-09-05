@@ -129,7 +129,7 @@ public class DefaultInvocationContext implements InvocationContext {
 
   @Override
   public BoundSql getBoundSql() {
-    return new BoundSql(sql.toString(), args, typeHandlers);
+    return new BoundSql(sql, args, typeHandlers);
   }
 
   @Override

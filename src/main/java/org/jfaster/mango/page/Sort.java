@@ -79,7 +79,10 @@ public class Sort {
 
   @Override
   public String toString() {
-    return Joiner.on(",").join(orders);
+    if (orders.isEmpty()) {
+      return "";
+    }
+    return " order by " + Joiner.on(",").join(orders);
   }
 
 }

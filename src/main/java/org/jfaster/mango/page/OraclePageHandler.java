@@ -21,23 +21,26 @@ import org.jfaster.mango.binding.BoundSql;
 /**
  * @author ash
  */
-public class OraclePageHandler extends AbstractPageHandler {
+public class OraclePageHandler implements PageHandler {
 
   @Override
-  void handleTotal(BoundSql boundSql) {
-    String sql = boundSql.getSql();
-    sql = "SELECT COUNT(1) FROM (" + sql + ") aliasForPage";
-    boundSql.setSql(sql);
+  public void handlePage(BoundSql boundSql, Page page) {
+    int startRow = page.getPageNum() * page.getPageSize();
+    int endRow = (page.getPageNum() + 1) * page.getPageSize();
+
+    boundSql.prepend("SELECT * FROM ( SELECT B.* , ROWNUM RN FROM (")
+        .append(") B WHERE ROWNUM <= ").append(endRow).append(" ) WHERE RN > ").append(startRow);
+
   }
 
   @Override
-  void handlePage(int pageNum, int pageSize, BoundSql boundSql) {
-    int startRow = pageNum * pageSize;
-    int endRow = (pageNum + 1) * pageSize;
-    String sql = boundSql.getSql();
-    sql = "SELECT * FROM ( SELECT B.* , ROWNUM RN FROM (" + sql + ") B WHERE ROWNUM <= "
-        + endRow + " ) WHERE RN > " + startRow;
-    boundSql.setSql(sql);
+  public void handleSort(BoundSql boundSql, Sort sort) {
+    boundSql.append(sort.toString());
+  }
+
+  @Override
+  public void handleCount(BoundSql boundSql) {
+    boundSql.prepend("SELECT COUNT(1) FROM (").append(") aliasForPage");
   }
 
 }

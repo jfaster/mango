@@ -28,25 +28,15 @@ public class PageTest {
 
   @Test
   public void create() throws Exception {
-    Page page = Page.create();
-    assertThat(page.getPageNum(), is(0));
-    assertThat(page.getPageSize(), is(20));
-    assertThat(page.isFetchTotal(), is(false));
 
-    page = Page.create(1, 100);
+    Page page = Page.of(1, 100);
     assertThat(page.getPageNum(), is(1));
     assertThat(page.getPageSize(), is(100));
-    assertThat(page.isFetchTotal(), is(false));
 
-    page = Page.create(2, 200, true);
+    page = Page.of(2, 200);
     assertThat(page.getPageNum(), is(2));
     assertThat(page.getPageSize(), is(200));
-    assertThat(page.isFetchTotal(), is(true));
 
-    page = Page.create(true);
-    assertThat(page.getPageNum(), is(0));
-    assertThat(page.getPageSize(), is(20));
-    assertThat(page.isFetchTotal(), is(true));
   }
 
 }

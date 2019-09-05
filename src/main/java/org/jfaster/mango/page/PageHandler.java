@@ -17,16 +17,16 @@
 package org.jfaster.mango.page;
 
 import org.jfaster.mango.binding.BoundSql;
-import org.jfaster.mango.jdbc.JdbcOperations;
-
-import javax.sql.DataSource;
-import java.util.List;
 
 /**
  * @author ash
  */
 public interface PageHandler {
 
-  void process(BoundSql boundSql, List<Parameter> parameters, JdbcOperations jdbcOperations, DataSource dataSource);
+  void handlePage(BoundSql boundSql, Page page);
+
+  void handleSort(BoundSql boundSql, Sort sort);
+
+  void handleCount(BoundSql boundSql);
 
 }

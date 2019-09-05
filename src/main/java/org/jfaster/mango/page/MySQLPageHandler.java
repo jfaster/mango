@@ -21,23 +21,32 @@ import org.jfaster.mango.binding.BoundSql;
 /**
  * @author ash
  */
-public class MySQLPageHandler extends AbstractPageHandler {
+public class MySQLPageHandler implements PageHandler {
 
   @Override
-  void handleTotal(BoundSql boundSql) {
-    String sql = boundSql.getSql();
-    sql = "SELECT COUNT(1) FROM (" + sql + ") aliasForPage";
-    boundSql.setSql(sql);
+  public void handlePage(BoundSql boundSql, Page page) {
+    int pageNum = page.getPageNum();
+    int pageSize = page.getPageSize();
+    Sort sort = page.getSort();
+
+    if (sort != null) {
+      boundSql.append(sort.toString()); // 排序
+    }
+
+    boundSql.append(" limit ?, ?"); // 分页
+    int startRow = pageNum * pageSize;
+    boundSql.addArg(startRow);
+    boundSql.addArg(pageSize);
   }
 
   @Override
-  void handlePage(int pageNum, int pageSize, BoundSql boundSql) {
-    int startRow = pageNum * pageSize;
-    String sql = boundSql.getSql();
-    sql = sql + " limit ?, ?";
-    boundSql.setSql(sql);
-    boundSql.addArg(startRow);
-    boundSql.addArg(pageSize);
+  public void handleSort(BoundSql boundSql, Sort sort) {
+    boundSql.append(sort.toString());
+  }
+
+  @Override
+  public void handleCount(BoundSql boundSql) {
+    boundSql.prepend("SELECT COUNT(1) FROM (").append(") aliasForPage");
   }
 
 }

@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.jfaster.mango.annotation.DB;
 import org.jfaster.mango.operator.Mango;
 import org.jfaster.mango.page.Page;
+import org.jfaster.mango.page.PageResult;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.junit.Before;
@@ -80,21 +81,15 @@ public class CustomCrudDaoTest {
       CrudOrder order = CrudOrder.createRandomCrudOrder(userId);
       dao.add(order);
     }
-    Page page = Page.create(0, 3, true);
-    assertThat(dao.getByUserId(userId, page).size(), equalTo(3));
-    assertThat(page.getTotal(), equalTo(10));
+    assertThat(dao.getByUserId(userId, Page.of(0, 3)).size(), equalTo(3));
 
-    page = Page.create(1, 3, true);
-    assertThat(dao.getByUserId(userId, page).size(), equalTo(3));
-    assertThat(page.getTotal(), equalTo(10));
+    assertThat(dao.getByUserId(userId, Page.of(1, 3)).size(), equalTo(3));
 
-    page = Page.create(2, 3, true);
-    assertThat(dao.getByUserId(userId, page).size(), equalTo(3));
-    assertThat(page.getTotal(), equalTo(10));
+    assertThat(dao.getByUserId(userId, Page.of(2, 3)).size(), equalTo(3));
 
-    page = Page.create(3, 3, true);
-    assertThat(dao.getByUserId(userId, page).size(), equalTo(1));
-    assertThat(page.getTotal(), equalTo(10));
+    PageResult<CrudOrder> pr = dao.findByUserId(userId, Page.of(3, 3));
+    assertThat(pr.getData().size(), equalTo(1));
+    assertThat(pr.getTotal(), equalTo(10L));
   }
 
   @Rule
@@ -173,6 +168,8 @@ public class CustomCrudDaoTest {
     int deleteByUserId(int userId);
 
     List<CrudOrder> getByUserId(int userId, Page page);
+
+    PageResult<CrudOrder> findByUserId(int userId, Page page);
 
     int countByUserId(int userId, Page page);
 

@@ -16,6 +16,8 @@
 
 package org.jfaster.mango.util.reflect;
 
+import org.jfaster.mango.page.PageResult;
+
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -38,6 +40,7 @@ public class TypeWrapper {
    */
   private Type mappedType;
 
+  private boolean isPageResult;
   private boolean isOptinal;
   private boolean isArray;
   private boolean isCollection;
@@ -73,6 +76,8 @@ public class TypeWrapper {
           Type rawType = t.getRawType();
           if (Optional.class.equals(rawType)) {
             isOptinal = true;
+          } else if (PageResult.class.equals(rawType)) {
+            isPageResult = true;
           } else {
             // 支持Collection,List,ArrayList,LinkedList,Set,HashSet,Iterable
             if (Collection.class.equals(rawType)) {
@@ -91,7 +96,7 @@ public class TypeWrapper {
               isIterable = true;
             } else {
               throw new IllegalStateException("parameterized type must be one of" +
-                  "[Collection,List,ArrayList,LinkedList,Set,HashSet,Iterable,Optional] but " + type);
+                  "[Collection,List,ArrayList,LinkedList,Set,HashSet,Iterable,Optional,PageResult] but " + type);
             }
             isIterableAssignable = true;
           }
@@ -160,6 +165,9 @@ public class TypeWrapper {
     return isIterable;
   }
 
+  public boolean isPageResult() {
+    return isPageResult;
+  }
 }
 
 

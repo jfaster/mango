@@ -16,49 +16,42 @@
 
 package org.jfaster.mango.page;
 
+import javax.annotation.Nullable;
+
 /**
  * @author ash
  */
 public class Page {
 
-  private static final int DEFAULT_PAGE_NUM = 0; // 默认查询第1页
-
-  private static final int DEFAULT_PAGE_SIZE = 20; // 默认数据数量20
-
-  private static final boolean DEFAULT_IS_FETCH_TOTAL = false; // 默认不取总数
-
   private final int pageNum;
 
   private final int pageSize;
 
-  private final boolean isFetchTotal;
+  private final Sort sort;
 
-  private int total;
+  private Page(int pageNum, int pageSize, Sort sort) {
+    if (pageNum < 0) {
+      throw new IllegalArgumentException("pageNum need >= 0, but pageNum is " + pageNum);
+    }
+    if (pageSize <= 0) {
+      throw new IllegalArgumentException("pageSize need > 0, but pageSize is " + pageSize);
+    }
 
-  private Page(int pageNum, int pageSize, boolean isFetchTotal) {
     this.pageNum = pageNum;
     this.pageSize = pageSize;
-    this.isFetchTotal = isFetchTotal;
+    this.sort = sort;
   }
 
-  public static Page create(int pageNum, int pageSize, boolean isFetchTotal) {
-    return new Page(pageNum, pageSize, isFetchTotal);
+  public static Page of(int pageNum, int pageSize) {
+    return of(pageNum, pageSize, null);
   }
 
-  public static Page create(int pageNum, int pageSize) {
-    return create(pageNum, pageSize, DEFAULT_IS_FETCH_TOTAL);
+  public static Page of(int pageNum, int pageSize, Direction direction, String... properties) {
+    return of(pageNum, pageSize, Sort.by(direction, properties));
   }
 
-  public static Page create() {
-    return create(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE);
-  }
-
-  public static Page create(boolean isFetchTotal) {
-    return new Page(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, isFetchTotal);
-  }
-
-  public boolean isFetchTotal() {
-    return isFetchTotal;
+  public static Page of(int pageNum, int pageSize, Sort sort) {
+    return new Page(pageNum, pageSize, sort);
   }
 
   public int getPageNum() {
@@ -69,14 +62,9 @@ public class Page {
     return pageSize;
   }
 
-  public int getTotal() {
-    if (!isFetchTotal) {
-      throw new PageException("can't fetch total, please set isFetchTotal to true");
-    }
-    return total;
+  @Nullable
+  public Sort getSort() {
+    return sort;
   }
 
-  public void setTotal(int total) {
-    this.total = total;
-  }
 }

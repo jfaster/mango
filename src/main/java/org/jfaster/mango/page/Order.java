@@ -66,7 +66,7 @@ public class Order {
 
   @Override
   public String toString() {
-    return String.format("%s: %s", property, direction);
+    return String.format("%s %s", property, direction.toString().toLowerCase());
   }
 
 }

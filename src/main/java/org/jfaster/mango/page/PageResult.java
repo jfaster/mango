@@ -16,19 +16,33 @@
 
 package org.jfaster.mango.page;
 
-import org.jfaster.mango.exception.MangoException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
  */
-public class PageException extends MangoException {
+public class PageResult<T> {
 
-  public PageException(String msg) {
-    super(msg);
+  private final List<T> data;
+
+  private final long total;
+
+  public PageResult(List<T> data, long total) {
+    this.data = data;
+    this.total = total;
   }
 
-  public PageException(String msg, Throwable cause) {
-    super(msg, cause);
+  public List<T> getData() {
+    return data;
+  }
+
+  public long getTotal() {
+    return total;
+  }
+
+  public static <U> PageResult<U> empty(Class<U> clazz) {
+    return new PageResult<>(new ArrayList<U>(), 0);
   }
 
 }

@@ -30,12 +30,13 @@ public class SortTest {
 
   @Test
   public void by() throws Exception {
-    assertThat(Sort.by("a").toString().intern(), equalTo("a: ASC"));
-    assertThat(Sort.by("a", "b").toString().intern(), equalTo("a: ASC,b: ASC"));
-    assertThat(Sort.by(Direction.ASC, "a", "b").toString().intern(), equalTo("a: ASC,b: ASC"));
-    assertThat(Sort.by(Direction.DESC, "a", "b").toString().intern(), equalTo("a: DESC,b: DESC"));
-    assertThat(Sort.by(Order.by("a"), Order.by(Direction.DESC, "b")).toString().intern(), equalTo("a: ASC,b: DESC"));
-    assertThat(Sort.by(Arrays.asList(Order.by("a"), Order.by(Direction.DESC, "b"))).toString().intern(), equalTo("a: ASC,b: DESC"));
+    assertThat(Sort.by("a").toString().intern(), equalTo(" order by a asc"));
+    assertThat(Sort.by("a", "b").toString().intern(), equalTo(" order by a asc,b asc"));
+    assertThat(Sort.by(Direction.ASC, "a", "b").toString().intern(), equalTo(" order by a asc,b asc"));
+    assertThat(Sort.by(Direction.DESC, "a", "b").toString().intern(), equalTo(" order by a desc,b desc"));
+    assertThat(Sort.by(Order.by("a"), Order.by(Direction.DESC, "b")).toString().intern(), equalTo(" order by a asc,b desc"));
+    assertThat(Sort.by(Arrays.asList(Order.by("a"), Order.by(Direction.DESC, "b"))).toString().intern(), equalTo(" order by a asc,b desc"));
+    assertThat(Sort.by(new Order[0]).toString().intern(), equalTo(""));
   }
 
 }

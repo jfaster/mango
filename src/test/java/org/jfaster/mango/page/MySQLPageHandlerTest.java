@@ -59,7 +59,7 @@ public class MySQLPageHandlerTest {
       int uid = 100;
       String content = "hi";
 
-      List<Msg> expected = new ArrayList<Msg>();
+      List<Msg> expected = new ArrayList<>();
       for (int i = 0; i < 10; i++) {
         Msg msg = new Msg();
         msg.setUid(uid);
@@ -69,31 +69,25 @@ public class MySQLPageHandlerTest {
         expected.add(msg);
       }
 
-      List<Msg> actual = new ArrayList<Msg>();
+      List<Msg> actual = new ArrayList<>();
 
-      Page page = Page.create(0, 3, true);
-      List<Msg> msgs = dao.getMsgs(uid, page);
+      List<Msg> msgs = dao.getMsgs(uid, Page.of(0, 3, Direction.ASC, "id"));
       actual.addAll(msgs);
-      assertThat(page.getTotal(), is(10));
       assertThat(msgs.size(), is(3));
 
-      page = Page.create(1, 3, true);
-      msgs = dao.getMsgs(uid, page);
+      msgs = dao.getMsgs(uid, Page.of(1, 3, Direction.ASC, "id"));
       actual.addAll(msgs);
-      assertThat(page.getTotal(), is(10));
       assertThat(msgs.size(), is(3));
 
-      page = Page.create(2, 3, true);
-      msgs = dao.getMsgs(uid, page);
-      actual.addAll(msgs);
-      assertThat(page.getTotal(), is(10));
-      assertThat(msgs.size(), is(3));
+      PageResult<Msg> pr = dao.getMsgs2(uid, Page.of(2, 3, Direction.ASC, "id"));
+      actual.addAll(pr.getData());
+      assertThat(pr.getTotal(), is(10));
+      assertThat(pr.getData().size(), is(3));
 
-      page = Page.create(3, 3, true);
-      msgs = dao.getMsgs(uid, page);
-      actual.addAll(msgs);
-      assertThat(page.getTotal(), is(10));
-      assertThat(msgs.size(), is(1));
+      pr = dao.getMsgs2(uid, Page.of(3, 3, Direction.ASC, "id"));
+      actual.addAll(pr.getData());
+      assertThat(pr.getTotal(), is(10));
+      assertThat(pr.getData().size(), is(1));
 
       assertThat(actual, equalTo(expected));
     }
@@ -105,7 +99,7 @@ public class MySQLPageHandlerTest {
   @Test
   public void interceptQuery2() throws Exception {
     if (DataSourceConfig.isUseMySQL()) {
-      thrown.expect(PageException.class);
+      thrown.expect(IllegalArgumentException.class);
       thrown.expectMessage("Parameter page is null");
       dao.getMsgs(100, null);
     }
@@ -116,11 +110,13 @@ public class MySQLPageHandlerTest {
 
     @ReturnGeneratedId
     @SQL("insert into msg(uid, content) values(:uid, :content)")
-    public int insert(Msg msg);
+    int insert(Msg msg);
 
-    @SQL("select id, uid, content from msg where uid = :1 order by id")
-    public List<Msg> getMsgs(int uid, Page page);
+    @SQL("select id, uid, content from msg where uid = :1")
+    List<Msg> getMsgs(int uid, Page page);
 
+    @SQL("select id, uid, content from msg where uid = :1")
+    PageResult<Msg> getMsgs2(int uid, Page page);
   }
 
 }

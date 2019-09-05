@@ -19,10 +19,7 @@ package org.jfaster.mango.page;
 import org.jfaster.mango.binding.BoundSql;
 import org.jfaster.mango.binding.InvocationContext;
 import org.jfaster.mango.descriptor.ParameterDescriptor;
-import org.jfaster.mango.jdbc.JdbcOperations;
 
-import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,15 +37,40 @@ public class InvocationPageHandler {
     this.parameterDescriptors = parameterDescriptors;
   }
 
-  public void process(BoundSql boundSql, InvocationContext context,
-                        JdbcOperations jdbcOperations, DataSource dataSource) {
+  public void handlePageAndSort(BoundSql boundSql, InvocationContext context) {
     List<Object> parameterValues = context.getParameterValues();
-    List<Parameter> parameters = new ArrayList<Parameter>(parameterValues.size());
+    Page page = null;
+    Sort sort = null;
     for (int i = 0; i < parameterValues.size(); i++) {
       ParameterDescriptor pd = parameterDescriptors.get(i);
-      parameters.add(new Parameter(pd, parameterValues.get(i)));
+      if (Page.class.equals(pd.getRawType())) {
+        Object val = parameterValues.get(i);
+        if (val == null) {
+          throw new IllegalArgumentException("Parameter page is null");
+        }
+        page = (Page) val;
+      }
+      if (Sort.class.equals(pd.getRawType())) {
+        Object val = parameterValues.get(i);
+        if (val == null) {
+          throw new IllegalArgumentException("Parameter sort is null");
+        }
+        sort = (Sort) val;
+      }
     }
-    pageHandler.process(boundSql, parameters, jdbcOperations, dataSource);
+    if (page != null & sort != null) { // Page和Sort不能同时存在
+      throw new IllegalArgumentException("page and sort can't be used on a query");
+    }
+    if (page != null) {
+      pageHandler.handlePage(boundSql, page);
+    }
+    if (sort != null) {
+      pageHandler.handleSort(boundSql, sort);
+    }
+  }
+
+  public void handleCount(BoundSql boundSql) {
+    pageHandler.handleCount(boundSql);
   }
 
 }
