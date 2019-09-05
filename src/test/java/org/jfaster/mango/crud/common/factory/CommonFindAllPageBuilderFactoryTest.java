@@ -19,6 +19,7 @@ package org.jfaster.mango.crud.common.factory;
 import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
+import org.jfaster.mango.page.Page;
 import org.jfaster.mango.util.reflect.DynamicTokens;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
@@ -33,19 +34,19 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
-public class CommonFindByIdsBuilderFactoryTest {
+public class CommonFindAllPageBuilderFactoryTest {
 
   @Test
   public void test() throws Exception {
-    CommonFindByIdsBuilderFactory factory = new CommonFindByIdsBuilderFactory();
-    String name = "findByIds";
+    CommonFindAllPageBuilderFactory factory = new CommonFindAllPageBuilderFactory();
+    String name = "findAll";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    Type returnType = DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
-    List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.iterableToken(TypeToken.of(idClass)).getType());
+    Type returnType = DynamicTokens.pageResultToken(TypeToken.of(entityClass)).getType();
+    List<Type> parameterTypes = Lists.newArrayList(Page.class);
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());
-    assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table where id in (:1)"));
+    assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table"));
   }
 
 }

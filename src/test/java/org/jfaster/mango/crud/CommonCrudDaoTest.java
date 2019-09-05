@@ -178,10 +178,10 @@ public class CommonCrudDaoTest {
     Optional<Msg> findById(Integer integer);
 
     @Override
-    Iterable<Msg> findByIds(Iterable<Integer> integers);
+    List<Msg> findByIds(Iterable<Integer> integers);
 
     @Override
-    Iterable<Msg> findAll();
+    List<Msg> findAll();
 
     @Override
     long count();

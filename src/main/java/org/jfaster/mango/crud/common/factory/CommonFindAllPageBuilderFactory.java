@@ -19,6 +19,7 @@ package org.jfaster.mango.crud.common.factory;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
 import org.jfaster.mango.crud.common.builder.CommonGetAllBuilder;
+import org.jfaster.mango.page.Page;
 import org.jfaster.mango.util.reflect.DynamicTokens;
 import org.jfaster.mango.util.reflect.TypeToken;
 
@@ -29,7 +30,7 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonFindAllBuilderFactory extends AbstractCommonBuilderFactory {
+public class CommonFindAllPageBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
@@ -38,12 +39,14 @@ public class CommonFindAllBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
+    return DynamicTokens.pageResultToken(TypeToken.of(entityClass)).getType();
   }
 
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    return new ArrayList<>();
+    List<Type> types = new ArrayList<>();
+    types.add(Page.class);
+    return types;
   }
 
   @Override

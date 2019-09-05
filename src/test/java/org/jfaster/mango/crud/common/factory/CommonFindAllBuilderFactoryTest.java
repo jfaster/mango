@@ -41,7 +41,7 @@ public class CommonFindAllBuilderFactoryTest {
     String name = "findAll";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    Type returnType = DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType();
+    Type returnType = DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
     List<Type> parameterTypes = Lists.newArrayList();
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());

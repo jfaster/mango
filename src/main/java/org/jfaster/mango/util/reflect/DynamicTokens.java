@@ -16,6 +16,9 @@
 
 package org.jfaster.mango.util.reflect;
 
+import org.jfaster.mango.page.PageResult;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,8 +31,18 @@ public class DynamicTokens {
         .where(new TypeParameter<E>() {}, entityToken);
   }
 
+  public static <E> TypeToken<List<E>> listToken(TypeToken<E> entityToken) {
+    return new TypeToken<List<E>>() {}
+        .where(new TypeParameter<E>() {}, entityToken);
+  }
+
   public static <E> TypeToken<Optional<E>> optionalToken(TypeToken<E> entityToken) {
     return new TypeToken<Optional<E>>() {}
+        .where(new TypeParameter<E>() {}, entityToken);
+  }
+
+  public static <E> TypeToken<PageResult<E>> pageResultToken(TypeToken<E> entityToken) {
+    return new TypeToken<PageResult<E>>() {}
         .where(new TypeParameter<E>() {}, entityToken);
   }
 

@@ -38,12 +38,12 @@ public class CommonFindByIdsBuilderFactory extends AbstractCommonBuilderFactory 
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return DynamicTokens.iterableToken(TypeToken.of(entityClass)).getType();
+    return DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
   }
 
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    List<Type> types = new ArrayList<Type>();
+    List<Type> types = new ArrayList<>();
     types.add(DynamicTokens.iterableToken(TypeToken.of(idClass)).getType());
     return types;
   }

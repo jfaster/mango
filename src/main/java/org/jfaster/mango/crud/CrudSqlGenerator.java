@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class CrudSqlGenerator implements SqlGenerator {
 
-  private static final List<BuilderFactory> commonBuilderFactories = new ArrayList<BuilderFactory>();
-  private static final List<BuilderFactory> customBuilderFactories = new ArrayList<BuilderFactory>();
+  private static final List<BuilderFactory> commonBuilderFactories = new ArrayList<>();
+  private static final List<BuilderFactory> customBuilderFactories = new ArrayList<>();
   static {
     commonBuilderFactories.add(new CommonAddBuilderFactory());
     commonBuilderFactories.add(new CommonAddAndReturnGeneratedIdBuilderFactory());
@@ -44,6 +44,9 @@ public class CrudSqlGenerator implements SqlGenerator {
     commonBuilderFactories.add(new CommonUpdateBuilderFactory());
     commonBuilderFactories.add(new CommonBatchUpdateBuilderFactory());
     commonBuilderFactories.add(new CommonDeleteBuilderFactory());
+    commonBuilderFactories.add(new CommonFindAllPageBuilderFactory());
+    commonBuilderFactories.add(new CommonFindAllSortBuilderFactory());
+    commonBuilderFactories.add(new CommonGetByIdBuilderFactory());
 
     customBuilderFactories.add(new CustomQueryBuilderFactory());
     customBuilderFactories.add(new CustomCountBuilderFactory());

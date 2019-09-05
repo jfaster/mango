@@ -18,9 +18,7 @@ package org.jfaster.mango.crud.common.factory;
 
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.common.builder.AbstractCommonBuilder;
-import org.jfaster.mango.crud.common.builder.CommonGetAllBuilder;
-import org.jfaster.mango.util.reflect.DynamicTokens;
-import org.jfaster.mango.util.reflect.TypeToken;
+import org.jfaster.mango.crud.common.builder.CommonGetBuilder;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -29,26 +27,28 @@ import java.util.List;
 /**
  * @author ash
  */
-public class CommonFindAllBuilderFactory extends AbstractCommonBuilderFactory {
+public class CommonGetByIdBuilderFactory extends AbstractCommonBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "findAll";
+    return "getById";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
+    return entityClass;
   }
 
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    return new ArrayList<>();
+    List<Type> types = new ArrayList<>();
+    types.add(idClass);
+    return types;
   }
 
   @Override
   AbstractCommonBuilder createCommonBuilder(CrudMeta cm) {
-    return new CommonGetAllBuilder(cm.getColumns());
+    return new CommonGetBuilder(cm.getColumnId(), cm.getColumns(), false);
   }
 
 }
