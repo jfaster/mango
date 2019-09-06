@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.custom.builder;
+package org.jfaster.mango.crud.internal.builder;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -24,16 +24,23 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+
 /**
  * @author ash
  */
-public class CustomQueryBuilderTest {
+public class InternalAddBuilderTest {
 
   @Test
-  public void buildSql() throws Exception {
-    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
-    CustomQueryBuilder b = new CustomQueryBuilder(columns, "where id = :1");
-    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table where id = :1"));
+  public void build() throws Exception {
+    List<String> properties = Lists.newArrayList("id", "name", "age");
+    List<String> columns = Lists.newArrayList("id2", "name2", "age2");
+    InternalAddBuilder b = new InternalAddBuilder("id", properties, columns, true);
+    assertThat(b.buildSql(), equalTo("insert into #table(name2, age2) values(:name, :age)"));
+
+    properties = Lists.newArrayList("id", "name", "age");
+    columns = Lists.newArrayList("id2", "name2", "age2");
+    b = new InternalAddBuilder("id", properties, columns, false);
+    assertThat(b.buildSql(), equalTo("insert into #table(id2, name2, age2) values(:id, :name, :age)"));
   }
 
 }

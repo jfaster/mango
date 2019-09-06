@@ -22,6 +22,10 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.ID;
 import org.jfaster.mango.annotation.Ignore;
+import org.jfaster.mango.support.Randoms;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ash
@@ -34,7 +38,7 @@ public class CrudOrder {
   @Column("uid")
   private int userId;
 
-  private int price;
+  private Integer price;
 
   @Ignore
   private String stat;
@@ -55,11 +59,11 @@ public class CrudOrder {
     this.userId = userId;
   }
 
-  public int getPrice() {
+  public Integer getPrice() {
     return price;
   }
 
-  public void setPrice(int price) {
+  public void setPrice(Integer price) {
     this.price = price;
   }
 
@@ -71,9 +75,36 @@ public class CrudOrder {
     this.stat = stat;
   }
 
+  public static CrudOrder createCrudOrder(String id, int userId, Integer price) {
+    CrudOrder co = new CrudOrder();
+    co.setId(id);
+    co.setUserId(userId);
+    co.setPrice(price);
+    return co;
+  }
+
   public static CrudOrder createRandomCrudOrder(int userId) {
     CrudOrder co = new CrudOrder();
     String id = RandomStringUtils.randomNumeric(10);
+    int price = 100;
+    co.setId(id);
+    co.setUserId(userId);
+    co.setPrice(price);
+    return co;
+  }
+
+  public static List<CrudOrder> createRandomCrudOrders(int num) {
+    List<CrudOrder> cos = new ArrayList<>();
+    for (int i = 0; i < num; i++) {
+      cos.add(createRandomCrudOrder());
+    }
+    return cos;
+  }
+
+  public static CrudOrder createRandomCrudOrder() {
+    CrudOrder co = new CrudOrder();
+    String id = RandomStringUtils.randomNumeric(10);
+    int userId = Randoms.randomInt(10000);
     int price = 100;
     co.setId(id);
     co.setUserId(userId);

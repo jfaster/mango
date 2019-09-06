@@ -32,10 +32,6 @@ public class IncorrectSqlExceptionTest {
 
   private final static Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
 
-  static {
-    mango.setLazyInit(true);
-  }
-
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 

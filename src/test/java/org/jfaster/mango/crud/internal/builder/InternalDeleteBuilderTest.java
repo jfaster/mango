@@ -14,31 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
+package org.jfaster.mango.crud.internal.builder;
 
-import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.DataSourceConfig;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author ash
  */
-public class IllegalStateExceptionTest {
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+public class InternalDeleteBuilderTest {
 
   @Test
-  public void test() {
-    thrown.expect(IllegalStateException.class);
-    thrown.expectMessage("dao interface expected one @DB annotation but not found");
-    Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
-    mango.create(Dao.class);
-  }
-
-  interface Dao {
+  public void build() throws Exception {
+    InternalDeleteBuilder b = new InternalDeleteBuilder("id2");
+    assertThat(b.buildSql(), equalTo("delete from #table where id2 = :1"));
   }
 
 }

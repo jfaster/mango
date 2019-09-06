@@ -51,9 +51,6 @@ public class DbTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private final static Mango mango = Mango.newInstance(ds);
-  static {
-    mango.setLazyInit(true);
-  }
   private final static UserDao dao = mango.create(UserDao.class);
 
   @Before

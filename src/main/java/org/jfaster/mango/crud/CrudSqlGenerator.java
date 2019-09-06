@@ -16,7 +16,7 @@
 
 package org.jfaster.mango.crud;
 
-import org.jfaster.mango.crud.common.factory.*;
+import org.jfaster.mango.crud.internal.factory.*;
 import org.jfaster.mango.crud.custom.factory.CustomCountBuilderFactory;
 import org.jfaster.mango.crud.custom.factory.CustomDeleteBuilderFactory;
 import org.jfaster.mango.crud.custom.factory.CustomQueryBuilderFactory;
@@ -31,22 +31,22 @@ import java.util.List;
  */
 public class CrudSqlGenerator implements SqlGenerator {
 
-  private static final List<BuilderFactory> commonBuilderFactories = new ArrayList<>();
+  private static final List<BuilderFactory> internalBuilderFactories = new ArrayList<>();
   private static final List<BuilderFactory> customBuilderFactories = new ArrayList<>();
   static {
-    commonBuilderFactories.add(new CommonAddBuilderFactory());
-    commonBuilderFactories.add(new CommonAddAndReturnGeneratedIdBuilderFactory());
-    commonBuilderFactories.add(new CommonBatchAddBuilderFactory());
-    commonBuilderFactories.add(new CommonFindByIdBuilderFactory());
-    commonBuilderFactories.add(new CommonFindByIdsBuilderFactory());
-    commonBuilderFactories.add(new CommonFindAllBuilderFactory());
-    commonBuilderFactories.add(new CommonCountBuilderFactory());
-    commonBuilderFactories.add(new CommonUpdateBuilderFactory());
-    commonBuilderFactories.add(new CommonBatchUpdateBuilderFactory());
-    commonBuilderFactories.add(new CommonDeleteBuilderFactory());
-    commonBuilderFactories.add(new CommonFindAllPageBuilderFactory());
-    commonBuilderFactories.add(new CommonFindAllSortBuilderFactory());
-    commonBuilderFactories.add(new CommonGetByIdBuilderFactory());
+    internalBuilderFactories.add(new InternalAddBuilderFactory());
+    internalBuilderFactories.add(new InternalAddAndReturnGeneratedIdBuilderFactory());
+    internalBuilderFactories.add(new InternalBatchAddBuilderFactory());
+    internalBuilderFactories.add(new InternalFindByIdBuilderFactory());
+    internalBuilderFactories.add(new InternalFindByIdsBuilderFactory());
+    internalBuilderFactories.add(new InternalFindAllBuilderFactory());
+    internalBuilderFactories.add(new InternalCountBuilderFactory());
+    internalBuilderFactories.add(new InternalUpdateBuilderFactory());
+    internalBuilderFactories.add(new InternalBatchUpdateBuilderFactory());
+    internalBuilderFactories.add(new InternalDeleteBuilderFactory());
+    internalBuilderFactories.add(new InternalFindAllPageBuilderFactory());
+    internalBuilderFactories.add(new InternalFindAllSortBuilderFactory());
+    internalBuilderFactories.add(new InternalGetByIdBuilderFactory());
 
     customBuilderFactories.add(new CustomQueryBuilderFactory());
     customBuilderFactories.add(new CustomCountBuilderFactory());
@@ -59,8 +59,8 @@ public class CrudSqlGenerator implements SqlGenerator {
   }
 
   private Builder getBuilder(MethodDescriptor md) {
-    for (BuilderFactory commonBuilderFactory : commonBuilderFactories) {
-      Builder builder = commonBuilderFactory.tryGetBuilder(md);
+    for (BuilderFactory internalBuilderFactory : internalBuilderFactories) {
+      Builder builder = internalBuilderFactory.tryGetBuilder(md);
       if (builder != null) {
         return builder;
       }

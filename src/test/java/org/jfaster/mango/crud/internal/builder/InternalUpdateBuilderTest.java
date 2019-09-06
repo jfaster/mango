@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.custom.builder;
+package org.jfaster.mango.crud.internal.builder;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -27,13 +27,14 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * @author ash
  */
-public class CustomQueryBuilderTest {
+public class InternalUpdateBuilderTest {
 
   @Test
-  public void buildSql() throws Exception {
-    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
-    CustomQueryBuilder b = new CustomQueryBuilder(columns, "where id = :1");
-    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table where id = :1"));
+  public void build() throws Exception {
+    List<String> properties = Lists.newArrayList("id", "userName", "userAge");
+    List<String> columns = Lists.newArrayList("id", "user_name", "user_age");
+    InternalUpdateBuilder b = new InternalUpdateBuilder("id", properties, columns);
+    assertThat(b.buildSql(), equalTo("update #table set #if (:userName != null) user_name = :userName,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where id = :id"));
   }
 
 }

@@ -14,31 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.exception;
-
-import org.jfaster.mango.operator.Mango;
-import org.jfaster.mango.support.DataSourceConfig;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+package org.jfaster.mango.crud.internal.builder;
 
 /**
  * @author ash
  */
-public class IllegalStateExceptionTest {
+public class InternalCountBuilder extends AbstractInternalBuilder {
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  private final static String SQL = "select count(1) from #table";
 
-  @Test
-  public void test() {
-    thrown.expect(IllegalStateException.class);
-    thrown.expectMessage("dao interface expected one @DB annotation but not found");
-    Mango mango = Mango.newInstance(DataSourceConfig.getDataSource());
-    mango.create(Dao.class);
-  }
-
-  interface Dao {
+  @Override
+  public String buildSql() {
+    return SQL;
   }
 
 }

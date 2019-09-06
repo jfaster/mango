@@ -14,26 +14,35 @@
  * under the License.
  */
 
-package org.jfaster.mango.crud.custom.builder;
+package org.jfaster.mango.crud.internal.factory;
 
 import com.google.common.collect.Lists;
+import org.jfaster.mango.crud.Builder;
+import org.jfaster.mango.crud.Order;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * @author ash
  */
-public class CustomQueryBuilderTest {
+public class InternalAddAndReturnGeneratedIdBuilderFactoryTest {
 
   @Test
-  public void buildSql() throws Exception {
-    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
-    CustomQueryBuilder b = new CustomQueryBuilder(columns, "where id = :1");
-    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table where id = :1"));
+  public void test() throws Exception {
+    InternalAddAndReturnGeneratedIdBuilderFactory factory = new InternalAddAndReturnGeneratedIdBuilderFactory();
+    String name = "addAndReturnGeneratedId";
+    Class<?> entityClass = Order.class;
+    Class<Integer> idClass = Integer.class;
+    List<Type> types = Lists.newArrayList((Type) Order.class);
+    Builder b = factory.doTryGetBuilder(name, long.class, types, entityClass, idClass);
+    assertThat(b, notNullValue());
+    assertThat(b.buildSql(), equalTo("insert into #table(userid, user_age) values(:userId, :userAge)"));
   }
 
 }

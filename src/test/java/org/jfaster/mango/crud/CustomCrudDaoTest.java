@@ -99,59 +99,35 @@ public class CustomCrudDaoTest {
   public void test2() throws Throwable {
     thrown.expect(CrudException.class);
     thrown.expectMessage("the type of 1th parameters of method [getById] expected 'class java.lang.String', but 'int'");
-    try {
-      mango.create(CrudOrder2Dao.class);
-    } catch (Exception e) {
-      throw e.getCause();
-    }
+    mango.create(CrudOrder2Dao.class).getById(1);
   }
 
   @Test
   public void test3() throws Throwable {
     thrown.expect(CrudException.class);
     thrown.expectMessage("can't convert method [abc] to SQL");
-    try {
-      mango.create(CrudOrder3Dao.class);
-    } catch (Exception e) {
-      throw e.getCause();
-    }
-
+    mango.create(CrudOrder3Dao.class).abc(1);
   }
 
   @Test
   public void test4() throws Throwable {
     thrown.expect(CrudException.class);
     thrown.expectMessage("the type of 1th parameters of method [getByIdIn] expected iterable, but 'int'");
-    try {
-      mango.create(CrudOrder4Dao.class);
-    } catch (Exception e) {
-      throw e.getCause();
-    }
-
+    mango.create(CrudOrder4Dao.class).getByIdIn(1);
   }
 
   @Test
   public void test5() throws Throwable {
     thrown.expect(CrudException.class);
     thrown.expectMessage("the type of 1th parameters of method [getByIdIn] error");
-    try {
-      mango.create(CrudOrder5Dao.class);
-    } catch (Exception e) {
-      throw e.getCause();
-    }
-
+    mango.create(CrudOrder5Dao.class).getByIdIn(Lists.newArrayList());
   }
 
   @Test
   public void test6() throws Throwable {
     thrown.expect(CrudException.class);
     thrown.expectMessage("the name of method [getByIdAndUid] is error, the number of parameters expected greater or equal than 2, but 1");
-    try {
-      mango.create(CrudOrder6Dao.class);
-    } catch (Exception e) {
-      throw e.getCause();
-    }
-
+    mango.create(CrudOrder6Dao.class).getByIdAndUid("abc");
   }
 
   @DB(table = "t_order")

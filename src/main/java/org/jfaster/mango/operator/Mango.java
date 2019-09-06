@@ -22,7 +22,6 @@ import org.jfaster.mango.datasource.DataSourceFactoryGroup;
 import org.jfaster.mango.datasource.SimpleDataSourceFactory;
 import org.jfaster.mango.descriptor.MethodDescriptor;
 import org.jfaster.mango.descriptor.Methods;
-import org.jfaster.mango.exception.InitializationException;
 import org.jfaster.mango.page.MySQLPageHandler;
 import org.jfaster.mango.page.PageHandler;
 import org.jfaster.mango.util.ToStringHelper;
@@ -56,11 +55,6 @@ public class Mango extends Config {
    * 数据源工厂组
    */
   private DataSourceFactoryGroup dataSourceFactoryGroup;
-
-  /**
-   * 是否懒加载
-   */
-  private boolean isLazyInit = false;
 
   /**
    * 默认使用MySQL分页处理器
@@ -143,16 +137,6 @@ public class Mango extends Config {
 
     MangoInvocationHandler handler = new MangoInvocationHandler(
         daoClass, dataSourceFactoryGroup, pageHandler, this);
-    if (!isLazyInit) { // 不使用懒加载，则提前加载
-      List<Method> methods = Methods.listMethods(daoClass);
-      for (Method method : methods) {
-        try {
-          handler.getOperator(method);
-        } catch (Throwable e) {
-          throw new InitializationException("initialize " + ToStringHelper.toString(method) + " error", e);
-        }
-      }
-    }
     return Reflection.newProxy(daoClass, handler);
   }
 
@@ -192,14 +176,6 @@ public class Mango extends Config {
       throw new IllegalArgumentException("dataSourceFactories can't be null or empty");
     }
     dataSourceFactoryGroup = new DataSourceFactoryGroup(dataSourceFactories);
-  }
-
-  public boolean isLazyInit() {
-    return isLazyInit;
-  }
-
-  public void setLazyInit(boolean isLazyInit) {
-    this.isLazyInit = isLazyInit;
   }
 
   public void setPageHandler(PageHandler pageHandler) {

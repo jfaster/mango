@@ -42,10 +42,6 @@ public class JdkExceptionTest {
   private final static DataSource ds = DataSourceConfig.getDataSource();
   private final static Mango mango = Mango.newInstance(ds);
 
-  static {
-    mango.setLazyInit(true);
-  }
-
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
