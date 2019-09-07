@@ -17,12 +17,12 @@
 package org.jfaster.mango.util.bean;
 
 import com.google.common.collect.Sets;
+import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.ID;
 import org.jfaster.mango.util.Strings;
 import org.junit.Test;
 
 import javax.annotation.Nullable;
-import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -60,7 +60,7 @@ public class BeanUtilTest {
     assertThat(pms.get(5).getName(), equalTo("key"));
 
     assertThat(pms.get(0).getPropertyAnno(ID.class), notNullValue());
-    assertThat(pms.get(3).getPropertyAnno(Resource.class), notNullValue());
+    assertThat(pms.get(3).getPropertyAnno(Column.class), notNullValue());
   }
 
   private PropertyMeta getPropertyMeta(Class<?> clazz, String property, Class<?> type) throws NoSuchMethodException {

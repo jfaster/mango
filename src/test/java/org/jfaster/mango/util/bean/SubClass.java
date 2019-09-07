@@ -4,7 +4,7 @@
 
 package org.jfaster.mango.util.bean;
 
-import javax.annotation.Resource;
+import org.jfaster.mango.annotation.Column;
 
 /**
  * @author ash
@@ -13,7 +13,7 @@ public class SubClass extends SuperClass {
 
   private int price;
 
-  @Resource
+  @Column("")
   private String tree;
 
   private int age;
