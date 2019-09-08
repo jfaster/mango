@@ -200,6 +200,41 @@
                     <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.1.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.4</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/parser/JJTParserState.class</exclude>
+                        <exclude>**/parser/ParseException.class</exclude>
+                        <exclude>**/parser/Parser.class</exclude>
+                        <exclude>**/parser/ParserTokenManager.class</exclude>
+                        <exclude>**/parser/SimpleCharStream.class</exclude>
+                        <exclude>**/parser/SimpleNode.class</exclude>
+                        <exclude>**/parser/Token.class</exclude>
+                        <exclude>**/parser/TokenMgrError.class</exclude>
+                        <exclude>**/util/logging/**</exclude>
+                        <exclude>**/stat/atomic/**</exclude>
+                        <exclude>**/exception/**</exclude>
+                        <exclude>**/mango/plugin/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
