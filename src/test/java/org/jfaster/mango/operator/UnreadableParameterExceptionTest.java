@@ -19,14 +19,6 @@ public class UnreadableParameterExceptionTest {
   public ExpectedException thrown = ExpectedException.none();
 
   @Test
-  public void test2() {
-    thrown.expect(BindingException.class);
-    thrown.expectMessage("Parameter ':1.c.d' can't be readable; caused by: There is no getter/setter for property named 'c' in 'class org.jfaster.mango.operator.UnreadableParameterExceptionTest$A'");
-    Dao dao = mango.create(Dao.class);
-    dao.add2(new A());
-  }
-
-  @Test
   public void test4() {
     thrown.expect(BindingException.class);
     thrown.expectMessage("Parameter ':1' not found, available root parameters are []");
@@ -46,9 +38,6 @@ public class UnreadableParameterExceptionTest {
   static interface Dao {
     @SQL("insert into user(uid) values (:1.b.d)")
     public int add(A a);
-
-    @SQL("insert into user(uid) values (:1.c.d)")
-    public int add2(A a);
 
     @SQL("insert into user(uid) values(:1)")
     public int add();

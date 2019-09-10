@@ -26,16 +26,16 @@ public interface BindingParameterInvoker {
   /**
    * 获得目标类型
    */
-  public Type getTargetType();
+  Type getTargetType();
 
   /**
-   * 执行get方法链
+   * 执行get方法
    */
-  public Object invoke(Object obj);
+  Object invoke(Object obj);
 
   /**
    * 获得绑定参数
    */
-  public BindingParameter getBindingParameter();
+  BindingParameter getBindingParameter();
 
 }

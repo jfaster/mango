@@ -14,52 +14,24 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.bean;
-
-import org.jfaster.mango.annotation.Column;
-import org.jfaster.mango.annotation.ID;
+package org.jfaster.mango.invoker;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
+ * 属性调用器，封装get与set方法调用，同时具备转换功能
+ *
  * @author ash
  */
-public class A {
+public interface TransferableInvoker {
 
-  @ID
-  private int id;
+  String getName();
 
-  @Column("user_id")
-  @Nullable
-  private int uid;
+  Object invokeGet(Object obj);
 
-  private int age;
+  void invokeSet(Object object, @Nullable Object columnValue);
 
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public int getUid() {
-    return uid;
-  }
-
-  public void setUid(int uid) {
-    this.uid = uid;
-  }
-
-  public String getName() {
-    return "";
-  }
-
-  public void setName(String name) {
-  }
-
-  public int getAge() {
-    return age;
-  }
+  Type getColumnType();
 
 }

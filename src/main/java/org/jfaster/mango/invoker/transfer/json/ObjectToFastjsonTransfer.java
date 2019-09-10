@@ -14,52 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.bean;
+package org.jfaster.mango.invoker.transfer.json;
 
-import org.jfaster.mango.annotation.Column;
-import org.jfaster.mango.annotation.ID;
+import com.alibaba.fastjson.JSON;
+import org.jfaster.mango.invoker.PropertyTransfer;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
+ * Object <--> String(fastjson)
+ *
  * @author ash
  */
-public class A {
+public class ObjectToFastjsonTransfer implements PropertyTransfer<Object, String> {
 
-  @ID
-  private int id;
+  @Override
+  public String propertyToColumn(@Nullable Object propertyValue) {
+    return propertyValue == null ? null : JSON.toJSONString(propertyValue);
+  }
 
-  @Column("user_id")
   @Nullable
-  private int uid;
-
-  private int age;
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public int getUid() {
-    return uid;
-  }
-
-  public void setUid(int uid) {
-    this.uid = uid;
-  }
-
-  public String getName() {
-    return "";
-  }
-
-  public void setName(String name) {
-  }
-
-  public int getAge() {
-    return age;
+  @Override
+  public Object columnToProperty(@Nullable String columnValue, Type actualPropertyType) {
+    return columnValue == null ? null : JSON.parseObject(columnValue, actualPropertyType);
   }
 
 }

@@ -80,8 +80,6 @@ public class BeanPropertyRowMapperTest {
     MullMsg msg = MullMsg.createRandomMsg();
     int id = dao.insert(msg.getUid(), msg.getYyCon());
     assertThat(id, greaterThan(0));
-    MullMsg m = dao.getMsg2(id);
-    assertThat(m.getMsgItem().getContent(), equalTo(msg.getYyCon()));
   }
 
   @Test
@@ -91,8 +89,6 @@ public class BeanPropertyRowMapperTest {
       MullMsg msg = MullMsg.createRandomMsg();
       int id = dao.insert(msg.getUid(), msg.getYyCon());
       assertThat(id, greaterThan(0));
-      MullMsg m = dao.getMsg3(id);
-      assertThat(m.getMsgItem().uid, equalTo(msg.getUid()));
     }
   }
 
@@ -165,8 +161,6 @@ public class BeanPropertyRowMapperTest {
     private int uid;
     private String yyCon;
 
-    private MsgItem msgItem;
-
     public static List<MullMsg> createRandomMsgs(int num) {
       List<MullMsg> msgs = new ArrayList<MullMsg>();
       for (int i = 0; i < num; i++) {
@@ -224,13 +218,6 @@ public class BeanPropertyRowMapperTest {
       this.yyCon = yyCon;
     }
 
-    public MsgItem getMsgItem() {
-      return msgItem;
-    }
-
-    public void setMsgItem(MsgItem msgItem) {
-      this.msgItem = msgItem;
-    }
   }
 
   public static class MsgItem {

@@ -27,7 +27,7 @@ public class BindingParameter {
 
   private final String parameterName;
 
-  private final String propertyPath;
+  private final String propertyPath; // TODO 优化为propertyName
 
   private final JdbcType jdbcType;
 
@@ -62,6 +62,10 @@ public class BindingParameter {
 
   public String getFullName() {
     return Strings.getFullName(parameterName, propertyPath);
+  }
+
+  public boolean hasProperty() {
+    return Strings.isNotEmpty(propertyPath);
   }
 
   @Override

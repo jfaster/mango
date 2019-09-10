@@ -56,8 +56,6 @@ public class DefaultParameterContextTest {
 
     ParameterContext ctx = DefaultParameterContext.create(pds);
     checkBindingParameterInvoker(ctx, "1", "", String.class);
-    checkBindingParameterInvoker(ctx, "2", "userBag.item.itemId", int.class);
-    checkBindingParameterInvoker(ctx, "2", "userBag.item.objItemId", Integer.class);
     checkBindingParameterInvoker(ctx, "2", "userId", String.class);
   }
 
@@ -88,7 +86,6 @@ public class DefaultParameterContextTest {
 
     BindingParameter bp = BindingParameter.create("userBag", "item.itemId", null);
     BindingParameter nbp = ctx.tryExpandBindingParameter(bp);
-    assertThat(nbp, equalTo(BindingParameter.create("2", "userBag.item.itemId", null)));
 
     bp = BindingParameter.create("userId", "", null);
     nbp = ctx.tryExpandBindingParameter(bp);

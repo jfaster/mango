@@ -14,52 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.bean;
+package org.jfaster.mango.annotation;
 
-import org.jfaster.mango.annotation.Column;
-import org.jfaster.mango.annotation.ID;
+import org.jfaster.mango.invoker.PropertyTransfer;
 
-import javax.annotation.Nullable;
+import java.lang.annotation.*;
 
 /**
  * @author ash
  */
-public class A {
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Transfer {
 
-  @ID
-  private int id;
-
-  @Column("user_id")
-  @Nullable
-  private int uid;
-
-  private int age;
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public int getUid() {
-    return uid;
-  }
-
-  public void setUid(int uid) {
-    this.uid = uid;
-  }
-
-  public String getName() {
-    return "";
-  }
-
-  public void setName(String name) {
-  }
-
-  public int getAge() {
-    return age;
-  }
+  Class<? extends PropertyTransfer<?, ?>> value();
 
 }

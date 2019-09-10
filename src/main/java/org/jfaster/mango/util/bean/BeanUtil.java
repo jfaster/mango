@@ -33,6 +33,10 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
+ * 抽取当前类与向上所有被继承类的property，
+ * 同时含有get与set方法，才能算一个property
+ * get与set方法只含有1个，不算property
+ *
  * @author ash
  */
 public class BeanUtil {
@@ -82,6 +86,16 @@ public class BeanUtil {
 
   public static List<PropertyMeta> fetchPropertyMetas(Class<?> clazz) {
     return cache.get(clazz);
+  }
+
+  @Nullable
+  public static PropertyMeta fetchPropertyMeta(Class<?> clazz, String name) {
+    for (PropertyMeta propertyMeta : fetchPropertyMetas(clazz)) {
+      if (propertyMeta.getName().equals(name)) {
+        return propertyMeta;
+      }
+    }
+    return null;
   }
 
   static List<Field> fetchField(Class<?> clazz) {

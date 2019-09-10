@@ -45,24 +45,20 @@ public class DefaultInvocationContextTest {
     ctx.addParameter("user", user);
 
     BindingParameterInvoker userIdInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
+        TransferableBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
     assertThat(ctx.getNullableBindingValue(userIdInvoker), equalTo((Object) 9527));
     assertThat(ctx.getNullableBindingValue(userIdInvoker), equalTo((Object) 9527));
 
     BindingParameterInvoker userDotIdInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("user", "id", null));
+        TransferableBindingParameterInvoker.create(User.class, BindingParameter.create("user", "id", null));
     assertThat(ctx.getNullableBindingValue(userDotIdInvoker), equalTo((Object) 100));
     assertThat(ctx.getNullableBindingValue(userDotIdInvoker), equalTo((Object) 100));
 
     BindingParameterInvoker userDotObjIdInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("user", "objId", null));
+        TransferableBindingParameterInvoker.create(User.class, BindingParameter.create("user", "objId", null));
     assertThat(ctx.getNullableBindingValue(userDotObjIdInvoker), nullValue());
     assertThat(ctx.getNullableBindingValue(userDotObjIdInvoker), nullValue());
 
-    BindingParameterInvoker userDotUserBagDotNameInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("user", "userBag.name", null));
-    assertThat(ctx.getNullableBindingValue(userDotUserBagDotNameInvoker), equalTo((Object) "ash"));
-    assertThat(ctx.getNullableBindingValue(userDotUserBagDotNameInvoker), equalTo((Object) "ash"));
   }
 
   @Test
@@ -70,7 +66,7 @@ public class DefaultInvocationContextTest {
     DefaultInvocationContext ctx = DefaultInvocationContext.create();
     ctx.addParameter("userId", 9527);
     BindingParameterInvoker userIdInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
+        TransferableBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
     assertThat(ctx.getBindingValue(userIdInvoker), equalTo((Object) 9527));
   }
 
@@ -127,7 +123,7 @@ public class DefaultInvocationContextTest {
     DefaultInvocationContext ctx = DefaultInvocationContext.create();
     ctx.addParameter("userId", 9527);
     BindingParameterInvoker userIdInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
+        TransferableBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
     assertThat(ctx.getBindingValue(userIdInvoker), equalTo((Object) 9527));
     ctx.setBindingValue(userIdInvoker, 666);
     assertThat(ctx.getBindingValue(userIdInvoker), equalTo((Object) 666));
@@ -143,7 +139,7 @@ public class DefaultInvocationContextTest {
     DefaultInvocationContext ctx = DefaultInvocationContext.create();
     ctx.addParameter("userId", null);
     BindingParameterInvoker userIdInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
+        TransferableBindingParameterInvoker.create(User.class, BindingParameter.create("userId", "", null));
     ctx.getBindingValue(userIdInvoker);
   }
 
@@ -155,7 +151,7 @@ public class DefaultInvocationContextTest {
     ctx.addParameter("userId", null);
     ctx.addParameter("userName", "ash");
     BindingParameterInvoker userIdInvoker =
-        FunctionalBindingParameterInvoker.create(User.class, BindingParameter.create("userId2", "", null));
+        TransferableBindingParameterInvoker.create(User.class, BindingParameter.create("userId2", "", null));
     ctx.getNullableBindingValue(userIdInvoker);
   }
 

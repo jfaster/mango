@@ -75,7 +75,7 @@ public class DefaultParameterContext implements ParameterContext {
       throw new BindingException("Parameter '" + BindingParameter.create(bindingParameter.getParameterName(), "", null) +
           "' not found, available root parameters are " + transToBindingParameters(nameToTypeMap.keySet()));
     }
-    return FunctionalBindingParameterInvoker.create(type, bindingParameter);
+    return TransferableBindingParameterInvoker.create(type, bindingParameter);
   }
 
   @Override
@@ -83,6 +83,7 @@ public class DefaultParameterContext implements ParameterContext {
     return parameterDescriptors;
   }
 
+  // TODO 自动扩展
   @Override
   @Nullable
   public BindingParameter tryExpandBindingParameter(BindingParameter bindingParameter) {
@@ -92,7 +93,7 @@ public class DefaultParameterContext implements ParameterContext {
       for (Map.Entry<String, Type> entry : nameToTypeMap.entrySet()) {
         Type type = entry.getValue();
         try {
-          FunctionalBindingParameterInvoker.create(type, newBindingParameter);
+          TransferableBindingParameterInvoker.create(type, newBindingParameter);
         } catch (BindingException e) {
           // 异常说明扩展失败
           continue;

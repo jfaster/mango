@@ -14,52 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.bean;
-
-import org.jfaster.mango.annotation.Column;
-import org.jfaster.mango.annotation.ID;
+package org.jfaster.mango.invoker;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
  * @author ash
  */
-public class A {
+public interface PropertyTransfer<PROPERTY, COLUMN> {
 
-  @ID
-  private int id;
-
-  @Column("user_id")
   @Nullable
-  private int uid;
+  COLUMN propertyToColumn(@Nullable PROPERTY propertyValue);
 
-  private int age;
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public int getUid() {
-    return uid;
-  }
-
-  public void setUid(int uid) {
-    this.uid = uid;
-  }
-
-  public String getName() {
-    return "";
-  }
-
-  public void setName(String name) {
-  }
-
-  public int getAge() {
-    return age;
-  }
+  @Nullable
+  PROPERTY columnToProperty(@Nullable COLUMN columnValue, Type actualPropertyType);
 
 }

@@ -17,8 +17,7 @@
 package org.jfaster.mango.mapper;
 
 import org.jfaster.mango.invoker.InvokerCache;
-import org.jfaster.mango.invoker.SetterInvoker;
-import org.jfaster.mango.invoker.UnreachablePropertyException;
+import org.jfaster.mango.invoker.TransferableInvoker;
 import org.jfaster.mango.type.TypeHandler;
 import org.jfaster.mango.type.TypeHandlerRegistry;
 import org.jfaster.mango.util.PropertyTokenizer;
@@ -27,6 +26,7 @@ import org.jfaster.mango.util.jdbc.ResultSetWrapper;
 import org.jfaster.mango.util.logging.InternalLogger;
 import org.jfaster.mango.util.logging.InternalLoggerFactory;
 import org.jfaster.mango.util.reflect.Reflection;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +45,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
 
   private Class<T> mappedClass;
 
-  private Map<String, SetterInvoker> invokerMap;
+  private Map<String, TransferableInvoker> invokerMap;
 
   private Map<String, String> columnToPropertyMap;
 
@@ -55,11 +55,11 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     initialize(mappedClass, propertyToColumnMap, checkColumn);
   }
 
-  protected void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap, boolean checkColumn) {
+  void initialize(Class<T> mappedClass, Map<String, String> propertyToColumnMap, boolean checkColumn) {
     this.mappedClass = mappedClass;
     this.checkColumn = checkColumn;
-    this.columnToPropertyMap = new HashMap<String, String>();
-    this.invokerMap = new HashMap<String, SetterInvoker>();
+    this.columnToPropertyMap = new HashMap<>();
+    this.invokerMap = new HashMap<>();
 
     // 初始化columnToPropertyPathMap
     for (Map.Entry<String, String> entry : propertyToColumnMap.entrySet()) {
@@ -71,8 +71,8 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
     }
 
     // 初始化invokerMap
-    List<SetterInvoker> invokers = InvokerCache.getSetterInvokers(mappedClass);
-    for (SetterInvoker invoker : invokers) {
+    List<TransferableInvoker> invokers = InvokerCache.getInvokers(mappedClass);
+    for (TransferableInvoker invoker : invokers) {
       String column = propertyToColumnMap.get(invoker.getName());
       if (column != null) { // 使用配置映射
         invokerMap.put(column.toLowerCase(), invoker);
@@ -96,55 +96,29 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
       String columnName = rsw.getColumnName(index);
       String lowerCaseColumnName = columnName.toLowerCase();
       String propertyPath = columnToPropertyMap.get(lowerCaseColumnName);
+
+      //TODO 优化
       if (propertyPath != null) { // 使用自定义多级映射
-        setValueByPropertyPath(mappedObject, propertyPath, rsw, index, rowNumber);
+        setValueByProperty(mappedObject, propertyPath, rsw, index, rowNumber);
       } else {
-        PropertyTokenizer prop = new PropertyTokenizer(columnName);
-        if (prop.hasNext()) { // select语句中的字段存在多级映射
-          setValueByPropertyPath(mappedObject, columnName, rsw, index, rowNumber);
-        } else { // 单级映射（包含约定和自定义）
-          setValueByProperty(mappedObject, lowerCaseColumnName, rsw, index, rowNumber);
-        }
+        setValueByProperty(mappedObject, lowerCaseColumnName, rsw, index, rowNumber);
       }
     }
     return mappedObject;
   }
-
-  private void setValueByPropertyPath(Object mappedObject, String propertyPath, ResultSetWrapper rsw,
-                                      int index, int rowNumber) throws SQLException {
-
-    FunctionalSetterInvokerGroup g = null;
-    try {
-      g = FunctionalSetterInvokerGroup.create(mappedClass, propertyPath);
-    } catch (UnreachablePropertyException e) {
-      if (checkColumn) {
-        throw new MappingException("Unable to map column '" + rsw.getColumnName(index) +
-            "' to property '" + propertyPath + "'");
-      }
-    }
-    if (g != null) {
-      TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(g.getTargetType(), rsw.getJdbcType(index));
-      Object value = typeHandler.getResult(rsw.getResultSet(), index);
-      if (logger.isDebugEnabled() && rowNumber == 0) {
-        logger.debug("Mapping column '" + rsw.getColumnName(index) + "' to property '" +
-            propertyPath + "' of type " + g.getTargetType());
-      }
-      g.invoke(mappedObject, value);
-    }
-  }
-
   private void setValueByProperty(Object mappedObject, String lowerCaseColumnName, ResultSetWrapper rsw,
                                   int index, int rowNumber) throws SQLException {
 
-    SetterInvoker invoker = invokerMap.get(lowerCaseColumnName);
+    TransferableInvoker invoker = invokerMap.get(lowerCaseColumnName);
     if (invoker != null) {
-      TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(invoker.getParameterRawType(), rsw.getJdbcType(index));
+      Class<?> columnRawType = TypeToken.of(invoker.getColumnType()).getRawType();
+      TypeHandler<?> typeHandler = TypeHandlerRegistry.getTypeHandler(columnRawType, rsw.getJdbcType(index));
       Object value = typeHandler.getResult(rsw.getResultSet(), index);
       if (logger.isDebugEnabled() && rowNumber == 0) {
         logger.debug("Mapping column '" + rsw.getColumnName(index) + "' to property '" +
-            invoker.getName() + "' of type " + invoker.getParameterRawType());
+            invoker.getName() + "' of type " + columnRawType);
       }
-      invoker.invoke(mappedObject, value);
+      invoker.invokeSet(mappedObject, value);
     } else {
       if (checkColumn) {
         throw new MappingException("Unable to map column '" + rsw.getColumnName(index) +
