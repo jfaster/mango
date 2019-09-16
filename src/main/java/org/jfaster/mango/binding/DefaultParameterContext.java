@@ -104,11 +104,11 @@ public class DefaultParameterContext implements ParameterContext {
       if (num > 0) {
         if (num != 1) {
           throw new BindingException("Root parameters " + transToBindingParameters(parameterNames) +
-              " has the same property '" + newBindingParameter.getPropertyPath() + "', so can't auto expand");
+              " has the same property '" + newBindingParameter.getPropertyName() + "', so can't auto expand");
         }
         return BindingParameter.create(
             parameterNames.get(0),
-            newBindingParameter.getPropertyPath(),
+            newBindingParameter.getPropertyName(),
             newBindingParameter.getJdbcType());
       }
     }

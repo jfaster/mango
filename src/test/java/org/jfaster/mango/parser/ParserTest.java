@@ -455,7 +455,7 @@ public class ParserTest {
       public Object visit(ASTJDBCParameter node, Object data) {
         BindingParameter bp = node.getBindingParameter();
         assertThat(bp.getParameterName(), equalTo("1"));
-        assertThat(bp.getPropertyPath(), equalTo("b.c"));
+        assertThat(bp.getPropertyName(), equalTo("b.c"));
         assertThat(bp.getJdbcType(), equalTo(JdbcType.BLOB));
         t.incrementAndGet();
         return super.visit(node, data);
@@ -465,7 +465,7 @@ public class ParserTest {
       public Object visit(ASTJDBCIterableParameter node, Object data) {
         BindingParameter bp = node.getBindingParameter();
         assertThat(bp.getParameterName(), equalTo("2"));
-        assertThat(bp.getPropertyPath(), equalTo("x.y"));
+        assertThat(bp.getPropertyName(), equalTo("x.y"));
         assertThat(bp.getJdbcType(), equalTo(JdbcType.CLOB));
         t.incrementAndGet();
         return super.visit(node, data);

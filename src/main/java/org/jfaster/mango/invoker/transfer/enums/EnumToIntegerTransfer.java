@@ -59,4 +59,8 @@ public class EnumToIntegerTransfer implements PropertyTransfer<Enum, Integer> {
     throw new IllegalStateException("cant' trans Integer(" + columnValue + ") to " + actualPropertyType);
   }
 
+  @Override
+  public boolean isCheckType() {
+    return false;
+  }
 }

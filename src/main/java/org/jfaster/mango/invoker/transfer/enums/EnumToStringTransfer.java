@@ -45,4 +45,8 @@ public class EnumToStringTransfer implements PropertyTransfer<Enum, String> {
     return r;
   }
 
+  @Override
+  public boolean isCheckType() {
+    return false;
+  }
 }

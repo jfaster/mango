@@ -40,4 +40,8 @@ public class ObjectToGsonTransfer implements PropertyTransfer<Object, String> {
     return columnValue == null ? null : new Gson().fromJson(columnValue, actualPropertyType);
   }
 
+  @Override
+  public boolean isCheckType() {
+    return false;
+  }
 }

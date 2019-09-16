@@ -18,6 +18,7 @@ package org.jfaster.mango.invoker;
 
 import org.jfaster.mango.annotation.Transfer;
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.util.ToStringHelper;
 import org.jfaster.mango.util.bean.PropertyMeta;
 import org.jfaster.mango.util.reflect.Reflection;
 import org.jfaster.mango.util.reflect.TokenTuple;
@@ -58,6 +59,13 @@ public class TransferablePropertyInvoker implements TransferableInvoker {
       TokenTuple tokenTuple = TypeToken.of(transferClass).resolveFatherClassTuple(PropertyTransfer.class);
       TypeToken<?> columnToken = tokenTuple.getSecond();
       columnType = columnToken.getType();
+      if (propertyTransfer.isCheckType()) {
+        Type propertyType = tokenTuple.getFirst().getType();
+        if (!propertyType.equals(actualPropertyToken.getType())) {
+          throw new ClassCastException(String.format("error transfer<%s, %s> for property type %s",
+              ToStringHelper.toString(propertyType), ToStringHelper.toString(columnType), ToStringHelper.toString(actualPropertyToken.getType())));
+        }
+      }
     } else {
       propertyTransfer = null;
       columnType = propertyMeta.getType();

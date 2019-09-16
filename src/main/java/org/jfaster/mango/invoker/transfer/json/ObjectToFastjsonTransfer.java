@@ -40,4 +40,8 @@ public class ObjectToFastjsonTransfer implements PropertyTransfer<Object, String
     return columnValue == null ? null : JSON.parseObject(columnValue, actualPropertyType);
   }
 
+  @Override
+  public boolean isCheckType() {
+    return false;
+  }
 }

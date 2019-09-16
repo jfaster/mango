@@ -79,7 +79,7 @@ public class ASTJoinParameter extends AbstractRenderableNode implements Paramete
     return super.toString() + "{" +
         "fullName=" + getFullName() + ", " +
         "parameterName=" + bindingParameter.getParameterName() + ", " +
-        "propertyPath=" + bindingParameter.getPropertyPath() +
+        "propertyName=" + bindingParameter.getPropertyName() +
         "}";
   }
 

@@ -36,8 +36,7 @@ public class TransferableBindingParameterInvoker implements BindingParameterInvo
     Type targetType = originalType;
     TransferableInvoker invoker = null;
     if (bindingParameter.hasProperty()) {
-      invoker = InvokerCache.getInvoker(TypeToken.of(targetType).getRawType(),
-          bindingParameter.getPropertyPath());
+      invoker = InvokerCache.getInvoker(TypeToken.of(targetType).getRawType(),  bindingParameter.getPropertyName());
       targetType = invoker.getColumnType();
     }
     this.targetType = targetType;

@@ -30,4 +30,8 @@ public interface PropertyTransfer<PROPERTY, COLUMN> {
   @Nullable
   PROPERTY columnToProperty(@Nullable COLUMN columnValue, Type actualPropertyType);
 
+  default boolean isCheckType() {
+    return true;
+  }
+
 }

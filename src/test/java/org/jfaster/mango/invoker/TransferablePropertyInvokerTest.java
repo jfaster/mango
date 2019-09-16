@@ -98,6 +98,14 @@ public class TransferablePropertyInvokerTest {
     idInvoker.invokeSet(a, null);
   }
 
+  @Test
+  public void invokeId4Exception2() {
+    thrown.expect(ClassCastException.class);
+    thrown.expectMessage("error transfer<List<Integer>, String> for property type int");
+    PropertyMeta idMeta = BeanUtil.fetchPropertyMeta(ClassB.class, "id");
+    TransferablePropertyInvoker.create(idMeta);
+  }
+
   private static class ClassA {
 
     private int id;
@@ -128,6 +136,20 @@ public class TransferablePropertyInvokerTest {
 
     public void setSubIds(List<Integer> subIds) {
       this.subIds = subIds;
+    }
+  }
+
+  private static class ClassB {
+
+    @Transfer(IntegerListToStringTransfer.class)
+    private int id;
+
+    public int getId() {
+      return id;
+    }
+
+    public void setId(int id) {
+      this.id = id;
     }
   }
 

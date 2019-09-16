@@ -108,7 +108,7 @@ public class ASTExpressionParameter extends AbstractExpression implements Parame
     return super.toString() + "{" +
         "fullName=" + getFullName() + ", " +
         "parameterName=" + bindingParameter.getParameterName() + ", " +
-        "propertyPath=" + bindingParameter.getPropertyPath() +
+        "propertyName=" + bindingParameter.getPropertyName() +
         "}";
   }
 

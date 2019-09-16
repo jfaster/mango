@@ -27,13 +27,13 @@ public class BindingParameter {
 
   private final String parameterName;
 
-  private final String propertyPath; // TODO 优化为propertyName
+  private final String propertyName;
 
   private final JdbcType jdbcType;
 
-  public BindingParameter(String parameterName, String propertyPath, JdbcType jdbcType) {
+  public BindingParameter(String parameterName, String propertyName, JdbcType jdbcType) {
     this.parameterName = parameterName;
-    this.propertyPath = propertyPath;
+    this.propertyName = propertyName;
     this.jdbcType = jdbcType;
   }
 
@@ -42,18 +42,18 @@ public class BindingParameter {
   }
 
   public BindingParameter rightShift() {
-    String newPropertyPath = Strings.isNotEmpty(propertyPath) ?
-        parameterName + "." + propertyPath :
+    String newPropertyName = hasProperty() ?
+        parameterName + "." + propertyName :
         parameterName;
-    return BindingParameter.create("", newPropertyPath, jdbcType);
+    return BindingParameter.create("", newPropertyName, jdbcType);
   }
 
   public String getParameterName() {
     return parameterName;
   }
 
-  public String getPropertyPath() {
-    return propertyPath;
+  public String getPropertyName() {
+    return propertyName;
   }
 
   public JdbcType getJdbcType() {
@@ -61,11 +61,11 @@ public class BindingParameter {
   }
 
   public String getFullName() {
-    return Strings.getFullName(parameterName, propertyPath);
+    return Strings.getFullName(parameterName, propertyName);
   }
 
   public boolean hasProperty() {
-    return Strings.isNotEmpty(propertyPath);
+    return Strings.isNotEmpty(propertyName);
   }
 
   @Override
@@ -76,13 +76,13 @@ public class BindingParameter {
       return false;
     final BindingParameter other = (BindingParameter) obj;
     return Objects.equal(this.getParameterName(), other.getParameterName())
-        && Objects.equal(this.getPropertyPath(), other.getPropertyPath())
+        && Objects.equal(this.getPropertyName(), other.getPropertyName())
         && Objects.equal(this.getJdbcType(), other.getJdbcType());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(getParameterName(), getPropertyPath(), getJdbcType());
+    return Objects.hashCode(getParameterName(), getPropertyName(), getJdbcType());
   }
 
   @Override

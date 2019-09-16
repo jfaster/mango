@@ -124,7 +124,7 @@ public class ASTJDBCIterableParameter extends AbstractRenderableNode implements 
     return super.toString() + "{" +
         "fullName=" + getFullName() + ", " +
         "parameterName=" + bindingParameter.getParameterName() + ", " +
-        "propertyPath=" + bindingParameter.getPropertyPath() +
+        "propertyName=" + bindingParameter.getPropertyName() +
         "}";
   }
 
