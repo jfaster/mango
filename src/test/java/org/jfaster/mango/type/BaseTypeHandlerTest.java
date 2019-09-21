@@ -18,12 +18,12 @@ package org.jfaster.mango.type;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class BaseTypeHandlerTest {
 
   @Mock
