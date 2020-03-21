@@ -14,19 +14,29 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
-
-
-import javax.annotation.Nullable;
+package org.jfaster.mango.crud.named.parser.op;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public abstract class Param0Op extends AbstractOp {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Override
+  public int paramCount() {
+    return 0;
+  }
+
+  @Override
+  public String render(String column, String[] params) {
+    if (params == null) {
+      throw new NullPointerException("params can't be null");
+    }
+    if (params.length != 0) {
+      throw new IllegalArgumentException("length of params expected 0, but " + params.length);
+    }
+    return render(column);
+  }
+
+  public abstract String render(String column);
 
 }

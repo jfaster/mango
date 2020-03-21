@@ -22,6 +22,7 @@ import org.jfaster.mango.util.reflect.TypeWrapper;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -78,6 +79,16 @@ public abstract class TypeWithAnnotationDescriptor {
       }
     }
     return null;
+  }
+
+  public <A extends Annotation> List<A> getAnnotations(Class<A> annotationType) {
+    List<A> r = new LinkedList<>();
+    for (Annotation annotation : getAnnotations()) {
+      if (annotationType.isInstance(annotation)) {
+        r.add(annotationType.cast(annotation));
+      }
+    }
+    return r;
   }
 
   public Type getType() {

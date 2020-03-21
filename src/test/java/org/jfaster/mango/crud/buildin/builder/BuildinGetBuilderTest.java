@@ -14,46 +14,28 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.reflect;
+package org.jfaster.mango.crud.buildin.builder;
 
-import org.jfaster.mango.annotation.DB;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author ash
  */
-public class ReflectionTest {
+public class BuildinGetBuilderTest {
 
   @Test
-  public void testInstantiate() throws Exception {
-    Reflection.instantiateClass(A.class);
-  }
-
-  private static class A {
-
-  }
-
-  @Test
-  public void testGetAnnotations() throws Exception {
-    List<Annotation> annos = new LinkedList<>();
-    Reflection.getAnnotations(SubDao.class, annos);
-    assertThat(annos.size(), equalTo(1));
-  }
-
-  @DB
-  interface SuperDao {
-  }
-
-  interface SubDao extends SuperDao {
+  public void build() throws Exception {
+    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
+    BuildinGetBuilder b = new BuildinGetBuilder("id2", columns, false);
+    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table where id2 = :1"));
+    b = new BuildinGetBuilder("id2", columns, true);
+    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table where id2 in (:1)"));
   }
 
 }

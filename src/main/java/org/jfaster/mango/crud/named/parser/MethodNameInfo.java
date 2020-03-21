@@ -14,19 +14,37 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.named.parser;
 
-
-import javax.annotation.Nullable;
+import java.util.List;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class MethodNameInfo {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  private final List<OpUnit> opUnits;
+
+  private final List<String> logics;
+
+  private final OrderUnit orderUnit;
+
+  public MethodNameInfo(List<OpUnit> opUnits, List<String> logics, OrderUnit orderUnit) {
+    this.opUnits = opUnits;
+    this.logics = logics;
+    this.orderUnit = orderUnit;
+  }
+
+  public List<OpUnit> getOpUnits() {
+    return opUnits;
+  }
+
+  public List<String> getLogics() {
+    return logics;
+  }
+
+  public OrderUnit getOrderUnit() {
+    return orderUnit;
+  }
 
 }

@@ -25,6 +25,7 @@ import org.jfaster.mango.page.PageResult;
 import org.jfaster.mango.support.DataSourceConfig;
 import org.jfaster.mango.support.Table;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -103,6 +104,7 @@ public class CustomCrudDaoTest {
   }
 
   @Test
+  @Ignore
   public void test3() throws Throwable {
     thrown.expect(CrudException.class);
     thrown.expectMessage("can't convert method [abc] to SQL");

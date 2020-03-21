@@ -14,19 +14,33 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.named.parser.op;
 
 
-import javax.annotation.Nullable;
+import org.jfaster.mango.util.Objects;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public abstract class AbstractOp implements Op {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Op) {
+      Op other = (Op) obj;
+      return this == other || Objects.equal(this.keyword(), other.keyword());
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(keyword());
+  }
+
+  @Override
+  public String toString() {
+    return keyword();
+  }
 
 }

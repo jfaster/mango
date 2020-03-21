@@ -38,9 +38,7 @@ public class Methods {
     for (Annotation a : method.getAnnotations()) {
       mas.add(a);
     }
-    for (Annotation a : Reflection.getAnnotations(daoClass)) {
-      mas.add(a);
-    }
+    mas.addAll(Reflection.getAnnotations(daoClass));
 
     TypeToken<?> daoTypeToken = TypeToken.of(daoClass);
     Type returnType = fixAndResolveType(method.getGenericReturnType(), daoTypeToken);

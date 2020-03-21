@@ -78,6 +78,10 @@ public class MethodDescriptor {
     return returnDescriptor.getAnnotation(annotationType);
   }
 
+  public  <A extends Annotation> List<A> getAnnotations(Class<A> annotationType) {
+    return returnDescriptor.getAnnotations(annotationType);
+  }
+
   public Type getReturnType() {
     return returnDescriptor.getType();
   }
@@ -103,16 +107,21 @@ public class MethodDescriptor {
       return cachedSQL;
     }
     SQL sqlAnno = getAnnotation(SQL.class);
-    String sql;
+    String sql = null;
     if (sqlAnno != null) {
       sql = sqlAnno.value();
     } else {
-      UseSqlGenerator useSqlGeneratorAnno = getAnnotation(UseSqlGenerator.class);
-      if (useSqlGeneratorAnno == null) {
+      List<UseSqlGenerator> useSqlGeneratorAnnos = getAnnotations(UseSqlGenerator.class);
+      if (useSqlGeneratorAnnos.isEmpty()) {
         throw new DescriptionException("each method expected one of @SQL or @UseSqlGenerator annotation but not found");
       }
-      SqlGenerator sqlGenerator = Reflection.instantiateClass(useSqlGeneratorAnno.value());
-      sql = sqlGenerator.generateSql(this);
+      for (UseSqlGenerator useSqlGeneratorAnno : useSqlGeneratorAnnos) {
+        SqlGenerator sqlGenerator = Reflection.instantiateClass(useSqlGeneratorAnno.value());
+        sql = sqlGenerator.generateSql(this);
+        if (Strings.isNotEmpty(sql)) {
+          break;
+        }
+      }
     }
     if (Strings.isEmpty(sql)) {
       throw new DescriptionException("sql is null or empty");

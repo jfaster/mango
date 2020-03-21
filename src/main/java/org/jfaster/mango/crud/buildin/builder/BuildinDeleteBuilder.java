@@ -14,19 +14,24 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
-
-
-import javax.annotation.Nullable;
+package org.jfaster.mango.crud.buildin.builder;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class BuildinDeleteBuilder extends AbstractBuildinBuilder {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  private final static String SQL_TEMPLATE = "delete from #table where %s = :1";
+
+  private final String columnId;
+
+  public BuildinDeleteBuilder(String colId) {
+    columnId = colId;
+  }
+
+  @Override
+  public String buildSql() {
+    return String.format(SQL_TEMPLATE, columnId);
+  }
 
 }

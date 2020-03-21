@@ -14,19 +14,18 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
-
-
-import javax.annotation.Nullable;
+package org.jfaster.mango.crud.buildin.builder;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class BuildinCountBuilder extends AbstractBuildinBuilder {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  private final static String SQL = "select count(1) from #table";
+
+  @Override
+  public String buildSql() {
+    return SQL;
+  }
 
 }

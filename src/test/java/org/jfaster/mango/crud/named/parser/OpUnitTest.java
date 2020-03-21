@@ -14,46 +14,35 @@
  * under the License.
  */
 
-package org.jfaster.mango.util.reflect;
+package org.jfaster.mango.crud.named.parser;
 
-import org.jfaster.mango.annotation.DB;
 import org.junit.Test;
 
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author ash
  */
-public class ReflectionTest {
+public class OpUnitTest {
 
   @Test
-  public void testInstantiate() throws Exception {
-    Reflection.instantiateClass(A.class);
-  }
+  public void test() throws Exception {
+    OpUnit u = OpUnit.create("UserName");
+    assertThat(u.getOp().keyword(), equalTo("Equals"));
+    assertThat(u.getProperty(), equalTo("userName"));
 
-  private static class A {
+    u = OpUnit.create("IdIsNull");
+    assertThat(u.getOp().keyword(), equalTo("IsNull"));
+    assertThat(u.getProperty(), equalTo("id"));
 
-  }
+    u = OpUnit.create("UserAgeLessThan");
+    assertThat(u.getOp().keyword(), equalTo("LessThan"));
+    assertThat(u.getProperty(), equalTo("userAge"));
 
-  @Test
-  public void testGetAnnotations() throws Exception {
-    List<Annotation> annos = new LinkedList<>();
-    Reflection.getAnnotations(SubDao.class, annos);
-    assertThat(annos.size(), equalTo(1));
-  }
-
-  @DB
-  interface SuperDao {
-  }
-
-  interface SubDao extends SuperDao {
+    u = OpUnit.create("ageBetween");
+    assertThat(u.getOp().keyword(), equalTo("Between"));
+    assertThat(u.getProperty(), equalTo("age"));
   }
 
 }

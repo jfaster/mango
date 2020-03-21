@@ -14,19 +14,26 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.buildin.builder;
 
+import com.google.common.collect.Lists;
+import org.junit.Test;
 
-import javax.annotation.Nullable;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class BuildinGetAllBuilderTest {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Test
+  public void build() throws Exception {
+    List<String> columns = Lists.newArrayList("id2", "user_name", "user_age");
+    BuildinGetAllBuilder b = new BuildinGetAllBuilder(columns);
+    assertThat(b.buildSql(), equalTo("select id2, user_name, user_age from #table"));
+  }
 
 }

@@ -14,19 +14,30 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.buildin.builder;
 
+import org.jfaster.mango.util.Joiner;
 
-import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class BuildinGetAllBuilder extends AbstractBuildinBuilder {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  private final static String SQL = "select %s from #table";
+
+  private final List<String> columns;
+
+  public BuildinGetAllBuilder(List<String> cols) {
+    columns = new ArrayList<String>(cols);
+  }
+
+  @Override
+  public String buildSql() {
+    String s1 = Joiner.on(", ").join(columns);
+    return String.format(SQL, s1, s1);
+  }
 
 }

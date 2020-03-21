@@ -14,19 +14,34 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
-
-
-import javax.annotation.Nullable;
+package org.jfaster.mango.crud.named.parser;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class OrderUnit {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  private final String property;
 
+  private final OrderType orderType;
+
+  private final int orderStrSize;
+
+  public OrderUnit(String property, OrderType orderType, int orderStrSize) {
+    this.property = property;
+    this.orderType = orderType;
+    this.orderStrSize = orderStrSize;
+  }
+
+  public String getProperty() {
+    return property;
+  }
+
+  public OrderType getOrderType() {
+    return orderType;
+  }
+
+  public int getOrderStrSize() {
+    return orderStrSize;
+  }
 }

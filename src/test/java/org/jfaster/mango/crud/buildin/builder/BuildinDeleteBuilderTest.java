@@ -14,19 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.buildin.builder;
 
+import org.junit.Test;
 
-import javax.annotation.Nullable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class BuildinDeleteBuilderTest {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Test
+  public void build() throws Exception {
+    BuildinDeleteBuilder b = new BuildinDeleteBuilder("id2");
+    assertThat(b.buildSql(), equalTo("delete from #table where id2 = :1"));
+  }
 
 }

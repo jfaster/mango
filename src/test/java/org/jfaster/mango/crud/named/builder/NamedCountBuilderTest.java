@@ -14,19 +14,22 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.named.builder;
 
+import org.junit.Test;
 
-import javax.annotation.Nullable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class NamedCountBuilderTest {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Test
+  public void buildSql() throws Exception {
+    NamedCountBuilder b = new NamedCountBuilder("where id = :1");
+    assertThat(b.buildSql(), equalTo("select count(1) from #table where id = :1"));
+  }
 
 }

@@ -14,19 +14,20 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud;
 
+import org.jfaster.mango.annotation.UseSqlGenerator;
+import org.jfaster.mango.descriptor.Generic;
+import org.jfaster.mango.page.Page;
+import org.jfaster.mango.page.PageResult;
+import org.jfaster.mango.page.Sort;
 
-import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
-
-  @Nullable
-  String generateSql(MethodDescriptor md);
-
+@UseSqlGenerator(NamedSqlGenerator.class)
+public interface NamedCrudDao<T, ID> extends Generic<T, ID> {
 }

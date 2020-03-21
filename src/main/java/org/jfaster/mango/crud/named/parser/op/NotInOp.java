@@ -14,19 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
-
-
-import javax.annotation.Nullable;
+package org.jfaster.mango.crud.named.parser.op;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class NotInOp extends Param1ForCollectionOp {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Override
+  public String keyword() {
+    return "NotIn";
+  }
+
+  @Override
+  public String operator() {
+    return "not in";
+  }
 
 }

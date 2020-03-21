@@ -14,19 +14,32 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.named.builder;
 
+import org.jfaster.mango.util.Joiner;
 
-import javax.annotation.Nullable;
+import java.util.List;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class NamedQueryBuilder extends AbstractNamedBuilder {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  private final static String SQL_TEMPLATE = "select %s from #table %s";
+
+  private final List<String> columns;
+
+  private final String tailOfSql;
+
+  public NamedQueryBuilder(List<String> columns, String tailOfSql) {
+    this.columns = columns;
+    this.tailOfSql = tailOfSql;
+  }
+
+  @Override
+  public String buildSql() {
+    String s1 = Joiner.on(", ").join(columns);
+    return String.format(SQL_TEMPLATE, s1, tailOfSql);
+  }
 
 }

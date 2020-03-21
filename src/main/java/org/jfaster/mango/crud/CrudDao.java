@@ -28,8 +28,8 @@ import java.util.Optional;
 /**
  * @author ash
  */
-@UseSqlGenerator(CrudSqlGenerator.class)
-public interface CrudDao<T, ID> extends Generic<T, ID> {
+@UseSqlGenerator(BuildinSqlGenerator.class)
+public interface CrudDao<T, ID> extends NamedCrudDao<T, ID> {
 
   void add(T entity);
 

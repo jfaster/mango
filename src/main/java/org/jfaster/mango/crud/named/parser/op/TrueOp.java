@@ -14,19 +14,21 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
-
-
-import javax.annotation.Nullable;
+package org.jfaster.mango.crud.named.parser.op;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class TrueOp extends Param0Op {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Override
+  public String keyword() {
+    return "True";
+  }
+
+  @Override
+  public String render(String column) {
+    return column + " = true";
+  }
 
 }

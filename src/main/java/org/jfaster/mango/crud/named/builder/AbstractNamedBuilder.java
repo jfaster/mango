@@ -14,19 +14,12 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.named.builder;
 
-
-import javax.annotation.Nullable;
+import org.jfaster.mango.crud.Builder;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
-
-  @Nullable
-  String generateSql(MethodDescriptor md);
-
+public abstract class AbstractNamedBuilder implements Builder {
 }

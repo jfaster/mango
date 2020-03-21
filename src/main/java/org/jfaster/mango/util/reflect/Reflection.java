@@ -19,10 +19,7 @@ package org.jfaster.mango.util.reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ash
@@ -91,13 +88,19 @@ public class Reflection {
     }
   }
 
-  public static Set<Annotation> getAnnotations(Class<?> clazz) {
-    Set<Annotation> annos = new HashSet<Annotation>();
+  /**
+   * 从子到父，获得类/接口上的注解
+   *
+   * @param clazz
+   * @return
+   */
+  public static List<Annotation> getAnnotations(Class<?> clazz) {
+    List<Annotation> annos = new LinkedList<>();
     getAnnotations(clazz, annos);
     return annos;
   }
 
-  static void getAnnotations(Class<?> clazz, Set<Annotation> annos) {
+  static void getAnnotations(Class<?> clazz, List<Annotation> annos) {
     if (clazz == null) {
       return;
     }

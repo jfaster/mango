@@ -14,19 +14,24 @@
  * under the License.
  */
 
-package org.jfaster.mango.descriptor;
+package org.jfaster.mango.crud.named.parser.op;
 
+import org.junit.Test;
 
-import javax.annotation.Nullable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
- * SQL生成器
- *
  * @author ash
  */
-public interface SqlGenerator {
+public class BetweenOpTest {
 
-  @Nullable
-  String generateSql(MethodDescriptor md);
+  @Test
+  public void test() throws Exception {
+    Op op = new BetweenOp();
+    assertThat(op.keyword(), equalTo("Between"));
+    assertThat(op.paramCount(), equalTo(2));
+    assertThat(op.render("id", new String[] {":1", ":2"}), equalTo("id between :1 and :2"));
+  }
 
 }
