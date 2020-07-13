@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class CrudOrder {
 
-  @ID(autoGenerateId = false)
+  @ID()
   private String id;
 
   @Column("uid")

@@ -19,6 +19,7 @@ package org.jfaster.mango.crud.buildin.factory;
 import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
+import org.jfaster.mango.crud.Order2;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -43,6 +44,18 @@ public class BuildinAddBuilderFactoryTest {
     Builder b = factory.doTryGetBuilder(name, void.class, types, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("insert into #table(userid, user_age) values(:userId, :userAge)"));
+  }
+
+  @Test
+  public void test2() throws Exception {
+    BuildinAddBuilderFactory factory = new BuildinAddBuilderFactory();
+    String name = "add";
+    Class<?> entityClass = Order2.class;
+    Class<Integer> idClass = Integer.class;
+    List<Type> types = Lists.newArrayList((Type) Order2.class);
+    Builder b = factory.doTryGetBuilder(name, void.class, types, entityClass, idClass);
+    assertThat(b, notNullValue());
+    assertThat(b.buildSql(), equalTo("insert into #table(order_id, userid, user_age) values(:orderId, :userId, :userAge)"));
   }
 
 }

@@ -48,7 +48,7 @@ public class BuildinDeleteBuilderFactory extends AbstractBuildinBuilderFactory {
 
   @Override
   AbstractBuildinBuilder createInternalBuilder(CrudMeta cm) {
-    return new BuildinDeleteBuilder(cm.getColumnId());
+    return new BuildinDeleteBuilder(cm.getColumn4Id());
   }
 
 }

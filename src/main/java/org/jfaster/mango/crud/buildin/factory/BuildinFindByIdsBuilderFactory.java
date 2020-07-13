@@ -50,7 +50,7 @@ public class BuildinFindByIdsBuilderFactory extends AbstractBuildinBuilderFactor
 
   @Override
   AbstractBuildinBuilder createInternalBuilder(CrudMeta cm) {
-    return new BuildinGetBuilder(cm.getColumnId(), cm.getColumns(), true);
+    return new BuildinGetBuilder(cm.getColumn4Id(), cm.getColumns(), true);
   }
 
 }

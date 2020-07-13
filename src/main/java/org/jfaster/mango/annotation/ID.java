@@ -27,7 +27,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ID {
-
-  boolean autoGenerateId() default true;
-
 }

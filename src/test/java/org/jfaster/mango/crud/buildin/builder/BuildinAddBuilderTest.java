@@ -34,12 +34,12 @@ public class BuildinAddBuilderTest {
   public void build() throws Exception {
     List<String> properties = Lists.newArrayList("id", "name", "age");
     List<String> columns = Lists.newArrayList("id2", "name2", "age2");
-    BuildinAddBuilder b = new BuildinAddBuilder("id", properties, columns, true);
+    BuildinAddBuilder b = new BuildinAddBuilder("id", properties, columns);
     assertThat(b.buildSql(), equalTo("insert into #table(name2, age2) values(:name, :age)"));
 
     properties = Lists.newArrayList("id", "name", "age");
     columns = Lists.newArrayList("id2", "name2", "age2");
-    b = new BuildinAddBuilder("id", properties, columns, false);
+    b = new BuildinAddBuilder(null, properties, columns);
     assertThat(b.buildSql(), equalTo("insert into #table(id2, name2, age2) values(:id, :name, :age)"));
   }
 

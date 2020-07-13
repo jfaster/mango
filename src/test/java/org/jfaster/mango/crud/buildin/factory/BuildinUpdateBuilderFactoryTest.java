@@ -19,6 +19,8 @@ package org.jfaster.mango.crud.buildin.factory;
 import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
+import org.jfaster.mango.crud.Order2;
+import org.jfaster.mango.crud.Order3;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -44,6 +46,32 @@ public class BuildinUpdateBuilderFactoryTest {
     Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
     assertThat(b, notNullValue());
     assertThat(b.buildSql(), equalTo("update #table set #if (:userId != null) userid = :userId,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where id = :id"));
+  }
+
+  @Test
+  public void test2() throws Exception {
+    BuildinUpdateBuilderFactory factory = new BuildinUpdateBuilderFactory();
+    String name = "update";
+    Class<?> entityClass = Order2.class;
+    Class<Integer> idClass = Integer.class;
+    Type returnType = int.class;
+    List<Type> parameterTypes = Lists.newArrayList((Type) entityClass);
+    Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
+    assertThat(b, notNullValue());
+    assertThat(b.buildSql(), equalTo("update #table set #if (:userId != null) userid = :userId,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where order_id = :orderId"));
+  }
+
+  @Test
+  public void test3() throws Exception {
+    BuildinUpdateBuilderFactory factory = new BuildinUpdateBuilderFactory();
+    String name = "update";
+    Class<?> entityClass = Order3.class;
+    Class<Integer> idClass = Integer.class;
+    Type returnType = int.class;
+    List<Type> parameterTypes = Lists.newArrayList((Type) entityClass);
+    Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
+    assertThat(b, notNullValue());
+    assertThat(b.buildSql(), equalTo("update #table set #if (:userId != null) userid = :userId,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where order_id = :orderId"));
   }
 
 }

@@ -33,8 +33,16 @@ public class BuildinUpdateBuilderTest {
   public void build() throws Exception {
     List<String> properties = Lists.newArrayList("id", "userName", "userAge");
     List<String> columns = Lists.newArrayList("id", "user_name", "user_age");
-    BuildinUpdateBuilder b = new BuildinUpdateBuilder("id", properties, columns);
+    BuildinUpdateBuilder b = new BuildinUpdateBuilder("id", "id", properties, columns);
     assertThat(b.buildSql(), equalTo("update #table set #if (:userName != null) user_name = :userName,#end #if (:userAge != null) user_age = :userAge,#end #trim_comma where id = :id"));
+  }
+
+  @Test
+  public void build2() throws Exception {
+    List<String> properties = Lists.newArrayList("id", "orderId", "userAge");
+    List<String> columns = Lists.newArrayList("id", "order_id", "user_age");
+    BuildinUpdateBuilder b = new BuildinUpdateBuilder("orderId", "id", properties, columns);
+    assertThat(b.buildSql(), equalTo("update #table set #if (:userAge != null) user_age = :userAge,#end #trim_comma where order_id = :orderId"));
   }
 
 }
