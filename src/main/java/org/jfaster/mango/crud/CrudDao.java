@@ -17,7 +17,6 @@
 package org.jfaster.mango.crud;
 
 import org.jfaster.mango.annotation.UseSqlGenerator;
-import org.jfaster.mango.descriptor.Generic;
 import org.jfaster.mango.page.Page;
 import org.jfaster.mango.page.PageResult;
 import org.jfaster.mango.page.Sort;
