@@ -19,8 +19,6 @@ package org.jfaster.mango.crud.buildin.factory;
 import com.google.common.collect.Lists;
 import org.jfaster.mango.crud.Builder;
 import org.jfaster.mango.crud.Order;
-import org.jfaster.mango.util.reflect.DynamicTokens;
-import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -33,19 +31,18 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
-public class BuildinFindByIdsBuilderFactoryTest {
+public class BuildinGetOneBuilderFactoryTest {
 
   @Test
   public void test() throws Exception {
-    BuildinFindByIdsBuilderFactory factory = new BuildinFindByIdsBuilderFactory();
-    String name = "findByIds";
+    BuildinGetOneBuilderFactory factory = new BuildinGetOneBuilderFactory();
+    String name = "getOne";
     Class<?> entityClass = Order.class;
     Class<Integer> idClass = Integer.class;
-    Type returnType = DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
-    List<Type> parameterTypes = Lists.newArrayList(DynamicTokens.iterableToken(TypeToken.of(idClass)).getType());
-    Builder b = factory.doTryGetBuilder(name, returnType, parameterTypes, entityClass, idClass);
+    List<Type> types = Lists.newArrayList((Type) idClass);
+    Builder b = factory.doTryGetBuilder(name, entityClass, types, entityClass, idClass);
     assertThat(b, notNullValue());
-    assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table where id in (:1)"));
+    assertThat(b.buildSql(), equalTo("select id, userid, user_age from #table where id = :1"));
   }
 
 }

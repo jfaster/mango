@@ -34,8 +34,8 @@ public class BuildinSqlGenerator implements SqlGenerator {
     buildinBuilderFactories.add(new BuildinAddBuilderFactory());
     buildinBuilderFactories.add(new BuildinAddAndReturnGeneratedIdBuilderFactory());
     buildinBuilderFactories.add(new BuildinBatchAddBuilderFactory());
-    buildinBuilderFactories.add(new BuildinFindByIdBuilderFactory());
-    buildinBuilderFactories.add(new BuildinFindByIdsBuilderFactory());
+    buildinBuilderFactories.add(new BuildinFindOneBuilderFactory());
+    buildinBuilderFactories.add(new BuildinFindManyBuilderFactory());
     buildinBuilderFactories.add(new BuildinFindAllBuilderFactory());
     buildinBuilderFactories.add(new BuildinCountBuilderFactory());
     buildinBuilderFactories.add(new BuildinUpdateBuilderFactory());
@@ -43,7 +43,7 @@ public class BuildinSqlGenerator implements SqlGenerator {
     buildinBuilderFactories.add(new BuildinDeleteBuilderFactory());
     buildinBuilderFactories.add(new BuildinFindAllPageBuilderFactory());
     buildinBuilderFactories.add(new BuildinFindAllSortBuilderFactory());
-    buildinBuilderFactories.add(new BuildinGetByIdBuilderFactory());
+    buildinBuilderFactories.add(new BuildinGetOneBuilderFactory());
   }
 
   @Override

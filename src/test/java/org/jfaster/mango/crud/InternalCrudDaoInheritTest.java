@@ -48,14 +48,14 @@ public class InternalCrudDaoInheritTest {
   public void testAdd() {
     CrudOrder co = CrudOrder.createRandomCrudOrder();
     subDao.add(co);
-    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
   }
 
   @DB(table = "t_order")
   interface OrderDao extends CrudDao<CrudOrder, String> {
 
     @Override
-    CrudOrder getById(String primaryKey);
+    CrudOrder getOne(String primaryKey);
   }
 
   @DB(table = "t_order")
@@ -65,7 +65,7 @@ public class InternalCrudDaoInheritTest {
     void add(CrudOrder entity);
 
     @Override
-    CrudOrder getById(String primaryKey);
+    CrudOrder getOne(String primaryKey);
   }
 
 }

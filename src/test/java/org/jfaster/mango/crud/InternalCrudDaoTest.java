@@ -58,14 +58,14 @@ public class InternalCrudDaoTest {
   public void testAdd() {
     CrudOrder co = CrudOrder.createRandomCrudOrder();
     dao.add(co);
-    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
   }
 
   @Test
   public void testAddAndReturnGeneratedId() {
     Msg msg = Msg.createRandomMsg();
     int id = (int) msgDao.addAndReturnGeneratedId(msg);
-    Msg dbMsg = msgDao.getById(id);
+    Msg dbMsg = msgDao.getOne(id);
     msg.setId(dbMsg.getId());
     assertThat(dbMsg, equalTo(msg));
   }
@@ -85,29 +85,29 @@ public class InternalCrudDaoTest {
   public void testGetById() {
     CrudOrder co = CrudOrder.createRandomCrudOrder();
     dao.add(co);
-    assertThat(dao.getById(co.getId()), equalTo(co));
-    assertThat(dao.getById(co.getId() + "abc"), nullValue());
+    assertThat(dao.getOne(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId() + "abc"), nullValue());
   }
 
   @Test
-  public void testFindById() {
+  public void testfindOne() {
     CrudOrder co = CrudOrder.createRandomCrudOrder();
     dao.add(co);
-    Optional<CrudOrder> op = dao.findById(co.getId());
+    Optional<CrudOrder> op = dao.findOne(co.getId());
     assertThat(op.isPresent(), equalTo(true));
     assertThat(op.get(), equalTo(co));
-    assertThat(dao.findById(co.getId() + "abc").isPresent(), equalTo(false));
+    assertThat(dao.findOne(co.getId() + "abc").isPresent(), equalTo(false));
   }
 
   @Test
-  public void testFindByIds() {
+  public void testfindMany() {
     List<CrudOrder> cos = CrudOrder.createRandomCrudOrders(5);
     dao.add(cos);
     List<String> ids = cos.stream().map(CrudOrder::getId).collect(Collectors.toList());
-    assertThat(Sets.newHashSet(dao.findByIds(ids)), equalTo(Sets.newHashSet(cos)));
+    assertThat(Sets.newHashSet(dao.findMany(ids)), equalTo(Sets.newHashSet(cos)));
 
     ids.clear();
-    assertThat(dao.findByIds(ids), hasSize(0));
+    assertThat(dao.findMany(ids), hasSize(0));
   }
 
   @Test
@@ -125,13 +125,13 @@ public class InternalCrudDaoTest {
     co.setUserId(0);
     co.setPrice(100);
     dao.update(co);
-    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
 
     co.setUserId(1);
     co.setPrice(null); // 设置成null不更新
     dao.update(co);
     co.setPrice(100);
-    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
   }
 
   @Test
@@ -154,9 +154,9 @@ public class InternalCrudDaoTest {
   public void testDelete() {
     CrudOrder co = CrudOrder.createRandomCrudOrder();
     dao.add(co);
-    assertThat(dao.getById(co.getId()), equalTo(co));
+    assertThat(dao.getOne(co.getId()), equalTo(co));
     assertThat(dao.delete(co.getId()), equalTo(1));
-    assertThat(dao.getById(co.getId()), equalTo(null));
+    assertThat(dao.getOne(co.getId()), equalTo(null));
     assertThat(dao.delete(co.getId()), equalTo(0));
   }
 

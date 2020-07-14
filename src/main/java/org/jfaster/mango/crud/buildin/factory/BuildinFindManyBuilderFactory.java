@@ -19,6 +19,8 @@ package org.jfaster.mango.crud.buildin.factory;
 import org.jfaster.mango.crud.CrudMeta;
 import org.jfaster.mango.crud.buildin.builder.AbstractBuildinBuilder;
 import org.jfaster.mango.crud.buildin.builder.BuildinGetBuilder;
+import org.jfaster.mango.util.reflect.DynamicTokens;
+import org.jfaster.mango.util.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,28 +29,28 @@ import java.util.List;
 /**
  * @author ash
  */
-public class BuildinGetByIdBuilderFactory extends AbstractBuildinBuilderFactory {
+public class BuildinFindManyBuilderFactory extends AbstractBuildinBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "getById";
+    return "findMany";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return entityClass;
+    return DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
   }
 
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
     List<Type> types = new ArrayList<>();
-    types.add(idClass);
+    types.add(DynamicTokens.iterableToken(TypeToken.of(idClass)).getType());
     return types;
   }
 
   @Override
   AbstractBuildinBuilder createInternalBuilder(CrudMeta cm) {
-    return new BuildinGetBuilder(cm.getColumn4Id(), cm.getColumns(), false);
+    return new BuildinGetBuilder(cm.getColumn4Id(), cm.getColumns(), true);
   }
 
 }

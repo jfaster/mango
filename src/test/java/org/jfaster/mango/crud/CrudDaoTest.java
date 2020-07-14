@@ -49,7 +49,7 @@ public class CrudDaoTest {
     CrudOrder co = CrudOrder.createRandomCrudOrder(userId);
     dao.add(co);
     assertThat(dao.getById(co.getId()), equalTo(co));
-    assertThat(dao.findById(co.getId()).get(), equalTo(co));
+    assertThat(dao.findOne(co.getId()).get(), equalTo(co));
     assertThat(dao.delete(co.getId()), equalTo(1));
     assertThat(Iterables.size(dao.findAll()), equalTo(0));
     assertThat(dao.count(), equalTo(0L));
@@ -63,7 +63,7 @@ public class CrudDaoTest {
     dao.add(co);
     System.out.println(dao.getById(co.getId()));
     assertThat(dao.getById(co.getId()), equalTo(co));
-    assertThat(dao.findById(co.getId()).get(), equalTo(co));
+    assertThat(dao.findOne(co.getId()).get(), equalTo(co));
     assertThat(dao.delete(co.getId()), equalTo(1));
     assertThat(Iterables.size(dao.findAll()), equalTo(0));
     assertThat(dao.count(), equalTo(0L));

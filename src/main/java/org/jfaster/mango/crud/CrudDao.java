@@ -37,11 +37,11 @@ public interface CrudDao<T, ID> extends NamedCrudDao<T, ID> {
 
   void add(Iterable<T> entities);
 
-  T getById(ID primaryKey);
+  T getOne(ID primaryKey);
 
-  Optional<T> findById(ID primaryKey);
+  Optional<T> findOne(ID primaryKey);
 
-  List<T> findByIds(Iterable<ID> primaryKeys);
+  List<T> findMany(Iterable<ID> primaryKeys);
 
   long count();
 

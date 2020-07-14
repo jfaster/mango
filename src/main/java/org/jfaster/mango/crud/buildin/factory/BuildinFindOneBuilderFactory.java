@@ -29,28 +29,28 @@ import java.util.List;
 /**
  * @author ash
  */
-public class BuildinFindByIdsBuilderFactory extends AbstractBuildinBuilderFactory {
+public class BuildinFindOneBuilderFactory extends AbstractBuildinBuilderFactory {
 
   @Override
   String expectedMethodName() {
-    return "findByIds";
+    return "findOne";
   }
 
   @Override
   Type expectedReturnType(Class<?> entityClass) {
-    return DynamicTokens.listToken(TypeToken.of(entityClass)).getType();
+    return DynamicTokens.optionalToken(TypeToken.of(entityClass)).getType();
   }
 
   @Override
   List<Type> expectedParameterType(Class<?> entityClass, Class<?> idClass) {
-    List<Type> types = new ArrayList<>();
-    types.add(DynamicTokens.iterableToken(TypeToken.of(idClass)).getType());
+    List<Type> types = new ArrayList<Type>();
+    types.add(idClass);
     return types;
   }
 
   @Override
   AbstractBuildinBuilder createInternalBuilder(CrudMeta cm) {
-    return new BuildinGetBuilder(cm.getColumn4Id(), cm.getColumns(), true);
+    return new BuildinGetBuilder(cm.getColumn4Id(), cm.getColumns(), false);
   }
 
 }

@@ -33,12 +33,12 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * @author ash
  */
-public class BuildinFindByIdBuilderFactoryTest {
+public class BuildinFindOneBuilderFactoryTest {
 
   @Test
   public void test() throws Exception {
-    BuildinFindByIdBuilderFactory factory = new BuildinFindByIdBuilderFactory();
-    String name = "findById";
+    BuildinFindOneBuilderFactory factory = new BuildinFindOneBuilderFactory();
+    String name = "findOne";
     Class<?> entityClass = Order.class;
     Type returnType = DynamicTokens.optionalToken(TypeToken.of(entityClass)).getType();
     Class<Integer> idClass = Integer.class;
