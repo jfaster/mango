@@ -13,12 +13,12 @@ that can handle 120000+ payment order per second.
 
 Documentation is at http://mango.jfaster.org/
 
-Requires JDK 1.6 or higher.
+Requires JDK 1.8 or higher.
 
 Latest release
 --------------
 
-The most recent release is Mango 1.6.1, released April 27, 2018.
+The most recent release is Mango 2.0.1, released Jul 14, 2020.
 
 To add a dependency on Mango using Maven, use the following:
 
@@ -26,7 +26,7 @@ To add a dependency on Mango using Maven, use the following:
 <dependency>
     <groupId>org.jfaster</groupId>
     <artifactId>mango</artifactId>
-    <version>1.6.1</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
@@ -34,11 +34,9 @@ To add a dependency using Gradle:
 
 ```
 dependencies {
-    compile 'org.jfaster:mango:1.6.1'
+    compile 'org.jfaster:mango:2.0.1'
 }
 ```
-
-Or [download from here](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.jfaster%22%20AND%20a%3A%22mango%22).
 
 JMH Benchmarks
 --------------
