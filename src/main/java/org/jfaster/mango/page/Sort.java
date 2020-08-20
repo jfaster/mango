@@ -82,7 +82,7 @@ public class Sort {
     if (orders.isEmpty()) {
       return "";
     }
-    return " order by " + Joiner.on(",").join(orders);
+    return " order by " + Joiner.on(", ").join(orders);
   }
 
 }
