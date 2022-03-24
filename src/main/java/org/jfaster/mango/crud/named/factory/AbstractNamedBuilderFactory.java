@@ -72,6 +72,42 @@ public abstract class AbstractNamedBuilderFactory extends BuilderFactory {
     return 0;
   }
 
+  protected void appendParamsToWhereClause(
+      StringBuilder tailOfSql, List<OpUnit> opUnits,
+      List<String> logics, CrudMeta cm,
+      List<Type> parameterTypes, String methodName,
+      Class<?> clazz) {
+    int paramIndex = 1;
+
+    for (int i = 0; i < opUnits.size(); i++) {
+      OpUnit opUnit = opUnits.get(i);
+      String property = opUnit.getProperty();
+      String column = cm.getColumnByProperty(property);
+      Type propertyType = cm.getTypeByProperty(property);
+
+      if (column == null || propertyType == null) {
+        throw new CrudException("the name of method [" + methodName + "] is error, " +
+                "property " + property + " can't be found in '" + clazz + "'");
+      }
+
+      Op op = opUnit.getOp();
+      String[] params = new String[op.paramCount()];
+
+      for (int j = 0; j < params.length; j++) {
+        Type parameterType = parameterTypes.get(paramIndex - 1);
+        checkType(parameterType, propertyType, paramIndex, methodName, op);
+        params[j] = ":" + paramIndex;
+        paramIndex++;
+      }
+
+      tailOfSql.append(op.render(column, params));
+
+      if (i != (opUnits.size() - 1)) {
+        tailOfSql.append(" ").append(logics.get(i)).append(" ");
+      }
+    }
+  }
+
   protected void buildWhereClause(
       StringBuilder tailOfSql, List<OpUnit> opUnits, List<String> logics,
       CrudMeta cm, List<Type> parameterTypes, String methodName, Class<?> clazz) {
@@ -90,29 +126,8 @@ public abstract class AbstractNamedBuilderFactory extends BuilderFactory {
           "the number of parameters expected greater or equal than " + count + ", but " + parameterTypes.size());
     }
     tailOfSql.append("where ");
-    int paramIndex = 1;
-    for (int i = 0; i < opUnits.size(); i++) {
-      OpUnit opUnit = opUnits.get(i);
-      String property = opUnit.getProperty();
-      String column = cm.getColumnByProperty(property);
-      Type propertyType = cm.getTypeByProperty(property);
-      if (column == null || propertyType == null) {
-        throw new CrudException("the name of method [" + methodName + "] is error, " +
-            "property " + property + " can't be found in '" + clazz + "'");
-      }
-      Op op = opUnit.getOp();
-      String[] params = new String[op.paramCount()];
-      for (int j = 0; j < params.length; j++) {
-        Type parameterType = parameterTypes.get(paramIndex - 1);
-        checkType(parameterType, propertyType, paramIndex, methodName, op);
-        params[j] = ":" + paramIndex;
-        paramIndex++;
-      }
-      tailOfSql.append(op.render(column, params));
-      if (i != (opUnits.size() - 1)) {
-        tailOfSql.append(" ").append(logics.get(i)).append(" ");
-      }
-    }
+
+    appendParamsToWhereClause(tailOfSql, opUnits, logics, cm, parameterTypes, methodName, clazz);
   }
 
   protected void checkType(Type paramType, Type propType, int paramIndex, String methodName, Op op) {
