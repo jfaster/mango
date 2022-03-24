@@ -72,22 +72,33 @@ public abstract class AbstractNamedBuilderFactory extends BuilderFactory {
     return 0;
   }
 
+  private int getCountOfOpUnitParams(List<OpUnit> opUnits) {
+    int countOfOpUnitParams = 0;
+
+    for (OpUnit opUnit : opUnits) {
+      countOfOpUnitParams += opUnit.getOp().paramCount();
+    }
+
+    return countOfOpUnitParams;
+  }
+
   protected void buildWhereClause(
       StringBuilder tailOfSql, List<OpUnit> opUnits, List<String> logics,
       CrudMeta cm, List<Type> parameterTypes, String methodName, Class<?> clazz) {
+    int countOfOpUnitParams;
+
     if (opUnits.size() == 0) {
       throw new IllegalStateException(); // TODO msg
     }
     if (opUnits.size() != (logics.size() + 1)) {
       throw new IllegalStateException(); // TODO msg
     }
-    int count = 0;
-    for (OpUnit opUnit : opUnits) {
-      count = count + opUnit.getOp().paramCount();
-    }
-    if (parameterTypes.size() < count) {
+
+    countOfOpUnitParams = getCountOfOpUnitParams(opUnits);
+
+    if (parameterTypes.size() < countOfOpUnitParams) {
       throw new CrudException("the name of method [" + methodName + "] is error, " +
-          "the number of parameters expected greater or equal than " + count + ", but " + parameterTypes.size());
+          "the number of parameters expected greater or equal than " + countOfOpUnitParams + ", but " + parameterTypes.size());
     }
     tailOfSql.append("where ");
     int paramIndex = 1;
