@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
  */
 public class MockDB implements Annotation, DB {
 
-  private String name = AbstractDataSourceFactory.DEFULT_NAME;
+  private String name = AbstractDataSourceFactory.DEFAULT_NAME;
 
   private String table = "";
 

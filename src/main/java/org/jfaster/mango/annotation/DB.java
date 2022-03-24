@@ -35,7 +35,7 @@ public @interface DB {
    *
    * @return
    */
-  String name() default AbstractDataSourceFactory.DEFULT_NAME;
+  String name() default AbstractDataSourceFactory.DEFAULT_NAME;
 
   /**
    * 全局表名，在{@link SQL}的字符串参数，可以通过#table的方式引用此全局表名。

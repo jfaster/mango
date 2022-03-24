@@ -60,11 +60,11 @@ public abstract class TransactionFactory {
   }
 
   public static Transaction newTransaction(TransactionIsolationLevel level) {
-    return newTransaction(AbstractDataSourceFactory.DEFULT_NAME, level);
+    return newTransaction(AbstractDataSourceFactory.DEFAULT_NAME, level);
   }
 
   public static Transaction newTransaction() {
-    return newTransaction(AbstractDataSourceFactory.DEFULT_NAME, TransactionIsolationLevel.DEFAULT);
+    return newTransaction(AbstractDataSourceFactory.DEFAULT_NAME, TransactionIsolationLevel.DEFAULT);
   }
 
   public static Transaction newTransaction(DataSource dataSource) {
