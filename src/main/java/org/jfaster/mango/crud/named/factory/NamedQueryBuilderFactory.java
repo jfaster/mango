@@ -30,17 +30,17 @@ import java.util.List;
  */
 public class NamedQueryBuilderFactory extends AbstractNamedBuilderFactory {
 
-  private final static List<String> PREFIXS = new ArrayList<String>();
+  private static final List<String> PREFIXES = new ArrayList<String>();
   static {
-    PREFIXS.add("getBy");
-    PREFIXS.add("findBy");
-    PREFIXS.add("queryBy");
-    PREFIXS.add("selectBy");
+    PREFIXES.add("getBy");
+    PREFIXES.add("findBy");
+    PREFIXES.add("queryBy");
+    PREFIXES.add("selectBy");
   }
 
   @Override
-  public List<String> prefixs() {
-    return PREFIXS;
+  public List<String> prefixes() {
+    return PREFIXES;
   }
 
   @Override

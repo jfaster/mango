@@ -31,14 +31,14 @@ import java.util.List;
  */
 public class NamedCountBuilderFactory extends AbstractNamedBuilderFactory {
 
-  private final static List<String> PREFIXS = new ArrayList<String>();
+  private static final List<String> PREFIXES = new ArrayList<String>();
   static {
-    PREFIXS.add("countBy");
+    PREFIXES.add("countBy");
   }
 
   @Override
-  public List<String> prefixs() {
-    return PREFIXS;
+  public List<String> prefixes() {
+    return PREFIXES;
   }
 
   @Override

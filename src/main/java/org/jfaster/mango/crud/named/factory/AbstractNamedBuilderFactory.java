@@ -43,7 +43,7 @@ public abstract class AbstractNamedBuilderFactory extends BuilderFactory {
   @Nullable
   @Override
   public Builder doTryGetBuilder(String name, Type returnType, List<Type> parameterTypes, Class<?> entityClass, Class<?> idClass) {
-    int matchSize = metchSize(name);
+    int matchSize = matchSize(name);
     if (matchSize == 0) {
       return null;
     }
@@ -52,14 +52,14 @@ public abstract class AbstractNamedBuilderFactory extends BuilderFactory {
     return createCustomBuilder(name, parameterTypes, entityClass, info);
   }
 
-  public abstract List<String> prefixs();
+  public abstract List<String> prefixes();
 
   abstract AbstractNamedBuilder createCustomBuilder(
           String methodName, List<Type> parameterTypes,
           Class<?> entityClass, MethodNameInfo info);
 
-  private int metchSize(String name) {
-    for (String prefix : prefixs()) {
+  private int matchSize(String name) {
+    for (String prefix : prefixes()) {
       if (Strings.isEmpty(prefix)) {
         throw new IllegalStateException("prefix can't be empty");
       }
@@ -74,7 +74,7 @@ public abstract class AbstractNamedBuilderFactory extends BuilderFactory {
 
   protected void buildWhereClause(
       StringBuilder tailOfSql, List<OpUnit> opUnits, List<String> logics,
-      CrudMeta cm, List<Type> parameterTypes, String methodName, Class<?> clazz) {
+      CrudMeta cm, List<Type> parameterTypes, String methodName, Class<?> className) {
     if (opUnits.size() == 0) {
       throw new IllegalStateException(); // TODO msg
     }
@@ -98,7 +98,7 @@ public abstract class AbstractNamedBuilderFactory extends BuilderFactory {
       Type propertyType = cm.getTypeByProperty(property);
       if (column == null || propertyType == null) {
         throw new CrudException("the name of method [" + methodName + "] is error, " +
-            "property " + property + " can't be found in '" + clazz + "'");
+            "property " + property + " can't be found in '" + className + "'");
       }
       Op op = opUnit.getOp();
       String[] params = new String[op.paramCount()];

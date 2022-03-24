@@ -56,17 +56,17 @@ public class TransactionTemplateTest {
     dao.insert(y);
     dao.insert(z);
 
-    TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+    TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
       @Override
       public void doInTransaction(TransactionStatus status) {
         x.add(50);
         dao.update(x);
 
-        TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+        TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
 
           @Override
           public void doInTransaction(TransactionStatus status) {
-            TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+            TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
 
               @Override
               public void doInTransaction(TransactionStatus status) {
@@ -96,17 +96,17 @@ public class TransactionTemplateTest {
     dao.insert(y);
     dao.insert(z);
 
-    TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+    TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
       @Override
       public void doInTransaction(TransactionStatus status) {
         x.add(50);
         dao.update(x);
 
-        TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+        TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
 
           @Override
           public void doInTransaction(TransactionStatus status) {
-            TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+            TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
 
               @Override
               public void doInTransaction(TransactionStatus status) {
@@ -141,17 +141,17 @@ public class TransactionTemplateTest {
     dao.insert(y);
     dao.insert(z);
 
-    TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+    TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
       @Override
       public void doInTransaction(TransactionStatus status) {
         x.add(50);
         dao.update(x);
 
-        TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+        TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
 
           @Override
           public void doInTransaction(TransactionStatus status) {
-            TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFULT_NAME, new TransactionAction() {
+            TransactionTemplate.execute(mango, AbstractDataSourceFactory.DEFAULT_NAME, new TransactionAction() {
 
               @Override
               public void doInTransaction(TransactionStatus status) {

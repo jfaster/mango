@@ -21,12 +21,12 @@ package org.jfaster.mango.datasource;
  */
 public abstract class AbstractDataSourceFactory implements DataSourceFactory {
 
-  public final static String DEFULT_NAME = "DEFAULT";
+  public static final String DEFAULT_NAME = "DEFAULT";
 
   private String name;
 
   protected AbstractDataSourceFactory() {
-    this(DEFULT_NAME);
+    this(DEFAULT_NAME);
   }
 
   protected AbstractDataSourceFactory(String name) {

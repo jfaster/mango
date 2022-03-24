@@ -53,13 +53,13 @@ public class BatchUpdateOperator extends AbstractOperator {
       return transformer.transform(new int[]{});
     }
 
-    Map<DataSource, Group> gorupMap = new HashMap<DataSource, Group>();
+    Map<DataSource, Group> groupMap = new HashMap<DataSource, Group>();
     int t = 0;
     for (Object obj : iterObj) {
       InvocationContext context = invocationContextFactory.newInvocationContext(new Object[]{obj});
-      group(context, gorupMap, t++);
+      group(context, groupMap, t++);
     }
-    int[] ints = executeDb(gorupMap, t);
+    int[] ints = executeDb(groupMap, t);
     return transformer.transform(ints);
   }
 

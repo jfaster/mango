@@ -31,15 +31,15 @@ import java.util.List;
  */
 public class NamedDeleteBuilderFactory extends AbstractNamedBuilderFactory {
 
-  private final static List<String> PREFIXS = new ArrayList<String>();
+  private static final List<String> PREFIXES = new ArrayList<String>();
   static {
-    PREFIXS.add("deleteBy");
-    PREFIXS.add("removeBy");
+    PREFIXES.add("deleteBy");
+    PREFIXES.add("removeBy");
   }
 
   @Override
-  public List<String> prefixs() {
-    return PREFIXS;
+  public List<String> prefixes() {
+    return PREFIXES;
   }
 
   @Override
