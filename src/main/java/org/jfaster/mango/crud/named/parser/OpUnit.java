@@ -17,6 +17,7 @@
 package org.jfaster.mango.crud.named.parser;
 
 import org.jfaster.mango.crud.named.parser.op.*;
+import org.jfaster.mango.util.ManipulateStringNames;
 import org.jfaster.mango.util.Strings;
 
 import java.util.ArrayList;
@@ -53,12 +54,12 @@ public class OpUnit {
     for (Op op : OPS) {
       if (str.endsWith(op.keyword())) {
         this.op = op;
-        this.property = Strings.firstLetterToLowerCase(str.substring(0, str.length() - op.keyword().length()));
+        this.property = ManipulateStringNames.firstLetterToLowerCase(str.substring(0, str.length() - op.keyword().length()));
         return;
       }
     }
     this.op = new EqualsOp();
-    this.property = Strings.firstLetterToLowerCase(str);
+    this.property = ManipulateStringNames.firstLetterToLowerCase(str);
   }
 
   public static OpUnit create(String str) {

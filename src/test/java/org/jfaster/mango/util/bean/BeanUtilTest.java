@@ -19,6 +19,7 @@ package org.jfaster.mango.util.bean;
 import com.google.common.collect.Sets;
 import org.jfaster.mango.annotation.Column;
 import org.jfaster.mango.annotation.ID;
+import org.jfaster.mango.util.ManipulateStringNames;
 import org.jfaster.mango.util.Strings;
 import org.junit.Test;
 
@@ -64,8 +65,8 @@ public class BeanUtilTest {
   }
 
   private PropertyMeta getPropertyMeta(Class<?> clazz, String property, Class<?> type) throws NoSuchMethodException {
-    String readMethodName = "get" + Strings.firstLetterToUpperCase(property);
-    String writeMethodName = "set" + Strings.firstLetterToUpperCase(property);
+    String readMethodName = "get" + ManipulateStringNames.firstLetterToUpperCase(property);
+    String writeMethodName = "set" + ManipulateStringNames.firstLetterToUpperCase(property);
     Method readMethod = clazz.getMethod(readMethodName);
     Method writeMethod = clazz.getMethod(writeMethodName, type);
     Field f = tryGetField(clazz, property);

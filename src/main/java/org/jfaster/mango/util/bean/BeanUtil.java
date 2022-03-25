@@ -17,6 +17,7 @@
 package org.jfaster.mango.util.bean;
 
 import org.jfaster.mango.exception.UncheckedException;
+import org.jfaster.mango.util.ManipulateStringNames;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.local.CacheLoader;
 import org.jfaster.mango.util.local.DoubleCheckCache;
@@ -61,7 +62,7 @@ public class BeanUtil {
                   Type type = readMethod.getGenericReturnType(); // 和writeMethod的type相同
                   Field field = tryGetField(readMethod.getDeclaringClass(), name);
                   if (isBoolean(pd.getPropertyType()) && field == null) {
-                    String bname = "is" + Strings.firstLetterToUpperCase(name);
+                    String bname = "is" + ManipulateStringNames.firstLetterToUpperCase(name);
                     field = tryGetField(clazz, bname);
                     if (field != null) {
                       name = bname;  // 使用isXxYy替换xxYy

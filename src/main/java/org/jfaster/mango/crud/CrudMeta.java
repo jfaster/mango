@@ -17,6 +17,7 @@
 package org.jfaster.mango.crud;
 
 import org.jfaster.mango.annotation.*;
+import org.jfaster.mango.util.ManipulateStringNames;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.bean.BeanUtil;
 import org.jfaster.mango.util.bean.PropertyMeta;
@@ -68,7 +69,7 @@ public class CrudMeta {
       Column colAnno = propertyMeta.getPropertyAnno(Column.class);
       String col = colAnno != null ?
           colAnno.value() :
-          Strings.underscoreName(prop);
+          ManipulateStringNames.underscoreName(prop);
       props.add(prop);
       cols.add(col);
       propToColMap.put(prop, col);

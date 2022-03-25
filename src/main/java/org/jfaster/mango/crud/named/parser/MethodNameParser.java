@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.crud.named.parser;
 
+import org.jfaster.mango.util.ManipulateStringNames;
 import org.jfaster.mango.util.Strings;
 
 import javax.annotation.Nullable;
@@ -51,7 +52,7 @@ public class MethodNameParser {
     int index = 0;
     while (m.find()) {
       opUnits.add(OpUnit.create(str.substring(index, m.start())));
-      logics.add(Strings.firstLetterToLowerCase(m.group()));
+      logics.add(ManipulateStringNames.firstLetterToLowerCase(m.group()));
       index = m.end();
     }
     opUnits.add(OpUnit.create(str.substring(index)));
@@ -63,7 +64,7 @@ public class MethodNameParser {
     Pattern p = Pattern.compile(ORDER_BY_REGEX);
     Matcher m = p.matcher(str);
     if (m.find()) {
-      String tailStr = Strings.firstLetterToLowerCase(str.substring(m.end() - 1));
+      String tailStr = ManipulateStringNames.firstLetterToLowerCase(str.substring(m.end() - 1));
       int size = ORDER_BY.length() + tailStr.length();
       String property;
       OrderType orderType;

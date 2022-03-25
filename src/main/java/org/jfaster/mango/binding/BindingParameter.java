@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.binding;
 
+import org.jfaster.mango.util.ManipulateStringNames;
 import org.jfaster.mango.util.Objects;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.jdbc.JdbcType;
@@ -61,7 +62,7 @@ public class BindingParameter {
   }
 
   public String getFullName() {
-    return Strings.getFullName(parameterName, propertyName);
+    return ManipulateStringNames.getFullName(parameterName, propertyName);
   }
 
   public boolean hasProperty() {
