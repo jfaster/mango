@@ -24,6 +24,8 @@ import org.jfaster.mango.annotation.ID;
  */
 public class CrudOrderA {
 
+  protected int price;
+
   @ID()
   private String id;
 
@@ -44,6 +46,14 @@ public class CrudOrderA {
 
   public void setUserId(int userId) {
     this.userId = userId;
+  }
+
+  public int getPrice() {
+    return price;
+  }
+
+  public void setPrice(int price) {
+    this.price = price;
   }
 }
 
