@@ -26,18 +26,8 @@ import org.jfaster.mango.annotation.Ignore;
  */
 public class CrudOrderB extends CrudOrderA {
 
-  private int price;
-
   @Ignore
   private String stat;
-
-  public int getPrice() {
-    return price;
-  }
-
-  public void setPrice(int price) {
-    this.price = price;
-  }
 
   public String getStat() {
     return stat;
