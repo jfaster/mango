@@ -20,6 +20,7 @@ import org.jfaster.mango.invoker.InvokerCache;
 import org.jfaster.mango.invoker.TransferableInvoker;
 import org.jfaster.mango.type.TypeHandler;
 import org.jfaster.mango.type.TypeHandlerRegistry;
+import org.jfaster.mango.util.ManipulateStringNames;
 import org.jfaster.mango.util.PropertyTokenizer;
 import org.jfaster.mango.util.Strings;
 import org.jfaster.mango.util.jdbc.ResultSetWrapper;
@@ -78,7 +79,7 @@ public class BeanPropertyRowMapper<T> implements RowMapper<T> {
         invokerMap.put(column.toLowerCase(), invoker);
       } else { // 使用约定映射
         invokerMap.put(invoker.getName().toLowerCase(), invoker);
-        String underscoredName = Strings.underscoreName(invoker.getName());
+        String underscoredName = ManipulateStringNames.underscoreName(invoker.getName());
         if (!invoker.getName().toLowerCase().equals(underscoredName)) {
           invokerMap.put(underscoredName, invoker);
         }
