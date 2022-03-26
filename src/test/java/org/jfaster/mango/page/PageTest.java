@@ -16,10 +16,14 @@
 
 package org.jfaster.mango.page;
 
+import org.jfaster.mango.crud.CrudOrder;
+import org.jfaster.mango.crud.CustomCrudDaoTest;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.jfaster.mango.crud.CustomCrudDaoTest.mango;
 
 /**
  * @author ash
@@ -37,6 +41,25 @@ public class PageTest {
     assertThat(page.getPageNum(), is(2));
     assertThat(page.getPageSize(), is(200));
 
+  }
+
+  @Test
+  public void testPage() throws Exception {
+    CustomCrudDaoTest.CrudOrderDao dao = mango.create(CustomCrudDaoTest.CrudOrderDao.class);
+    int userId = 2;
+    for (int i = 0; i < 10; i++) {
+      CrudOrder order = CrudOrder.createRandomCrudOrder(userId);
+      dao.add(order);
+    }
+    assertThat(dao.getByUserId(userId, Page.of(0, 3)).size(), equalTo(3));
+
+    assertThat(dao.getByUserId(userId, Page.of(1, 3)).size(), equalTo(3));
+
+    assertThat(dao.getByUserId(userId, Page.of(2, 3)).size(), equalTo(3));
+
+    PageResult<CrudOrder> pr = dao.findByUserId(userId, Page.of(3, 3));
+    assertThat(pr.getData().size(), equalTo(1));
+    assertThat(pr.getTotal(), equalTo(10L));
   }
 
 }

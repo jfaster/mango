@@ -43,7 +43,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class CustomCrudDaoTest {
 
   private final static DataSource ds = DataSourceConfig.getDataSource();
-  private final static Mango mango = Mango.newInstance(ds);
+  public final static Mango mango = Mango.newInstance(ds);
 
   @Before
   public void before() throws Exception {
@@ -72,25 +72,6 @@ public class CustomCrudDaoTest {
     assertThat(dao.countByUserId(userId), equalTo(2));
     assertThat(dao.deleteByUserId(userId), equalTo(2));
     assertThat(dao.countByUserId(userId), equalTo(0));
-  }
-
-  @Test
-  public void testPage() throws Exception {
-    CrudOrderDao dao = mango.create(CrudOrderDao.class);
-    int userId = 2;
-    for (int i = 0; i < 10; i++) {
-      CrudOrder order = CrudOrder.createRandomCrudOrder(userId);
-      dao.add(order);
-    }
-    assertThat(dao.getByUserId(userId, Page.of(0, 3)).size(), equalTo(3));
-
-    assertThat(dao.getByUserId(userId, Page.of(1, 3)).size(), equalTo(3));
-
-    assertThat(dao.getByUserId(userId, Page.of(2, 3)).size(), equalTo(3));
-
-    PageResult<CrudOrder> pr = dao.findByUserId(userId, Page.of(3, 3));
-    assertThat(pr.getData().size(), equalTo(1));
-    assertThat(pr.getTotal(), equalTo(10L));
   }
 
   @Rule
@@ -133,7 +114,7 @@ public class CustomCrudDaoTest {
   }
 
   @DB(table = "t_order")
-  interface CrudOrderDao extends CrudDao<CrudOrder, String> {
+  public interface CrudOrderDao extends CrudDao<CrudOrder, String> {
 
     CrudOrder getById(String id);
 
