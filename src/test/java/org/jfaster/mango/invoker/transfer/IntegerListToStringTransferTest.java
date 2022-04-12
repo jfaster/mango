@@ -32,7 +32,7 @@ public class IntegerListToStringTransferTest {
 
   @Test
   public void propertyToColumn() {
-    IntegerListToStringTransfer transfer = new IntegerListToStringTransfer();
+    IntegerListToStringTransfer transfer = (IntegerListToStringTransfer) new PropertyTransferFactory().makeInstanceFromFactory("IntegerListToStringTransfer");
     assertThat(transfer.propertyToColumn(null), nullValue());
     assertThat(transfer.propertyToColumn(Lists.newArrayList()), equalTo(""));
     assertThat(transfer.propertyToColumn(Lists.newArrayList(1,2,3)), equalTo("1,2,3"));
@@ -40,7 +40,7 @@ public class IntegerListToStringTransferTest {
 
   @Test
   public void columnToProperty() {
-    IntegerListToStringTransfer transfer = new IntegerListToStringTransfer();
+    IntegerListToStringTransfer transfer = (IntegerListToStringTransfer) new PropertyTransferFactory().makeInstanceFromFactory("IntegerListToStringTransfer");
     assertThat(transfer.columnToProperty(null, null), nullValue());
     assertThat(transfer.columnToProperty("", null), hasSize(0));
     List<Integer> r = transfer.columnToProperty("1,2,3", null);

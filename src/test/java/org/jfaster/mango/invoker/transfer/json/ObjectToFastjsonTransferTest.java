@@ -18,6 +18,7 @@ package org.jfaster.mango.invoker.transfer.json;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import org.jfaster.mango.invoker.transfer.PropertyTransferFactory;
 import org.jfaster.mango.util.reflect.TypeToken;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class ObjectToFastjsonTransferTest {
 
   @Test
   public void propertyToColumn() {
-    ObjectToFastjsonTransfer transfer = new ObjectToFastjsonTransfer();
+    ObjectToFastjsonTransfer transfer = (ObjectToFastjsonTransfer) new PropertyTransferFactory().makeInstanceFromFactory("ObjectToFastjsonTransfer");
     assertThat(transfer.propertyToColumn(null), nullValue());
     List<Integer> list = Lists.newArrayList(1, 2, 3);
     assertThat(transfer.propertyToColumn(list), equalTo(JSON.toJSONString(list)));
@@ -43,7 +44,7 @@ public class ObjectToFastjsonTransferTest {
 
   @Test
   public void columnToProperty() {
-    ObjectToFastjsonTransfer transfer = new ObjectToFastjsonTransfer();
+    ObjectToFastjsonTransfer transfer = (ObjectToFastjsonTransfer) new PropertyTransferFactory().makeInstanceFromFactory("ObjectToFastjsonTransfer");
     List<Integer> list = Lists.newArrayList(1, 2, 3);
     Type listType = new TypeToken<List<Integer>>(){}.getType();
     assertThat(transfer.columnToProperty(null, listType), nullValue());
