@@ -32,7 +32,7 @@ public class LongListToStringTransferTest {
 
   @Test
   public void propertyToColumn() {
-    LongListToStringTransfer transfer = new LongListToStringTransfer();
+    LongListToStringTransfer transfer = (LongListToStringTransfer) new PropertyTransferFactory().makeInstanceFromFactory("LongListToStringTransfer");
     assertThat(transfer.propertyToColumn(null), nullValue());
     assertThat(transfer.propertyToColumn(Lists.newArrayList()), equalTo(""));
     assertThat(transfer.propertyToColumn(Lists.newArrayList(1L,2L,3L)), equalTo("1,2,3"));
@@ -40,7 +40,7 @@ public class LongListToStringTransferTest {
 
   @Test
   public void columnToProperty() {
-    LongListToStringTransfer transfer = new LongListToStringTransfer();
+    LongListToStringTransfer transfer = (LongListToStringTransfer) new PropertyTransferFactory().makeInstanceFromFactory("LongListToStringTransfer");
     assertThat(transfer.columnToProperty(null, null), nullValue());
     assertThat(transfer.columnToProperty("", null), hasSize(0));
     List<Long> r = transfer.columnToProperty("1,2,3", null);

@@ -16,6 +16,7 @@
 
 package org.jfaster.mango.invoker.transfer.enums;
 
+import org.jfaster.mango.invoker.transfer.PropertyTransferFactory;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -29,7 +30,7 @@ public class EnumToIntegerTransferTest {
 
   @Test
   public void propertyToColumn() {
-    EnumToIntegerTransfer transfer = new EnumToIntegerTransfer();
+    EnumToIntegerTransfer transfer = (EnumToIntegerTransfer) new PropertyTransferFactory().makeInstanceFromFactory("EnumToIntegerTransfer");
     assertThat(transfer.propertyToColumn(null), nullValue());
     assertThat(transfer.propertyToColumn(E.X), equalTo(0));
     assertThat(transfer.propertyToColumn(E.Y), equalTo(1));
@@ -38,7 +39,7 @@ public class EnumToIntegerTransferTest {
 
   @Test
   public void columnToProperty() {
-    EnumToIntegerTransfer transfer = new EnumToIntegerTransfer();
+    EnumToIntegerTransfer transfer = (EnumToIntegerTransfer) new PropertyTransferFactory().makeInstanceFromFactory("EnumToIntegerTransfer");
     assertThat(transfer.columnToProperty(null, E.class), nullValue());
     assertThat(transfer.columnToProperty(0, E.class), equalTo(E.X));
     assertThat(transfer.columnToProperty(1, E.class), equalTo(E.Y));
