@@ -21,6 +21,7 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.sql.*;
+import java.util.Properties;
 
 /**
  * Tool to run database scripts
@@ -39,6 +40,13 @@ public class ScriptRunner {
 
   private String delimiter = DEFAULT_DELIMITER;
   private boolean fullLineDelimiter = false;
+
+  public Connection getConnection() throws SQLException {
+    if(connection == null) {
+      connection = DriverManager.getConnection("",new Properties());
+    }
+    return connection;
+  }
 
   /**
    * Default constructor
